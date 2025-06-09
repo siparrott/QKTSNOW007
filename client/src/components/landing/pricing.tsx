@@ -5,51 +5,31 @@ import { Check } from "lucide-react";
 export default function Pricing() {
   const plans = [
     {
-      name: "Starter",
-      description: "Perfect for getting started",
-      price: "Free",
-      period: "Forever",
+      name: "Launch Deal",
+      description: "Everything you need to dominate",
+      price: "€5",
+      period: "/month",
+      originalPrice: "€49",
       features: [
-        "1 Calculator",
-        "100 Monthly Quotes",
-        "Basic Analytics",
-        "Email Support",
+        "✅ All 50+ Calculators",
+        "✅ Unlimited Embeds",
+        "✅ Branded Embed Tools", 
+        "✅ AI-Powered Pricing Logic",
+        "✅ Email Lead Capture + Dashboard",
+        "✅ Custom Style Editor",
+        "✅ PDF + Quote Lock Tools",
+        "✅ Mobile-First Design",
+        "✅ Future Tools + Updates",
+        "✅ Price Lock Guarantee"
       ],
-      cta: "Get Started Free",
-      popular: false,
-    },
-    {
-      name: "Pro",
-      description: "For growing businesses",
-      price: "$49",
-      period: "/mo",
-      features: [
-        "10 Calculators",
-        "Unlimited Quotes",
-        "Advanced Analytics",
-        "Custom Branding",
-        "Priority Support",
-        "API Access",
+      bonuses: [
+        "🎬 50 Viral TikTok Ad Scripts",
+        "📩 10 Email Templates",
+        "🔧 Priority Support"
       ],
-      cta: "Start Free Trial",
+      cta: "Get QuoteKit.ai Now",
       popular: true,
-    },
-    {
-      name: "Studio",
-      description: "For large operations",
-      price: "$149",
-      period: "/mo",
-      features: [
-        "Unlimited Calculators",
-        "Unlimited Quotes",
-        "Advanced Analytics",
-        "White Label Solution",
-        "Dedicated Support",
-        "Custom Integrations",
-      ],
-      cta: "Contact Sales",
-      popular: false,
-    },
+    }
   ];
 
   const containerVariants = {
@@ -78,23 +58,20 @@ export default function Pricing() {
           viewport={{ once: true }}
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
-            Simple, <span className="text-neon-400">Transparent</span> Pricing
+            🚀 The <span className="text-neon-400">Godfather Offer</span>
           </h2>
-          <p className="text-xl text-gray-300 mb-8">Start free, scale as you grow. No hidden fees, cancel anytime.</p>
-
-          {/* Billing Toggle */}
-          <div className="flex items-center justify-center mb-8">
-            <span className="text-gray-300 mr-3">Monthly</span>
-            <button className="relative w-14 h-8 bg-midnight-600 rounded-full p-1 transition-colors focus:outline-none focus:ring-2 focus:ring-neon-400">
-              <div className="w-6 h-6 bg-white rounded-full shadow-lg transform transition-transform translate-x-0" />
-            </button>
-            <span className="text-gray-300 ml-3">Yearly</span>
-            <span className="bg-neon-500 text-white text-xs px-2 py-1 rounded-full ml-2">Save 20%</span>
+          <p className="text-xl text-gray-300 mb-4">Make Them an Offer They Can't Refuse</p>
+          <div className="bg-gradient-to-r from-neon-500/20 to-neon-600/20 border border-neon-500/30 rounded-lg p-6 max-w-2xl mx-auto mb-8">
+            <div className="text-3xl font-bold text-neon-400 mb-2">💣 Launch Deal: €5/month</div>
+            <div className="text-gray-300">Paid Annually • Cancel Anytime</div>
           </div>
+          <p className="text-lg text-gray-300 max-w-3xl mx-auto">
+            You're not just buying software. You're unlocking an entire arsenal of quote-to-close power moves for 50+ service-based businesses.
+          </p>
         </motion.div>
 
         <motion.div
-          className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto"
+          className="max-w-4xl mx-auto"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -103,48 +80,57 @@ export default function Pricing() {
           {plans.map((plan) => (
             <motion.div
               key={plan.name}
-              className={`rounded-2xl p-8 transition-all duration-300 ${
-                plan.popular
-                  ? "bg-gradient-to-b from-neon-500/20 to-midnight-800 border-2 border-neon-500 relative transform scale-105"
-                  : "bg-midnight-800 border border-midnight-700 hover:border-midnight-600"
-              }`}
+              className="bg-gradient-to-b from-neon-500/20 to-midnight-800 border-2 border-neon-500 relative rounded-2xl p-8 md:p-12"
               variants={itemVariants}
-              whileHover={{ y: plan.popular ? 0 : -5 }}
             >
-              {plan.popular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-neon-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
-                  Most Popular
-                </div>
-              )}
-
-              <div className="text-center mb-8">
-                <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
-                <p className="text-gray-400 mb-6">{plan.description}</p>
-                <div className="text-4xl font-bold text-white mb-2">
-                  {plan.price}
-                  {plan.period !== "Forever" && <span className="text-xl text-gray-400">{plan.period}</span>}
-                </div>
-                <p className="text-gray-400">{plan.period === "Forever" ? plan.period : "Billed monthly"}</p>
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-neon-500 text-white px-6 py-2 rounded-full text-sm font-bold">
+                🔥 LIMITED LAUNCH OFFER
               </div>
 
-              <ul className="space-y-4 mb-8">
-                {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-center">
-                    <Check className="text-neon-400 mr-3 h-5 w-5" />
-                    <span className="text-gray-300">{feature}</span>
-                  </li>
-                ))}
-              </ul>
+              <div className="text-center mb-8">
+                <h3 className="text-3xl font-bold text-white mb-4">{plan.name}</h3>
+                <p className="text-xl text-gray-300 mb-6">{plan.description}</p>
+                <div className="flex items-center justify-center gap-4 mb-4">
+                  <div className="text-6xl font-bold text-neon-400">{plan.price}</div>
+                  <div>
+                    <div className="text-xl text-gray-400">{plan.period}</div>
+                    <div className="text-sm text-gray-500 line-through">{plan.originalPrice}/month</div>
+                  </div>
+                </div>
+                <p className="text-gray-400">Paid annually • Cancel anytime</p>
+              </div>
 
-              <Button
-                className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 ${
-                  plan.popular
-                    ? "bg-neon-500 hover:bg-neon-600 text-white hover:shadow-glow"
-                    : "bg-midnight-600 hover:bg-midnight-500 text-white"
-                }`}
-              >
-                {plan.cta}
-              </Button>
+              <div className="grid md:grid-cols-2 gap-8 mb-8">
+                <div>
+                  <h4 className="text-lg font-semibold text-white mb-4">What You Get:</h4>
+                  <ul className="space-y-3">
+                    {plan.features.map((feature, index) => (
+                      <li key={index} className="flex items-start">
+                        <span className="text-gray-300 text-sm">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold text-white mb-4">🎁 Launch Bonuses:</h4>
+                  <ul className="space-y-3">
+                    {plan.bonuses.map((bonus, index) => (
+                      <li key={index} className="flex items-start">
+                        <span className="text-gray-300 text-sm">{bonus}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <Button className="bg-neon-500 hover:bg-neon-600 text-white px-12 py-4 rounded-lg font-bold text-xl transition-all duration-300 hover:shadow-glow transform hover:scale-105">
+                  {plan.cta} →
+                </Button>
+                <p className="text-xs text-gray-500 mt-3">
+                  ✅ No contracts ✅ Full access ✅ Cancel anytime
+                </p>
+              </div>
             </motion.div>
           ))}
         </motion.div>

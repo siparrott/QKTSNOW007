@@ -57,42 +57,56 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            Let Your Website{" "}
+            What if quoting clients became your{" "}
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-400 to-neon-600">
-              Do the Selling
+              #1 sales weapon?
             </span>
           </motion.h1>
 
           <motion.p
-            className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed"
+            className="text-xl md:text-2xl text-gray-300 mb-8 max-w-4xl mx-auto leading-relaxed"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            QuoteKit gives service businesses 24/7 AI-powered quote calculators that turn visitors into paying clients.
+            Instantly deploy 50+ high-converting AI quote calculators. For any service business. No code. No friction.
+            <br />
+            <span className="text-neon-400 font-semibold">Introducing QuoteKit.ai – the fastest way to turn clicks into clients.</span>
           </motion.p>
 
           <motion.div
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12"
+            className="flex flex-col gap-6 justify-center items-center mb-12"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
             <Button
-              onClick={() => scrollToSection("niches")}
-              className="bg-neon-500 hover:bg-neon-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 hover:shadow-glow transform hover:scale-105"
+              onClick={() => scrollToSection("pricing")}
+              className="bg-neon-500 hover:bg-neon-600 text-white px-8 py-6 rounded-lg font-bold text-xl transition-all duration-300 hover:shadow-glow transform hover:scale-105 min-w-[400px] max-w-lg"
             >
-              <Rocket className="mr-2 h-5 w-5" />
-              Explore Calculators
+              💥 Get Lifetime Access for Just €5/month
             </Button>
-            <Button
-              variant="outline"
-              className="border border-gray-600 hover:border-neon-400 text-gray-300 hover:text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 bg-transparent"
-            >
-              <Play className="mr-2 h-5 w-5" />
-              Watch Demo
-            </Button>
+            <p className="text-sm text-gray-400 text-center max-w-md">
+              Limited Launch Offer • Renews annually • Cancel anytime
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button
+                onClick={() => scrollToSection("niches")}
+                variant="outline"
+                className="border border-gray-600 hover:border-neon-400 text-gray-300 hover:text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-transparent"
+              >
+                <Rocket className="mr-2 h-4 w-4" />
+                Try Calculators
+              </Button>
+              <Button
+                variant="outline"
+                className="border border-gray-600 hover:border-neon-400 text-gray-300 hover:text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-transparent"
+              >
+                <Play className="mr-2 h-4 w-4" />
+                Watch Demo
+              </Button>
+            </div>
           </motion.div>
 
           {/* Trust Indicators */}

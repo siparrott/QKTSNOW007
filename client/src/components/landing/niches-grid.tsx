@@ -81,11 +81,25 @@ export default function NichesGrid() {
           viewport={{ once: true }}
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
-            <span className="text-neon-400">50+</span> Service Niches
+            Your Arsenal of <span className="text-neon-400">Quote-to-Close</span> Power Moves
           </h2>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Pre-built calculators designed specifically for your industry
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
+            Build trust. Get booked. Look like a pro. Without needing a developer. Without wasting hours on DMs.
           </p>
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-4 max-w-2xl mx-auto text-sm text-gray-400">
+            <div>📸 Photographers</div>
+            <div>🧼 Cleaners</div>
+            <div>🛠️ Electricians</div>
+            <div>🏡 Renovators</div>
+            <div>💇‍♂️ Barbers</div>
+            <div>🍳 Food stylists</div>
+            <div>🥳 Event planners</div>
+            <div>🚗 Auto services</div>
+            <div>💪 Fitness trainers</div>
+            <div>🎨 Designers</div>
+            <div>📱 Consultants</div>
+            <div>...and 40+ more</div>
+          </div>
         </motion.div>
 
         <motion.div

@@ -6,20 +6,20 @@ export default function HowItWorks() {
     {
       number: 1,
       icon: Search,
-      title: "Choose Your Niche",
-      description: "Select from 50+ service categories including photography, fitness, home services, and more",
+      title: "Choose a calculator",
+      description: "Select from 50+ niche templates (photography, trades, beauty, wellness & more)",
     },
     {
       number: 2,
       icon: Code,
-      title: "Embed the Calculator",
-      description: "Copy and paste our simple embed code into your website - no technical skills required",
+      title: "Customize with your logo & prices",
+      description: "Adjust pricing, colors, style – no coding needed",
     },
     {
       number: 3,
       icon: TrendingUp,
-      title: "Start Converting",
-      description: "Watch as your calculator automatically captures leads and converts visitors 24/7",
+      title: "Watch quotes + leads roll in",
+      description: "Get email leads, PDF quotes, and bookings while you sleep",
     },
   ];
 
@@ -49,11 +49,24 @@ export default function HowItWorks() {
           viewport={{ once: true }}
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
-            How It <span className="text-neon-400">Works</span>
+            💡 How It <span className="text-neon-400">Works</span>
           </h2>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Get your AI quote calculator up and running in three simple steps
-          </p>
+          <div className="bg-midnight-700/50 rounded-lg p-6 max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-3 gap-8 text-left">
+              <div>
+                <div className="text-neon-400 font-bold mb-2">🧠 Psychology:</div>
+                <div className="text-gray-300">Clients want instant answers, not contact forms.</div>
+              </div>
+              <div>
+                <div className="text-neon-400 font-bold mb-2">⚡ Speed:</div>
+                <div className="text-gray-300">AI gives quotes in seconds, not hours.</div>
+              </div>
+              <div>
+                <div className="text-neon-400 font-bold mb-2">🎯 Conversion:</div>
+                <div className="text-gray-300">On-page quotes = 3x more bookings.</div>
+              </div>
+            </div>
+          </div>
         </motion.div>
 
         <motion.div

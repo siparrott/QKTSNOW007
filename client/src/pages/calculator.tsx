@@ -11,7 +11,7 @@ import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { Calculator, DollarSign, ArrowLeft, CheckCircle, Sparkles, Lightbulb, Home, Clock, AlertTriangle } from "lucide-react";
+import { Calculator, DollarSign, ArrowLeft, CheckCircle, Sparkles, Lightbulb, Home, Clock, AlertTriangle, Bug, Shield } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import type { Calculator as CalculatorType } from "@shared/schema";
 import { Link } from "wouter";
@@ -34,6 +34,11 @@ interface CalculatorFormData {
   extras?: string[];
   promoCode?: string;
   naturalLanguageInput?: string;
+  // Pest control fields
+  pestType?: string;
+  infestationLevel?: string;
+  serviceType?: string;
+  addOns?: string[];
 }
 
 interface QuoteResult {
@@ -46,7 +51,8 @@ interface QuoteResult {
 export default function CalculatorPage() {
   const { slug } = useParams<{ slug: string }>();
   const [formData, setFormData] = useState<CalculatorFormData>({
-    extras: []
+    extras: [],
+    addOns: []
   });
   const [quote, setQuote] = useState<QuoteResult | null>(null);
   const [showLeadForm, setShowLeadForm] = useState(false);
@@ -210,6 +216,77 @@ export default function CalculatorPage() {
         const surcharge = config.timeframeSurcharges?.asap || 500;
         total += surcharge;
         breakdown.push(`Urgent Timeline Surcharge: €${surcharge}`);
+      }
+
+      // Promo code discount
+      if (formData.promoCode) {
+        const discount = config.promoCodes?.[formData.promoCode.toUpperCase()];
+        if (discount) {
+          const discountAmount = total * discount;
+          total -= discountAmount;
+          breakdown.push(`Promo Code (${formData.promoCode.toUpperCase()}): -€${discountAmount.toFixed(0)}`);
+        }
+      }
+
+      adjustedPrice = total;
+    }
+
+    // Pest Control Calculator
+    if (calculator.slug === "pest-control") {
+      let total = config.baseVisit || 100;
+      breakdown.push(`Base Visit: €${total}`);
+
+      // Pest type cost
+      if (formData.pestType) {
+        const pestCost = config.pestTypes?.[formData.pestType] || 0;
+        total += pestCost;
+        const pestName = formData.pestType.split('-').map(word => 
+          word.charAt(0).toUpperCase() + word.slice(1)
+        ).join(' ');
+        breakdown.push(`${pestName} Treatment: €${pestCost}`);
+      }
+
+      // Infestation level
+      if (formData.infestationLevel && formData.infestationLevel !== "light") {
+        const infestationCost = config.infestationLevels?.[formData.infestationLevel] || 0;
+        total += infestationCost;
+        breakdown.push(`${formData.infestationLevel.charAt(0).toUpperCase() + formData.infestationLevel.slice(1)} Infestation: €${infestationCost}`);
+      }
+
+      // Property type multiplier
+      if (formData.propertyType) {
+        const propertyMultiplier = config.propertyTypes?.[formData.propertyType] || 1.0;
+        if (propertyMultiplier > 1) {
+          const increase = (total - config.baseVisit) * (propertyMultiplier - 1);
+          total += increase;
+          const propertyName = formData.propertyType.charAt(0).toUpperCase() + formData.propertyType.slice(1);
+          breakdown.push(`${propertyName} Property Surcharge: €${increase.toFixed(0)}`);
+        }
+      }
+
+      // Service type multiplier
+      if (formData.serviceType && formData.serviceType !== "one-time") {
+        const serviceMultiplier = config.serviceTypes?.[formData.serviceType] || 1.0;
+        if (serviceMultiplier < 1) {
+          const discount = total * (1 - serviceMultiplier);
+          total -= discount;
+          const serviceName = formData.serviceType.charAt(0).toUpperCase() + formData.serviceType.slice(1);
+          breakdown.push(`${serviceName} Service Discount: -€${discount.toFixed(0)}`);
+        }
+      }
+
+      // Add-ons
+      if (formData.addOns && formData.addOns.length > 0) {
+        formData.addOns.forEach(addOnId => {
+          const addOnCost = config.addOns?.[addOnId];
+          if (addOnCost) {
+            total += addOnCost;
+            const addOnLabel = addOnId.split('-').map(word => 
+              word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ');
+            breakdown.push(`${addOnLabel}: €${addOnCost}`);
+          }
+        });
       }
 
       // Promo code discount
@@ -599,6 +676,220 @@ export default function CalculatorPage() {
                   />
                   <div className="text-sm text-gray-400 mt-1">
                     Try: LAUNCH10, NEWCLIENT, or QUOTEKIT
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Pest Control Form */}
+            {calculator.slug === "pest-control" && (
+              <div className="space-y-6">
+                {/* Natural Language Input */}
+                <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+                  <div className="flex items-center mb-3">
+                    <Bug className="h-5 w-5 text-green-400 mr-2" />
+                    <Label className="text-green-400 font-semibold">AI-Powered Input (Optional)</Label>
+                  </div>
+                  <Textarea
+                    placeholder="Describe your pest problem... e.g., 'I have a mice problem in my warehouse' or 'Ants in my kitchen'"
+                    value={formData.naturalLanguageInput || ""}
+                    onChange={(e) => setFormData({...formData, naturalLanguageInput: e.target.value})}
+                    className="bg-midnight-700 border-midnight-600 mb-3"
+                    rows={2}
+                  />
+                  <Button 
+                    onClick={() => {
+                      const input = formData.naturalLanguageInput?.toLowerCase() || "";
+                      const updates: Partial<CalculatorFormData> = {};
+                      
+                      if (input.includes("mice") || input.includes("mouse") || input.includes("rat")) updates.pestType = "rodents";
+                      else if (input.includes("ant")) updates.pestType = "ants";
+                      else if (input.includes("cockroach")) updates.pestType = "cockroaches";
+                      else if (input.includes("wasp") || input.includes("bee")) updates.pestType = "wasps-bees";
+                      else if (input.includes("bedbug") || input.includes("bed bug")) updates.pestType = "bedbugs";
+                      else if (input.includes("termite")) updates.pestType = "termites";
+                      
+                      if (input.includes("warehouse") || input.includes("industrial")) updates.propertyType = "warehouse";
+                      else if (input.includes("commercial") || input.includes("office")) updates.propertyType = "commercial";
+                      else if (input.includes("apartment")) updates.propertyType = "apartment";
+                      else if (input.includes("house") || input.includes("home")) updates.propertyType = "house";
+                      
+                      if (input.includes("severe") || input.includes("bad") || input.includes("everywhere")) updates.infestationLevel = "severe";
+                      else if (input.includes("moderate") || input.includes("some")) updates.infestationLevel = "moderate";
+                      else updates.infestationLevel = "light";
+                      
+                      setFormData(prev => ({ ...prev, ...updates }));
+                    }}
+                    disabled={!formData.naturalLanguageInput?.trim()}
+                    size="sm"
+                    className="bg-green-500 hover:bg-green-600"
+                  >
+                    <Lightbulb className="h-4 w-4 mr-2" />
+                    Parse & Fill Form
+                  </Button>
+                </div>
+
+                {/* Pest Type */}
+                <div>
+                  <Label className="text-white mb-3 block font-medium">Pest Type *</Label>
+                  <div className="grid grid-cols-1 gap-3">
+                    {[
+                      { value: "cockroaches", label: "Cockroaches", icon: "🪳", price: "€75" },
+                      { value: "ants", label: "Ants", icon: "🐜", price: "€50" },
+                      { value: "wasps-bees", label: "Wasps/Bees", icon: "🐝", price: "€100" },
+                      { value: "bedbugs", label: "Bedbugs", icon: "🐛", price: "€250", popular: true },
+                      { value: "rodents", label: "Rodents (Mice/Rats)", icon: "🐭", price: "€150", popular: true },
+                      { value: "termites", label: "Termites", icon: "🪲", price: "€300" },
+                      { value: "general-prevention", label: "General Prevention", icon: "🛡️", price: "€60" }
+                    ].map((option) => (
+                      <div
+                        key={option.value}
+                        className={`relative p-4 border rounded-lg cursor-pointer transition-all ${
+                          formData.pestType === option.value
+                            ? "border-green-500 bg-green-500/10"
+                            : "border-midnight-600 hover:border-midnight-500"
+                        }`}
+                        onClick={() => setFormData(prev => ({ ...prev, pestType: option.value }))}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <span className="text-2xl mr-3">{option.icon}</span>
+                            <span className="font-medium">{option.label}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-green-400 font-medium">{option.price}</span>
+                            {option.popular && (
+                              <Badge variant="secondary" className="bg-neon-500/20 text-neon-400">
+                                Popular
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Infestation Level */}
+                <div>
+                  <Label className="text-white mb-2 block">Infestation Level *</Label>
+                  <div className="grid grid-cols-3 gap-3">
+                    {[
+                      { key: "light", label: "Light", description: "Few sightings", surcharge: "Base" },
+                      { key: "moderate", label: "Moderate", description: "Regular sightings", surcharge: "+€75" },
+                      { key: "severe", label: "Severe", description: "Heavy infestation", surcharge: "+€150" }
+                    ].map((option) => (
+                      <div
+                        key={option.key}
+                        className={`p-4 border rounded-lg cursor-pointer text-center transition-all ${
+                          formData.infestationLevel === option.key
+                            ? "border-green-500 bg-green-500/10"
+                            : "border-midnight-600 hover:border-midnight-500"
+                        }`}
+                        onClick={() => setFormData(prev => ({ ...prev, infestationLevel: option.key }))}
+                      >
+                        <div className="font-medium">{option.label}</div>
+                        <div className="text-sm text-gray-400 mt-1">{option.description}</div>
+                        <div className="text-sm text-green-400 font-medium mt-1">{option.surcharge}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Property Type */}
+                <div>
+                  <Label className="text-white mb-2 block">Property Type *</Label>
+                  <Select value={formData.propertyType} onValueChange={(value) => setFormData(prev => ({ ...prev, propertyType: value }))}>
+                    <SelectTrigger className="bg-midnight-700 border-midnight-600">
+                      <SelectValue placeholder="Select property type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="apartment">Apartment (Base)</SelectItem>
+                      <SelectItem value="house">Detached House (+20%)</SelectItem>
+                      <SelectItem value="commercial">Commercial Unit (+50%)</SelectItem>
+                      <SelectItem value="warehouse">Warehouse/Industrial (+100%)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Service Type */}
+                <div>
+                  <Label className="text-white mb-2 block">Service Type *</Label>
+                  <div className="grid grid-cols-1 gap-3">
+                    {[
+                      { key: "one-time", label: "One-Time Treatment", description: "Single visit treatment", discount: "Standard Rate" },
+                      { key: "monthly", label: "Monthly Maintenance", description: "Regular monthly service", discount: "20% Off" },
+                      { key: "quarterly", label: "Quarterly Prevention", description: "Seasonal treatments", discount: "10% Off" }
+                    ].map((option) => (
+                      <div
+                        key={option.key}
+                        className={`p-4 border rounded-lg cursor-pointer transition-all ${
+                          formData.serviceType === option.key
+                            ? "border-green-500 bg-green-500/10"
+                            : "border-midnight-600 hover:border-midnight-500"
+                        }`}
+                        onClick={() => setFormData(prev => ({ ...prev, serviceType: option.key }))}
+                      >
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <div className="font-medium">{option.label}</div>
+                            <div className="text-sm text-gray-400 mt-1">{option.description}</div>
+                          </div>
+                          <div className="text-sm text-green-400 font-medium">{option.discount}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Add-ons */}
+                <div>
+                  <Label className="text-white mb-3 block">Add-on Services</Label>
+                  <div className="space-y-3">
+                    {[
+                      { id: "eco-friendly", label: "Eco-Friendly Chemicals", price: 40, icon: "🌱" },
+                      { id: "same-day", label: "Same-Day Service", price: 80, icon: "⚡" },
+                      { id: "follow-up", label: "Follow-Up Visit", price: 50, icon: "📅" },
+                      { id: "pet-safe", label: "Pet-Safe Treatment", price: 40, icon: "🐕" }
+                    ].map((addOn) => (
+                      <div key={addOn.id} className="flex items-center space-x-3">
+                        <Checkbox
+                          id={addOn.id}
+                          checked={formData.addOns?.includes(addOn.id) || false}
+                          onCheckedChange={(checked) => {
+                            const currentAddOns = formData.addOns || [];
+                            if (checked) {
+                              setFormData(prev => ({ ...prev, addOns: [...currentAddOns, addOn.id] }));
+                            } else {
+                              setFormData(prev => ({ ...prev, addOns: currentAddOns.filter(id => id !== addOn.id) }));
+                            }
+                          }}
+                        />
+                        <label htmlFor={addOn.id} className="flex-1 cursor-pointer">
+                          <div className="flex justify-between items-center">
+                            <div className="flex items-center">
+                              <span className="mr-2">{addOn.icon}</span>
+                              <span>{addOn.label}</span>
+                            </div>
+                            <span className="text-green-400 font-medium">+€{addOn.price}</span>
+                          </div>
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Promo Code */}
+                <div>
+                  <Label className="text-white mb-2 block">Promo Code</Label>
+                  <Input
+                    placeholder="Enter promo code (e.g., PEST20)"
+                    value={formData.promoCode || ""}
+                    onChange={(e) => setFormData(prev => ({ ...prev, promoCode: e.target.value }))}
+                    className="bg-midnight-700 border-midnight-600"
+                  />
+                  <div className="text-sm text-gray-400 mt-1">
+                    Try: LAUNCH10, NEWCLIENT, or PEST20
                   </div>
                 </div>
               </div>

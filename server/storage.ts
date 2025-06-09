@@ -137,6 +137,51 @@ export class MemStorage implements IStorage {
             "QUOTEKIT": 0.1
           }
         }
+      },
+      {
+        name: "Pest Control Services Calculator",
+        slug: "pest-control",
+        category: "home-services",
+        description: "Professional pest control quotes for residential and commercial properties",
+        defaultConfig: {
+          baseVisit: 100,
+          pestTypes: {
+            "cockroaches": 75,
+            "ants": 50,
+            "wasps-bees": 100,
+            "bedbugs": 250,
+            "rodents": 150,
+            "termites": 300,
+            "general-prevention": 60
+          },
+          infestationLevels: {
+            "light": 0,
+            "moderate": 75,
+            "severe": 150
+          },
+          propertyTypes: {
+            "apartment": 1.0,
+            "house": 1.2,
+            "commercial": 1.5,
+            "warehouse": 2.0
+          },
+          serviceTypes: {
+            "one-time": 1.0,
+            "monthly": 0.8,
+            "quarterly": 0.9
+          },
+          addOns: {
+            "eco-friendly": 40,
+            "same-day": 80,
+            "follow-up": 50,
+            "pet-safe": 40
+          },
+          promoCodes: {
+            "LAUNCH10": 0.1,
+            "NEWCLIENT": 0.15,
+            "PEST20": 0.2
+          }
+        }
       }
     ];
 

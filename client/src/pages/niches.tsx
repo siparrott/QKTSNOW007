@@ -44,7 +44,7 @@ const serviceNiches = [
   { id: 7, name: "Electrical Services", icon: Zap, category: "Home Services" },
   { id: 8, name: "HVAC Services", icon: Building, category: "Home Services" },
   { id: 9, name: "Pool Installation", icon: Home, category: "Home Services" },
-  { id: 10, name: "Pest Control", icon: Shield, category: "Home Services" },
+  { id: 10, name: "Pest Control", icon: Shield, category: "Home Services", available: true },
 
   // Photography & Events
   { id: 11, name: "Wedding Photography", icon: Camera, category: "Photography", available: true },
@@ -305,7 +305,14 @@ export default function NichesPage() {
                           </Button>
                         </Link>
                       )}
-                      {!["Home Renovation", "Wedding Photography", "Personal Training", "Landscaping"].includes(niche.name) && (
+                      {niche.name === "Pest Control" && (
+                        <Link href="/calculator/pest-control">
+                          <Button className="w-full bg-neon-500 hover:bg-neon-600 text-white">
+                            Try Live Demo
+                          </Button>
+                        </Link>
+                      )}
+                      {!["Home Renovation", "Wedding Photography", "Personal Training", "Landscaping", "Pest Control"].includes(niche.name) && (
                         <Button className="w-full bg-neon-500 hover:bg-neon-600 text-white">
                           Try Live Demo
                         </Button>

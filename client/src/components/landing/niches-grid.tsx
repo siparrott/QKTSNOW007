@@ -1,0 +1,124 @@
+import { motion } from "framer-motion";
+import { Camera, Dumbbell, Home, Calendar, Scale, Car, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+export default function NichesGrid() {
+  const niches = [
+    {
+      icon: Camera,
+      title: "Photography",
+      description: "Wedding, portrait, event photography calculators",
+      gradient: "from-pink-500 to-purple-600",
+    },
+    {
+      icon: Dumbbell,
+      title: "Fitness & Wellness",
+      description: "Personal training, nutrition, wellness services",
+      gradient: "from-green-500 to-emerald-600",
+    },
+    {
+      icon: Home,
+      title: "Home Services",
+      description: "Landscaping, cleaning, renovation, plumbing",
+      gradient: "from-blue-500 to-cyan-600",
+    },
+    {
+      icon: Calendar,
+      title: "Events",
+      description: "Wedding planning, catering, party services",
+      gradient: "from-yellow-500 to-orange-600",
+    },
+    {
+      icon: Scale,
+      title: "Legal/Consulting",
+      description: "Legal services, business consulting, coaching",
+      gradient: "from-indigo-500 to-purple-600",
+    },
+    {
+      icon: Car,
+      title: "Automotive",
+      description: "Auto repair, detailing, mechanic services",
+      gradient: "from-red-500 to-pink-600",
+    },
+  ];
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0 },
+  };
+
+  return (
+    <section id="niches" className="py-20 lg:py-32">
+      <div className="container mx-auto px-4 lg:px-8">
+        <motion.div
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+        >
+          <h2 className="text-3xl md:text-5xl font-bold mb-4">
+            <span className="text-neon-400">50+</span> Service Niches
+          </h2>
+          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            Pre-built calculators designed specifically for your industry
+          </p>
+        </motion.div>
+
+        <motion.div
+          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          {niches.map((niche) => (
+            <motion.div
+              key={niche.title}
+              className="bg-midnight-800 hover:bg-midnight-700 rounded-xl p-6 transition-all duration-300 hover:shadow-lg hover:shadow-neon-500/20 group cursor-pointer"
+              variants={itemVariants}
+              whileHover={{ y: -5 }}
+            >
+              <div className="flex items-center mb-4">
+                <div className={`w-12 h-12 bg-gradient-to-br ${niche.gradient} rounded-lg flex items-center justify-center mr-4`}>
+                  <niche.icon className="text-white h-6 w-6" />
+                </div>
+                <h3 className="text-xl font-semibold text-white group-hover:text-neon-400 transition-colors">
+                  {niche.title}
+                </h3>
+              </div>
+              <p className="text-gray-400 mb-4">{niche.description}</p>
+              <div className="text-sm text-neon-400 group-hover:text-neon-300 transition-colors flex items-center">
+                <ArrowRight className="mr-1 h-4 w-4" />
+                Explore calculators
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        <motion.div
+          className="text-center mt-12"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          viewport={{ once: true }}
+        >
+          <Button className="bg-midnight-700 hover:bg-midnight-600 text-white px-8 py-4 rounded-lg font-semibold transition-all duration-300 border border-midnight-600 hover:border-neon-400">
+            View All 50+ Niches
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
+        </motion.div>
+      </div>
+    </section>
+  );
+}

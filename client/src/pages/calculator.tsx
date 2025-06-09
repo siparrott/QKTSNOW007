@@ -8,7 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Calculator, DollarSign, ArrowLeft, CheckCircle } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import { Calculator, DollarSign, ArrowLeft, CheckCircle, Sparkles, Lightbulb, Home, Clock, AlertTriangle } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import type { Calculator as CalculatorType } from "@shared/schema";
 import { Link } from "wouter";
@@ -22,6 +25,15 @@ interface CalculatorFormData {
   materials?: string;
   packageType?: string;
   squareFootage?: number;
+  // Home renovation fields
+  projectType?: string;
+  propertySize?: string;
+  propertyType?: string;
+  finishQuality?: string;
+  timeframe?: string;
+  extras?: string[];
+  promoCode?: string;
+  naturalLanguageInput?: string;
 }
 
 interface QuoteResult {
@@ -33,7 +45,9 @@ interface QuoteResult {
 
 export default function CalculatorPage() {
   const { slug } = useParams<{ slug: string }>();
-  const [formData, setFormData] = useState<CalculatorFormData>({});
+  const [formData, setFormData] = useState<CalculatorFormData>({
+    extras: []
+  });
   const [quote, setQuote] = useState<QuoteResult | null>(null);
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [leadData, setLeadData] = useState({
@@ -139,6 +153,76 @@ export default function CalculatorPage() {
         adjustedPrice *= materialFactor;
         breakdown.push(`${formData.materials} materials: ${(materialFactor * 100 - 100).toFixed(0)}%`);
       }
+    }
+
+    // Home Renovation Calculator
+    if (calculator.slug === "home-renovation") {
+      let total = config.baseConsultation || 500;
+      breakdown.push(`Consultation Fee: €${total}`);
+
+      // Project type base cost
+      if (formData.projectType) {
+        const projectConfig = config.projectTypes?.[formData.projectType];
+        if (projectConfig) {
+          let projectCost = projectConfig.min;
+          if (formData.propertySize === "50-100") {
+            projectCost = projectConfig.min + (projectConfig.max - projectConfig.min) * 0.3;
+          } else if (formData.propertySize === "100-200") {
+            projectCost = projectConfig.min + (projectConfig.max - projectConfig.min) * 0.6;
+          } else if (formData.propertySize === "200+") {
+            projectCost = projectConfig.max;
+          }
+          
+          total += projectCost;
+          const projectName = formData.projectType.split('-').map(word => 
+            word.charAt(0).toUpperCase() + word.slice(1)
+          ).join(' ');
+          breakdown.push(`${projectName} Base Cost: €${projectCost.toFixed(0)}`);
+        }
+      }
+
+      // Finish quality multiplier
+      if (formData.finishQuality && formData.finishQuality !== "standard") {
+        const multiplier = config.finishMultipliers?.[formData.finishQuality] || 1.0;
+        if (multiplier > 1) {
+          const increase = (total - config.baseConsultation) * (multiplier - 1);
+          total += increase;
+          breakdown.push(`${formData.finishQuality.charAt(0).toUpperCase() + formData.finishQuality.slice(1)} Finish Upgrade: €${increase.toFixed(0)}`);
+        }
+      }
+
+      // Extras
+      if (formData.extras && formData.extras.length > 0) {
+        formData.extras.forEach(extraId => {
+          const extraCost = config.extras?.[extraId];
+          if (extraCost) {
+            total += extraCost;
+            const extraLabel = extraId.split('-').map(word => 
+              word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ');
+            breakdown.push(`${extraLabel}: €${extraCost}`);
+          }
+        });
+      }
+
+      // Timeframe surcharge
+      if (formData.timeframe === "asap") {
+        const surcharge = config.timeframeSurcharges?.asap || 500;
+        total += surcharge;
+        breakdown.push(`Urgent Timeline Surcharge: €${surcharge}`);
+      }
+
+      // Promo code discount
+      if (formData.promoCode) {
+        const discount = config.promoCodes?.[formData.promoCode.toUpperCase()];
+        if (discount) {
+          const discountAmount = total * discount;
+          total -= discountAmount;
+          breakdown.push(`Promo Code (${formData.promoCode.toUpperCase()}): -€${discountAmount.toFixed(0)}`);
+        }
+      }
+
+      adjustedPrice = total;
     }
 
     setQuote({
@@ -330,6 +414,192 @@ export default function CalculatorPage() {
                       <SelectItem value="luxury">Luxury Materials</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+              </div>
+            )}
+
+            {/* Home Renovation Form */}
+            {calculator.slug === "home-renovation" && (
+              <div className="space-y-6">
+                {/* Natural Language Input */}
+                <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+                  <div className="flex items-center mb-3">
+                    <Sparkles className="h-5 w-5 text-blue-400 mr-2" />
+                    <Label className="text-blue-400 font-semibold">AI-Powered Input (Optional)</Label>
+                  </div>
+                  <Textarea
+                    placeholder="Describe your project in plain English... e.g., 'I want to redo my kitchen and paint my apartment (80m²)'"
+                    value={formData.naturalLanguageInput || ""}
+                    onChange={(e) => setFormData({...formData, naturalLanguageInput: e.target.value})}
+                    className="bg-midnight-700 border-midnight-600 mb-3"
+                    rows={2}
+                  />
+                  <Button 
+                    onClick={() => {
+                      const input = formData.naturalLanguageInput?.toLowerCase() || "";
+                      const updates: Partial<CalculatorFormData> = {};
+                      
+                      if (input.includes("kitchen")) updates.projectType = "kitchen-remodel";
+                      else if (input.includes("bathroom")) updates.projectType = "bathroom-remodel";
+                      else if (input.includes("paint")) updates.projectType = "painting";
+                      
+                      if (input.match(/\d+\s*m²/)) {
+                        const size = parseInt(input.match(/(\d+)\s*m²/)?.[1] || "0");
+                        if (size < 50) updates.propertySize = "under-50";
+                        else if (size <= 100) updates.propertySize = "50-100";
+                        else if (size <= 200) updates.propertySize = "100-200";
+                        else updates.propertySize = "200+";
+                      }
+                      
+                      setFormData(prev => ({ ...prev, ...updates }));
+                    }}
+                    disabled={!formData.naturalLanguageInput?.trim()}
+                    size="sm"
+                    className="bg-blue-500 hover:bg-blue-600"
+                  >
+                    <Lightbulb className="h-4 w-4 mr-2" />
+                    Parse & Fill Form
+                  </Button>
+                </div>
+
+                {/* Project Type */}
+                <div>
+                  <Label className="text-white mb-3 block font-medium">Project Type *</Label>
+                  <div className="grid grid-cols-1 gap-3">
+                    {[
+                      { value: "kitchen-remodel", label: "Kitchen Remodel", price: "€6,000-€15,000", popular: true },
+                      { value: "bathroom-remodel", label: "Bathroom Remodel", price: "€4,000-€10,000", popular: true },
+                      { value: "full-home", label: "Full Home Makeover", price: "€20,000+" },
+                      { value: "flooring", label: "Flooring", price: "€2,000-€8,000" },
+                      { value: "painting", label: "Painting", price: "€1,000-€5,000" },
+                      { value: "basement-conversion", label: "Basement Conversion", price: "€8,000-€20,000" },
+                      { value: "attic-renovation", label: "Attic Renovation", price: "€5,000-€15,000" }
+                    ].map((option) => (
+                      <div
+                        key={option.value}
+                        className={`relative p-4 border rounded-lg cursor-pointer transition-all ${
+                          formData.projectType === option.value
+                            ? "border-blue-500 bg-blue-500/10"
+                            : "border-midnight-600 hover:border-midnight-500"
+                        }`}
+                        onClick={() => setFormData(prev => ({ ...prev, projectType: option.value }))}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium">{option.label}</span>
+                          {option.popular && (
+                            <Badge variant="secondary" className="bg-neon-500/20 text-neon-400">
+                              Popular
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="text-sm text-gray-400 mt-1">{option.price}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Property Size */}
+                <div>
+                  <Label className="text-white mb-2 block">Property Size *</Label>
+                  <Select value={formData.propertySize} onValueChange={(value) => setFormData(prev => ({ ...prev, propertySize: value }))}>
+                    <SelectTrigger className="bg-midnight-700 border-midnight-600">
+                      <SelectValue placeholder="Select property size" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="under-50">Under 50m²</SelectItem>
+                      <SelectItem value="50-100">50–100m²</SelectItem>
+                      <SelectItem value="100-200">100–200m²</SelectItem>
+                      <SelectItem value="200+">Over 200m²</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Finish Quality */}
+                <div>
+                  <Label className="text-white mb-2 block">Finish Quality *</Label>
+                  <div className="grid grid-cols-3 gap-3">
+                    {[
+                      { key: "standard", label: "Standard", multiplier: "Base" },
+                      { key: "premium", label: "Premium", multiplier: "+20%" },
+                      { key: "luxury", label: "Luxury", multiplier: "+35%" }
+                    ].map((option) => (
+                      <div
+                        key={option.key}
+                        className={`p-4 border rounded-lg cursor-pointer text-center transition-all ${
+                          formData.finishQuality === option.key
+                            ? "border-blue-500 bg-blue-500/10"
+                            : "border-midnight-600 hover:border-midnight-500"
+                        }`}
+                        onClick={() => setFormData(prev => ({ ...prev, finishQuality: option.key }))}
+                      >
+                        <div className="font-medium">{option.label}</div>
+                        <div className="text-sm text-gray-400">{option.multiplier}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Timeframe */}
+                <div>
+                  <Label className="text-white mb-2 block">Timeframe</Label>
+                  <Select value={formData.timeframe} onValueChange={(value) => setFormData(prev => ({ ...prev, timeframe: value }))}>
+                    <SelectTrigger className="bg-midnight-700 border-midnight-600">
+                      <SelectValue placeholder="Select timeframe" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="flexible">Flexible</SelectItem>
+                      <SelectItem value="3-months">Next 3 months</SelectItem>
+                      <SelectItem value="asap">ASAP / Urgent (+€500)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Extras */}
+                <div>
+                  <Label className="text-white mb-3 block">Add-ons & Services</Label>
+                  <div className="space-y-3">
+                    {[
+                      { id: "interior-design", label: "Interior Design Consultation", price: 800 },
+                      { id: "project-management", label: "Project Management", price: 1200 },
+                      { id: "cleanup", label: "Cleanup & Disposal", price: 400 },
+                      { id: "permits", label: "Permit Assistance", price: 350 }
+                    ].map((extra) => (
+                      <div key={extra.id} className="flex items-center space-x-3">
+                        <Checkbox
+                          id={extra.id}
+                          checked={formData.extras?.includes(extra.id) || false}
+                          onCheckedChange={(checked) => {
+                            const currentExtras = formData.extras || [];
+                            if (checked) {
+                              setFormData(prev => ({ ...prev, extras: [...currentExtras, extra.id] }));
+                            } else {
+                              setFormData(prev => ({ ...prev, extras: currentExtras.filter(id => id !== extra.id) }));
+                            }
+                          }}
+                        />
+                        <label htmlFor={extra.id} className="flex-1 cursor-pointer">
+                          <div className="flex justify-between">
+                            <span>{extra.label}</span>
+                            <span className="text-blue-400 font-medium">+€{extra.price}</span>
+                          </div>
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Promo Code */}
+                <div>
+                  <Label className="text-white mb-2 block">Promo Code</Label>
+                  <Input
+                    placeholder="Enter promo code (e.g., LAUNCH10)"
+                    value={formData.promoCode || ""}
+                    onChange={(e) => setFormData(prev => ({ ...prev, promoCode: e.target.value }))}
+                    className="bg-midnight-700 border-midnight-600"
+                  />
+                  <div className="text-sm text-gray-400 mt-1">
+                    Try: LAUNCH10, NEWCLIENT, or QUOTEKIT
+                  </div>
                 </div>
               </div>
             )}

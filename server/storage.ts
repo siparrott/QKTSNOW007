@@ -98,6 +98,45 @@ export class MemStorage implements IStorage {
             materials: { standard: 1.0, premium: 1.4, luxury: 2.0 }
           }
         }
+      },
+      {
+        name: "Home Renovation AI Calculator",
+        slug: "home-renovation",
+        category: "home-services",
+        description: "AI-powered home renovation quotes with natural language input",
+        defaultConfig: {
+          baseConsultation: 500,
+          projectTypes: {
+            "kitchen-remodel": { min: 6000, max: 15000 },
+            "bathroom-remodel": { min: 4000, max: 10000 },
+            "full-home": { min: 20000, max: 50000 },
+            "flooring": { min: 2000, max: 8000 },
+            "painting": { min: 1000, max: 5000 },
+            "basement-conversion": { min: 8000, max: 20000 },
+            "attic-renovation": { min: 5000, max: 15000 }
+          },
+          finishMultipliers: {
+            "standard": 1.0,
+            "premium": 1.2,
+            "luxury": 1.35
+          },
+          extras: {
+            "interior-design": 800,
+            "project-management": 1200,
+            "cleanup": 400,
+            "permits": 350
+          },
+          timeframeSurcharges: {
+            "flexible": 0,
+            "3-months": 0,
+            "asap": 500
+          },
+          promoCodes: {
+            "LAUNCH10": 0.1,
+            "NEWCLIENT": 0.15,
+            "QUOTEKIT": 0.1
+          }
+        }
       }
     ];
 

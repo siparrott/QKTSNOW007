@@ -8,7 +8,7 @@ const demoCalculators = [
   {
     title: "Home Renovation AI",
     icon: Home,
-    href: "/demo/home-renovation",
+    href: "/calculator/home-renovation",
     description: "AI-powered renovation quotes with natural language input",
     featured: true,
     badge: "NEW AI"
@@ -99,7 +99,7 @@ export default function LiveDemo() {
                   </div>
                 </div>
 
-                <Link href="/demo/home-renovation">
+                <Link href="/calculator/home-renovation">
                   <Button className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300">
                     <Play className="mr-2 h-5 w-5" />
                     Try AI Calculator Demo

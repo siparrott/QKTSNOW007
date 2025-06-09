@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Rocket, Play, CheckCircle, Clock, Users } from "lucide-react";
 import { motion } from "framer-motion";
+import { Link } from "wouter";
 
 export default function Hero() {
   const scrollToSection = (sectionId: string) => {
@@ -89,14 +90,15 @@ export default function Hero() {
               Limited Launch Offer • Renews annually • Cancel anytime
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button
-                onClick={() => scrollToSection("niches")}
-                variant="outline"
-                className="border border-gray-600 hover:border-neon-400 text-gray-300 hover:text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-transparent"
-              >
-                <Rocket className="mr-2 h-4 w-4" />
-                Try Calculators
-              </Button>
+              <Link href="/niches">
+                <Button
+                  variant="outline"
+                  className="border border-gray-600 hover:border-neon-400 text-gray-300 hover:text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-transparent"
+                >
+                  <Rocket className="mr-2 h-4 w-4" />
+                  See All 50+ Niches
+                </Button>
+              </Link>
               <Button
                 variant="outline"
                 className="border border-gray-600 hover:border-neon-400 text-gray-300 hover:text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-transparent"

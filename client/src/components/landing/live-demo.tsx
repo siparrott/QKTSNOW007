@@ -196,11 +196,21 @@ export default function LiveDemo() {
           <p className="text-gray-400 mb-6">
             Each calculator captures leads automatically and generates professional quotes in seconds.
           </p>
-          <Link href="#pricing">
-            <Button className="bg-neon-500 hover:bg-neon-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 hover:shadow-glow">
-              Start Building Your Calculators - €5/month
-            </Button>
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/niches">
+              <Button className="bg-neon-500 hover:bg-neon-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 hover:shadow-glow">
+                Browse All 50+ Niches
+              </Button>
+            </Link>
+            <Link href="#pricing">
+              <Button 
+                variant="outline" 
+                className="border-neon-500 text-neon-400 hover:bg-neon-500 hover:text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300"
+              >
+                Start Building - €5/month
+              </Button>
+            </Link>
+          </div>
         </motion.div>
       </div>
     </section>

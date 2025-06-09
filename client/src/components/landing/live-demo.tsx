@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Play, CheckCircle } from "lucide-react";
+import { Link } from "wouter";
 
 export default function LiveDemo() {
   return (
@@ -35,10 +36,12 @@ export default function LiveDemo() {
               </div>
             </div>
 
-            <Button className="bg-neon-500 hover:bg-neon-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 hover:shadow-glow">
-              <Play className="mr-2 h-5 w-5" />
-              Try Live Demo
-            </Button>
+            <Link href="/calculator/wedding-photography">
+              <Button className="bg-neon-500 hover:bg-neon-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 hover:shadow-glow">
+                <Play className="mr-2 h-5 w-5" />
+                Try Live Demo
+              </Button>
+            </Link>
           </motion.div>
 
           <motion.div

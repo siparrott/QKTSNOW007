@@ -172,6 +172,7 @@ export class MemStorage implements IStorage {
     const userCalculator: UserCalculator = {
       ...insertUserCalculator,
       id: crypto.randomUUID(),
+      config: insertUserCalculator.config || null,
       isActive: true,
       createdAt: new Date()
     };
@@ -186,8 +187,13 @@ export class MemStorage implements IStorage {
 
   async createLead(insertLead: InsertLead): Promise<Lead> {
     const lead: Lead = {
-      ...insertLead,
       id: crypto.randomUUID(),
+      userCalculatorId: insertLead.userCalculatorId,
+      name: insertLead.name || null,
+      email: insertLead.email || null,
+      phone: insertLead.phone || null,
+      quoteData: insertLead.quoteData || null,
+      estimatedValue: insertLead.estimatedValue || null,
       status: "new",
       createdAt: new Date()
     };

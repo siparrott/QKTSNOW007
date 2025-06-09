@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Camera, Dumbbell, Home, Calendar, Scale, Car, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
 
 export default function NichesGrid() {
   const niches = [
@@ -9,36 +10,48 @@ export default function NichesGrid() {
       title: "Photography",
       description: "Wedding, portrait, event photography calculators",
       gradient: "from-pink-500 to-purple-600",
+      calculatorSlug: "wedding-photography",
+      available: true,
     },
     {
       icon: Dumbbell,
       title: "Fitness & Wellness",
       description: "Personal training, nutrition, wellness services",
       gradient: "from-green-500 to-emerald-600",
+      calculatorSlug: "personal-training",
+      available: true,
     },
     {
       icon: Home,
       title: "Home Services",
       description: "Landscaping, cleaning, renovation, plumbing",
       gradient: "from-blue-500 to-cyan-600",
+      calculatorSlug: "landscaping",
+      available: true,
     },
     {
       icon: Calendar,
       title: "Events",
       description: "Wedding planning, catering, party services",
       gradient: "from-yellow-500 to-orange-600",
+      calculatorSlug: "",
+      available: false,
     },
     {
       icon: Scale,
       title: "Legal/Consulting",
       description: "Legal services, business consulting, coaching",
       gradient: "from-indigo-500 to-purple-600",
+      calculatorSlug: "",
+      available: false,
     },
     {
       icon: Car,
       title: "Automotive",
       description: "Auto repair, detailing, mechanic services",
       gradient: "from-red-500 to-pink-600",
+      calculatorSlug: "",
+      available: false,
     },
   ];
 
@@ -85,23 +98,43 @@ export default function NichesGrid() {
           {niches.map((niche) => (
             <motion.div
               key={niche.title}
-              className="bg-midnight-800 hover:bg-midnight-700 rounded-xl p-6 transition-all duration-300 hover:shadow-lg hover:shadow-neon-500/20 group cursor-pointer"
+              className={`bg-midnight-800 hover:bg-midnight-700 rounded-xl p-6 transition-all duration-300 hover:shadow-lg hover:shadow-neon-500/20 group ${niche.available ? 'cursor-pointer' : 'cursor-not-allowed opacity-75'}`}
               variants={itemVariants}
-              whileHover={{ y: -5 }}
+              whileHover={{ y: niche.available ? -5 : 0 }}
             >
-              <div className="flex items-center mb-4">
-                <div className={`w-12 h-12 bg-gradient-to-br ${niche.gradient} rounded-lg flex items-center justify-center mr-4`}>
-                  <niche.icon className="text-white h-6 w-6" />
-                </div>
-                <h3 className="text-xl font-semibold text-white group-hover:text-neon-400 transition-colors">
-                  {niche.title}
-                </h3>
-              </div>
-              <p className="text-gray-400 mb-4">{niche.description}</p>
-              <div className="text-sm text-neon-400 group-hover:text-neon-300 transition-colors flex items-center">
-                <ArrowRight className="mr-1 h-4 w-4" />
-                Explore calculators
-              </div>
+              {niche.available ? (
+                <Link href={`/calculator/${niche.calculatorSlug}`}>
+                  <div className="flex items-center mb-4">
+                    <div className={`w-12 h-12 bg-gradient-to-br ${niche.gradient} rounded-lg flex items-center justify-center mr-4`}>
+                      <niche.icon className="text-white h-6 w-6" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-white group-hover:text-neon-400 transition-colors">
+                      {niche.title}
+                    </h3>
+                  </div>
+                  <p className="text-gray-400 mb-4">{niche.description}</p>
+                  <div className="text-sm text-neon-400 group-hover:text-neon-300 transition-colors flex items-center">
+                    <ArrowRight className="mr-1 h-4 w-4" />
+                    Try Calculator
+                  </div>
+                </Link>
+              ) : (
+                <>
+                  <div className="flex items-center mb-4">
+                    <div className={`w-12 h-12 bg-gradient-to-br ${niche.gradient} rounded-lg flex items-center justify-center mr-4 opacity-60`}>
+                      <niche.icon className="text-white h-6 w-6" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-white">
+                      {niche.title}
+                    </h3>
+                  </div>
+                  <p className="text-gray-400 mb-4">{niche.description}</p>
+                  <div className="text-sm text-gray-500 flex items-center">
+                    <ArrowRight className="mr-1 h-4 w-4" />
+                    Coming Soon
+                  </div>
+                </>
+              )}
             </motion.div>
           ))}
         </motion.div>

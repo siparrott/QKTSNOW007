@@ -57,22 +57,20 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            What if quoting clients became your{" "}
+            "They Don't Want a Chat.{" "}
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-400 to-neon-600">
-              #1 sales weapon?
+              They Want a Price."
             </span>
           </motion.h1>
 
           <motion.p
-            className="text-xl md:text-2xl text-gray-300 mb-8 max-w-4xl mx-auto leading-relaxed"
+            className="text-2xl md:text-3xl text-neon-400 mb-8 max-w-3xl mx-auto leading-relaxed font-semibold"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            Instantly deploy 50+ high-converting AI quote calculators. For any service business. No code. No friction.
-            <br />
-            <span className="text-neon-400 font-semibold">Introducing QuoteKit.ai – the fastest way to turn clicks into clients.</span>
+            Give it to them — instantly.
           </motion.p>
 
           <motion.div

@@ -59,7 +59,7 @@ export default function Hero() {
           >
             "They Don't Want a Chat.{" "}
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-400 to-neon-600">
+            <span className="text-white">
               They Want a Price."
             </span>
           </motion.h1>

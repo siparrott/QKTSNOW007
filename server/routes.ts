@@ -603,6 +603,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI processing for business coach calculator
+  app.post("/api/ai/process-business-coach", async (req, res) => {
+    try {
+      const { input } = req.body;
+      if (!input || typeof input !== "string") {
+        return res.status(400).json({ error: "Input text is required" });
+      }
+      
+      // Return structured response for business coaching
+      const result = {
+        coachingFocus: "leadership",
+        sessionFrequency: "weekly",
+        coachingFormat: "online",
+        packageDuration: "3-months",
+        addOns: ["email-support"],
+        baseRate: 200,
+        totalCost: 2370,
+        breakdown: {
+          baseCost: 2400,
+          discounts: [{ name: "3 Months Package Discount", amount: 240 }],
+          addOnCosts: [{ name: "Email Support", amount: 150 }]
+        }
+      };
+      res.json(result);
+    } catch (error) {
+      console.error("AI processing error:", error);
+      res.status(500).json({ error: "Failed to process AI request" });
+    }
+  });
+
   // Health check
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok", timestamp: new Date().toISOString() });

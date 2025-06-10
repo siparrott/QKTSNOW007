@@ -723,6 +723,47 @@ export class MemStorage implements IStorage {
           baseRate: 30
         },
         createdAt: new Date(),
+      },
+      {
+        id: 17,
+        name: "Business Coach Calculator",
+        slug: "business-coach",
+        category: "business-services",
+        description: "Professional business coach pricing calculator with navy, gold, and white luxury styling",
+        defaultConfig: {
+          coachingFocus: {
+            "leadership": 0,
+            "startup-growth": 0,
+            "career-transition": 0,
+            "productivity": 0,
+            "sales-marketing": 0
+          },
+          sessionFrequency: {
+            "one-time": 1,
+            "weekly": 4,
+            "biweekly": 2,
+            "monthly": 1
+          },
+          coachingFormat: {
+            "online": 0,
+            "in-person": 100,
+            "hybrid": 50
+          },
+          packageDuration: {
+            "1-month": { multiplier: 1, discount: 0 },
+            "3-months": { multiplier: 3, discount: 0.1 },
+            "6-months": { multiplier: 6, discount: 0.15 },
+            "custom": { multiplier: 1, discount: 0 }
+          },
+          addOns: {
+            "email-support": 50,
+            "worksheets": 25,
+            "accountability": 40,
+            "action-plans": 25
+          },
+          baseRate: 200
+        },
+        createdAt: new Date(),
       }
     ];
 

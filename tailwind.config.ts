@@ -61,6 +61,26 @@ export default {
           border: "var(--sidebar-border)",
           ring: "var(--sidebar-ring)",
         },
+        cream: {
+          25: "var(--cream-25)",
+          50: "var(--cream-50)",
+        },
+        stone: {
+          50: "var(--stone-50)",
+          200: "var(--stone-200)",
+          300: "var(--stone-300)",
+          400: "var(--stone-400)",
+          500: "var(--stone-500)",
+          600: "var(--stone-600)",
+          700: "var(--stone-700)",
+          800: "var(--stone-800)",
+        },
+        amber: {
+          25: "var(--amber-25)",
+          50: "var(--amber-50)",
+          600: "var(--amber-600)",
+          700: "var(--amber-700)",
+        },
       },
       keyframes: {
         "accordion-down": {

@@ -192,6 +192,45 @@ export class MemStorage implements IStorage {
         }
       },
       {
+        name: "Food Photography Calculator",
+        slug: "food-photography",
+        category: "photography",
+        description: "Professional food photography quote calculator with elegant styling",
+        defaultConfig: {
+          baseStudio: 180,
+          dishCounts: {
+            "1-5": 0,
+            "6-10": 100,
+            "11-20": 200,
+            "20+": 300
+          },
+          locations: {
+            "studio": 0,
+            "on-location": 75,
+            "outdoor": 50
+          },
+          styles: {
+            "overhead": 0,
+            "lifestyle": 80,
+            "studio": 0,
+            "process": 60
+          },
+          addOns: {
+            "stylist": 150,
+            "props": 100,
+            "fast": 80,
+            "raw": 50,
+            "commercial": 200
+          },
+          delivery: {
+            "jpeg": 0,
+            "social": 40,
+            "tiff": 60,
+            "web": 30
+          }
+        }
+      },
+      {
         name: "Wedding Photography Quote Calculator",
         slug: "wedding-photography",
         category: "photography",

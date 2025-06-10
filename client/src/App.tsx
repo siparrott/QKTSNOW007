@@ -43,6 +43,7 @@ import AutoMechanicCalculator from "@/pages/auto-mechanic-calculator";
 import MobileCarWashCalculator from "@/pages/mobile-car-wash-calculator";
 import ChauffeurLimoCalculator from "@/pages/chauffeur-limo-calculator";
 import AirportTransferCalculator from "@/pages/airport-transfer-calculator";
+import VanRentalCalculator from "@/pages/van-rental-calculator";
 
 
 function Router() {
@@ -85,6 +86,7 @@ function Router() {
       <Route path="/calculator/mobile-car-wash" component={MobileCarWashCalculator} />
       <Route path="/calculator/chauffeur-limo" component={ChauffeurLimoCalculator} />
       <Route path="/calculator/airport-transfer" component={AirportTransferCalculator} />
+      <Route path="/calculator/van-rental" component={VanRentalCalculator} />
       <Route path="/calculator/:slug" component={CalculatorPage} />
       <Route path="/niches" component={NichesPage} />
       <Route path="/niches/:niche" component={NotFound} />

@@ -120,7 +120,7 @@ const allNiches = [
   { id: 42, name: "Moving Services", icon: Truck, category: "Automotive & Transportation", description: "Residential and commercial moving services" },
   { id: 43, name: "Chauffeur/Limo Services", icon: Car, category: "Automotive & Transportation", available: true, slug: "chauffeur-limo", description: "Luxury transportation and chauffeur services" },
   { id: 44, name: "Airport Transfers", icon: Car, category: "Automotive & Transportation", available: true, slug: "airport-transfer", description: "Airport pickup and drop-off services" },
-  { id: 45, name: "Van Rentals", icon: Truck, category: "Automotive & Transportation", description: "Van and vehicle rental services" },
+  { id: 45, name: "Van Rentals", icon: Truck, category: "Automotive & Transportation", available: true, slug: "van-rental", description: "Van and vehicle rental services" },
   { id: 46, name: "Boat Charters", icon: Truck, category: "Automotive & Transportation", description: "Boat rental and charter services" },
   { id: 47, name: "Motorcycle Repair", icon: Wrench, category: "Automotive & Transportation", description: "Motorcycle maintenance and repair services" },
 

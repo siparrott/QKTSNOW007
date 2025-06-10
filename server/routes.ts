@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { processCarWashRequest, processChauffeurRequest, processAirportTransferRequest } from "./ai";
+import { processCarWashRequest, processChauffeurRequest, processAirportTransferRequest, processVanRentalRequest } from "./ai";
 import { 
   insertUserSchema, 
   insertLeadSchema,
@@ -184,6 +184,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const result = await processAirportTransferRequest(input);
+      res.json(result);
+    } catch (error) {
+      console.error("AI processing error:", error);
+      res.status(500).json({ error: "Failed to process AI request" });
+    }
+  });
+
+  // AI processing for van rental calculator
+  app.post("/api/ai/process-van-rental", async (req, res) => {
+    try {
+      const { input } = req.body;
+      if (!input || typeof input !== "string") {
+        return res.status(400).json({ error: "Input text is required" });
+      }
+      
+      const result = await processVanRentalRequest(input);
       res.json(result);
     } catch (error) {
       console.error("AI processing error:", error);

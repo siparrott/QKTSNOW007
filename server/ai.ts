@@ -139,3 +139,47 @@ Respond with JSON in this exact format:
     throw new Error("Failed to process request");
   }
 }
+
+export async function processVanRentalRequest(input: string) {
+  if (!input.trim()) {
+    throw new Error("Input is required");
+  }
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: `You are an AI assistant that analyzes customer requests for van rental services and extracts structured data.
+
+Available options:
+- Rental types: cargo (Cargo Van), passenger (Passenger Van), luton (Luton/Box Van), camper (Campervan)
+- Duration: half_day (Half Day), full_day (Full Day), weekend (Weekend), weekly (Weekly)
+- Kilometre limits: 100 (100km/day), 200 (200km/day), unlimited (Unlimited)
+- Extras: gps (GPS Navigation), baby_seat (Child/Baby Seat), trolley (Sack Trolley), extra_driver (Additional Driver), insurance (Insurance Upgrade)
+
+Respond with JSON in this exact format:
+{
+  "rentalType": "string or null",
+  "duration": "string or null",
+  "kmLimit": "string or null",
+  "extras": ["array of strings or empty array"]
+}`
+        },
+        {
+          role: "user",
+          content: input
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.3
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result;
+  } catch (error) {
+    console.error('AI processing error:', error);
+    throw new Error("Failed to process request");
+  }
+}

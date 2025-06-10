@@ -50,8 +50,8 @@ export default function NichesGrid() {
       title: "Automotive",
       description: "Auto repair, detailing, mechanic services",
       gradient: "from-red-500 to-pink-600",
-      calculatorSlug: "",
-      available: false,
+      calculatorSlug: "mobile-car-wash",
+      available: true,
     },
   ];
 

@@ -1041,6 +1041,47 @@ export class MemStorage implements IStorage {
           }
         },
         createdAt: new Date(),
+      },
+      {
+        id: 25,
+        name: "Plastic Surgery Calculator",
+        slug: "plastic-surgery",
+        category: "healthcare-medical",
+        description: "Premium plastic surgery pricing calculator with monochrome/gold design for cosmetic and reconstructive procedures",
+        defaultConfig: {
+          procedures: {
+            "rhinoplasty": 4500,
+            "breast-augmentation": 5800,
+            "liposuction": 3000,
+            "facelift": 7500,
+            "tummy-tuck": 6200,
+            "eyelid-surgery": 3800
+          },
+          anesthesia: {
+            "local": 250,
+            "general": 600
+          },
+          additionalTreatments: {
+            "fat-transfer": 1200,
+            "injectables": 300,
+            "aftercare-package": 450,
+            "compression-garments": 180
+          },
+          hospitalStay: {
+            "none": 0,
+            "1-night": 400,
+            "2-nights": 800
+          },
+          discounts: {
+            promo: 0.10
+          },
+          promoCodes: {
+            "BEAUTY10": 0.10,
+            "CONSULTATION15": 0.15,
+            "PREMIUM20": 0.20
+          }
+        },
+        createdAt: new Date(),
       }
     ];
 

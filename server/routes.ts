@@ -7,6 +7,7 @@ import { emailService } from "./email";
 import { processCarWashRequest, processChauffeurRequest, processAirportTransferRequest, processVanRentalRequest, processBoatCharterRequest, processMovingServicesRequest, processMotorcycleRepairRequest, processDrivingInstructorRequest, processWebDesignerRequest, processMarketingConsultantRequest, processSEOAgencyRequest, processVideoEditorRequest, processCopywriterRequest, processLegalAdvisorRequest, processTaxPreparerRequest, processTranslationServicesRequest, processCleaningServicesRequest, processPrivateSchoolRequest } from "./ai";
 import { processDentistRequest } from "./dental-ai";
 import { processChildcareRequest } from "./childcare-ai";
+import { processPlasticSurgeryRequest } from "./plastic-surgery-ai";
 import { 
   insertUserSchema, 
   insertLeadSchema,
@@ -838,6 +839,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
         numberOfChildren: aiResult.numberOfChildren || "1",
         addOns: aiResult.addOns || [],
         hasSubsidy: aiResult.hasSubsidy || false
+      };
+      res.json(result);
+    } catch (error) {
+      console.error("AI processing error:", error);
+      res.status(500).json({ error: "Failed to process AI request" });
+    }
+  });
+
+  // AI processing for plastic surgery calculator
+  app.post("/api/ai/process-plasticsurgery", async (req, res) => {
+    try {
+      const { input } = req.body;
+      if (!input || typeof input !== "string") {
+        return res.status(400).json({ error: "Input text is required" });
+      }
+      
+      // Process with AI function
+      const aiResult = await processPlasticSurgeryRequest(input);
+      
+      // Return structured response for plastic surgery procedures
+      const result = {
+        procedure: aiResult.procedure || "rhinoplasty",
+        anesthesiaType: aiResult.anesthesiaType || "general",
+        additionalTreatments: aiResult.additionalTreatments || [],
+        hospitalStay: aiResult.hospitalStay || "none",
+        consultationType: aiResult.consultationType || "in-person"
       };
       res.json(result);
     } catch (error) {

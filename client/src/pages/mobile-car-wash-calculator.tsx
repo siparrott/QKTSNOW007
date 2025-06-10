@@ -1,4 +1,5 @@
 import { useState } from "react";
+import OpenAI from "openai";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -53,6 +54,7 @@ interface PricingBreakdown {
 
 export default function MobileCarWashCalculator() {
   const [currentStep, setCurrentStep] = useState(1);
+  const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [formData, setFormData] = useState<CarWashFormData>({
     vehicleSize: "",
     servicePackage: "",
@@ -63,6 +65,16 @@ export default function MobileCarWashCalculator() {
     naturalLanguageInput: "",
     contactInfo: { name: "", email: "", phone: "" }
   });
+
+  // Initialize OpenAI client only when API key is available
+  const getOpenAIClient = () => {
+    const apiKey = import.meta.env.VITE_OPENAI_API_KEY || process.env.OPENAI_API_KEY;
+    if (!apiKey) return null;
+    return new OpenAI({ 
+      apiKey,
+      dangerouslyAllowBrowser: true 
+    });
+  };
 
   const vehicleSizeOptions = [
     { label: "Compact Car", value: "compact", adjustment: 0, icon: <Car className="h-5 w-5" /> },
@@ -122,6 +134,63 @@ export default function MobileCarWashCalculator() {
     { label: "2-3 Days", value: "normal", fee: 0, icon: <Calendar className="h-5 w-5" /> },
     { label: "Flexible", value: "flexible", fee: 0, icon: <Clock className="h-5 w-5" /> },
   ];
+
+  const processNaturalLanguage = async (input: string) => {
+    const openai = getOpenAIClient();
+    if (!input.trim() || !openai) return;
+    
+    setIsProcessingAI(true);
+    try {
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+        messages: [
+          {
+            role: "system",
+            content: `You are an AI assistant that analyzes customer requests for mobile car wash services and extracts structured data. 
+
+Available options:
+- Vehicle sizes: compact, sedan, suv, truck
+- Service packages: exterior (exterior only), ext_int (exterior + interior), full_detail (full detail), showroom (showroom finish)
+- Locations: home, work, other
+- Urgency: rush (24 hours), normal (2-3 days), flexible
+- Add-ons: engine (engine bay cleaning), pet_hair (pet hair removal), ceramic (ceramic coating), wax (wax & polish), headlight (headlight restoration)
+
+Respond with JSON in this exact format:
+{
+  "vehicleSize": "string or null",
+  "servicePackage": "string or null", 
+  "serviceLocation": "string or null",
+  "urgency": "string or null",
+  "addOns": ["array of strings or empty array"]
+}`
+          },
+          {
+            role: "user",
+            content: input
+          }
+        ],
+        response_format: { type: "json_object" },
+        temperature: 0.3
+      });
+
+      const result = JSON.parse(response.choices[0].message.content || "{}");
+      
+      // Update form data with AI-extracted information
+      setFormData(prev => ({
+        ...prev,
+        vehicleSize: result.vehicleSize || prev.vehicleSize,
+        servicePackage: result.servicePackage || prev.servicePackage,
+        serviceLocation: result.serviceLocation || prev.serviceLocation,
+        urgency: result.urgency || prev.urgency,
+        addOns: result.addOns?.length ? result.addOns : prev.addOns
+      }));
+
+    } catch (error) {
+      console.error('AI processing error:', error);
+    } finally {
+      setIsProcessingAI(false);
+    }
+  };
 
   const calculatePricing = (): PricingBreakdown => {
     const selectedVehicle = vehicleSizeOptions.find(v => v.value === formData.vehicleSize);
@@ -221,6 +290,31 @@ export default function MobileCarWashCalculator() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-25 to-sky-100">
       <QuoteKitHeader />
       <div className="max-w-7xl mx-auto px-4 py-8">
+        
+        {/* Calculator Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-blue-800 mb-2 flex items-center justify-center">
+            <Droplets className="h-10 w-10 mr-3 text-blue-500" />
+            Mobile Car Wash Quote Calculator
+          </h1>
+          <p className="text-blue-600 max-w-2xl mx-auto font-medium">
+            Get instant pricing for professional mobile car wash services. We come to you with eco-friendly solutions and sparkling results.
+          </p>
+          <div className="flex items-center justify-center mt-4 space-x-6 text-sm text-blue-500">
+            <span className="flex items-center">
+              <Droplets className="h-4 w-4 mr-1" />
+              Waterless Technology
+            </span>
+            <span className="flex items-center">
+              <Shield className="h-4 w-4 mr-1" />
+              Eco-Friendly
+            </span>
+            <span className="flex items-center">
+              <Star className="h-4 w-4 mr-1" />
+              Satisfaction Guaranteed
+            </span>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Form */}

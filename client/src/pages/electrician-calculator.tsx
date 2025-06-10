@@ -616,7 +616,7 @@ export default function ElectricianCalculator() {
           {/* Pricing Sidebar */}
           <div className="lg:col-span-1">
             <Card className="p-6 bg-white/90 backdrop-blur-sm sticky top-8">
-              <h3 className="text-xl font-bold text-gray-800 mb-4">Your Quote</h3>
+              <h3 className="text-xl font-display text-gray-800 mb-4">Your Quote</h3>
               
               <div className="space-y-3">
                 <div className="text-3xl font-bold text-blue-600">
@@ -655,7 +655,7 @@ export default function ElectricianCalculator() {
                 {/* Ready to Book Section */}
                 <div className="mt-6 pt-6 border-t border-blue-200">
                   <div className="text-center space-y-4">
-                    <h3 className="text-lg font-bold text-gray-800">Ready to Schedule Your Job?</h3>
+                    <h3 className="text-lg font-display text-gray-800">Ready to Schedule Your Job?</h3>
                     <p className="text-sm text-gray-600">
                       This quote is valid for 24 hours. Book your preferred time slot today.
                     </p>

@@ -88,6 +88,7 @@ const allNiches = [
   { id: 19, name: "Solar Panel Installation", icon: Sun, category: "Home Services", available: true, slug: "solar", description: "Solar energy system installation and maintenance" },
   { id: 20, name: "Pest Control", icon: Shield, category: "Home Services", available: true, slug: "pest-control", description: "Residential and commercial pest management services" },
   { id: 21, name: "Window & Door Installation", icon: Home, category: "Home Services", available: true, slug: "window-door", description: "Window and door replacement and installation" },
+  { id: 58, name: "Cleaning Services", icon: Sparkles, category: "Home Services", available: true, slug: "cleaning-services", description: "Professional house and commercial cleaning services" },
 
   // Beauty & Wellness (8 calculators)
   { id: 22, name: "Makeup Artist", icon: Palette, category: "Beauty & Wellness", available: true, slug: "makeup-artist", description: "Bridal, event, and special occasion makeup" },
@@ -101,7 +102,7 @@ const allNiches = [
 
   // Education & Training (3 calculators)
   { id: 30, name: "Private Tutor", icon: GraduationCap, category: "Education & Training", available: true, slug: "private-tutor", description: "Academic tutoring and test preparation" },
-  { id: 31, name: "Private Schools", icon: GraduationCap, category: "Education & Training", description: "Private education tuition and enrollment services" },
+  { id: 31, name: "Private Schools", icon: GraduationCap, category: "Education & Training", available: true, slug: "private-school", description: "Private education tuition and enrollment services" },
   { id: 32, name: "Driving Instructor", icon: Car, category: "Education & Training", available: true, slug: "driving-instructor", description: "Driver education and road test preparation" },
 
   // Healthcare & Medical (5 calculators)

@@ -330,7 +330,7 @@ export default function ElectricianCalculator() {
                     
                     {/* Natural Language Input */}
                     <div className="mb-6 p-4 bg-blue-50 rounded-lg">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-body text-gray-700 mb-2">
                         Describe your project in your own words (optional)
                       </label>
                       <Textarea
@@ -382,14 +382,14 @@ export default function ElectricianCalculator() {
               {currentStep === 2 && (
                 <div className="space-y-6">
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                    <h2 className="text-2xl font-display text-gray-800 mb-4 flex items-center">
                       <Home className="h-6 w-6 mr-2 text-blue-500" />
                       Property details
                     </h2>
                     
                     <div className="space-y-6">
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-700 mb-3">Property Type</h3>
+                        <h3 className="text-lg font-display text-gray-700 mb-3">Property Type</h3>
                         <div className="grid grid-cols-2 gap-4">
                           {propertyTypes.map((property) => (
                             <OptionCard
@@ -404,7 +404,7 @@ export default function ElectricianCalculator() {
                       </div>
 
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-700 mb-3">Number of Rooms/Areas</h3>
+                        <h3 className="text-lg font-display text-gray-700 mb-3">Number of Rooms/Areas</h3>
                         <div className="grid grid-cols-5 gap-3">
                           {roomCounts.map((count) => (
                             <Button
@@ -448,7 +448,7 @@ export default function ElectricianCalculator() {
               {currentStep === 3 && (
                 <div className="space-y-6">
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                    <h2 className="text-2xl font-display text-gray-800 mb-4 flex items-center">
                       <Clock className="h-6 w-6 mr-2 text-blue-500" />
                       When do you need this done?
                     </h2>
@@ -467,7 +467,7 @@ export default function ElectricianCalculator() {
                       </div>
 
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-700 mb-3">Additional Services</h3>
+                        <h3 className="text-lg font-display text-gray-700 mb-3">Additional Services</h3>
                         <div className="grid grid-cols-2 gap-4">
                           {addOnOptions.map((addOn) => (
                             <div
@@ -494,7 +494,7 @@ export default function ElectricianCalculator() {
                       </div>
 
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-700 mb-3">Promo Code (Optional)</h3>
+                        <h3 className="text-lg font-display text-gray-700 mb-3">Promo Code (Optional)</h3>
                         <Input
                           placeholder="Enter promo code (e.g., SAVE10)"
                           value={formData.promoCode}
@@ -528,7 +528,7 @@ export default function ElectricianCalculator() {
               {currentStep === 4 && (
                 <div className="space-y-6">
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                    <h2 className="text-2xl font-display text-gray-800 mb-4 flex items-center">
                       <Mail className="h-6 w-6 mr-2 text-blue-500" />
                       Get your detailed quote
                     </h2>

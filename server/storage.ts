@@ -958,6 +958,45 @@ export class MemStorage implements IStorage {
           baseRate: 7500
         },
         createdAt: new Date(),
+      },
+      {
+        id: 23,
+        name: "Dentist & Implant Clinic Calculator",
+        slug: "dentist-implant",
+        category: "healthcare-medical",
+        description: "Dental treatment pricing calculator with clinical aqua blue design for implants, veneers, and comprehensive care",
+        defaultConfig: {
+          treatments: {
+            "dental-implant-single": { single: 1200 },
+            "dental-implant-multiple": { multiple: 1000 },
+            "veneers-single": { single: 450 },
+            "veneers-full": { fullSet: 4000 },
+            "invisalign": { starting: 3500 },
+            "teeth-whitening": { base: 300 },
+            "cleaning": { base: 90 },
+            "root-canal": { base: 400 }
+          },
+          urgency: {
+            "regular": 1.0,
+            "express": 75,
+            "virtual": 50
+          },
+          addOns: {
+            "xray-3d": 120,
+            "sedation": 200,
+            "care-package": 150
+          },
+          discounts: {
+            multiTreatment: 0.10,
+            insurance: 0.15
+          },
+          promoCodes: {
+            "DENTAL10": 0.10,
+            "SMILE20": 0.20,
+            "NEWPATIENT15": 0.15
+          }
+        },
+        createdAt: new Date(),
       }
     ];
 

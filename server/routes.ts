@@ -5,6 +5,7 @@ import { authService } from "./auth";
 import { stripeService } from "./stripe";
 import { emailService } from "./email";
 import { processCarWashRequest, processChauffeurRequest, processAirportTransferRequest, processVanRentalRequest, processBoatCharterRequest, processMovingServicesRequest, processMotorcycleRepairRequest, processDrivingInstructorRequest, processWebDesignerRequest, processMarketingConsultantRequest, processSEOAgencyRequest, processVideoEditorRequest, processCopywriterRequest, processLegalAdvisorRequest, processTaxPreparerRequest, processTranslationServicesRequest, processCleaningServicesRequest, processPrivateSchoolRequest } from "./ai";
+import { processDentistRequest } from "./dental-ai";
 import { 
   insertUserSchema, 
   insertLeadSchema,
@@ -782,6 +783,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
         siblingStatus: aiResult.siblingStatus || "first",
         addOns: aiResult.addOns || [],
         paymentPlan: aiResult.paymentPlan || "annual"
+      };
+      res.json(result);
+    } catch (error) {
+      console.error("AI processing error:", error);
+      res.status(500).json({ error: "Failed to process AI request" });
+    }
+  });
+
+  // AI processing for dental calculator
+  app.post("/api/ai/process-dental", async (req, res) => {
+    try {
+      const { input } = req.body;
+      if (!input || typeof input !== "string") {
+        return res.status(400).json({ error: "Input text is required" });
+      }
+      
+      // Process with AI function
+      const aiResult = await processDentistRequest(input);
+      
+      // Return structured response for dental treatment
+      const result = {
+        treatmentType: aiResult.treatmentType || "cleaning",
+        treatmentCount: aiResult.treatmentCount || "1",
+        urgency: aiResult.urgency || "regular",
+        addOns: aiResult.addOns || [],
+        paymentPlan: aiResult.paymentPlan || "full",
+        insurance: aiResult.insurance || false
       };
       res.json(result);
     } catch (error) {

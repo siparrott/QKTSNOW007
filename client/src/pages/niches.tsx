@@ -106,7 +106,7 @@ const allNiches = [
   { id: 32, name: "Driving Instructor", icon: Car, category: "Education & Training", available: true, slug: "driving-instructor", description: "Driver education and road test preparation" },
 
   // Healthcare & Medical (5 calculators)
-  { id: 33, name: "Dentist & Implant Clinics", icon: Stethoscope, category: "Healthcare & Medical", description: "Dental care, implants, and oral surgery services" },
+  { id: 33, name: "Dentist & Implant Clinics", icon: Stethoscope, category: "Healthcare & Medical", available: true, slug: "dentist-implant", description: "Dental care, implants, and oral surgery services" },
   { id: 34, name: "Private Medical Clinics", icon: Stethoscope, category: "Healthcare & Medical", description: "Private healthcare consultations and treatments" },
   { id: 35, name: "Plastic Surgery", icon: Stethoscope, category: "Healthcare & Medical", description: "Cosmetic and reconstructive surgery procedures" },
   { id: 36, name: "Childcare Practitioners", icon: Heart, category: "Healthcare & Medical", description: "Individual childcare and nanny services" },

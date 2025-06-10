@@ -60,6 +60,7 @@ import TaxPreparerCalculator from "@/pages/tax-preparer-calculator";
 import TranslationServicesCalculator from "@/pages/translation-services-calculator";
 import CleaningServicesCalculator from "@/pages/cleaning-services-calculator";
 import PrivateSchoolCalculator from "@/pages/private-school-calculator";
+import DentistCalculator from "@/pages/dentist-calculator";
 import Features from "@/pages/features";
 import Login from "@/pages/login";
 import Register from "@/pages/register";
@@ -123,6 +124,7 @@ function Router() {
       <Route path="/calculator/translation-services" component={TranslationServicesCalculator} />
       <Route path="/calculator/cleaning-services" component={CleaningServicesCalculator} />
       <Route path="/calculator/private-school" component={PrivateSchoolCalculator} />
+      <Route path="/calculator/dentist-implant" component={DentistCalculator} />
       <Route path="/calculator/:slug" component={CalculatorPage} />
       <Route path="/niches" component={NichesPage} />
       <Route path="/features" component={Features} />

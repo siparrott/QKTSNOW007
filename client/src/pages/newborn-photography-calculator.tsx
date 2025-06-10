@@ -284,12 +284,7 @@ export default function NewbornPhotographyCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-25 via-pink-25 to-stone-50">
-      <CalculatorHeader 
-        title="Newborn Photography Quote Calculator"
-        subtitle="Capture precious fleeting moments forever with gentle newborn photography"
-        category="Photography"
-        accentColor="rose"
-      />
+      <QuoteKitHeader />
       <div className="max-w-7xl mx-auto px-4 py-8">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

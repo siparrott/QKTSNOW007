@@ -298,12 +298,7 @@ export default function AutoMechanicCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 via-slate-100 to-blue-100">
-      <CalculatorHeader 
-        title="Auto Repair Quote Calculator"
-        subtitle="Accurate auto repair quotes instantly with professional service you can trust"
-        category="Automotive"
-        accentColor="blue"
-      />
+      <QuoteKitHeader />
       <div className="max-w-7xl mx-auto px-4 py-8">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

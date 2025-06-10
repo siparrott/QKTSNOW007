@@ -289,12 +289,7 @@ export default function CarDetailingCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-stone-50 to-teal-50">
-      <CalculatorHeader 
-        title="Car Detailing Quote Calculator"
-        subtitle="Professional service that makes your car shine with instant pricing"
-        category="Automotive"
-        accentColor="teal"
-      />
+      <QuoteKitHeader />
       <div className="max-w-7xl mx-auto px-4 py-8">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

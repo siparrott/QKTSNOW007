@@ -1,5 +1,4 @@
 import { useState } from "react";
-import OpenAI from "openai";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -66,15 +65,7 @@ export default function MobileCarWashCalculator() {
     contactInfo: { name: "", email: "", phone: "" }
   });
 
-  // Initialize OpenAI client only when API key is available
-  const getOpenAIClient = () => {
-    const apiKey = import.meta.env.VITE_OPENAI_API_KEY || process.env.OPENAI_API_KEY;
-    if (!apiKey) return null;
-    return new OpenAI({ 
-      apiKey,
-      dangerouslyAllowBrowser: true 
-    });
-  };
+
 
   const vehicleSizeOptions = [
     { label: "Compact Car", value: "compact", adjustment: 0, icon: <Car className="h-5 w-5" /> },
@@ -136,44 +127,23 @@ export default function MobileCarWashCalculator() {
   ];
 
   const processNaturalLanguage = async (input: string) => {
-    const openai = getOpenAIClient();
-    if (!input.trim() || !openai) return;
+    if (!input.trim()) return;
     
     setIsProcessingAI(true);
     try {
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-        messages: [
-          {
-            role: "system",
-            content: `You are an AI assistant that analyzes customer requests for mobile car wash services and extracts structured data. 
-
-Available options:
-- Vehicle sizes: compact, sedan, suv, truck
-- Service packages: exterior (exterior only), ext_int (exterior + interior), full_detail (full detail), showroom (showroom finish)
-- Locations: home, work, other
-- Urgency: rush (24 hours), normal (2-3 days), flexible
-- Add-ons: engine (engine bay cleaning), pet_hair (pet hair removal), ceramic (ceramic coating), wax (wax & polish), headlight (headlight restoration)
-
-Respond with JSON in this exact format:
-{
-  "vehicleSize": "string or null",
-  "servicePackage": "string or null", 
-  "serviceLocation": "string or null",
-  "urgency": "string or null",
-  "addOns": ["array of strings or empty array"]
-}`
-          },
-          {
-            role: "user",
-            content: input
-          }
-        ],
-        response_format: { type: "json_object" },
-        temperature: 0.3
+      const response = await fetch('/api/ai/process-car-wash', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ input }),
       });
 
-      const result = JSON.parse(response.choices[0].message.content || "{}");
+      if (!response.ok) {
+        throw new Error('Failed to process AI request');
+      }
+
+      const result = await response.json();
       
       // Update form data with AI-extracted information
       setFormData(prev => ({

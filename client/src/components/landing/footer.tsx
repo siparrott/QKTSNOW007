@@ -1,4 +1,5 @@
 import { Calculator } from "lucide-react";
+import { Link } from "wouter";
 
 export default function Footer() {
   return (
@@ -53,9 +54,9 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#niches" className="text-gray-400 hover:text-neon-400 transition-colors">
+                <Link href="/niches" className="text-gray-400 hover:text-neon-400 transition-colors">
                   Niches
-                </a>
+                </Link>
               </li>
               <li>
                 <a href="#pricing" className="text-gray-400 hover:text-neon-400 transition-colors">

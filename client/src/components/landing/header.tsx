@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Calculator } from "lucide-react";
+import { Link } from "wouter";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -57,12 +58,11 @@ export default function Header() {
             >
               Features
             </button>
-            <button
-              onClick={() => scrollToSection("niches")}
-              className="text-gray-300 hover:text-neon-400 transition-colors"
-            >
-              Niches
-            </button>
+            <Link href="/niches">
+              <button className="text-gray-300 hover:text-neon-400 transition-colors">
+                Niches
+              </button>
+            </Link>
             <button
               onClick={() => scrollToSection("pricing")}
               className="text-gray-300 hover:text-neon-400 transition-colors"
@@ -109,12 +109,11 @@ export default function Header() {
             >
               Features
             </button>
-            <button
-              onClick={() => scrollToSection("niches")}
-              className="block text-gray-300 hover:text-neon-400 transition-colors"
-            >
-              Niches
-            </button>
+            <Link href="/niches">
+              <button className="block text-gray-300 hover:text-neon-400 transition-colors">
+                Niches
+              </button>
+            </Link>
             <button
               onClick={() => scrollToSection("pricing")}
               className="block text-gray-300 hover:text-neon-400 transition-colors"

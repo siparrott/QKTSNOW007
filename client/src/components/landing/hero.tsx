@@ -97,7 +97,7 @@ export default function Hero() {
                   className="border border-gray-600 hover:border-neon-400 text-gray-300 hover:text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-transparent"
                 >
                   <Rocket className="mr-2 h-4 w-4" />
-                  See All 50+ Niches
+                  See All 56 Niches
                 </Button>
               </Link>
               <Button

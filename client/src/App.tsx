@@ -64,6 +64,7 @@ import DentistCalculator from "@/pages/dentist-calculator";
 import ChildcareCalculator from "@/pages/childcare-calculator";
 import PlasticSurgeryCalculator from "@/pages/plastic-surgery-calculator";
 import ChildcareServicesCalculator from "@/pages/childcare-services-calculator";
+import PrivateMedicalCalculator from "@/pages/private-medical-calculator";
 import Features from "@/pages/features";
 import Login from "@/pages/login";
 import Register from "@/pages/register";
@@ -131,6 +132,7 @@ function Router() {
       <Route path="/calculator/childcare-practitioner" component={ChildcareCalculator} />
       <Route path="/calculator/plastic-surgery" component={PlasticSurgeryCalculator} />
       <Route path="/calculator/childcare-services" component={ChildcareServicesCalculator} />
+      <Route path="/calculator/private-medical" component={PrivateMedicalCalculator} />
       <Route path="/calculator/:slug" component={CalculatorPage} />
       <Route path="/niches" component={NichesPage} />
       <Route path="/features" component={Features} />

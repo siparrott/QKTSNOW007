@@ -65,15 +65,34 @@ export default function Hero() {
             </span>
           </motion.h1>
 
-          <motion.p
+          <motion.div
             className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            You're losing leads to silence, second guesses, and service pages that don't convert. 
-            But it's not your fault. Here's the real story...
-          </motion.p>
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+              You're Not Losing Leads. You're Losing Patience.
+            </h2>
+            <p className="mb-4">
+              Clients don't want to call. They won't wait for an email.<br />
+              They want a price—right now.
+            </p>
+            <p className="mb-4">
+              If your website can't quote instantly, they'll click away and never return.<br />
+              It's not your fault. Your service page just isn't built to convert.
+            </p>
+            <p className="mb-4 text-neon-300 font-semibold">
+              But now it can be.
+            </p>
+            <p className="mb-4">
+              QuoteKit calculators give you confirmed bookings, not question marks.<br />
+              No calls. No emails. No fuss.
+            </p>
+            <p className="text-gray-200 font-medium">
+              Just fast, accurate quotes and real sales—while you focus on your work.
+            </p>
+          </motion.div>
 
           <motion.div
             className="flex flex-col gap-6 justify-center items-center mb-12"

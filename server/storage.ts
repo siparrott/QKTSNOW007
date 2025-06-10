@@ -1,10 +1,36 @@
-import type { Calculator, User, UserCalculator, Lead, InsertUser, InsertCalculator, InsertUserCalculator, InsertLead } from "@shared/schema";
+import type { 
+  Calculator, 
+  User, 
+  UserCalculator, 
+  Lead, 
+  Session,
+  Subscription,
+  InsertUser, 
+  InsertCalculator, 
+  InsertUserCalculator, 
+  InsertLead,
+  InsertSession,
+  InsertSubscription
+} from "@shared/schema";
 
 export interface IStorage {
   // Users
   getUser(id: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUserSubscription(userId: string, data: Partial<User>): Promise<User>;
+  resetUserQuotes(userId: string): Promise<void>;
+  incrementUserQuotes(userId: string): Promise<void>;
+  
+  // Sessions
+  createSession(session: InsertSession): Promise<Session>;
+  getSessionByToken(token: string): Promise<Session | undefined>;
+  deleteSession(sessionId: string): Promise<void>;
+  
+  // Subscriptions
+  createSubscription(subscription: InsertSubscription): Promise<Subscription>;
+  getSubscriptionByUserId(userId: string): Promise<Subscription | undefined>;
+  updateSubscription(subscriptionId: string, data: Partial<Subscription>): Promise<Subscription>;
   
   // Calculators
   getCalculators(): Promise<Calculator[]>;
@@ -16,6 +42,7 @@ export interface IStorage {
   getUserCalculators(userId: string): Promise<UserCalculator[]>;
   getUserCalculatorByEmbedId(embedId: string): Promise<UserCalculator | undefined>;
   createUserCalculator(userCalculator: InsertUserCalculator): Promise<UserCalculator>;
+  updateUserCalculator(id: string, data: Partial<UserCalculator>): Promise<UserCalculator>;
   
   // Leads
   getLeadsByUserCalculator(userCalculatorId: string): Promise<Lead[]>;
@@ -27,6 +54,8 @@ export class MemStorage implements IStorage {
   private calculators: Map<number, Calculator>;
   private userCalculators: Map<string, UserCalculator>;
   private leads: Map<string, Lead>;
+  private sessions: Map<string, Session>;
+  private subscriptions: Map<string, Subscription>;
   private currentCalculatorId: number;
 
   constructor() {

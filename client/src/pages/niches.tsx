@@ -115,7 +115,7 @@ const allNiches = [
 
   // Automotive & Transportation (9 calculators)
   { id: 39, name: "Car Detailing", icon: Car, category: "Automotive & Transportation", available: true, slug: "car-detailing", description: "Professional car cleaning and detailing services" },
-  { id: 40, name: "Auto Mechanic", icon: Wrench, category: "Automotive & Transportation", description: "Car maintenance and mechanical repair services" },
+  { id: 40, name: "Auto Mechanic", icon: Wrench, category: "Automotive & Transportation", available: true, slug: "auto-mechanic", description: "Car maintenance and mechanical repair services" },
   { id: 41, name: "Mobile Car Wash", icon: Droplets, category: "Automotive & Transportation", description: "On-site car washing and cleaning services" },
   { id: 42, name: "Moving Services", icon: Truck, category: "Automotive & Transportation", description: "Residential and commercial moving services" },
   { id: 43, name: "Chauffeur/Limo Services", icon: Car, category: "Automotive & Transportation", description: "Luxury transportation and chauffeur services" },

@@ -573,6 +573,46 @@ export class MemStorage implements IStorage {
           }
         },
         createdAt: new Date(),
+      },
+      {
+        id: 14,
+        name: "Auto Mechanic Calculator",
+        slug: "auto-mechanic",
+        category: "automotive-transportation",
+        description: "Industrial clean auto repair pricing calculator with graphite grey and cobalt blue styling",
+        defaultConfig: {
+          vehicleTypes: {
+            "sedan": 0,
+            "suv": 30,
+            "truck": 40,
+            "van": 35,
+            "electric-hybrid": 50
+          },
+          servicesNeeded: {
+            "oil-change": 60,
+            "brake-replacement": 180,
+            "tire-service": 80,
+            "engine-diagnostics": 120,
+            "battery-replacement": 150,
+            "suspension-alignment": 200
+          },
+          urgencyLevels: {
+            "flexible": 0,
+            "within-3-days": 20,
+            "emergency": 50
+          },
+          serviceLocations: {
+            "at-shop": 0,
+            "mobile": 35
+          },
+          addOns: {
+            "pickup-dropoff": 25,
+            "premium-parts": 15,
+            "car-wash": 20,
+            "extended-warranty": 40
+          }
+        },
+        createdAt: new Date(),
       }
     ];
 

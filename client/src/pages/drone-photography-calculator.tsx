@@ -240,8 +240,8 @@ export default function DronePhotographyCalculator() {
       onClick={onClick}
       className={`relative p-4 rounded-lg border-2 cursor-pointer transition-all hover:shadow-md ${
         selected 
-          ? "border-cyan-500 bg-cyan-50 shadow-md" 
-          : "border-gray-200 hover:border-cyan-300"
+          ? "border-cyan-500 bg-cyan-950/50 shadow-md" 
+          : "border-gray-600 hover:border-cyan-500/50 bg-slate-700/30"
       }`}
     >
       {popular && (
@@ -251,12 +251,12 @@ export default function DronePhotographyCalculator() {
       )}
       <div className="text-center">
         {icon && <div className="text-2xl mb-2">{icon}</div>}
-        <div className="font-semibold text-gray-800">{option.label}</div>
+        <div className="font-semibold text-white">{option.label}</div>
         {option.price !== undefined && (
-          <div className="text-sm text-gray-600 mt-1">+€{option.price}</div>
+          <div className="text-sm text-cyan-300 mt-1">+€{option.price}</div>
         )}
         {option.multiplier !== undefined && option.multiplier > 1.0 && (
-          <div className="text-sm text-gray-600 mt-1">×{option.multiplier}</div>
+          <div className="text-sm text-cyan-300 mt-1">×{option.multiplier}</div>
         )}
       </div>
     </div>

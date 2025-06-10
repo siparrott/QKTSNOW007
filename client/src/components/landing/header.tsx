@@ -52,12 +52,11 @@ export default function Header() {
             >
               Home
             </button>
-            <button
-              onClick={() => scrollToSection("features")}
-              className="text-gray-300 hover:text-neon-400 transition-colors"
-            >
-              Features
-            </button>
+            <Link href="/features">
+              <button className="text-gray-300 hover:text-neon-400 transition-colors">
+                Features
+              </button>
+            </Link>
             <Link href="/niches">
               <button className="text-gray-300 hover:text-neon-400 transition-colors">
                 Niches
@@ -69,16 +68,20 @@ export default function Header() {
             >
               Pricing
             </button>
-            <button className="text-gray-300 hover:text-neon-400 transition-colors">
-              Login
-            </button>
+            <Link href="/login">
+              <button className="text-gray-300 hover:text-neon-400 transition-colors">
+                Login
+              </button>
+            </Link>
           </nav>
 
           {/* CTA Button */}
           <div className="flex items-center space-x-4">
-            <Button className="hidden lg:block bg-neon-500 hover:bg-neon-600 text-white px-6 py-2 rounded-lg font-medium transition-all duration-300 hover:shadow-glow">
-              Start Free Trial
-            </Button>
+            <Link href="/register">
+              <Button className="hidden lg:block bg-neon-500 hover:bg-neon-600 text-white px-6 py-2 rounded-lg font-medium transition-all duration-300 hover:shadow-glow">
+                Start Free Trial
+              </Button>
+            </Link>
 
             {/* Mobile Menu Button */}
             <Button
@@ -103,12 +106,11 @@ export default function Header() {
             >
               Home
             </button>
-            <button
-              onClick={() => scrollToSection("features")}
-              className="block text-gray-300 hover:text-neon-400 transition-colors"
-            >
-              Features
-            </button>
+            <Link href="/features">
+              <button className="block text-gray-300 hover:text-neon-400 transition-colors">
+                Features
+              </button>
+            </Link>
             <Link href="/niches">
               <button className="block text-gray-300 hover:text-neon-400 transition-colors">
                 Niches
@@ -120,12 +122,16 @@ export default function Header() {
             >
               Pricing
             </button>
-            <button className="block text-gray-300 hover:text-neon-400 transition-colors">
-              Login
-            </button>
-            <Button className="w-full bg-neon-500 hover:bg-neon-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300">
-              Start Free Trial
-            </Button>
+            <Link href="/login">
+              <button className="block text-gray-300 hover:text-neon-400 transition-colors">
+                Login
+              </button>
+            </Link>
+            <Link href="/register">
+              <Button className="w-full bg-neon-500 hover:bg-neon-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300">
+                Start Free Trial
+              </Button>
+            </Link>
           </div>
         </div>
       )}

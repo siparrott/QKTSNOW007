@@ -662,7 +662,12 @@ export default function ElectricianCalculator() {
                     
                     <Button 
                       className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3"
-                      onClick={() => window.open(`mailto:info@electrician.com?subject=Electrical Job Booking&body=I'm ready to schedule my electrical job! My quote is €${pricing.total}`, "_blank")}
+                      onClick={() => {
+                        const subject = "Electrical Job Booking";
+                        const body = `I'm ready to schedule my electrical job! My quote is €${pricing.total.toFixed(2)}`;
+                        const mailtoUrl = `mailto:info@electrician.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                        window.open(mailtoUrl, "_blank");
+                      }}
                     >
                       ⚡ Book My Job
                     </Button>

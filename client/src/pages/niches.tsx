@@ -70,7 +70,7 @@ const allNiches = [
   { id: 7, name: "Food Photography", icon: Camera, category: "Photography & Videography", available: true, slug: "food-photography", description: "Restaurant and culinary photography services" },
   { id: 8, name: "Commercial Product Photography", icon: Camera, category: "Photography & Videography", available: true, slug: "commercial-photography", description: "E-commerce and catalog product photography" },
   { id: 9, name: "Portrait Studios", icon: Camera, category: "Photography & Videography", available: true, slug: "portrait-photography", description: "Family portraits, headshots, and personal sessions" },
-  { id: 10, name: "Lifestyle Influencer Videography", icon: Video, category: "Photography & Videography", description: "Content creation for social media influencers" },
+  { id: 10, name: "Lifestyle Influencer Videography", icon: Video, category: "Photography & Videography", available: true, slug: "lifestyle-influencer", description: "Content creation for social media influencers" },
 
   // Home Services (10 calculators)
   { id: 11, name: "Home Renovation", icon: Hammer, category: "Home Services", available: true, slug: "home-renovation", description: "Kitchen, bathroom, and full home renovations with AI pricing" },

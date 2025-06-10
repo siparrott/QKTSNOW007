@@ -309,6 +309,42 @@ export class MemStorage implements IStorage {
         }
       },
       {
+        name: "Lifestyle Influencer Calculator",
+        slug: "lifestyle-influencer",
+        category: "digital-marketing",
+        description: "Professional influencer collaboration rate calculator with modern styling",
+        defaultConfig: {
+          basePost: 250,
+          deliverables: {
+            "1-post": 0,
+            "post-stories": 150,
+            "reel": 100,
+            "full-campaign": 400,
+            "unboxing": 200
+          },
+          usageRights: {
+            "organic": 0,
+            "paid-3m": 150,
+            "paid-6m": 250,
+            "paid-12m": 300,
+            "whitelisting": 200
+          },
+          exclusivity: {
+            "none": 0,
+            "30-days": 100,
+            "3-months": 200,
+            "6-months": 400
+          },
+          addOns: {
+            "photography": 150,
+            "blog-writeup": 150,
+            "link-in-bio": 75,
+            "giveaway": 75,
+            "bts-content": 100
+          }
+        }
+      },
+      {
         name: "Wedding Photography Quote Calculator",
         slug: "wedding-photography",
         category: "photography",

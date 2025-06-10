@@ -231,6 +231,48 @@ export class MemStorage implements IStorage {
         }
       },
       {
+        name: "Commercial Photography Calculator",
+        slug: "commercial-photography",
+        category: "photography",
+        description: "Professional commercial photography quote calculator with corporate styling",
+        defaultConfig: {
+          baseStudio: 350,
+          imageCounts: {
+            "1-5": 0,
+            "6-15": 300,
+            "16-30": 750,
+            "30+": 1200
+          },
+          durations: {
+            "1-hour": 0,
+            "half-day": 250,
+            "full-day": 600,
+            "multi-day": 1200
+          },
+          locations: {
+            "studio": 0,
+            "on-location": 100,
+            "hybrid": 200
+          },
+          addOns: {
+            "creative-director": 200,
+            "stylist": 150,
+            "basic-retouching": 50,
+            "advanced-retouching": 100,
+            "casting": 300,
+            "set-design": 180,
+            "local-rights": 100,
+            "national-rights": 250,
+            "global-rights": 500
+          },
+          delivery: {
+            "standard": 0,
+            "rush": 90,
+            "same-day": 150
+          }
+        }
+      },
+      {
         name: "Wedding Photography Quote Calculator",
         slug: "wedding-photography",
         category: "photography",

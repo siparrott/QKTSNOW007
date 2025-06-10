@@ -68,7 +68,7 @@ const allNiches = [
   { id: 5, name: "Event Videography", icon: Video, category: "Photography & Videography", available: true, slug: "event-videography", description: "Event video production and live streaming" },
   { id: 6, name: "Real Estate Photography", icon: Camera, category: "Photography & Videography", available: true, slug: "real-estate-photography", description: "Property photos for listings and marketing" },
   { id: 7, name: "Food Photography", icon: Camera, category: "Photography & Videography", available: true, slug: "food-photography", description: "Restaurant and culinary photography services" },
-  { id: 8, name: "Commercial Product Photography", icon: Camera, category: "Photography & Videography", description: "E-commerce and catalog product photography" },
+  { id: 8, name: "Commercial Product Photography", icon: Camera, category: "Photography & Videography", available: true, slug: "commercial-photography", description: "E-commerce and catalog product photography" },
   { id: 9, name: "Portrait Studios", icon: Camera, category: "Photography & Videography", description: "Family portraits, headshots, and personal sessions" },
   { id: 10, name: "Lifestyle Influencer Videography", icon: Video, category: "Photography & Videography", description: "Content creation for social media influencers" },
 

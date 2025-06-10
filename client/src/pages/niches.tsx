@@ -167,7 +167,7 @@ export default function NichesPage() {
           className="text-center mb-12"
         >
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-            💡 Explore 58 Lead-Generating Calculators
+            💡 Explore 58 <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-green-400">Lead-Generating Calculators</span>
           </h1>
           <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
             One for every service niche. All powered by AI. All ready to embed.<br />

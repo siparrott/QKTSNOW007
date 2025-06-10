@@ -565,6 +565,38 @@ export class MemStorage implements IStorage {
         }
       },
       {
+        name: "Hair Stylist Calculator",
+        slug: "hair-stylist",
+        category: "beauty-wellness",
+        description: "Professional hair styling pricing calculator with elegant blush pink styling",
+        defaultConfig: {
+          serviceTypes: {
+            "blow-dry": 40,
+            "haircut-style": 60,
+            "bridal-updo": 150,
+            "coloring": 120,
+            "keratin": 200
+          },
+          hairLengths: {
+            "short": 0,
+            "medium": 15,
+            "long": 25,
+            "extra-long": 40
+          },
+          locations: {
+            "salon": 0,
+            "mobile": 50
+          },
+          addOns: {
+            "olaplex": 25,
+            "extensions": 40,
+            "trial": 50,
+            "extra-time": 30,
+            "travel": 75
+          }
+        }
+      },
+      {
         name: "Wedding Photography Quote Calculator",
         slug: "wedding-photography",
         category: "photography",

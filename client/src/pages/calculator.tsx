@@ -1131,16 +1131,24 @@ export default function CalculatorPage() {
 
             <Button 
               onClick={calculateQuote}
-              className="w-full mt-6 bg-neon-500 hover:bg-neon-600 text-white"
+              className={`w-full mt-6 text-white ${
+                calculator.slug === "boudoir-photography" 
+                  ? "bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 font-serif" 
+                  : "bg-neon-500 hover:bg-neon-600"
+              }`}
             >
               <DollarSign className="mr-2 h-4 w-4" />
-              Calculate Quote
+              {calculator.slug === "boudoir-photography" ? "Calculate Your Boudoir Experience" : "Calculate Quote"}
             </Button>
           </Card>
 
           {/* Quote Results */}
           <Card className="bg-midnight-800 border-midnight-700 p-6">
-            <h2 className="text-xl font-bold mb-6">Your Quote</h2>
+            <h2 className={`text-xl font-bold mb-6 ${
+              calculator.slug === "boudoir-photography" ? "font-serif text-rose-300" : ""
+            }`}>
+              {calculator.slug === "boudoir-photography" ? "Your Boudoir Experience" : "Your Quote"}
+            </h2>
             
             {quote ? (
               <motion.div
@@ -1148,9 +1156,26 @@ export default function CalculatorPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-6"
               >
-                <div className="text-center p-6 bg-gradient-to-br from-neon-500/20 to-neon-600/20 rounded-lg border border-neon-500/30">
-                  <div className="text-sm text-gray-300 mb-2">Estimated Total</div>
-                  <div className="text-4xl font-bold text-neon-400">${quote.adjustedPrice.toLocaleString()}</div>
+                <div className={`text-center p-6 rounded-lg border ${
+                  calculator.slug === "boudoir-photography" 
+                    ? "bg-gradient-to-br from-rose-500/20 to-pink-600/20 border-rose-500/30" 
+                    : "bg-gradient-to-br from-neon-500/20 to-neon-600/20 border-neon-500/30"
+                }`}>
+                  <div className="text-sm text-gray-300 mb-2">
+                    {calculator.slug === "boudoir-photography" ? "Investment Total" : "Estimated Total"}
+                  </div>
+                  <div className={`text-4xl font-bold ${
+                    calculator.slug === "boudoir-photography" 
+                      ? "text-rose-400 font-serif" 
+                      : "text-neon-400"
+                  }`}>
+                    €{quote.adjustedPrice.toLocaleString()}
+                  </div>
+                  {calculator.slug === "boudoir-photography" && (
+                    <div className="text-xs text-rose-300 mt-2 font-serif italic">
+                      This price is locked for 48 hours
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-3">
@@ -1163,12 +1188,30 @@ export default function CalculatorPage() {
                 </div>
 
                 {!showLeadForm ? (
-                  <Button 
-                    onClick={handleGetQuote}
-                    className="w-full bg-neon-500 hover:bg-neon-600 text-white"
-                  >
-                    Get Detailed Quote
-                  </Button>
+                  <div className="space-y-3">
+                    <Button 
+                      onClick={handleGetQuote}
+                      className={`w-full text-white ${
+                        calculator.slug === "boudoir-photography" 
+                          ? "bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 font-serif" 
+                          : "bg-neon-500 hover:bg-neon-600"
+                      }`}
+                    >
+                      {calculator.slug === "boudoir-photography" ? "Save My Quote & Contact Details" : "Get Detailed Quote"}
+                    </Button>
+                    {calculator.slug === "boudoir-photography" && (
+                      <Button 
+                        variant="outline"
+                        className="w-full border-rose-500 text-rose-400 hover:bg-rose-500/10 font-serif"
+                        onClick={() => {
+                          // This would integrate with booking system in production
+                          window.open("mailto:studio@example.com?subject=Boudoir Session Booking&body=I'm interested in booking a boudoir session. My quote is €" + quote.adjustedPrice, "_blank");
+                        }}
+                      >
+                        💌 Book My Session Now
+                      </Button>
+                    )}
+                  </div>
                 ) : (
                   <div className="space-y-4">
                     <h3 className="font-semibold text-gray-200">Get Your Detailed Quote:</h3>

@@ -62,7 +62,7 @@ import { Link } from "wouter";
 const allNiches = [
   // Photography & Videography (10 calculators)
   { id: 1, name: "Wedding Photography", icon: Camera, category: "Photography & Videography", available: true, description: "Wedding packages with engagement and reception coverage" },
-  { id: 2, name: "Boudoir Photography", icon: Camera, category: "Photography & Videography", description: "Intimate and artistic boudoir photography sessions" },
+  { id: 2, name: "Boudoir Photography", icon: Camera, category: "Photography & Videography", available: true, description: "Intimate and artistic boudoir photography sessions" },
   { id: 3, name: "Corporate Headshots", icon: Camera, category: "Photography & Videography", description: "Professional business portraits and headshots" },
   { id: 4, name: "Drone/Aerial Photography", icon: Camera, category: "Photography & Videography", description: "Aerial photography and videography services" },
   { id: 5, name: "Event Videography", icon: Video, category: "Photography & Videography", description: "Event video production and live streaming" },

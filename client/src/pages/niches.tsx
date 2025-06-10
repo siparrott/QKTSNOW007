@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { QuoteKitHeader } from "@/components/calculator-header";
 import { 
   Search, 
   Camera, 
@@ -154,7 +155,8 @@ export default function NichesPage() {
   const totalCount = allNiches.length;
 
   return (
-    <div className="min-h-screen bg-black pt-20">
+    <div className="min-h-screen bg-black">
+      <QuoteKitHeader />
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <motion.div

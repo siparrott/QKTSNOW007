@@ -297,7 +297,8 @@ export default function HomeRenovationCalculator() {
   };
 
   return (
-    <div className="min-h-screen bg-midnight-900 text-white">
+    <div className="min-h-screen&">
+      <QuoteKitHeader />
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center mb-8">

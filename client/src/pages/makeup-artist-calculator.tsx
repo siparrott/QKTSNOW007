@@ -263,7 +263,8 @@ export default function MakeupArtistCalculator() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-peach-25 to-amber-50 py-8">
+    <div className="min-h-screen&">
+      <QuoteKitHeader />
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">

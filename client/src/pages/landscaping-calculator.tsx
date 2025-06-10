@@ -283,7 +283,8 @@ export default function LandscapingCalculator() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-25 to-lime-50 py-8">
+    <div className="min-h-screen&">
+      <QuoteKitHeader />
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">

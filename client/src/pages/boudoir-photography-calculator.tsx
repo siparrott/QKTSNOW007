@@ -331,7 +331,8 @@ This quote is valid for 48 hours.
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-purple-50">
+    <div className="min-h-screen&">
+      <QuoteKitHeader />
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-pink-100">
         <div className="container mx-auto px-4 py-4">

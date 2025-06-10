@@ -297,7 +297,8 @@ export default function FoodPhotographyCalculator() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-25 to-orange-50 py-8">
+    <div className="min-h-screen&">
+      <QuoteKitHeader />
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">

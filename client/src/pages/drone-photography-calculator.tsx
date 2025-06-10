@@ -271,7 +271,8 @@ export default function DronePhotographyCalculator() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-cyan-900 to-slate-900 py-8">
+    <div className="min-h-screen&">
+      <QuoteKitHeader />
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">

@@ -53,6 +53,7 @@ import MarketingConsultantCalculator from "@/pages/marketing-consultant-calculat
 import SEOAgencyCalculator from "@/pages/seo-agency-calculator";
 import VideoEditorCalculator from "@/pages/video-editor-calculator";
 import CopywriterCalculator from "@/pages/copywriter-calculator";
+import VirtualAssistantCalculator from "@/pages/virtual-assistant-calculator";
 import Features from "@/pages/features";
 import Login from "@/pages/login";
 import Register from "@/pages/register";

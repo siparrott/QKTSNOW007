@@ -278,6 +278,46 @@ export class MemStorage implements IStorage {
           weekendSurcharge: 75
         },
         createdAt: new Date(),
+      },
+      {
+        id: 7,
+        name: "Maternity Photography Calculator",
+        slug: "maternity-photography",
+        category: "photography",
+        description: "Elegant maternity photography pricing calculator with warm neutral styling",
+        defaultConfig: {
+          sessionTypes: {
+            "classic-studio": 280,
+            "outdoor-lifestyle": 355,
+            "artistic": 355,
+            "combo": 450
+          },
+          gestationWeeks: {
+            "25-29": 0,
+            "30-34": 0,
+            "35-38": 25
+          },
+          whoIncluded: {
+            "mom-only": 0,
+            "mom-partner": 40,
+            "mom-family": 80
+          },
+          locationOptions: {
+            "in-studio": 0,
+            "outdoor": 50,
+            "in-home": 75
+          },
+          addOns: {
+            "makeup": 80,
+            "dress-rental": 60,
+            "hair-styling": 60,
+            "partner-portraits": 40,
+            "retouched-set": 65,
+            "album": 140,
+            "wall-art": 120
+          }
+        },
+        createdAt: new Date(),
       }
     ];
 

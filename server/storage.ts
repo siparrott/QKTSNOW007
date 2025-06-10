@@ -56,6 +56,36 @@ export class MemStorage implements IStorage {
   private seedCalculators() {
     const defaultCalculators: InsertCalculator[] = [
       {
+        name: "Electrician Services Calculator",
+        slug: "electrician",
+        category: "home-services",
+        description: "Professional electrical services quote calculator with AI input",
+        defaultConfig: {
+          baseCallOut: 80,
+          roomRate: 60,
+          serviceTypes: {
+            "new-installation": 50,
+            "rewiring": 150,
+            "fault-finding": 40,
+            "fuse-box-upgrade": 120,
+            "lighting-installation": 80,
+            "ev-charger": 200,
+            "smart-home": 225
+          },
+          urgencyRates: {
+            "standard": 0,
+            "next-day": 50,
+            "emergency": 100
+          },
+          addOns: {
+            "certificate": 40,
+            "cleanup": 50,
+            "materials": 100,
+            "extra-tech": 70
+          }
+        }
+      },
+      {
         name: "Wedding Photography Quote Calculator",
         slug: "wedding-photography",
         category: "photography",

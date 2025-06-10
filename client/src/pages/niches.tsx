@@ -167,11 +167,35 @@ export default function NichesPage() {
           className="text-center mb-12"
         >
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-            All <span className="text-neon-400">{totalCount} Calculators</span>
+            💡 Explore 58 Lead-Generating Calculators
           </h1>
           <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-            Every service business niche covered with AI-powered quote calculators
+            One for every service niche. All powered by AI. All ready to embed.<br />
+            Instant quotes. More bookings. Less back-and-forth.<br />
+            Browse live demos, pick your niche, and launch in minutes.
           </p>
+          
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center text-gray-300 mb-8">
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 bg-green-400 rounded-full flex items-center justify-center">
+                <span className="text-black text-xs font-bold">✓</span>
+              </div>
+              <span>58 Niches Covered</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 bg-green-400 rounded-full flex items-center justify-center">
+                <span className="text-black text-xs font-bold">✓</span>
+              </div>
+              <span>Fully Customizable</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 bg-green-400 rounded-full flex items-center justify-center">
+                <span className="text-black text-xs font-bold">✓</span>
+              </div>
+              <span>Add to Any Website in Seconds</span>
+            </div>
+          </div>
+
           <div className="flex items-center justify-center gap-4 text-sm flex-wrap">
             <Badge variant="secondary" className="bg-neon-500/20 text-neon-400">
               {availableCount} Live Demos Available

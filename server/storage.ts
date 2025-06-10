@@ -1082,6 +1082,43 @@ export class MemStorage implements IStorage {
           }
         },
         createdAt: new Date(),
+      },
+      {
+        id: 26,
+        name: "Childcare Services Calculator",
+        slug: "childcare-services",
+        category: "healthcare-medical",
+        description: "Warm childcare services pricing calculator with playful pastel design for daycare centers and nurseries",
+        defaultConfig: {
+          ageGroups: {
+            "infant": 950,
+            "toddler": 750,
+            "preschool": 650,
+            "school-age": 480
+          },
+          schedules: {
+            "full-time": 1.0,
+            "part-time": 0.68,
+            "after-school": 0.45,
+            "holiday-care": 0.3
+          },
+          additionalServices: {
+            "meals": 80,
+            "transport": 120,
+            "early-late": 60,
+            "learning-support": 150
+          },
+          discounts: {
+            sibling: 0.15,
+            promo: 0.10
+          },
+          promoCodes: {
+            "FAMILY10": 0.10,
+            "WELCOME15": 0.15,
+            "NEWCHILD20": 0.20
+          }
+        },
+        createdAt: new Date(),
       }
     ];
 

@@ -8,6 +8,7 @@ import { processCarWashRequest, processChauffeurRequest, processAirportTransferR
 import { processDentistRequest } from "./dental-ai";
 import { processChildcareRequest } from "./childcare-ai";
 import { processPlasticSurgeryRequest } from "./plastic-surgery-ai";
+import { processChildcareServicesRequest } from "./childcare-services-ai";
 import { 
   insertUserSchema, 
   insertLeadSchema,
@@ -865,6 +866,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
         additionalTreatments: aiResult.additionalTreatments || [],
         hospitalStay: aiResult.hospitalStay || "none",
         consultationType: aiResult.consultationType || "in-person"
+      };
+      res.json(result);
+    } catch (error) {
+      console.error("AI processing error:", error);
+      res.status(500).json({ error: "Failed to process AI request" });
+    }
+  });
+
+  // AI processing for childcare services calculator
+  app.post("/api/ai/process-childcare-services", async (req, res) => {
+    try {
+      const { input } = req.body;
+      if (!input || typeof input !== "string") {
+        return res.status(400).json({ error: "Input text is required" });
+      }
+      
+      // Process with AI function
+      const aiResult = await processChildcareServicesRequest(input);
+      
+      // Return structured response for childcare services
+      const result = {
+        ageGroup: aiResult.ageGroup || "toddler",
+        schedule: aiResult.schedule || "full-time",
+        duration: aiResult.duration || "monthly",
+        additionalServices: aiResult.additionalServices || [],
+        numberOfChildren: aiResult.numberOfChildren || "1"
       };
       res.json(result);
     } catch (error) {

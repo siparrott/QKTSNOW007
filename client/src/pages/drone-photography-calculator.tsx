@@ -334,9 +334,8 @@ export default function DronePhotographyCalculator() {
                       />
                       <Button 
                         onClick={parseNaturalLanguage}
-                        variant="outline" 
                         size="sm" 
-                        className="border-cyan-400 text-white hover:bg-cyan-950/50 font-body"
+                        className="bg-cyan-500 hover:bg-cyan-600 text-white border-0 font-body"
                         disabled={!formData.naturalLanguageInput.trim()}
                       >
                         <Sparkles className="h-4 w-4 mr-2" />

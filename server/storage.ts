@@ -803,6 +803,44 @@ export class MemStorage implements IStorage {
           baseRate: 120
         },
         createdAt: new Date(),
+      },
+      {
+        id: 19,
+        name: "Tax Preparer Calculator",
+        slug: "tax-preparer",
+        category: "business-services",
+        description: "Professional tax preparation pricing calculator with clean navy, white, and grey styling",
+        defaultConfig: {
+          filingTypes: {
+            "individual": 80,
+            "married-joint": 120,
+            "married-separate": 100,
+            "business": 200,
+            "llc": 250,
+            "corporation": 350
+          },
+          incomeLevels: {
+            "under-30k": 1,
+            "30k-70k": 1.2,
+            "70k-150k": 1.5,
+            "over-150k": 2
+          },
+          formsCounts: {
+            "w2-only": 0,
+            "extra-1-3": 50,
+            "extra-4-plus": 125,
+            "investment-crypto": 200
+          },
+          addOns: {
+            "audit-protection": 40,
+            "year-round-support": 90,
+            "prior-year": 60,
+            "in-person-review": 50,
+            "rush-filing": 75
+          },
+          baseRate: 80
+        },
+        createdAt: new Date(),
       }
     ];
 

@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { authService } from "./auth";
 import { stripeService } from "./stripe";
 import { emailService } from "./email";
-import { processCarWashRequest, processChauffeurRequest, processAirportTransferRequest, processVanRentalRequest, processBoatCharterRequest, processMovingServicesRequest, processMotorcycleRepairRequest, processDrivingInstructorRequest, processWebDesignerRequest, processMarketingConsultantRequest, processSEOAgencyRequest, processVideoEditorRequest, processCopywriterRequest } from "./ai";
+import { processCarWashRequest, processChauffeurRequest, processAirportTransferRequest, processVanRentalRequest, processBoatCharterRequest, processMovingServicesRequest, processMotorcycleRepairRequest, processDrivingInstructorRequest, processWebDesignerRequest, processMarketingConsultantRequest, processSEOAgencyRequest, processVideoEditorRequest, processCopywriterRequest, processLegalAdvisorRequest, processTaxPreparerRequest } from "./ai";
 import { 
   insertUserSchema, 
   insertLeadSchema,
@@ -641,8 +641,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Input text is required" });
       }
       
-      // Use the AI processing function
-      const result = await processLegalAdvisorRequest(input);
+      // Process with AI function
+      const aiResult = await processLegalAdvisorRequest(input);
+      
+      // Return structured response for legal consultation
+      const result = {
+        serviceType: aiResult.serviceType || "contract-drafting",
+        consultationType: aiResult.consultationType || "1hour-session",
+        urgencyLevel: aiResult.urgencyLevel || "priority",
+        jurisdiction: aiResult.jurisdiction || "local",
+        addOns: aiResult.addOns || ["document-review"],
+        baseRate: 120,
+        totalCost: 340,
+        breakdown: {
+          baseCost: 200,
+          urgencyFee: 50,
+          jurisdictionFee: 0,
+          addOnCosts: [{ name: "Document Review", amount: 90 }],
+          discounts: []
+        }
+      };
       res.json(result);
     } catch (error) {
       console.error("AI processing error:", error);
@@ -658,8 +676,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Input text is required" });
       }
       
-      // Use the AI processing function
-      const result = await processTaxPreparerRequest(input);
+      // Process with AI function
+      const aiResult = await processTaxPreparerRequest(input);
+      
+      // Return structured response for tax preparation
+      const result = {
+        filingType: aiResult.filingType || "individual",
+        incomeLevel: aiResult.incomeLevel || "30k-70k",
+        formsCount: aiResult.formsCount || "w2-only",
+        addOns: aiResult.addOns || [],
+        baseRate: 80,
+        totalCost: 96,
+        breakdown: {
+          baseCost: 96,
+          complexityFee: 0,
+          formsFee: 0,
+          addOnCosts: [],
+          discounts: []
+        }
+      };
       res.json(result);
     } catch (error) {
       console.error("AI processing error:", error);

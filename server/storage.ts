@@ -484,6 +484,54 @@ export class MemStorage implements IStorage {
           }
         },
         createdAt: new Date(),
+      },
+      {
+        id: 12,
+        name: "Dog Trainer Calculator",
+        slug: "dog-trainer",
+        category: "animals-pets",
+        description: "Friendly professional dog training pricing calculator with light blue and sage green styling",
+        defaultConfig: {
+          dogAges: {
+            "puppy": 0,
+            "adult": 0,
+            "senior": 5
+          },
+          dogSizes: {
+            "small": 0,
+            "medium": 5,
+            "large": 10,
+            "xl": 15
+          },
+          trainingTypes: {
+            "basic-obedience": 0,
+            "puppy-socialization": 0,
+            "behavioral-correction": 30,
+            "leash-training": 10,
+            "protection-k9": 50
+          },
+          sessionFormats: {
+            "one-on-one": 0,
+            "group-class": -15,
+            "at-home": 20,
+            "trainer-location": 5,
+            "online": -10
+          },
+          sessionFrequencies: {
+            "one-off": 1,
+            "weekly": 1,
+            "twice-weekly": 1.9,
+            "full-program": 5.5
+          },
+          addOns: {
+            "training-plan": 15,
+            "progress-report": 12,
+            "leash-collar-package": 25,
+            "emergency-weekend": 35,
+            "travel-to-client": 20
+          }
+        },
+        createdAt: new Date(),
       }
     ];
 

@@ -111,7 +111,7 @@ const allNiches = [
   { id: 37, name: "Childcare Clinics", icon: Heart, category: "Healthcare & Medical", description: "Pediatric care and child wellness clinics" },
 
   // Pet Services (1 calculator)
-  { id: 38, name: "Dog Trainer", icon: Heart, category: "Pet Services", description: "Dog training and behavioral modification services" },
+  { id: 38, name: "Dog Trainer", icon: Heart, category: "Pet Services", available: true, slug: "dog-trainer", description: "Dog training and behavioral modification services" },
 
   // Automotive & Transportation (9 calculators)
   { id: 39, name: "Car Detailing", icon: Car, category: "Automotive & Transportation", description: "Professional car cleaning and detailing services" },

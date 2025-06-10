@@ -97,10 +97,17 @@ const pricingPlans = [
 
 export default function Pricing() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-midnight-900 via-midnight-800 to-gray-900">
+    <div className="min-h-screen bg-black">
       <QuoteKitHeader />
       
       <div className="relative overflow-hidden">
+        {/* Background Effects */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-neon-500/10 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+        </div>
+
         {/* Hero Section */}
         <section className="py-20 lg:py-32 relative">
           <div className="container mx-auto px-4 lg:px-8">
@@ -139,7 +146,7 @@ export default function Pricing() {
                   <Card className={`p-8 h-full relative ${
                     plan.popular 
                       ? 'bg-gradient-to-b from-neon-500/10 to-blue-500/10 border-neon-500/50 shadow-2xl shadow-neon-500/20' 
-                      : 'bg-midnight-800/50 border-gray-700'
+                      : 'bg-black/50 border-gray-800 backdrop-blur-sm'
                   }`}>
                     {plan.popular && (
                       <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
@@ -209,7 +216,7 @@ export default function Pricing() {
         </section>
 
         {/* FAQ Section */}
-        <section className="py-20 bg-midnight-800/50">
+        <section className="py-20 bg-black/30 backdrop-blur-sm relative">
           <div className="container mx-auto px-4 lg:px-8">
             <motion.div
               className="text-center mb-16"
@@ -261,7 +268,7 @@ export default function Pricing() {
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: index * 0.1 }}
                   >
-                    <Card className="p-6 bg-midnight-700/50 border-gray-700">
+                    <Card className="p-6 bg-black/50 border-gray-800 backdrop-blur-sm">
                       <h3 className="text-xl font-semibold text-white mb-3">
                         {faq.question}
                       </h3>

@@ -58,15 +58,17 @@ export default function Pricing() {
           viewport={{ once: true }}
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
-            🚀 The <span className="text-neon-400">Godfather Offer</span>
+            🔐 <span className="text-neon-400">Limited Launch Deal</span>
           </h2>
-          <p className="text-xl text-gray-300 mb-4">Make Them an Offer They Can't Refuse</p>
           <div className="bg-gradient-to-r from-neon-500/20 to-neon-600/20 border border-neon-500/30 rounded-lg p-6 max-w-2xl mx-auto mb-8">
-            <div className="text-3xl font-bold text-neon-400 mb-2">💣 Launch Deal: €5/month</div>
-            <div className="text-gray-300">Paid Annually • Cancel Anytime</div>
+            <div className="text-3xl font-bold text-neon-400 mb-2">All 50+ Calculators • €5/month</div>
+            <div className="text-gray-300">(renews annually, cancel anytime)</div>
           </div>
           <p className="text-lg text-gray-300 max-w-3xl mx-auto">
-            You're not just buying software. You're unlocking an entire arsenal of quote-to-close power moves for 50+ service-based businesses.
+            🤝 You're Not Selling Software.<br/>
+            You're giving them instant certainty.<br/>
+            You're giving yourself time back.<br/>
+            You're giving your business a 300% conversion edge.
           </p>
         </motion.div>
 

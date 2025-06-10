@@ -1,28 +1,7 @@
 import { motion } from "framer-motion";
-import { Search, Code, TrendingUp } from "lucide-react";
+import { Frown, Zap, Smile, Clock, CheckCircle, TrendingUp, Search, Code } from "lucide-react";
 
 export default function HowItWorks() {
-  const steps = [
-    {
-      number: 1,
-      icon: Search,
-      title: "Choose a calculator",
-      description: "Select from 50+ niche templates (photography, trades, beauty, wellness & more)",
-    },
-    {
-      number: 2,
-      icon: Code,
-      title: "Customize with your logo & prices",
-      description: "Adjust pricing, colors, style – no coding needed",
-    },
-    {
-      number: 3,
-      icon: TrendingUp,
-      title: "Watch quotes + leads roll in",
-      description: "Get email leads, PDF quotes, and bookings while you sleep",
-    },
-  ];
-
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -41,6 +20,7 @@ export default function HowItWorks() {
   return (
     <section id="features" className="py-20 lg:py-32 bg-midnight-800/50">
       <div className="container mx-auto px-4 lg:px-8">
+        {/* Before Section */}
         <motion.div
           className="text-center mb-16"
           initial={{ opacity: 0, y: 30 }}
@@ -48,35 +28,107 @@ export default function HowItWorks() {
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-3xl md:text-5xl font-bold mb-4">
-            💡 How It <span className="text-neon-400">Works</span>
+          <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">
+            😫 Before: The Back-and-Forth Burnout
           </h2>
-          <div className="bg-midnight-700/50 rounded-lg p-6 max-w-4xl mx-auto">
-            <div className="grid md:grid-cols-3 gap-8 text-left">
-              <div>
-                <div className="text-neon-400 font-bold mb-2">🧠 Psychology:</div>
-                <div className="text-gray-300">Clients want instant answers, not contact forms.</div>
-              </div>
-              <div>
-                <div className="text-neon-400 font-bold mb-2">⚡ Speed:</div>
-                <div className="text-gray-300">AI gives quotes in seconds, not hours.</div>
-              </div>
-              <div>
-                <div className="text-neon-400 font-bold mb-2">🎯 Conversion:</div>
-                <div className="text-gray-300">On-page quotes = 3x more bookings.</div>
+          <p className="text-xl text-gray-300 mb-8">You've been here before...</p>
+          
+          <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-8 max-w-4xl mx-auto">
+            <div className="flex items-start gap-4">
+              <Frown className="h-8 w-8 text-red-400 mt-1 flex-shrink-0" />
+              <div className="text-left">
+                <h3 className="text-2xl font-semibold text-white mb-4">The Old Way (Painful)</h3>
+                <div className="space-y-3 text-gray-300">
+                  <p>• A potential client sends a vague message</p>
+                  <p>• You write a custom quote</p>
+                  <p>• ...Then wait</p>
+                  <p>• Crickets. No reply. No booking. Just another wasted hour.</p>
+                  <p className="text-red-400 font-medium">Meanwhile, your competitor sent a sleek, automated quote in 3 seconds flat. They won the client. You lost time.</p>
+                </div>
               </div>
             </div>
           </div>
         </motion.div>
 
+        {/* After Section */}
         <motion.div
-          className="grid md:grid-cols-3 gap-8 lg:gap-12"
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          viewport={{ once: true }}
+        >
+          <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">
+            🚀 After: From Ghosted to Booked
+          </h2>
+          <p className="text-xl text-gray-300 mb-8">With QuoteKit.ai, your site delivers exactly what they want</p>
+          
+          <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-8 max-w-4xl mx-auto">
+            <div className="flex items-start gap-4">
+              <Smile className="h-8 w-8 text-green-400 mt-1 flex-shrink-0" />
+              <div className="text-left">
+                <h3 className="text-2xl font-semibold text-white mb-4">The New Way (Effortless)</h3>
+                <div className="grid md:grid-cols-3 gap-6 text-gray-300 mb-4">
+                  <div className="flex items-center gap-3">
+                    <Zap className="h-6 w-6 text-neon-400" />
+                    <span>Instant pricing</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="h-6 w-6 text-neon-400" />
+                    <span>Beautiful quote PDFs</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Clock className="h-6 w-6 text-neon-400" />
+                    <span>Email lead capture</span>
+                  </div>
+                </div>
+                <p className="text-green-400 font-medium">All in less time than it takes to answer a DM. You become the pro they trust—before you even reply.</p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* The Fix Section */}
+        <motion.div
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          viewport={{ once: true }}
+        >
+          <h2 className="text-3xl md:text-5xl font-bold mb-8 text-white">
+            🛠️ The Fix: Our AI-Powered Quote Engine
+          </h2>
+        </motion.div>
+
+        {/* Steps */}
+        <motion.div
+          className="grid md:grid-cols-3 gap-8 lg:gap-12 mb-16"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
         >
-          {steps.map((step) => (
+          {[
+            {
+              number: 1,
+              icon: Search,
+              title: "Choose from 50+ calculators",
+              description: "photographers, trades, events & more"
+            },
+            {
+              number: 2,
+              icon: Code,
+              title: "Customize your style, logo & pricing",
+              description: "no code needed"
+            },
+            {
+              number: 3,
+              icon: TrendingUp,
+              title: "Embed & watch quotes + leads roll in",
+              description: "24/7"
+            }
+          ].map((step) => (
             <motion.div key={step.number} className="text-center group" variants={itemVariants}>
               <div className="relative mb-8">
                 <motion.div
@@ -90,10 +142,32 @@ export default function HowItWorks() {
                   {step.number}
                 </div>
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-white">{step.title}</h3>
+              <h3 className="text-2xl font-bold mb-2 text-white">Step {step.number}</h3>
+              <h4 className="text-lg font-medium text-neon-400 mb-2">{step.title}</h4>
               <p className="text-gray-300 leading-relaxed">{step.description}</p>
             </motion.div>
           ))}
+        </motion.div>
+
+        {/* Why This Works */}
+        <motion.div
+          className="text-center"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          viewport={{ once: true }}
+        >
+          <div className="bg-midnight-700/50 rounded-lg p-8 border border-midnight-600 max-w-2xl mx-auto">
+            <h3 className="text-2xl font-semibold text-white mb-4">
+              🧠 Why This Works (Science + Psychology)
+            </h3>
+            <div className="text-gray-300 space-y-2">
+              <p>Clients want clarity. Not contact forms.</p>
+              <p>They want confidence. Not vague estimates.</p>
+              <p>They want to feel like they're booking a professional.</p>
+              <p className="text-neon-400 font-medium">QuoteKit gives them that feeling—with every click.</p>
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>

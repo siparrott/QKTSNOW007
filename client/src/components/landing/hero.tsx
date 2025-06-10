@@ -58,20 +58,21 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            "They Don't Want a Chat.{" "}
+            <span className="text-neon-400">💥 They Don't Want a Chat.</span>
             <br />
             <span className="text-white">
-              They Want a Price."
+              They Want a Price.
             </span>
           </motion.h1>
 
           <motion.p
-            className="text-2xl md:text-3xl text-neon-400 mb-8 max-w-3xl mx-auto leading-relaxed font-semibold"
+            className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            Give it to them — instantly.
+            You're losing leads to silence, second guesses, and service pages that don't convert. 
+            But it's not your fault. Here's the real story...
           </motion.p>
 
           <motion.div

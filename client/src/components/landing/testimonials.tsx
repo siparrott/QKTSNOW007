@@ -4,25 +4,25 @@ import { Star } from "lucide-react";
 export default function Testimonials() {
   const testimonials = [
     {
-      name: "Sarah Johnson",
-      role: "Wedding Photographer",
-      initials: "SJ",
-      gradient: "from-pink-500 to-purple-600",
-      text: "QuoteKit increased our conversion rate by 300%. Clients love getting instant quotes, and I love capturing leads 24/7.",
-    },
-    {
-      name: "Mike Rodriguez",
-      role: "Landscaping Services",
-      initials: "MR",
-      gradient: "from-blue-500 to-cyan-600",
-      text: "Setup took 5 minutes. Now I get qualified leads every day without any extra work. Best investment I've made!",
-    },
-    {
-      name: "Lisa Kim",
-      role: "Personal Trainer",
-      initials: "LK",
+      name: "Mike",
+      role: "Landscaping Pro",
+      initials: "M",
       gradient: "from-green-500 to-emerald-600",
-      text: "The AI suggestions are spot-on for my fitness coaching packages. My clients are impressed with the professionalism.",
+      text: "Setup took 5 minutes. My inbox hasn't stopped since.",
+    },
+    {
+      name: "Sarah",
+      role: "Wedding Photographer",
+      initials: "S",
+      gradient: "from-pink-500 to-purple-600",
+      text: "Clients LOVE getting a quote on the spot. Total game-changer.",
+    },
+    {
+      name: "David",
+      role: "HVAC Contractor",
+      initials: "D",
+      gradient: "from-blue-500 to-cyan-600",
+      text: "I'm closing deals before competitors even respond to emails.",
     },
   ];
 
@@ -58,9 +58,8 @@ export default function Testimonials() {
           viewport={{ once: true }}
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
-            Trusted by <span className="text-neon-400">500+</span> Service Businesses
+            💬 Real Pros. <span className="text-neon-400">Real Results.</span>
           </h2>
-          <p className="text-xl text-gray-300">Join thousands of service professionals growing their business</p>
         </motion.div>
 
         <motion.div

@@ -457,6 +457,46 @@ export class MemStorage implements IStorage {
         }
       },
       {
+        name: "Pest Control Calculator",
+        slug: "pest-control",
+        category: "home-services",
+        description: "Professional pest control pricing calculator with nature-friendly styling",
+        defaultConfig: {
+          basePrice: 100,
+          pestTypes: {
+            "cockroaches": 50,
+            "ants": 25,
+            "wasps": 75,
+            "bedbugs": 150,
+            "rodents": 100,
+            "termites": 250,
+            "general": 0
+          },
+          infestationLevels: {
+            "light": 0,
+            "moderate": 75,
+            "severe": 150
+          },
+          propertyMultipliers: {
+            "apartment": 1,
+            "house": 1.2,
+            "commercial": 1.5,
+            "warehouse": 2
+          },
+          serviceMultipliers: {
+            "one-time": 1,
+            "monthly": 0.8,
+            "quarterly": 0.9
+          },
+          addOns: {
+            "eco-friendly": 40,
+            "same-day": 80,
+            "follow-up": 50,
+            "pet-safe": 40
+          }
+        }
+      },
+      {
         name: "Wedding Photography Quote Calculator",
         slug: "wedding-photography",
         category: "photography",

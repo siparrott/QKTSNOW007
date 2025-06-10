@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import type { 
   Calculator, 
   User, 
@@ -1188,7 +1189,14 @@ export class MemStorage implements IStorage {
     const user: User = {
       id: crypto.randomUUID(),
       email: insertUser.email,
-      name: insertUser.name || null,
+      fullName: insertUser.fullName || null,
+      passwordHash: insertUser.passwordHash || null,
+      subscriptionStatus: "free",
+      stripeCustomerId: null,
+      quotesUsedThisMonth: 0,
+      quotesLimit: 5,
+      subscriptionStartDate: null,
+      lastQuoteReset: new Date(),
       createdAt: new Date(),
     };
     this.users.set(user.id, user);

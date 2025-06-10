@@ -1,0 +1,757 @@
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { 
+  Camera, 
+  Clock, 
+  MapPin, 
+  Heart, 
+  CheckCircle, 
+  Sparkles, 
+  Download,
+  Mail,
+  Phone,
+  User,
+  Users,
+  Palette
+} from "lucide-react";
+
+interface PortraitFormData {
+  portraitType: string;
+  duration: string;
+  location: string;
+  wardrobeChanges: string;
+  addOns: string[];
+  usageType: string;
+  promoCode: string;
+  naturalLanguageInput: string;
+  contactInfo: {
+    name: string;
+    email: string;
+    phone: string;
+  };
+}
+
+interface PricingBreakdown {
+  basePrice: number;
+  durationAdd: number;
+  locationAdd: number;
+  wardrobeAdd: number;
+  addOnsTotal: number;
+  usageAdd: number;
+  subtotal: number;
+  discount: number;
+  total: number;
+  breakdown: string[];
+}
+
+export default function PortraitPhotographyCalculator() {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [isQuoteLocked, setIsQuoteLocked] = useState(false);
+  const [formData, setFormData] = useState<PortraitFormData>({
+    portraitType: "",
+    duration: "",
+    location: "",
+    wardrobeChanges: "",
+    addOns: [],
+    usageType: "",
+    promoCode: "",
+    naturalLanguageInput: "",
+    contactInfo: {
+      name: "",
+      email: "",
+      phone: "",
+    },
+  });
+
+  const portraitTypes = [
+    { id: "individual", label: "Individual", icon: "👤", popular: true },
+    { id: "couple", label: "Couple", icon: "💕", popular: true },
+    { id: "family", label: "Family", icon: "👨‍👩‍👧‍👦" },
+    { id: "senior", label: "Senior / Graduation", icon: "🎓" },
+    { id: "branding", label: "Branding / Business", icon: "💼", popular: true },
+  ];
+
+  const durations = [
+    { id: "30-min", label: "30 minutes", price: 0, icon: "⏰" },
+    { id: "1-hour", label: "1 hour", price: 75, icon: "🕐", popular: true },
+    { id: "2-hours", label: "2 hours", price: 150, icon: "⏱️" },
+  ];
+
+  const locations = [
+    { id: "studio", label: "Studio", price: 0, icon: "🏢" },
+    { id: "outdoor", label: "Outdoor", price: 60, icon: "🌳", popular: true },
+    { id: "client-location", label: "Client's Home / Office", price: 60, icon: "🏠" },
+  ];
+
+  const wardrobeOptions = [
+    { id: "1", label: "1 Outfit", price: 0, icon: "👕" },
+    { id: "2", label: "2 Outfits", price: 40, icon: "👔", popular: true },
+    { id: "3+", label: "3+ Outfits", price: 80, icon: "👗" },
+  ];
+
+  const addOnOptions = [
+    { id: "makeup", label: "Professional Makeup", price: 80, popular: true },
+    { id: "standard-retouching", label: "Standard Retouching", price: 0 },
+    { id: "deluxe-retouching", label: "Deluxe Retouching", price: 50, popular: true },
+    { id: "express-delivery", label: "Express Delivery", price: 50 },
+    { id: "extra-images", label: "Extra Images (+5)", price: 100 },
+    { id: "headshot-bundle", label: "Headshot Bundle", price: 75 },
+  ];
+
+  const usageTypes = [
+    { id: "personal", label: "Personal Use", price: 0, icon: "🏠" },
+    { id: "commercial", label: "Commercial / Branding", price: 120, icon: "💼" },
+  ];
+
+  const calculatePricing = (): PricingBreakdown => {
+    const baseSession = 150; // Base: 30 min, studio, 1 outfit
+    let durationAdd = 0;
+    let locationAdd = 0;
+    let wardrobeAdd = 0;
+    let addOnsTotal = 0;
+    let usageAdd = 0;
+    const breakdown: string[] = [`Base session (30min, studio, 1 outfit): €${baseSession}`];
+
+    // Duration pricing
+    const duration = durations.find(d => d.id === formData.duration);
+    if (duration && duration.price > 0) {
+      durationAdd = duration.price;
+      breakdown.push(`${duration.label}: €${durationAdd}`);
+    }
+
+    // Location pricing
+    const location = locations.find(l => l.id === formData.location);
+    if (location && location.price > 0) {
+      locationAdd = location.price;
+      breakdown.push(`${location.label}: €${locationAdd}`);
+    }
+
+    // Wardrobe changes pricing
+    const wardrobe = wardrobeOptions.find(w => w.id === formData.wardrobeChanges);
+    if (wardrobe && wardrobe.price > 0) {
+      wardrobeAdd = wardrobe.price;
+      breakdown.push(`${wardrobe.label}: €${wardrobeAdd}`);
+    }
+
+    // Add-ons pricing
+    formData.addOns.forEach(addOnId => {
+      const addOn = addOnOptions.find(a => a.id === addOnId);
+      if (addOn && addOn.price > 0) {
+        addOnsTotal += addOn.price;
+        breakdown.push(`${addOn.label}: €${addOn.price}`);
+      }
+    });
+
+    // Usage type pricing
+    const usage = usageTypes.find(u => u.id === formData.usageType);
+    if (usage && usage.price > 0) {
+      usageAdd = usage.price;
+      breakdown.push(`${usage.label}: €${usageAdd}`);
+    }
+
+    const subtotal = baseSession + durationAdd + locationAdd + wardrobeAdd + addOnsTotal + usageAdd;
+    
+    // Promo code discount
+    let discount = 0;
+    if (formData.promoCode.toLowerCase() === "portrait10") {
+      discount = subtotal * 0.1;
+      breakdown.push(`Promo code discount (10%): -€${discount.toFixed(2)}`);
+    }
+
+    const total = subtotal - discount;
+
+    return {
+      basePrice: baseSession,
+      durationAdd,
+      locationAdd,
+      wardrobeAdd,
+      addOnsTotal,
+      usageAdd,
+      subtotal,
+      discount,
+      total,
+      breakdown,
+    };
+  };
+
+  const pricing = calculatePricing();
+
+  const parseNaturalLanguage = () => {
+    const input = formData.naturalLanguageInput.toLowerCase();
+    const newFormData = { ...formData };
+
+    // Parse portrait type
+    if (input.includes("couple")) newFormData.portraitType = "couple";
+    else if (input.includes("family")) newFormData.portraitType = "family";
+    else if (input.includes("senior") || input.includes("graduation")) newFormData.portraitType = "senior";
+    else if (input.includes("business") || input.includes("branding") || input.includes("professional")) newFormData.portraitType = "branding";
+    else newFormData.portraitType = "individual";
+
+    // Parse duration
+    if (input.includes("2 hour") || input.includes("two hour")) {
+      newFormData.duration = "2-hours";
+    } else if (input.includes("1 hour") || input.includes("one hour")) {
+      newFormData.duration = "1-hour";
+    } else {
+      newFormData.duration = "30-min";
+    }
+
+    // Parse location
+    if (input.includes("outdoor") || input.includes("outside") || input.includes("park")) {
+      newFormData.location = "outdoor";
+    } else if (input.includes("home") || input.includes("office") || input.includes("location")) {
+      newFormData.location = "client-location";
+    } else {
+      newFormData.location = "studio";
+    }
+
+    // Parse wardrobe changes
+    const outfitMatch = input.match(/(\d+)\s*(?:outfit|change|look)/);
+    if (outfitMatch) {
+      const count = parseInt(outfitMatch[1]);
+      if (count >= 3) newFormData.wardrobeChanges = "3+";
+      else if (count === 2) newFormData.wardrobeChanges = "2";
+      else newFormData.wardrobeChanges = "1";
+    } else {
+      newFormData.wardrobeChanges = "2";
+    }
+
+    // Parse add-ons
+    const newAddOns: string[] = [];
+    if (input.includes("makeup")) newAddOns.push("makeup");
+    if (input.includes("deluxe retouch") || input.includes("advanced retouch")) {
+      newAddOns.push("deluxe-retouching");
+    } else if (input.includes("retouch")) {
+      newAddOns.push("standard-retouching");
+    }
+    if (input.includes("express") || input.includes("rush") || input.includes("fast")) newAddOns.push("express-delivery");
+    if (input.includes("extra image") || input.includes("additional")) newAddOns.push("extra-images");
+    if (input.includes("headshot")) newAddOns.push("headshot-bundle");
+    newFormData.addOns = newAddOns;
+
+    // Parse usage type
+    if (input.includes("commercial") || input.includes("business") || input.includes("marketing")) {
+      newFormData.usageType = "commercial";
+    } else {
+      newFormData.usageType = "personal";
+    }
+
+    setFormData(newFormData);
+  };
+
+  const downloadQuotePDF = () => {
+    console.log("Downloading PDF quote...");
+  };
+
+  const OptionCard = ({ 
+    option, 
+    selected, 
+    onClick, 
+    icon, 
+    popular = false 
+  }: { 
+    option: any; 
+    selected: boolean; 
+    onClick: () => void; 
+    icon?: string; 
+    popular?: boolean;
+  }) => (
+    <div
+      onClick={onClick}
+      className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all hover:shadow-lg ${
+        selected 
+          ? "border-rose-400 bg-gradient-to-br from-rose-50 to-pink-50 shadow-lg" 
+          : "border-gray-200 hover:border-rose-300 bg-white"
+      }`}
+    >
+      {popular && (
+        <Badge className="absolute -top-2 -right-2 bg-rose-500 text-white text-xs font-semibold">
+          Popular
+        </Badge>
+      )}
+      <div className="text-center">
+        {icon && <div className="text-2xl mb-2">{icon}</div>}
+        <div className="font-semibold text-gray-800">{option.label}</div>
+        {option.price !== undefined && option.price > 0 && (
+          <div className="text-sm text-rose-600 mt-1">+€{option.price}</div>
+        )}
+      </div>
+    </div>
+  );
+
+  const steps = [
+    { number: 1, title: "Portrait & Duration", completed: !!formData.portraitType && !!formData.duration },
+    { number: 2, title: "Location & Wardrobe", completed: !!formData.location && !!formData.wardrobeChanges },
+    { number: 3, title: "Add-ons & Usage", completed: !!formData.usageType },
+    { number: 4, title: "Contact Details", completed: !!formData.contactInfo.email },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 py-8">
+      <div className="max-w-7xl mx-auto px-4">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-display text-gray-800 mb-2">
+            Portrait Photography Calculator
+          </h1>
+          <p className="text-gray-600 max-w-2xl mx-auto font-body">
+            Beautiful portraits that capture your authentic self. Get your personalized quote instantly.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Form */}
+          <div className="lg:col-span-2">
+            <Card className="p-8 bg-white/90 backdrop-blur-sm border-gray-200 rounded-2xl shadow-xl">
+              {/* Progress Steps */}
+              <div className="flex items-center justify-between mb-8">
+                {steps.map((step, index) => (
+                  <div key={step.number} className="flex items-center">
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
+                        step.completed
+                          ? "bg-green-500 text-white"
+                          : currentStep === step.number
+                          ? "bg-rose-500 text-white"
+                          : "bg-gray-200 text-gray-600"
+                      }`}
+                    >
+                      {step.completed ? <CheckCircle className="h-4 w-4" /> : step.number}
+                    </div>
+                    <span className="ml-2 text-sm font-medium text-gray-700">
+                      {step.title}
+                    </span>
+                    {index < steps.length - 1 && (
+                      <div className="w-8 h-px bg-gray-300 mx-4"></div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Step 1: Portrait & Duration */}
+              {currentStep === 1 && (
+                <div className="space-y-6">
+                  <div>
+                    <h2 className="text-2xl font-display text-gray-800 mb-4 flex items-center">
+                      <Heart className="h-6 w-6 mr-2 text-rose-500" />
+                      Tell us about your portrait session
+                    </h2>
+                    
+                    {/* Natural Language Input */}
+                    <div className="mb-6 p-4 bg-rose-50 rounded-xl border border-rose-200">
+                      <label className="block text-sm font-body text-gray-700 mb-2">
+                        Describe your vision (optional)
+                      </label>
+                      <Textarea
+                        placeholder="e.g., I want an outdoor shoot with 2 outfits and retouching"
+                        value={formData.naturalLanguageInput}
+                        onChange={(e) => setFormData(prev => ({ ...prev, naturalLanguageInput: e.target.value }))}
+                        className="bg-white border-rose-200 mb-3 resize-none rounded-lg"
+                        rows={2}
+                      />
+                      <Button 
+                        onClick={parseNaturalLanguage}
+                        size="sm" 
+                        className="bg-rose-500 hover:bg-rose-600 text-white border-0 font-body font-semibold rounded-lg"
+                        disabled={!formData.naturalLanguageInput.trim()}
+                      >
+                        <Sparkles className="h-4 w-4 mr-2" />
+                        Calculate with AI
+                      </Button>
+                    </div>
+
+                    <div className="space-y-6">
+                      <div>
+                        <h3 className="text-lg font-display text-gray-700 mb-3">Portrait Type</h3>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                          {portraitTypes.map((type) => (
+                            <OptionCard
+                              key={type.id}
+                              option={type}
+                              selected={formData.portraitType === type.id}
+                              onClick={() => setFormData(prev => ({ ...prev, portraitType: type.id }))}
+                              icon={type.icon}
+                              popular={type.popular}
+                            />
+                          ))}
+                        </div>
+                      </div>
+
+                      <div>
+                        <h3 className="text-lg font-display text-gray-700 mb-3">Session Duration</h3>
+                        <div className="grid grid-cols-1 gap-4">
+                          {durations.map((duration) => (
+                            <OptionCard
+                              key={duration.id}
+                              option={duration}
+                              selected={formData.duration === duration.id}
+                              onClick={() => setFormData(prev => ({ ...prev, duration: duration.id }))}
+                              icon={duration.icon}
+                              popular={duration.popular}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end">
+                    <Button
+                      onClick={() => setCurrentStep(2)}
+                      disabled={!formData.portraitType || !formData.duration}
+                      className="bg-rose-500 hover:bg-rose-600 text-white px-8 font-semibold rounded-lg"
+                    >
+                      Next Step
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 2: Location & Wardrobe */}
+              {currentStep === 2 && (
+                <div className="space-y-6">
+                  <div>
+                    <h2 className="text-2xl font-display text-gray-800 mb-4 flex items-center">
+                      <MapPin className="h-6 w-6 mr-2 text-rose-500" />
+                      Location & styling details
+                    </h2>
+                    
+                    <div className="space-y-6">
+                      <div>
+                        <h3 className="text-lg font-display text-gray-700 mb-3">Shooting Location</h3>
+                        <div className="grid grid-cols-1 gap-4">
+                          {locations.map((location) => (
+                            <OptionCard
+                              key={location.id}
+                              option={location}
+                              selected={formData.location === location.id}
+                              onClick={() => setFormData(prev => ({ ...prev, location: location.id }))}
+                              icon={location.icon}
+                              popular={location.popular}
+                            />
+                          ))}
+                        </div>
+                      </div>
+
+                      <div>
+                        <h3 className="text-lg font-display text-gray-700 mb-3">Wardrobe Changes</h3>
+                        <div className="grid grid-cols-1 gap-4">
+                          {wardrobeOptions.map((wardrobe) => (
+                            <OptionCard
+                              key={wardrobe.id}
+                              option={wardrobe}
+                              selected={formData.wardrobeChanges === wardrobe.id}
+                              onClick={() => setFormData(prev => ({ ...prev, wardrobeChanges: wardrobe.id }))}
+                              icon={wardrobe.icon}
+                              popular={wardrobe.popular}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between">
+                    <Button
+                      onClick={() => setCurrentStep(1)}
+                      variant="outline"
+                      className="px-8 border-gray-300 text-gray-600 hover:bg-gray-50 rounded-lg"
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                      onClick={() => setCurrentStep(3)}
+                      disabled={!formData.location || !formData.wardrobeChanges}
+                      className="bg-rose-500 hover:bg-rose-600 text-white px-8 font-semibold rounded-lg"
+                    >
+                      Next Step
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 3: Add-ons & Usage */}
+              {currentStep === 3 && (
+                <div className="space-y-6">
+                  <div>
+                    <h2 className="text-2xl font-display text-gray-800 mb-4 flex items-center">
+                      <Palette className="h-6 w-6 mr-2 text-rose-500" />
+                      Enhance your session
+                    </h2>
+                    
+                    <div className="space-y-6">
+                      <div>
+                        <h3 className="text-lg font-display text-gray-700 mb-3">Add-ons (Optional)</h3>
+                        <div className="grid grid-cols-1 gap-3">
+                          {addOnOptions.map((addOn) => (
+                            <div
+                              key={addOn.id}
+                              onClick={() => {
+                                const newAddOns = formData.addOns.includes(addOn.id)
+                                  ? formData.addOns.filter(id => id !== addOn.id)
+                                  : [...formData.addOns, addOn.id];
+                                setFormData(prev => ({ ...prev, addOns: newAddOns }));
+                              }}
+                              className={`relative p-3 rounded-xl border-2 cursor-pointer transition-all hover:shadow-lg ${
+                                formData.addOns.includes(addOn.id)
+                                  ? "border-rose-400 bg-gradient-to-br from-rose-50 to-pink-50 shadow-lg"
+                                  : "border-gray-200 hover:border-rose-300 bg-white"
+                              }`}
+                            >
+                              {addOn.popular && (
+                                <Badge className="absolute -top-2 -right-2 bg-rose-500 text-white text-xs font-semibold">
+                                  Popular
+                                </Badge>
+                              )}
+                              <div className="flex justify-between items-center">
+                                <div className="font-semibold text-gray-800">{addOn.label}</div>
+                                <div className="text-rose-600 font-semibold">
+                                  {addOn.price > 0 ? `+€${addOn.price}` : "Included"}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {formData.addOns.length > 0 && (
+                          <div className="mt-4 p-3 bg-green-50 rounded-xl border border-green-200">
+                            <div className="text-sm text-green-700">
+                              📸 Most clients choose 1 hour, outdoor, 2 outfits + makeup
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <h3 className="text-lg font-display text-gray-700 mb-3">Usage Type</h3>
+                        <div className="grid grid-cols-1 gap-4">
+                          {usageTypes.map((usage) => (
+                            <OptionCard
+                              key={usage.id}
+                              option={usage}
+                              selected={formData.usageType === usage.id}
+                              onClick={() => setFormData(prev => ({ ...prev, usageType: usage.id }))}
+                              icon={usage.icon}
+                            />
+                          ))}
+                        </div>
+                      </div>
+
+                      <div>
+                        <h3 className="text-lg font-display text-gray-700 mb-3">Promo Code (Optional)</h3>
+                        <Input
+                          placeholder="Enter promo code (e.g., PORTRAIT10)"
+                          value={formData.promoCode}
+                          onChange={(e) => setFormData(prev => ({ ...prev, promoCode: e.target.value }))}
+                          className="max-w-xs border-gray-300 rounded-lg"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between">
+                    <Button
+                      onClick={() => setCurrentStep(2)}
+                      variant="outline"
+                      className="px-8 border-gray-300 text-gray-600 hover:bg-gray-50 rounded-lg"
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                      onClick={() => setCurrentStep(4)}
+                      disabled={!formData.usageType}
+                      className="bg-rose-500 hover:bg-rose-600 text-white px-8 font-semibold rounded-lg"
+                    >
+                      Next Step
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 4: Contact Details */}
+              {currentStep === 4 && (
+                <div className="space-y-6">
+                  <div>
+                    <h2 className="text-2xl font-display text-gray-800 mb-4 flex items-center">
+                      <Mail className="h-6 w-6 mr-2 text-rose-500" />
+                      Get your personalized quote
+                    </h2>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Full Name
+                        </label>
+                        <div className="relative">
+                          <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                          <Input
+                            placeholder="Your full name"
+                            value={formData.contactInfo.name}
+                            onChange={(e) => setFormData(prev => ({
+                              ...prev,
+                              contactInfo: { ...prev.contactInfo, name: e.target.value }
+                            }))}
+                            className="pl-10 border-gray-300 rounded-lg"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Email Address *
+                        </label>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                          <Input
+                            type="email"
+                            placeholder="your.email@example.com"
+                            value={formData.contactInfo.email}
+                            onChange={(e) => setFormData(prev => ({
+                              ...prev,
+                              contactInfo: { ...prev.contactInfo, email: e.target.value }
+                            }))}
+                            className="pl-10 border-gray-300 rounded-lg"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Phone Number
+                        </label>
+                        <div className="relative">
+                          <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                          <Input
+                            placeholder="+353 xxx xxx xxx"
+                            value={formData.contactInfo.phone}
+                            onChange={(e) => setFormData(prev => ({
+                              ...prev,
+                              contactInfo: { ...prev.contactInfo, phone: e.target.value }
+                            }))}
+                            className="pl-10 border-gray-300 rounded-lg"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between">
+                    <Button
+                      onClick={() => setCurrentStep(3)}
+                      variant="outline"
+                      className="px-8 border-gray-300 text-gray-600 hover:bg-gray-50 rounded-lg"
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                      onClick={() => setIsQuoteLocked(true)}
+                      disabled={!formData.contactInfo.email}
+                      className="bg-green-500 hover:bg-green-600 text-white px-8 font-semibold rounded-lg"
+                    >
+                      Get Quote
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </Card>
+          </div>
+
+          {/* Pricing Sidebar */}
+          <div className="lg:col-span-1">
+            <Card className="p-6 bg-white/95 backdrop-blur-sm border-gray-200 rounded-2xl shadow-xl sticky top-8">
+              <h3 className="text-xl font-display text-gray-800 mb-4">Your Portrait Session</h3>
+              
+              <div className="space-y-3">
+                <div className="text-3xl font-bold text-rose-600">
+                  €{pricing.total.toLocaleString()}
+                </div>
+                
+                {pricing.breakdown.length > 1 && (
+                  <div className="space-y-2 text-sm">
+                    {pricing.breakdown.map((item, index) => (
+                      <div key={index} className="flex justify-between text-gray-600">
+                        <span>{item.split(': ')[0]}</span>
+                        <span>{item.split(': ')[1]}</span>
+                      </div>
+                    ))}
+                    {pricing.discount > 0 && (
+                      <div className="flex justify-between text-green-600 font-semibold">
+                        <span>Discount</span>
+                        <span>-€{pricing.discount.toFixed(2)}</span>
+                      </div>
+                    )}
+                    <div className="border-t border-gray-200 pt-2 flex justify-between font-bold text-gray-800">
+                      <span>Total</span>
+                      <span>€{pricing.total.toLocaleString()}</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Ready to Book Section */}
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <div className="text-center space-y-4">
+                    <h3 className="text-lg font-display text-gray-800">Ready to Book Your Portrait?</h3>
+                    <p className="text-sm text-gray-600">
+                      This quote is valid for 72 hours. Let's create beautiful portraits that capture your essence.
+                    </p>
+                    
+                    <Button 
+                      className="w-full bg-rose-500 hover:bg-rose-600 text-white py-3 font-semibold rounded-lg"
+                      onClick={() => {
+                        const subject = "Portrait Photography Booking";
+                        const body = `I'm ready to book my portrait session! My quote is €${pricing.total.toLocaleString()}`;
+                        const mailtoUrl = `mailto:info@portraitstudio.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                        window.open(mailtoUrl, "_blank");
+                      }}
+                    >
+                      📸 Book My Portrait
+                    </Button>
+                    
+                    <div className="flex items-center justify-center space-x-6 text-xs text-gray-500">
+                      <div className="flex items-center">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
+                        Professional Quality
+                      </div>
+                      <div className="flex items-center">
+                        <div className="w-2 h-2 bg-rose-500 rounded-full mr-1"></div>
+                        Same-Day Preview
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {isQuoteLocked && (
+                  <div className="space-y-3 pt-4 border-t border-gray-200 mt-4">
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-green-600 mb-2">Quote Locked!</div>
+                      <div className="flex items-center justify-center text-sm text-gray-600">
+                        <Clock className="h-4 w-4 mr-1" />
+                        Valid for 72 hours
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Button 
+                        variant="outline"
+                        className="w-full border-rose-300 text-rose-600 hover:bg-rose-50 rounded-lg"
+                        onClick={downloadQuotePDF}
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        Download Quote PDF
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -273,6 +273,42 @@ export class MemStorage implements IStorage {
         }
       },
       {
+        name: "Portrait Photography Calculator",
+        slug: "portrait-photography",
+        category: "photography",
+        description: "Professional portrait photography quote calculator with warm styling",
+        defaultConfig: {
+          baseSession: 150,
+          durations: {
+            "30-min": 0,
+            "1-hour": 75,
+            "2-hours": 150
+          },
+          locations: {
+            "studio": 0,
+            "outdoor": 60,
+            "client-location": 60
+          },
+          wardrobe: {
+            "1": 0,
+            "2": 40,
+            "3+": 80
+          },
+          addOns: {
+            "makeup": 80,
+            "standard-retouching": 0,
+            "deluxe-retouching": 50,
+            "express-delivery": 50,
+            "extra-images": 100,
+            "headshot-bundle": 75
+          },
+          usage: {
+            "personal": 0,
+            "commercial": 120
+          }
+        }
+      },
+      {
         name: "Wedding Photography Quote Calculator",
         slug: "wedding-photography",
         category: "photography",

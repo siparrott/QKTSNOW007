@@ -638,6 +638,38 @@ export class MemStorage implements IStorage {
         }
       },
       {
+        name: "Massage Therapy Calculator",
+        slug: "massage-therapy",
+        category: "beauty-wellness",
+        description: "Professional therapeutic massage pricing calculator with wellness styling",
+        defaultConfig: {
+          massageTypes: {
+            "swedish": 0,
+            "deep-tissue": 20,
+            "sports": 25,
+            "prenatal": 15,
+            "hot-stone": 20
+          },
+          sessionLengths: {
+            "30": 40,
+            "60": 65,
+            "90": 90,
+            "120": 115
+          },
+          locations: {
+            "studio": 0,
+            "mobile": 30
+          },
+          addOns: {
+            "aromatherapy": 15,
+            "hot-stones": 20,
+            "cupping": 25,
+            "cbd-oil": 20,
+            "head-scalp": 10
+          }
+        }
+      },
+      {
         name: "Wedding Photography Quote Calculator",
         slug: "wedding-photography",
         category: "photography",

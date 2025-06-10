@@ -88,7 +88,7 @@ const allNiches = [
   { id: 21, name: "Makeup Artist", icon: Palette, category: "Beauty & Wellness", available: true, slug: "makeup-artist", description: "Bridal, event, and special occasion makeup" },
   { id: 22, name: "Hair Stylist", icon: Scissors, category: "Beauty & Wellness", available: true, slug: "hair-stylist", description: "Cuts, coloring, and styling services" },
   { id: 23, name: "Tattoo Artist", icon: Sparkles, category: "Beauty & Wellness", available: true, slug: "tattoo-artist", description: "Custom tattoo design and tattooing services" },
-  { id: 24, name: "Massage Therapy", icon: Heart, category: "Beauty & Wellness", description: "Therapeutic and relaxation massage services" },
+  { id: 24, name: "Massage Therapy", icon: Heart, category: "Beauty & Wellness", available: true, slug: "massage-therapy", description: "Therapeutic and relaxation massage services" },
   { id: 25, name: "Personal Training", icon: Dumbbell, category: "Beauty & Wellness", available: true, slug: "personal-training", description: "1-on-1 and group fitness training sessions" },
   { id: 26, name: "Nutritionist", icon: Stethoscope, category: "Beauty & Wellness", description: "Meal planning and dietary consultation services" },
   { id: 27, name: "Life Coach", icon: Target, category: "Beauty & Wellness", description: "Personal development and goal achievement coaching" },

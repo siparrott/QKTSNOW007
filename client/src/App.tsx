@@ -21,6 +21,7 @@ import LandscapingCalculator from "@/pages/landscaping-calculator";
 import RoofingCalculator from "@/pages/roofing-calculator";
 import SolarCalculator from "@/pages/solar-calculator";
 import PestControlCalculator from "@/pages/pest-control-calculator";
+import WindowDoorCalculator from "@/pages/window-door-calculator";
 
 
 function Router() {
@@ -41,6 +42,7 @@ function Router() {
       <Route path="/calculator/roofing" component={RoofingCalculator} />
       <Route path="/calculator/solar" component={SolarCalculator} />
       <Route path="/calculator/pest-control" component={PestControlCalculator} />
+      <Route path="/calculator/window-door" component={WindowDoorCalculator} />
       <Route path="/calculator/:slug" component={CalculatorPage} />
       <Route path="/niches" component={NichesPage} />
       <Route path="/niches/:niche" component={NotFound} />

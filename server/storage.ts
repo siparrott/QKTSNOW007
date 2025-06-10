@@ -497,6 +497,41 @@ export class MemStorage implements IStorage {
         }
       },
       {
+        name: "Window & Door Installation Calculator",
+        slug: "window-door",
+        category: "home-services",
+        description: "Professional window and door installation pricing calculator with contractor styling",
+        defaultConfig: {
+          basePrice: {
+            "windows": 300,
+            "doors": 450,
+            "both": 375
+          },
+          productTypes: {
+            "standard": 0,
+            "energy-efficient": 150,
+            "premium-custom": 300
+          },
+          materials: {
+            "pvc": 0,
+            "wood": 100,
+            "aluminum": 75,
+            "composite": 125
+          },
+          accessTypes: {
+            "ground": 0,
+            "first-floor": 75,
+            "scaffolding": 150
+          },
+          addOns: {
+            "frame-removal": 80,
+            "waste-disposal": 50,
+            "fast-track": 120,
+            "extra-locks": 90
+          }
+        }
+      },
+      {
         name: "Wedding Photography Quote Calculator",
         slug: "wedding-photography",
         category: "photography",

@@ -82,7 +82,7 @@ const allNiches = [
   { id: 17, name: "Roofing", icon: Home, category: "Home Services", available: true, slug: "roofing", description: "Roof repair, replacement, and maintenance services" },
   { id: 18, name: "Solar Panel Installation", icon: Sun, category: "Home Services", available: true, slug: "solar", description: "Solar energy system installation and maintenance" },
   { id: 19, name: "Pest Control", icon: Shield, category: "Home Services", available: true, slug: "pest-control", description: "Residential and commercial pest management services" },
-  { id: 20, name: "Window & Door Installation", icon: Home, category: "Home Services", description: "Window and door replacement and installation" },
+  { id: 20, name: "Window & Door Installation", icon: Home, category: "Home Services", available: true, slug: "window-door", description: "Window and door replacement and installation" },
 
   // Beauty & Wellness (8 calculators)
   { id: 21, name: "Makeup Artist", icon: Palette, category: "Beauty & Wellness", description: "Bridal, event, and special occasion makeup" },

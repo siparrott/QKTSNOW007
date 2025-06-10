@@ -227,3 +227,47 @@ Respond with JSON in this exact format:
     throw new Error("Failed to process request");
   }
 }
+
+export async function processMovingServicesRequest(input: string) {
+  if (!input.trim()) {
+    throw new Error("Input is required");
+  }
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: `You are an AI assistant that analyzes customer requests for moving services and extracts structured data.
+
+Available options:
+- Moving types: local (Local Move), long_distance (Long Distance), international (International), office (Office Relocation)
+- Property types: studio (Studio/1BR), 2br (2 Bedroom), 3br (3 Bedroom), 4br (4+ Bedroom), office_space (Office Space)
+- Distance: local_short (Under 10 miles), local_medium (10-50 miles), regional (50-200 miles), long_distance (200+ miles)
+- Extras: packing (Packing Services), unpacking (Unpacking Services), assembly (Furniture Assembly), storage (Storage Service), cleaning (Cleaning Service)
+
+Respond with JSON in this exact format:
+{
+  "movingType": "string or null",
+  "propertyType": "string or null",
+  "distance": "string or null",
+  "extras": ["array of strings or empty array"]
+}`
+        },
+        {
+          role: "user",
+          content: input
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.3
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result;
+  } catch (error) {
+    console.error('AI processing error:', error);
+    throw new Error("Failed to process request");
+  }
+}

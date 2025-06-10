@@ -618,7 +618,7 @@ export default function HypnotherapistCalculator() {
 
           {/* Pricing Sidebar */}
           <div className="lg:col-span-1">
-            <Card className="p-6 bg-white/95 backdrop-blur-sm border-teal-200 rounded-3xl shadow-xl sticky top-8">
+            <Card id="pricing-sidebar" className="p-6 bg-white/95 backdrop-blur-sm border-teal-200 rounded-3xl shadow-xl sticky top-8">
               <h3 className="text-xl font-medium text-stone-800 mb-4">Your Therapy Investment</h3>
               
               <div className="space-y-3">

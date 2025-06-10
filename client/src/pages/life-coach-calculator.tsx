@@ -267,17 +267,14 @@ export default function LifeCoachCalculator() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-25 via-stone-50 to-green-25 py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-medium text-stone-800 mb-2">
-            Life Coaching Quote Calculator
-          </h1>
-          <p className="text-stone-600 max-w-2xl mx-auto font-light">
-            Discover your personalized coaching journey pricing. Transform your life with expert guidance.
-          </p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-purple-25 via-stone-50 to-green-25">
+      <CalculatorHeader 
+        title="Life Coaching Quote Calculator"
+        subtitle="Transform your life with expert guidance and personalized coaching journey pricing"
+        category="Wellness"
+        accentColor="purple"
+      />
+      <div className="max-w-7xl mx-auto px-4 py-8">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Form */}
@@ -644,7 +641,7 @@ export default function LifeCoachCalculator() {
 
           {/* Pricing Sidebar */}
           <div className="lg:col-span-1">
-            <Card className="p-6 bg-white/95 backdrop-blur-sm border-purple-200 rounded-3xl shadow-xl sticky top-8">
+            <Card id="pricing-sidebar" className="p-6 bg-white/95 backdrop-blur-sm border-purple-200 rounded-3xl shadow-xl sticky top-8">
               <h3 className="text-xl font-medium text-stone-800 mb-4">Your Coaching Investment</h3>
               
               <div className="space-y-3">

@@ -288,17 +288,14 @@ export default function CarDetailingCalculator() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-stone-50 to-teal-50 py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">
-            Car Detailing Quote Calculator
-          </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Get your personalized car detailing quote instantly. Professional service that makes your car shine.
-          </p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-stone-50 to-teal-50">
+      <CalculatorHeader 
+        title="Car Detailing Quote Calculator"
+        subtitle="Professional service that makes your car shine with instant pricing"
+        category="Automotive"
+        accentColor="teal"
+      />
+      <div className="max-w-7xl mx-auto px-4 py-8">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Form */}
@@ -649,7 +646,7 @@ export default function CarDetailingCalculator() {
 
           {/* Pricing Sidebar */}
           <div className="lg:col-span-1">
-            <Card className="p-6 bg-white/95 backdrop-blur-sm border-gray-200 rounded-3xl shadow-xl sticky top-8">
+            <Card id="pricing-sidebar" className="p-6 bg-white/95 backdrop-blur-sm border-gray-200 rounded-3xl shadow-xl sticky top-8">
               <h3 className="text-xl font-bold text-gray-800 mb-4">Your Detailing Investment</h3>
               
               <div className="space-y-3">

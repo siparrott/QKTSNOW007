@@ -297,17 +297,14 @@ export default function AutoMechanicCalculator() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-slate-100 to-blue-100 py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">
-            Auto Repair Quote Calculator
-          </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Get your accurate auto repair quote instantly. Professional service you can trust.
-          </p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-slate-100 to-blue-100">
+      <CalculatorHeader 
+        title="Auto Repair Quote Calculator"
+        subtitle="Accurate auto repair quotes instantly with professional service you can trust"
+        category="Automotive"
+        accentColor="blue"
+      />
+      <div className="max-w-7xl mx-auto px-4 py-8">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Form */}
@@ -658,7 +655,7 @@ export default function AutoMechanicCalculator() {
 
           {/* Pricing Sidebar */}
           <div className="lg:col-span-1">
-            <Card className="p-6 bg-white border-gray-300 rounded-lg shadow-xl sticky top-8">
+            <Card id="pricing-sidebar" className="p-6 bg-white border-gray-300 rounded-lg shadow-xl sticky top-8">
               <h3 className="text-xl font-bold text-gray-800 mb-4">Your Repair Estimate</h3>
               
               <div className="space-y-3">

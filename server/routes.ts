@@ -641,23 +641,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Input text is required" });
       }
       
-      // Return structured response for legal consultation
-      const result = {
-        serviceType: "contract-drafting",
-        consultationType: "1hour-session",
-        urgencyLevel: "priority",
-        jurisdiction: "local",
-        addOns: ["document-review"],
-        baseRate: 120,
-        totalCost: 340,
-        breakdown: {
-          baseCost: 200,
-          urgencyFee: 50,
-          jurisdictionFee: 0,
-          addOnCosts: [{ name: "Document Review", amount: 90 }],
-          discounts: []
-        }
-      };
+      // Use the AI processing function
+      const result = await processLegalAdvisorRequest(input);
+      res.json(result);
+    } catch (error) {
+      console.error("AI processing error:", error);
+      res.status(500).json({ error: "Failed to process AI request" });
+    }
+  });
+
+  // AI processing for tax preparer calculator
+  app.post("/api/ai/process-tax-preparer", async (req, res) => {
+    try {
+      const { input } = req.body;
+      if (!input || typeof input !== "string") {
+        return res.status(400).json({ error: "Input text is required" });
+      }
+      
+      // Use the AI processing function
+      const result = await processTaxPreparerRequest(input);
       res.json(result);
     } catch (error) {
       console.error("AI processing error:", error);

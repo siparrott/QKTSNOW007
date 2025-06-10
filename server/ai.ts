@@ -595,3 +595,93 @@ Respond with JSON in this exact format:
     throw new Error("Failed to process request");
   }
 }
+
+export async function processLegalAdvisorRequest(input: string) {
+  if (!input.trim()) {
+    throw new Error("Input is required");
+  }
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: `You are an AI assistant that analyzes customer requests for legal advisor services and extracts structured data.
+
+Available options:
+- Service types: contract-drafting (Contract Drafting), business-setup (Business Setup Advice), family-law (Family Law Consultation), immigration (Immigration Services), estate-planning (Estate & Will Planning), ip-trademark (IP / Trademark Advice)
+- Consultation types: 30min-call (Initial 30-min Call), 1hour-session (1-Hour Strategy Session), ongoing-retainer (Ongoing Retainer)
+- Urgency levels: flexible (Flexible within 1-2 weeks), priority (Priority within 3 days), urgent (Urgent within 24h)
+- Jurisdiction: local (Local / In-Country), international (International)
+- Add-ons: document-review (Document Review), legal-summary (Written Legal Summary), email-support (Follow-up Email Support), in-person (In-person Meeting)
+
+Respond with JSON in this exact format:
+{
+  "serviceType": "string or null",
+  "consultationType": "string or null",
+  "urgencyLevel": "string or null", 
+  "jurisdiction": "string or null",
+  "addOns": ["array of strings or empty array"]
+}`
+        },
+        {
+          role: "user",
+          content: input
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.3
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result;
+  } catch (error) {
+    console.error('AI processing error:', error);
+    throw new Error("Failed to process request");
+  }
+}
+
+export async function processTaxPreparerRequest(input: string) {
+  if (!input.trim()) {
+    throw new Error("Input is required");
+  }
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: `You are an AI assistant that analyzes customer requests for tax preparation services and extracts structured data.
+
+Available options:
+- Filing types: individual (Individual), married-joint (Married Joint), married-separate (Married Separate), business (Business / Self-Employed), llc (LLC), corporation (Corporation)
+- Income levels: under-30k (Under €30k), 30k-70k (€30k–€70k), 70k-150k (€70k–€150k), over-150k (Over €150k)
+- Number of forms: w2-only (W2 only), extra-1-3 (1–3 extra forms), extra-4-plus (4+ forms), investment-crypto (Investment / Crypto forms)
+- Add-ons: audit-protection (Audit Protection), year-round-support (Year-Round Support), prior-year (Prior-Year Filing), in-person-review (In-Person Review Session), rush-filing (Rush Filing 48hr)
+
+Respond with JSON in this exact format:
+{
+  "filingType": "string or null",
+  "incomeLevel": "string or null",
+  "formsCount": "string or null",
+  "addOns": ["array of strings or empty array"]
+}`
+        },
+        {
+          role: "user",
+          content: input
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.3
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result;
+  } catch (error) {
+    console.error('AI processing error:', error);
+    throw new Error("Failed to process request");
+  }
+}

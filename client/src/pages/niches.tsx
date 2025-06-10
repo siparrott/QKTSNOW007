@@ -104,36 +104,36 @@ const allNiches = [
 
   // Healthcare & Medical (5 calculators)
   { id: 33, name: "Dentist & Implant Clinics", icon: Stethoscope, category: "Healthcare & Medical", description: "Dental care, implants, and oral surgery services" },
-  { id: 33, name: "Private Medical Clinics", icon: Stethoscope, category: "Healthcare & Medical", description: "Private healthcare consultations and treatments" },
-  { id: 34, name: "Plastic Surgery", icon: Stethoscope, category: "Healthcare & Medical", description: "Cosmetic and reconstructive surgery procedures" },
-  { id: 35, name: "Childcare Practitioners", icon: Heart, category: "Healthcare & Medical", description: "Individual childcare and nanny services" },
-  { id: 36, name: "Childcare Clinics", icon: Heart, category: "Healthcare & Medical", description: "Pediatric care and child wellness clinics" },
+  { id: 34, name: "Private Medical Clinics", icon: Stethoscope, category: "Healthcare & Medical", description: "Private healthcare consultations and treatments" },
+  { id: 35, name: "Plastic Surgery", icon: Stethoscope, category: "Healthcare & Medical", description: "Cosmetic and reconstructive surgery procedures" },
+  { id: 36, name: "Childcare Practitioners", icon: Heart, category: "Healthcare & Medical", description: "Individual childcare and nanny services" },
+  { id: 37, name: "Childcare Clinics", icon: Heart, category: "Healthcare & Medical", description: "Pediatric care and child wellness clinics" },
 
   // Pet Services (1 calculator)
-  { id: 37, name: "Dog Trainer", icon: Heart, category: "Pet Services", description: "Dog training and behavioral modification services" },
+  { id: 38, name: "Dog Trainer", icon: Heart, category: "Pet Services", description: "Dog training and behavioral modification services" },
 
   // Automotive & Transportation (9 calculators)
-  { id: 38, name: "Car Detailing", icon: Car, category: "Automotive & Transportation", description: "Professional car cleaning and detailing services" },
-  { id: 39, name: "Auto Mechanic", icon: Wrench, category: "Automotive & Transportation", description: "Car maintenance and mechanical repair services" },
-  { id: 40, name: "Mobile Car Wash", icon: Droplets, category: "Automotive & Transportation", description: "On-site car washing and cleaning services" },
-  { id: 41, name: "Moving Services", icon: Truck, category: "Automotive & Transportation", description: "Residential and commercial moving services" },
-  { id: 42, name: "Chauffeur/Limo Services", icon: Car, category: "Automotive & Transportation", description: "Luxury transportation and chauffeur services" },
-  { id: 43, name: "Airport Transfers", icon: Car, category: "Automotive & Transportation", description: "Airport pickup and drop-off services" },
-  { id: 44, name: "Van Rentals", icon: Truck, category: "Automotive & Transportation", description: "Van and vehicle rental services" },
-  { id: 45, name: "Boat Charters", icon: Truck, category: "Automotive & Transportation", description: "Boat rental and charter services" },
-  { id: 46, name: "Motorcycle Repair", icon: Wrench, category: "Automotive & Transportation", description: "Motorcycle maintenance and repair services" },
+  { id: 39, name: "Car Detailing", icon: Car, category: "Automotive & Transportation", description: "Professional car cleaning and detailing services" },
+  { id: 40, name: "Auto Mechanic", icon: Wrench, category: "Automotive & Transportation", description: "Car maintenance and mechanical repair services" },
+  { id: 41, name: "Mobile Car Wash", icon: Droplets, category: "Automotive & Transportation", description: "On-site car washing and cleaning services" },
+  { id: 42, name: "Moving Services", icon: Truck, category: "Automotive & Transportation", description: "Residential and commercial moving services" },
+  { id: 43, name: "Chauffeur/Limo Services", icon: Car, category: "Automotive & Transportation", description: "Luxury transportation and chauffeur services" },
+  { id: 44, name: "Airport Transfers", icon: Car, category: "Automotive & Transportation", description: "Airport pickup and drop-off services" },
+  { id: 45, name: "Van Rentals", icon: Truck, category: "Automotive & Transportation", description: "Van and vehicle rental services" },
+  { id: 46, name: "Boat Charters", icon: Truck, category: "Automotive & Transportation", description: "Boat rental and charter services" },
+  { id: 47, name: "Motorcycle Repair", icon: Wrench, category: "Automotive & Transportation", description: "Motorcycle maintenance and repair services" },
 
   // Business & Digital Services (11 calculators)
-  { id: 47, name: "Web Designer", icon: Code, category: "Business & Digital Services", description: "Website design and development services" },
-  { id: 48, name: "Marketing Consultant", icon: BarChart3, category: "Business & Digital Services", description: "Marketing strategy and campaign management" },
-  { id: 49, name: "SEO Agency", icon: TrendingUp, category: "Business & Digital Services", description: "Search engine optimization and digital marketing" },
-  { id: 50, name: "Video Editor", icon: Video, category: "Business & Digital Services", description: "Video editing and post-production services" },
-  { id: 51, name: "Copywriter", icon: Edit, category: "Business & Digital Services", description: "Content writing and copywriting services" },
-  { id: 52, name: "Virtual Assistant", icon: Users, category: "Business & Digital Services", description: "Administrative support and virtual assistance" },
-  { id: 53, name: "Business Coach", icon: Briefcase, category: "Business & Digital Services", description: "Business strategy and coaching services" },
-  { id: 54, name: "Legal Advisor", icon: Scale, category: "Business & Digital Services", description: "Legal consultation and document preparation" },
-  { id: 55, name: "Tax Preparer", icon: Calculator, category: "Business & Digital Services", description: "Tax preparation and accounting services" },
-  { id: 56, name: "Translation Services", icon: Globe, category: "Business & Digital Services", description: "Document and verbal translation services" },
+  { id: 48, name: "Web Designer", icon: Code, category: "Business & Digital Services", description: "Website design and development services" },
+  { id: 49, name: "Marketing Consultant", icon: BarChart3, category: "Business & Digital Services", description: "Marketing strategy and campaign management" },
+  { id: 50, name: "SEO Agency", icon: TrendingUp, category: "Business & Digital Services", description: "Search engine optimization and digital marketing" },
+  { id: 51, name: "Video Editor", icon: Video, category: "Business & Digital Services", description: "Video editing and post-production services" },
+  { id: 52, name: "Copywriter", icon: Edit, category: "Business & Digital Services", description: "Content writing and copywriting services" },
+  { id: 53, name: "Virtual Assistant", icon: Users, category: "Business & Digital Services", description: "Administrative support and virtual assistance" },
+  { id: 54, name: "Business Coach", icon: Briefcase, category: "Business & Digital Services", description: "Business strategy and coaching services" },
+  { id: 55, name: "Legal Advisor", icon: Scale, category: "Business & Digital Services", description: "Legal consultation and document preparation" },
+  { id: 56, name: "Tax Preparer", icon: Calculator, category: "Business & Digital Services", description: "Tax preparation and accounting services" },
+  { id: 57, name: "Translation Services", icon: Globe, category: "Business & Digital Services", description: "Document and verbal translation services" },
 ];
 
 export default function NichesPage() {

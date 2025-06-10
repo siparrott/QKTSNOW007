@@ -54,7 +54,8 @@ import {
   Gem,
   Sparkles,
   Flower,
-  Sun
+  Sun,
+  Baby
 } from "lucide-react";
 import { Link } from "wouter";
 
@@ -63,6 +64,7 @@ const allNiches = [
   // Photography & Videography (10 calculators)
   { id: 1, name: "Wedding Photography", icon: Camera, category: "Photography & Videography", available: true, slug: "wedding-photography", description: "Wedding packages with engagement and reception coverage" },
   { id: 2, name: "Boudoir Photography", icon: Camera, category: "Photography & Videography", available: true, slug: "boudoir-photography", description: "Intimate and artistic boudoir photography sessions" },
+  { id: 3, name: "Newborn Photography", icon: Heart, category: "Photography & Videography", available: true, slug: "newborn-photography", description: "Gentle newborn and baby photography sessions" },
 
   { id: 4, name: "Drone/Aerial Photography", icon: Camera, category: "Photography & Videography", available: true, slug: "drone-photography", description: "Aerial photography and videography services" },
   { id: 5, name: "Event Videography", icon: Video, category: "Photography & Videography", available: true, slug: "event-videography", description: "Event video production and live streaming" },

@@ -238,6 +238,46 @@ export class MemStorage implements IStorage {
           }
         },
         createdAt: new Date(),
+      },
+      {
+        id: 6,
+        name: "Newborn Photography Calculator",
+        slug: "newborn-photography",
+        category: "photography",
+        description: "Gentle newborn photography pricing calculator with soft pastel styling",
+        defaultConfig: {
+          sessionTypes: {
+            "classic-studio": 290,
+            "lifestyle": 340,
+            "combo": 365,
+            "mini": 190
+          },
+          babyAges: {
+            "5-10-days": 0,
+            "11-21-days": 25,
+            "1-month-plus": 50
+          },
+          peopleOptions: {
+            "baby-only": 0,
+            "baby-parents": 50,
+            "baby-family": 100
+          },
+          deliveryOptions: {
+            "digital-only": 0,
+            "prints-album": 140,
+            "usb-album": 160
+          },
+          addOns: {
+            "makeup": 80,
+            "sibling": 50,
+            "album": 140,
+            "wall-art": 120,
+            "retouching": 60,
+            "extended": 75
+          },
+          weekendSurcharge: 75
+        },
+        createdAt: new Date(),
       }
     ];
 

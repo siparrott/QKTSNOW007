@@ -778,6 +778,49 @@ export class MemStorage implements IStorage {
         }
       },
       {
+        name: "Painting & Decorating Calculator",
+        slug: "painting-decorating",
+        category: "home-services",
+        description: "Professional painting and decorating pricing calculator with trade-pro styling",
+        defaultConfig: {
+          projectTypes: {
+            "interior": 180,
+            "exterior": 250,
+            "wallpaper": 220,
+            "decorative": 300,
+            "whole-house": 800
+          },
+          roomCounts: {
+            "1-room": 1,
+            "2-3-rooms": 2.5,
+            "4-5-rooms": 4.5,
+            "full-home": 6.5
+          },
+          wallConditions: {
+            "new": 0,
+            "minor": 30,
+            "repair": 80
+          },
+          paintTypes: {
+            "standard": 0,
+            "premium": 30,
+            "eco": 25
+          },
+          urgencyLevels: {
+            "flexible": 0,
+            "two-weeks": 50,
+            "asap": 100
+          },
+          addOns: {
+            "ceiling": 25,
+            "doors-trims": 40,
+            "feature-wall": 50,
+            "two-coat": 35,
+            "protection": 45
+          }
+        }
+      },
+      {
         name: "Wedding Photography Quote Calculator",
         slug: "wedding-photography",
         category: "photography",

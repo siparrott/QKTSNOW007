@@ -208,7 +208,7 @@ export default function Features() {
               transition={{ duration: 0.8 }}
             >
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6">
-                Meet Your New Lead Machines.
+                Meet Your New <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-green-400">Lead Machines</span>.
               </h1>
               <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
                 AI-powered quote calculators for every service business.<br />

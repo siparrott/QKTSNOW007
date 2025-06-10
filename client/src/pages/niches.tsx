@@ -61,9 +61,9 @@ import { Link } from "wouter";
 // Comprehensive list of all launch calculators
 const allNiches = [
   // Photography & Videography (10 calculators)
-  { id: 1, name: "Wedding Photography", icon: Camera, category: "Photography & Videography", available: true, description: "Wedding packages with engagement and reception coverage" },
-  { id: 2, name: "Boudoir Photography", icon: Camera, category: "Photography & Videography", available: true, description: "Intimate and artistic boudoir photography sessions" },
-  { id: 3, name: "Corporate Headshots", icon: Camera, category: "Photography & Videography", description: "Professional business portraits and headshots" },
+  { id: 1, name: "Wedding Photography", icon: Camera, category: "Photography & Videography", available: true, slug: "wedding-photography", description: "Wedding packages with engagement and reception coverage" },
+  { id: 2, name: "Boudoir Photography", icon: Camera, category: "Photography & Videography", available: true, slug: "boudoir-photography", description: "Intimate and artistic boudoir photography sessions" },
+  { id: 3, name: "Corporate Headshots", icon: Camera, category: "Photography & Videography", slug: "corporate-headshots", description: "Professional business portraits and headshots" },
   { id: 4, name: "Drone/Aerial Photography", icon: Camera, category: "Photography & Videography", description: "Aerial photography and videography services" },
   { id: 5, name: "Event Videography", icon: Video, category: "Photography & Videography", description: "Event video production and live streaming" },
   { id: 6, name: "Real Estate Photography", icon: Camera, category: "Photography & Videography", description: "Property photos for listings and marketing" },
@@ -73,15 +73,15 @@ const allNiches = [
   { id: 10, name: "Lifestyle Influencer Videography", icon: Video, category: "Photography & Videography", description: "Content creation for social media influencers" },
 
   // Home Services (10 calculators)
-  { id: 11, name: "Home Renovation", icon: Hammer, category: "Home Services", available: true, description: "Kitchen, bathroom, and full home renovations with AI pricing" },
-  { id: 12, name: "Landscaping", icon: TreePine, category: "Home Services", available: true, description: "Garden design, maintenance, and outdoor projects" },
+  { id: 11, name: "Home Renovation", icon: Hammer, category: "Home Services", available: true, slug: "home-renovation", description: "Kitchen, bathroom, and full home renovations with AI pricing" },
+  { id: 12, name: "Landscaping", icon: TreePine, category: "Home Services", available: true, slug: "landscaping", description: "Garden design, maintenance, and outdoor projects" },
   { id: 13, name: "Interior Design", icon: Palette, category: "Home Services", description: "Room design, furniture selection, and space planning" },
   { id: 14, name: "Painting & Decorating", icon: Paintbrush, category: "Home Services", description: "Interior and exterior painting and decorating services" },
   { id: 15, name: "Electrical Services", icon: Zap, category: "Home Services", description: "Wiring, lighting installation, and electrical repairs" },
   { id: 16, name: "Plumbing Services", icon: Wrench, category: "Home Services", description: "Pipe repair, installation, and emergency plumbing services" },
   { id: 17, name: "Roofing", icon: Home, category: "Home Services", description: "Roof repair, replacement, and maintenance services" },
   { id: 18, name: "Solar Panel Installation", icon: Sun, category: "Home Services", description: "Solar energy system installation and maintenance" },
-  { id: 19, name: "Pest Control", icon: Shield, category: "Home Services", available: true, description: "Residential and commercial pest management services" },
+  { id: 19, name: "Pest Control", icon: Shield, category: "Home Services", available: true, slug: "pest-control", description: "Residential and commercial pest management services" },
   { id: 20, name: "Window & Door Installation", icon: Home, category: "Home Services", description: "Window and door replacement and installation" },
 
   // Beauty & Wellness (8 calculators)
@@ -89,7 +89,7 @@ const allNiches = [
   { id: 22, name: "Hair Stylist", icon: Scissors, category: "Beauty & Wellness", description: "Cuts, coloring, and styling services" },
   { id: 23, name: "Tattoo Artist", icon: Sparkles, category: "Beauty & Wellness", description: "Custom tattoo design and tattooing services" },
   { id: 24, name: "Massage Therapy", icon: Heart, category: "Beauty & Wellness", description: "Therapeutic and relaxation massage services" },
-  { id: 25, name: "Personal Training", icon: Dumbbell, category: "Beauty & Wellness", available: true, description: "1-on-1 and group fitness training sessions" },
+  { id: 25, name: "Personal Training", icon: Dumbbell, category: "Beauty & Wellness", available: true, slug: "personal-training", description: "1-on-1 and group fitness training sessions" },
   { id: 26, name: "Nutritionist", icon: Stethoscope, category: "Beauty & Wellness", description: "Meal planning and dietary consultation services" },
   { id: 27, name: "Life Coach", icon: Target, category: "Beauty & Wellness", description: "Personal development and goal achievement coaching" },
   { id: 28, name: "Hypnotherapist", icon: Heart, category: "Beauty & Wellness", description: "Hypnosis therapy and mental wellness services" },
@@ -280,42 +280,17 @@ export default function NichesPage() {
                       Live Demo Available
                     </Badge>
                     <div className="space-y-2">
-                      {niche.name === "Home Renovation" && (
-                        <Link href="/calculator/home-renovation">
-                          <Button className="w-full bg-neon-500 hover:bg-neon-600 text-white">
+                      {niche.slug ? (
+                        <Link href={`/calculator/${niche.slug}`}>
+                          <Button className={`w-full text-white ${
+                            niche.name === "Boudoir Photography" 
+                              ? "bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 font-serif"
+                              : "bg-neon-500 hover:bg-neon-600"
+                          }`}>
                             Try Live Demo
                           </Button>
                         </Link>
-                      )}
-                      {niche.name === "Wedding Photography" && (
-                        <Link href="/calculator/wedding-photography">
-                          <Button className="w-full bg-neon-500 hover:bg-neon-600 text-white">
-                            Try Live Demo
-                          </Button>
-                        </Link>
-                      )}
-                      {niche.name === "Personal Training" && (
-                        <Link href="/calculator/personal-training">
-                          <Button className="w-full bg-neon-500 hover:bg-neon-600 text-white">
-                            Try Live Demo
-                          </Button>
-                        </Link>
-                      )}
-                      {niche.name === "Landscaping" && (
-                        <Link href="/calculator/landscaping">
-                          <Button className="w-full bg-neon-500 hover:bg-neon-600 text-white">
-                            Try Live Demo
-                          </Button>
-                        </Link>
-                      )}
-                      {niche.name === "Pest Control" && (
-                        <Link href="/calculator/pest-control">
-                          <Button className="w-full bg-neon-500 hover:bg-neon-600 text-white">
-                            Try Live Demo
-                          </Button>
-                        </Link>
-                      )}
-                      {!["Home Renovation", "Wedding Photography", "Personal Training", "Landscaping", "Pest Control"].includes(niche.name) && (
+                      ) : (
                         <Button className="w-full bg-neon-500 hover:bg-neon-600 text-white">
                           Try Live Demo
                         </Button>

@@ -116,10 +116,10 @@ const allNiches = [
   // Automotive & Transportation (9 calculators)
   { id: 39, name: "Car Detailing", icon: Car, category: "Automotive & Transportation", available: true, slug: "car-detailing", description: "Professional car cleaning and detailing services" },
   { id: 40, name: "Auto Mechanic", icon: Wrench, category: "Automotive & Transportation", available: true, slug: "auto-mechanic", description: "Car maintenance and mechanical repair services" },
-  { id: 41, name: "Mobile Car Wash", icon: Droplets, category: "Automotive & Transportation", description: "On-site car washing and cleaning services" },
+  { id: 41, name: "Mobile Car Wash", icon: Droplets, category: "Automotive & Transportation", available: true, slug: "mobile-car-wash", description: "On-site car washing and cleaning services" },
   { id: 42, name: "Moving Services", icon: Truck, category: "Automotive & Transportation", description: "Residential and commercial moving services" },
-  { id: 43, name: "Chauffeur/Limo Services", icon: Car, category: "Automotive & Transportation", description: "Luxury transportation and chauffeur services" },
-  { id: 44, name: "Airport Transfers", icon: Car, category: "Automotive & Transportation", description: "Airport pickup and drop-off services" },
+  { id: 43, name: "Chauffeur/Limo Services", icon: Car, category: "Automotive & Transportation", available: true, slug: "chauffeur-limo", description: "Luxury transportation and chauffeur services" },
+  { id: 44, name: "Airport Transfers", icon: Car, category: "Automotive & Transportation", available: true, slug: "airport-transfer", description: "Airport pickup and drop-off services" },
   { id: 45, name: "Van Rentals", icon: Truck, category: "Automotive & Transportation", description: "Van and vehicle rental services" },
   { id: 46, name: "Boat Charters", icon: Truck, category: "Automotive & Transportation", description: "Boat rental and charter services" },
   { id: 47, name: "Motorcycle Repair", icon: Wrench, category: "Automotive & Transportation", description: "Motorcycle maintenance and repair services" },

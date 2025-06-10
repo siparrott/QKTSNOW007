@@ -361,3 +361,49 @@ Respond with JSON in this exact format:
     throw new Error("Failed to process request");
   }
 }
+
+export async function processWebDesignerRequest(input: string) {
+  if (!input.trim()) {
+    throw new Error("Input is required");
+  }
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: `You are an AI assistant that analyzes customer requests for web design services and extracts structured data.
+
+Available options:
+- Website types: landing (Landing Page), portfolio (Portfolio Site), business (Business Website), blog (Blog), ecommerce (E-Commerce)
+- Page counts: 1-3 (1-3 Pages), 4-6 (4-6 Pages), 7-10 (7-10 Pages), 10+ (10+ Pages)
+- Platforms: wordpress (WordPress), webflow (Webflow), squarespace (Squarespace), shopify (Shopify), custom (Custom HTML)
+- Timeline: 2weeks (2 Weeks), 1month (1 Month), flexible (Flexible), urgent (Urgent - 7 days)
+- Add-ons: logo (Logo Design), seo (SEO Setup), blog (Blog Integration), booking (Booking System), copywriting (Copywriting), ecommerce (E-Commerce Integration)
+
+Respond with JSON in this exact format:
+{
+  "websiteType": "string or null",
+  "pageCount": "string or null",
+  "platform": "string or null",
+  "timeline": "string or null",
+  "addOns": ["array of strings or empty array"]
+}`
+        },
+        {
+          role: "user",
+          content: input
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.3
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result;
+  } catch (error) {
+    console.error('AI processing error:', error);
+    throw new Error("Failed to process request");
+  }
+}

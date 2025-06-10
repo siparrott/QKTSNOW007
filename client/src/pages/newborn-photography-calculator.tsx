@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CalculatorHeader } from "@/components/calculator-header";
 import { 
   Baby, 
   Clock, 
@@ -282,17 +283,14 @@ export default function NewbornPhotographyCalculator() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-25 via-pink-25 to-stone-50 py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-light text-stone-800 mb-2">
-            Newborn Photography Quote Calculator
-          </h1>
-          <p className="text-stone-600 max-w-2xl mx-auto font-light">
-            Capture these precious fleeting moments forever. Get your personalized quote for a gentle newborn photography session.
-          </p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-rose-25 via-pink-25 to-stone-50">
+      <CalculatorHeader 
+        title="Newborn Photography Quote Calculator"
+        subtitle="Capture precious fleeting moments forever with gentle newborn photography"
+        category="Photography"
+        accentColor="rose"
+      />
+      <div className="max-w-7xl mx-auto px-4 py-8">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Form */}
@@ -665,7 +663,7 @@ export default function NewbornPhotographyCalculator() {
 
           {/* Pricing Sidebar */}
           <div className="lg:col-span-1">
-            <Card className="p-6 bg-white/95 backdrop-blur-sm border-pink-200 rounded-3xl shadow-xl sticky top-8">
+            <Card id="pricing-sidebar" className="p-6 bg-white/95 backdrop-blur-sm border-pink-200 rounded-3xl shadow-xl sticky top-8">
               <h3 className="text-xl font-light text-stone-800 mb-4">Your Session Investment</h3>
               
               <div className="space-y-3">

@@ -66,31 +66,28 @@ export default function Hero() {
           </motion.h1>
 
           <motion.div
-            className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed"
+            className="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed space-y-6"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
-              You're Not Losing Leads. You're Losing Patience.
-            </h2>
-            <p className="mb-4">
+            <p className="text-gray-200 text-lg md:text-xl">
               Clients don't want to call. They won't wait for an email.<br />
-              They want a price—right now.
+              <span className="text-white font-semibold">They want a price—right now.</span>
             </p>
-            <p className="mb-4">
+            
+            <p className="text-gray-300 text-lg md:text-xl">
               If your website can't quote instantly, they'll click away and never return.<br />
               It's not your fault. Your service page just isn't built to convert.
             </p>
-            <p className="mb-4 text-neon-300 font-semibold">
+            
+            <p className="text-neon-300 font-bold text-xl md:text-2xl">
               But now it can be.
             </p>
-            <p className="mb-4">
-              QuoteKit calculators give you confirmed bookings, not question marks.<br />
+            
+            <p className="text-gray-200 text-lg md:text-xl">
+              QuoteKit calculators give you <span className="text-white font-semibold">confirmed bookings</span>, not question marks.<br />
               No calls. No emails. No fuss.
-            </p>
-            <p className="text-gray-200 font-medium">
-              Just fast, accurate quotes and real sales—while you focus on your work.
             </p>
           </motion.div>
 

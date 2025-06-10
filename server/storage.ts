@@ -318,6 +318,48 @@ export class MemStorage implements IStorage {
           }
         },
         createdAt: new Date(),
+      },
+      {
+        id: 8,
+        name: "Nutritionist Calculator",
+        slug: "nutritionist",
+        category: "beauty-wellness",
+        description: "Modern wellness nutrition plan pricing calculator with green styling",
+        defaultConfig: {
+          goalTypes: {
+            "weight-loss": 0,
+            "muscle-gain": 0,
+            "digestive-health": 0,
+            "general-wellness": 0,
+            "sports-nutrition": 0
+          },
+          planTypes: {
+            "one-time": 90,
+            "4-week": 180,
+            "8-week": 300,
+            "monthly": 120
+          },
+          dietPreferences: {
+            "balanced": 0,
+            "vegetarian": 0,
+            "vegan": 0,
+            "keto": 0,
+            "gluten-free": 0,
+            "custom": 0
+          },
+          addOns: {
+            "grocery-list": 25,
+            "supplement-plan": 35,
+            "whatsapp-support": 15,
+            "zoom-checkins": 20,
+            "food-diary-review": 30
+          },
+          clientTypes: {
+            "new": 0,
+            "returning": 0.1
+          }
+        },
+        createdAt: new Date(),
       }
     ];
 

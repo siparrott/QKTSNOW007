@@ -33,6 +33,7 @@ import PaintingDecoratingCalculator from "@/pages/painting-decorating-calculator
 import WeddingPhotographyCalculator from "@/pages/wedding-photography-calculator";
 import NewbornPhotographyCalculator from "@/pages/newborn-photography-calculator";
 import MaternityPhotographyCalculator from "@/pages/maternity-photography-calculator";
+import NutritionistCalculator from "@/pages/nutritionist-calculator";
 
 
 function Router() {
@@ -65,6 +66,7 @@ function Router() {
       <Route path="/calculator/wedding-photography" component={WeddingPhotographyCalculator} />
       <Route path="/calculator/newborn-photography" component={NewbornPhotographyCalculator} />
       <Route path="/calculator/maternity-photography" component={MaternityPhotographyCalculator} />
+      <Route path="/calculator/nutritionist" component={NutritionistCalculator} />
       <Route path="/calculator/:slug" component={CalculatorPage} />
       <Route path="/niches" component={NichesPage} />
       <Route path="/niches/:niche" component={NotFound} />

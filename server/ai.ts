@@ -503,3 +503,49 @@ Respond with JSON in this exact format:
     throw new Error("Failed to process request");
   }
 }
+
+export async function processVideoEditorRequest(input: string) {
+  if (!input.trim()) {
+    throw new Error("Input is required");
+  }
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: `You are an AI assistant that analyzes customer requests for video editing services and extracts structured data.
+
+Available options:
+- Project types: wedding (Wedding Video), youtube (YouTube Vlog), corporate (Corporate Promo), event (Event Recap), shortfilm (Short Film)
+- Video durations: under2 (Under 2 mins), 2to5 (2-5 mins), 5to10 (5-10 mins), over10 (Over 10 mins)
+- Footage provided: provided (Yes - Raw Files Provided), filming (No - Need Filming Too)
+- Turnaround times: standard (Standard 5-7 Days), rush (Rush 48 Hours)
+- Add-ons: graphics (Motion Graphics), grading (Color Grading), captions (Subtitles/Captions), music (Licensed Music), voiceover (Voiceover Sourcing)
+
+Respond with JSON in this exact format:
+{
+  "projectType": "string or null",
+  "videoDuration": "string or null",
+  "footageProvided": "string or null",
+  "turnaroundTime": "string or null",
+  "addOns": ["array of strings or empty array"]
+}`
+        },
+        {
+          role: "user",
+          content: input
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.3
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result;
+  } catch (error) {
+    console.error('AI processing error:', error);
+    throw new Error("Failed to process request");
+  }
+}

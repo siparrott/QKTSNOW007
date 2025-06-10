@@ -51,6 +51,7 @@ import DrivingInstructorCalculator from "@/pages/driving-instructor-calculator";
 import WebDesignerCalculator from "@/pages/web-designer-calculator";
 import MarketingConsultantCalculator from "@/pages/marketing-consultant-calculator";
 import SEOAgencyCalculator from "@/pages/seo-agency-calculator";
+import VideoEditorCalculator from "@/pages/video-editor-calculator";
 
 
 function Router() {
@@ -101,6 +102,7 @@ function Router() {
       <Route path="/calculator/web-designer" component={WebDesignerCalculator} />
       <Route path="/calculator/marketing-consultant" component={MarketingConsultantCalculator} />
       <Route path="/calculator/seo-agency" component={SEOAgencyCalculator} />
+      <Route path="/calculator/video-editor" component={VideoEditorCalculator} />
       <Route path="/calculator/:slug" component={CalculatorPage} />
       <Route path="/niches" component={NichesPage} />
       <Route path="/niches/:niche" component={NotFound} />

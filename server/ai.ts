@@ -93,3 +93,49 @@ Respond with JSON in this exact format:
     throw new Error("Failed to process request");
   }
 }
+
+export async function processAirportTransferRequest(input: string) {
+  if (!input.trim()) {
+    throw new Error("Input is required");
+  }
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: `You are an AI assistant that analyzes customer requests for airport transfer services and extracts structured data.
+
+Available options:
+- Destination airports: vie (Vienna International Airport), muc (Munich Airport), fra (Frankfurt Airport), zur (Zurich Airport), prg (Prague Airport), other (Other Airport)
+- Vehicle types: economy (Economy Car), sedan (Executive Sedan), suv (SUV), van (Van), shuttle (Shuttle Bus)
+- Passengers: number from 1-8
+- Add-ons: baby_seat (Baby Seat), extra_luggage (Extra Luggage), meet_greet (Meet & Greet), flight_tracking (Flight Tracking)
+- Return trip: true or false
+
+Respond with JSON in this exact format:
+{
+  "destinationAirport": "string or null",
+  "vehicleType": "string or null",
+  "passengers": "number or null",
+  "addOns": ["array of strings or empty array"],
+  "returnTrip": "boolean or null"
+}`
+        },
+        {
+          role: "user",
+          content: input
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.3
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result;
+  } catch (error) {
+    console.error('AI processing error:', error);
+    throw new Error("Failed to process request");
+  }
+}

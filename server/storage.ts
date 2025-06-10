@@ -345,6 +345,44 @@ export class MemStorage implements IStorage {
         }
       },
       {
+        name: "Landscaping Calculator",
+        slug: "landscaping",
+        category: "home-services",
+        description: "Professional landscaping quote calculator with earthy styling",
+        defaultConfig: {
+          baseLawnMowing: 120,
+          services: {
+            "mowing": 0,
+            "tree-trimming": 100,
+            "garden-design": 200,
+            "irrigation": 300,
+            "patio": 900,
+            "lighting": 250,
+            "fence": 800,
+            "cleanup": 80
+          },
+          sizes: {
+            "small": 0,
+            "medium": 50,
+            "large": 100,
+            "very-large": 150
+          },
+          frequencies: {
+            "one-time": 0,
+            "weekly": 0.10,
+            "bi-weekly": 0.07,
+            "monthly": 0.05
+          },
+          addOns: {
+            "soil-treatment": 120,
+            "sod": 200,
+            "pressure-washing": 80,
+            "mulching": 90,
+            "garden-redesign": 150
+          }
+        }
+      },
+      {
         name: "Wedding Photography Quote Calculator",
         slug: "wedding-photography",
         category: "photography",

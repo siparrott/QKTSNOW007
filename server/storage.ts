@@ -231,7 +231,7 @@ export class MemStorage implements IStorage {
         }
       },
       {
-        name: "Commercial Photography Calculator",
+        name: "Commercial Photography",
         slug: "commercial-photography",
         category: "photography",
         description: "Professional commercial photography quote calculator with corporate styling",

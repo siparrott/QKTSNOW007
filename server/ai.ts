@@ -407,3 +407,51 @@ Respond with JSON in this exact format:
     throw new Error("Failed to process request");
   }
 }
+
+export async function processMarketingConsultantRequest(input: string) {
+  if (!input.trim()) {
+    throw new Error("Input is required");
+  }
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: `You are an AI assistant that analyzes customer requests for marketing consulting services and extracts structured data.
+
+Available options:
+- Marketing goals: traffic (Increase Website Traffic), social (Grow Social Media Audience), launch (Launch a New Product), branding (Improve Branding), leads (Generate Leads)
+- Service focus: seo (SEO), ppc (Google Ads / PPC), social (Social Media Strategy), email (Email Marketing), branding (Branding & Positioning)
+- Business sizes: solo (Solo / Startup), small (Small Business), medium (Mid-size), enterprise (Enterprise)
+- Engagement types: audit (One-time Audit), monthly (Monthly Consulting), full (Full Strategy & Execution)
+- Timeline: immediate (Immediate), month (Within a Month), flexible (Flexible), unsure (Not Sure Yet)
+- Add-ons: content (Content Plan), competitor (Competitor Audit), analytics (Analytics Setup), automation (Marketing Automation), social_ads (Social Ads Management)
+
+Respond with JSON in this exact format:
+{
+  "marketingGoal": "string or null",
+  "serviceFocus": "string or null",
+  "businessSize": "string or null",
+  "engagementType": "string or null",
+  "timeline": "string or null",
+  "addOns": ["array of strings or empty array"]
+}`
+        },
+        {
+          role: "user",
+          content: input
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.3
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result;
+  } catch (error) {
+    console.error('AI processing error:', error);
+    throw new Error("Failed to process request");
+  }
+}

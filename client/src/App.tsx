@@ -49,6 +49,7 @@ import MovingServicesCalculator from "@/pages/moving-services-calculator";
 import MotorcycleRepairCalculator from "@/pages/motorcycle-repair-calculator";
 import DrivingInstructorCalculator from "@/pages/driving-instructor-calculator";
 import WebDesignerCalculator from "@/pages/web-designer-calculator";
+import MarketingConsultantCalculator from "@/pages/marketing-consultant-calculator";
 
 
 function Router() {
@@ -97,6 +98,7 @@ function Router() {
       <Route path="/calculator/motorcycle-repair" component={MotorcycleRepairCalculator} />
       <Route path="/calculator/driving-instructor" component={DrivingInstructorCalculator} />
       <Route path="/calculator/web-designer" component={WebDesignerCalculator} />
+      <Route path="/calculator/marketing-consultant" component={MarketingConsultantCalculator} />
       <Route path="/calculator/:slug" component={CalculatorPage} />
       <Route path="/niches" component={NichesPage} />
       <Route path="/niches/:niche" component={NotFound} />

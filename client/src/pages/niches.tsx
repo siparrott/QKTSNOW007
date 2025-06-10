@@ -126,7 +126,7 @@ const allNiches = [
 
   // Business & Digital Services (11 calculators)
   { id: 48, name: "Web Designer", icon: Code, category: "Business & Digital Services", available: true, slug: "web-designer", description: "Website design and development services" },
-  { id: 49, name: "Marketing Consultant", icon: BarChart3, category: "Business & Digital Services", description: "Marketing strategy and campaign management" },
+  { id: 49, name: "Marketing Consultant", icon: BarChart3, category: "Business & Digital Services", available: true, slug: "marketing-consultant", description: "Marketing strategy and campaign management" },
   { id: 50, name: "SEO Agency", icon: TrendingUp, category: "Business & Digital Services", description: "Search engine optimization and digital marketing" },
   { id: 51, name: "Video Editor", icon: Video, category: "Business & Digital Services", description: "Video editing and post-production services" },
   { id: 52, name: "Copywriter", icon: Edit, category: "Business & Digital Services", description: "Content writing and copywriting services" },

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -59,7 +60,6 @@ import {
   Baby,
   Apple
 } from "lucide-react";
-import { Link } from "wouter";
 
 // Comprehensive list of all launch calculators
 const allNiches = [
@@ -131,8 +131,8 @@ const allNiches = [
   { id: 50, name: "SEO Agency", icon: TrendingUp, category: "Business & Digital Services", available: true, slug: "seo-agency", description: "Search engine optimization and digital marketing" },
   { id: 51, name: "Video Editor", icon: Video, category: "Business & Digital Services", available: true, slug: "video-editor", description: "Video editing and post-production services" },
   { id: 52, name: "Copywriter", icon: Edit, category: "Business & Digital Services", available: true, slug: "copywriter", description: "Content writing and copywriting services" },
-  { id: 53, name: "Virtual Assistant", icon: Users, category: "Business & Digital Services", description: "Administrative support and virtual assistance" },
-  { id: 54, name: "Business Coach", icon: Briefcase, category: "Business & Digital Services", description: "Business strategy and coaching services" },
+  { id: 53, name: "Virtual Assistant", icon: Users, category: "Business & Digital Services", available: true, slug: "virtual-assistant", description: "Administrative support and virtual assistance" },
+  { id: 54, name: "Business Coach", icon: Briefcase, category: "Business & Digital Services", available: true, slug: "business-coach", description: "Business strategy and coaching services" },
   { id: 55, name: "Legal Advisor", icon: Scale, category: "Business & Digital Services", description: "Legal consultation and document preparation" },
   { id: 56, name: "Tax Preparer", icon: Calculator, category: "Business & Digital Services", description: "Tax preparation and accounting services" },
   { id: 57, name: "Translation Services", icon: Globe, category: "Business & Digital Services", description: "Document and verbal translation services" },

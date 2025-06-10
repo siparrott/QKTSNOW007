@@ -57,7 +57,7 @@ import VideoEditorCalculator from "@/pages/video-editor-calculator";
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Home} />
+      <Route path="/" component={Home} exact />
       <Route path="/calculator/boudoir-photography" component={BoudoirPhotographyCalculator} />
       <Route path="/calculator/electrician" component={ElectricianCalculator} />
       <Route path="/calculator/home-renovation" component={HomeRenovationCalculator} />

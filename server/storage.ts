@@ -597,6 +597,47 @@ export class MemStorage implements IStorage {
         }
       },
       {
+        name: "Tattoo Artist Calculator",
+        slug: "tattoo-artist",
+        category: "beauty-wellness",
+        description: "Professional tattoo artistry pricing calculator with urban dark styling",
+        defaultConfig: {
+          sizes: {
+            "xs": 100,
+            "small": 150,
+            "medium": 250,
+            "large": 500
+          },
+          placements: {
+            "arm": 0,
+            "leg": 0,
+            "back": 25,
+            "chest": 25,
+            "neck": 50,
+            "hand": 75,
+            "face": 100
+          },
+          styles: {
+            "fine-line": 0,
+            "realism": 100,
+            "traditional": 25,
+            "blackwork": 50,
+            "watercolor": 75
+          },
+          colorMultiplier: {
+            "black-grey": 1.0,
+            "color": 1.15
+          },
+          customArt: 75,
+          addOns: {
+            "priority": 60,
+            "aftercare": 25,
+            "touch-up": 40,
+            "consultation": 50
+          }
+        }
+      },
+      {
         name: "Wedding Photography Quote Calculator",
         slug: "wedding-photography",
         category: "photography",

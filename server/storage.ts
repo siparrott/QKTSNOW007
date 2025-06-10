@@ -159,6 +159,39 @@ export class MemStorage implements IStorage {
         }
       },
       {
+        name: "Real Estate Photography Calculator",
+        slug: "real-estate-photography",
+        category: "photography",
+        description: "Professional property photography quote calculator with competitive pricing",
+        defaultConfig: {
+          baseApartment: 150,
+          propertyTypes: {
+            "apartment": 0,
+            "house": 50,
+            "villa": 100,
+            "commercial": 100
+          },
+          services: {
+            "interior": 0,
+            "exterior": 30,
+            "aerial": 80,
+            "twilight": 90,
+            "floor-plan": 60,
+            "virtual-tour": 120
+          },
+          timeframes: {
+            "standard": 0,
+            "rush": 50,
+            "same-day": 90
+          },
+          locations: {
+            "city": 0,
+            "nearby": 25,
+            "distant": 75
+          }
+        }
+      },
+      {
         name: "Wedding Photography Quote Calculator",
         slug: "wedding-photography",
         category: "photography",

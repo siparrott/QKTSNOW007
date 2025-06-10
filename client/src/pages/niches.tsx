@@ -66,7 +66,7 @@ const allNiches = [
   { id: 3, name: "Corporate Headshots", icon: Camera, category: "Photography & Videography", slug: "corporate-headshots", description: "Professional business portraits and headshots" },
   { id: 4, name: "Drone/Aerial Photography", icon: Camera, category: "Photography & Videography", available: true, slug: "drone-photography", description: "Aerial photography and videography services" },
   { id: 5, name: "Event Videography", icon: Video, category: "Photography & Videography", available: true, slug: "event-videography", description: "Event video production and live streaming" },
-  { id: 6, name: "Real Estate Photography", icon: Camera, category: "Photography & Videography", description: "Property photos for listings and marketing" },
+  { id: 6, name: "Real Estate Photography", icon: Camera, category: "Photography & Videography", available: true, slug: "real-estate-photography", description: "Property photos for listings and marketing" },
   { id: 7, name: "Food Photography", icon: Camera, category: "Photography & Videography", description: "Restaurant and culinary photography services" },
   { id: 8, name: "Commercial Product Photography", icon: Camera, category: "Photography & Videography", description: "E-commerce and catalog product photography" },
   { id: 9, name: "Portrait Studios", icon: Camera, category: "Photography & Videography", description: "Family portraits, headshots, and personal sessions" },

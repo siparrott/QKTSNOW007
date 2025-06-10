@@ -12,6 +12,7 @@ import ElectricianCalculator from "@/pages/electrician-calculator";
 import HomeRenovationCalculator from "@/pages/home-renovation-calculator-new";
 import DronePhotographyCalculator from "@/pages/drone-photography-calculator";
 import EventVideographyCalculator from "@/pages/event-videography-calculator";
+import RealEstatePhotographyCalculator from "@/pages/real-estate-photography-calculator";
 
 
 function Router() {
@@ -23,6 +24,7 @@ function Router() {
       <Route path="/calculator/home-renovation" component={HomeRenovationCalculator} />
       <Route path="/calculator/drone-photography" component={DronePhotographyCalculator} />
       <Route path="/calculator/event-videography" component={EventVideographyCalculator} />
+      <Route path="/calculator/real-estate-photography" component={RealEstatePhotographyCalculator} />
       <Route path="/calculator/:slug" component={CalculatorPage} />
       <Route path="/niches" component={NichesPage} />
       <Route path="/niches/:niche" component={NotFound} />

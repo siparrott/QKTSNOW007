@@ -18,6 +18,7 @@ import CommercialPhotographyCalculator from "@/pages/commercial-photography-calc
 import PortraitPhotographyCalculator from "@/pages/portrait-photography-calculator";
 import LifestyleInfluencerCalculator from "@/pages/lifestyle-influencer-calculator";
 import LandscapingCalculator from "@/pages/landscaping-calculator";
+import RoofingCalculator from "@/pages/roofing-calculator";
 
 
 function Router() {
@@ -35,6 +36,7 @@ function Router() {
       <Route path="/calculator/portrait-photography" component={PortraitPhotographyCalculator} />
       <Route path="/calculator/lifestyle-influencer" component={LifestyleInfluencerCalculator} />
       <Route path="/calculator/landscaping" component={LandscapingCalculator} />
+      <Route path="/calculator/roofing" component={RoofingCalculator} />
       <Route path="/calculator/:slug" component={CalculatorPage} />
       <Route path="/niches" component={NichesPage} />
       <Route path="/niches/:niche" component={NotFound} />

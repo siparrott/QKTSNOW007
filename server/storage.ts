@@ -383,6 +383,45 @@ export class MemStorage implements IStorage {
         }
       },
       {
+        name: "Roofing Calculator",
+        slug: "roofing",
+        category: "home-services",
+        description: "Professional roofing quote calculator with contractor-friendly styling",
+        defaultConfig: {
+          services: {
+            "leak-repair": 150,
+            "replacement": 120,
+            "gutter-cleaning": 150,
+            "tile-replacement": 200,
+            "inspection": 75
+          },
+          roofTypes: {
+            "flat": 1,
+            "pitched": 1,
+            "metal": 1.15,
+            "tile": 1.2,
+            "asphalt": 1
+          },
+          accessFees: {
+            "easy": 0,
+            "moderate": 100,
+            "difficult": 200
+          },
+          buildingMultipliers: {
+            "house": 1,
+            "apartment": 1.1,
+            "commercial": 1.2
+          },
+          addOns: {
+            "gutter-guard": 180,
+            "waterproof": 150,
+            "skylight": 250,
+            "fascia": 120,
+            "emergency": 100
+          }
+        }
+      },
+      {
         name: "Wedding Photography Quote Calculator",
         slug: "wedding-photography",
         category: "photography",

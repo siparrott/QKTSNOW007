@@ -315,3 +315,49 @@ Respond with JSON in this exact format:
     throw new Error("Failed to process request");
   }
 }
+
+export async function processDrivingInstructorRequest(input: string) {
+  if (!input.trim()) {
+    throw new Error("Input is required");
+  }
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: `You are an AI assistant that analyzes customer requests for driving instructor services and extracts structured data.
+
+Available options:
+- Transmission types: manual (Manual), automatic (Automatic)
+- Lesson types: beginner (Beginner Package), intensive (Intensive Course), refresher (Refresher Lessons), test_prep (Test Preparation)
+- Number of lessons: any number from 1-40 as string
+- Pickup locations: instructor (Instructor's Location), student (Student Address)
+- Add-ons: theory (Theory Support), mock_test (Mock Test), flexible_time (Evening/Weekend Lessons)
+
+Respond with JSON in this exact format:
+{
+  "transmissionType": "string or null",
+  "lessonType": "string or null",
+  "numberOfLessons": "string or null",
+  "pickupLocation": "string or null",
+  "addOns": ["array of strings or empty array"]
+}`
+        },
+        {
+          role: "user",
+          content: input
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.3
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result;
+  } catch (error) {
+    console.error('AI processing error:', error);
+    throw new Error("Failed to process request");
+  }
+}

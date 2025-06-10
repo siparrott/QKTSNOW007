@@ -101,7 +101,7 @@ const allNiches = [
   // Education & Training (3 calculators)
   { id: 30, name: "Private Tutor", icon: GraduationCap, category: "Education & Training", available: true, slug: "private-tutor", description: "Academic tutoring and test preparation" },
   { id: 31, name: "Private Schools", icon: GraduationCap, category: "Education & Training", description: "Private education tuition and enrollment services" },
-  { id: 32, name: "Driving Instructor", icon: Car, category: "Education & Training", description: "Driver education and road test preparation" },
+  { id: 32, name: "Driving Instructor", icon: Car, category: "Education & Training", available: true, slug: "driving-instructor", description: "Driver education and road test preparation" },
 
   // Healthcare & Medical (5 calculators)
   { id: 33, name: "Dentist & Implant Clinics", icon: Stethoscope, category: "Healthcare & Medical", description: "Dental care, implants, and oral surgery services" },

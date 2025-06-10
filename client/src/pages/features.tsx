@@ -3,6 +3,7 @@ import { QuoteKitHeader } from "@/components/calculator-header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Link } from "wouter";
 import { 
   Zap, 
   Brain, 
@@ -22,7 +23,6 @@ import {
   ArrowRight,
   Sparkles,
   PenTool,
-  Link,
   Bell,
   CreditCard,
   RefreshCw,
@@ -207,15 +207,62 @@ export default function Features() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <Badge className="mb-6 bg-neon-500/20 text-neon-400 border-neon-500/30">
-                Revolutionary Quote Technology
-              </Badge>
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6">
-                Features That <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">Convert</span>
+                Meet Your New Lead Machines.
               </h1>
               <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
-                Every feature designed to turn website visitors into paying clients. 
-                No technical skills required, unlimited customization possible.
+                AI-powered quote calculators for every service business.<br />
+                Embed on any website. Start capturing leads in seconds. Then relax.
+              </p>
+              
+              <div className="flex items-center justify-center gap-8 mb-8 text-gray-300">
+                <div className="flex items-center gap-2">
+                  <span className="text-neon-400">💡</span>
+                  <span>57 Live Demos</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-green-400">🔓</span>
+                  <span>1 Full Version Unlocked</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-blue-400">💸</span>
+                  <span>Launch Price: Just €5/month</span>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+                <Button 
+                  asChild
+                  className="bg-neon-500 hover:bg-neon-600 text-white px-8 py-4 text-lg rounded-lg font-medium transition-all duration-300 hover:shadow-glow"
+                >
+                  <Link href="/niches">Browse All 58 Calculators</Link>
+                </Button>
+                <Button 
+                  variant="outline"
+                  asChild
+                  className="border-gray-600 text-gray-300 hover:bg-gray-800 px-8 py-4 text-lg rounded-lg font-medium transition-all duration-300"
+                >
+                  <Link href="/#pricing">See Pricing</Link>
+                </Button>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center text-gray-300 mb-8">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span>No Coding Needed</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span>Fully Brandable</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span>Lead Capture Built-In</span>
+                </div>
+              </div>
+
+              <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+                Whether you're a photographer, coach, cleaner or consultant—QuoteKit does the quoting, so you can do the closing.
               </p>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">

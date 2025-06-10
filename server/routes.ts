@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { authService } from "./auth";
 import { stripeService } from "./stripe";
 import { emailService } from "./email";
-import { processCarWashRequest, processChauffeurRequest, processAirportTransferRequest, processVanRentalRequest, processBoatCharterRequest, processMovingServicesRequest, processMotorcycleRepairRequest, processDrivingInstructorRequest, processWebDesignerRequest, processMarketingConsultantRequest, processSEOAgencyRequest, processVideoEditorRequest, processCopywriterRequest, processLegalAdvisorRequest, processTaxPreparerRequest, processTranslationServicesRequest } from "./ai";
+import { processCarWashRequest, processChauffeurRequest, processAirportTransferRequest, processVanRentalRequest, processBoatCharterRequest, processMovingServicesRequest, processMotorcycleRepairRequest, processDrivingInstructorRequest, processWebDesignerRequest, processMarketingConsultantRequest, processSEOAgencyRequest, processVideoEditorRequest, processCopywriterRequest, processLegalAdvisorRequest, processTaxPreparerRequest, processTranslationServicesRequest, processCleaningServicesRequest, processPrivateSchoolRequest } from "./ai";
 import { 
   insertUserSchema, 
   insertLeadSchema,
@@ -730,6 +730,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
           addOnCosts: [],
           discounts: []
         }
+      };
+      res.json(result);
+    } catch (error) {
+      console.error("AI processing error:", error);
+      res.status(500).json({ error: "Failed to process AI request" });
+    }
+  });
+
+  // AI processing for cleaning services calculator
+  app.post("/api/ai/process-cleaning", async (req, res) => {
+    try {
+      const { input } = req.body;
+      if (!input || typeof input !== "string") {
+        return res.status(400).json({ error: "Input text is required" });
+      }
+      
+      // Process with AI function
+      const aiResult = await processCleaningServicesRequest(input);
+      
+      // Return structured response for cleaning services
+      const result = {
+        cleaningType: aiResult.cleaningType || "regular",
+        propertySize: aiResult.propertySize || "2-bedroom",
+        addOns: aiResult.addOns || [],
+        frequency: aiResult.frequency || "weekly",
+        urgency: aiResult.urgency || "standard"
+      };
+      res.json(result);
+    } catch (error) {
+      console.error("AI processing error:", error);
+      res.status(500).json({ error: "Failed to process AI request" });
+    }
+  });
+
+  // AI processing for private school tuition calculator
+  app.post("/api/ai/process-privateschool", async (req, res) => {
+    try {
+      const { input } = req.body;
+      if (!input || typeof input !== "string") {
+        return res.status(400).json({ error: "Input text is required" });
+      }
+      
+      // Process with AI function
+      const aiResult = await processPrivateSchoolRequest(input);
+      
+      // Return structured response for private school tuition
+      const result = {
+        gradeLevel: aiResult.gradeLevel || "primary",
+        enrollmentType: aiResult.enrollmentType || "full-time",
+        siblingStatus: aiResult.siblingStatus || "first",
+        addOns: aiResult.addOns || [],
+        paymentPlan: aiResult.paymentPlan || "annual"
       };
       res.json(result);
     } catch (error) {

@@ -876,6 +876,88 @@ export class MemStorage implements IStorage {
           baseRate: 0.12
         },
         createdAt: new Date(),
+      },
+      {
+        id: 21,
+        name: "Cleaning Services Calculator",
+        slug: "cleaning-services",
+        category: "home-services",
+        description: "Professional house and commercial cleaning services pricing calculator with teal design",
+        defaultConfig: {
+          cleaningTypes: {
+            "regular": 1.0,
+            "deep-clean": 1.25,
+            "move-in-out": 1.35,
+            "airbnb": 1.15,
+            "carpet": 1.20
+          },
+          propertySizes: {
+            "studio": 60,
+            "1-bedroom": 75,
+            "2-bedroom": 90,
+            "3-bedroom": 105,
+            "4-bedroom": 125
+          },
+          frequencies: {
+            "one-time": 0,
+            "weekly": 0.15,
+            "biweekly": 0.10,
+            "monthly": 0.05
+          },
+          urgency: {
+            "standard": 1.0,
+            "express": 1.20,
+            "emergency": 1.50
+          },
+          addOns: {
+            "windows": 20,
+            "fridge": 10,
+            "oven": 15,
+            "laundry": 15,
+            "balcony": 12
+          },
+          baseRate: 60
+        },
+        createdAt: new Date(),
+      },
+      {
+        id: 22,
+        name: "Private School Tuition Calculator",
+        slug: "private-school",
+        category: "education",
+        description: "Academic tuition estimator for private schools with navy, white, and beige design",
+        defaultConfig: {
+          gradeLevels: {
+            "pre-k": 5000,
+            "primary": 7500,
+            "middle": 9000,
+            "high": 11000
+          },
+          enrollmentTypes: {
+            "full-time": 1.0,
+            "part-time": 0.7,
+            "boarding": 8000,
+            "day-school": 1.0
+          },
+          siblingDiscounts: {
+            "first": 0,
+            "second": 0.10,
+            "third": 0.15
+          },
+          paymentPlans: {
+            "annual": 0,
+            "quarterly": 0.02,
+            "monthly": 0.05
+          },
+          addOns: {
+            "aftercare": 900,
+            "lunch": 750,
+            "transport": 1200,
+            "ib-advanced": 1500
+          },
+          baseRate: 7500
+        },
+        createdAt: new Date(),
       }
     ];
 

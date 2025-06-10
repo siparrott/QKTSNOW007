@@ -735,3 +735,95 @@ Respond with JSON in this exact format:
     throw new Error("Failed to process request");
   }
 }
+
+export async function processCleaningServicesRequest(input: string) {
+  if (!input.trim()) {
+    throw new Error("Input is required");
+  }
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: `You are an AI assistant that analyzes customer requests for cleaning services and extracts structured data.
+
+Available options:
+- Cleaning types: regular (Regular / Weekly), deep-clean (Deep Clean), move-in-out (Move-in / Move-out), airbnb (Airbnb Turnaround), carpet (Carpet / Upholstery)
+- Property sizes: studio (Studio), 1-bedroom (1 Bedroom), 2-bedroom (2 Bedroom), 3-bedroom (3 Bedroom), 4-bedroom (4+ Bedroom)
+- Add-ons: windows (Window Cleaning), fridge (Inside Fridge), oven (Inside Oven), laundry (Laundry & Folding), balcony (Balcony / Patio)
+- Frequency: one-time (One-time), weekly (Weekly), biweekly (Biweekly), monthly (Monthly)
+- Urgency: standard (Standard 2–3 days), express (Express Next Day), emergency (Emergency Same Day)
+
+Respond with JSON in this exact format:
+{
+  "cleaningType": "string or null",
+  "propertySize": "string or null",
+  "addOns": ["array of strings or empty array"],
+  "frequency": "string or null",
+  "urgency": "string or null"
+}`
+        },
+        {
+          role: "user",
+          content: input
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.3
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result;
+  } catch (error) {
+    console.error('AI processing error:', error);
+    throw new Error("Failed to process request");
+  }
+}
+
+export async function processPrivateSchoolRequest(input: string) {
+  if (!input.trim()) {
+    throw new Error("Input is required");
+  }
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: `You are an AI assistant that analyzes parent requests for private school tuition and extracts structured data.
+
+Available options:
+- Grade levels: pre-k (Pre-K / Kindergarten), primary (Primary 1–5), middle (Middle School 6–8), high (High School 9–12)
+- Enrollment types: full-time (Full-Time), part-time (Part-Time), boarding (Boarding), day-school (Day School)
+- Sibling status: first (First Child), second (Second Child), third (Third+ Child)
+- Add-ons: aftercare (After-School Care), lunch (Lunch Plan), transport (Transportation), ib-advanced (IB / Advanced Curriculum)
+- Payment plans: annual (Annual), quarterly (Quarterly), monthly (Monthly)
+
+Respond with JSON in this exact format:
+{
+  "gradeLevel": "string or null",
+  "enrollmentType": "string or null",
+  "siblingStatus": "string or null",
+  "addOns": ["array of strings or empty array"],
+  "paymentPlan": "string or null"
+}`
+        },
+        {
+          role: "user",
+          content: input
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.3
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result;
+  } catch (error) {
+    console.error('AI processing error:', error);
+    throw new Error("Failed to process request");
+  }
+}

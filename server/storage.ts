@@ -997,6 +997,50 @@ export class MemStorage implements IStorage {
           }
         },
         createdAt: new Date(),
+      },
+      {
+        id: 24,
+        name: "Childcare Practitioner Calculator",
+        slug: "childcare-practitioner",
+        category: "healthcare-medical",
+        description: "Parent-friendly childcare pricing calculator with gentle pastel design for nannies, daycare, and after-school care",
+        defaultConfig: {
+          careTypes: {
+            "full-day": 60,
+            "half-day": 35,
+            "after-school": 25,
+            "weekend": 70,
+            "overnight": 80
+          },
+          ageGroups: {
+            "infant": 1.2,
+            "toddler": 1.1,
+            "preschooler": 1.0,
+            "school-age": 0.9
+          },
+          timeSlots: {
+            "morning": 1.0,
+            "afternoon": 1.0,
+            "evening": 1.1,
+            "overnight": 1.3
+          },
+          addOns: {
+            "meals": 5,
+            "homework": 10,
+            "extra-child": 20,
+            "special-needs": 15
+          },
+          discounts: {
+            multiChild: 0.15,
+            subsidy: 0.20
+          },
+          promoCodes: {
+            "CARE10": 10,
+            "FAMILY20": 20,
+            "FIRSTTIME15": 15
+          }
+        },
+        createdAt: new Date(),
       }
     ];
 

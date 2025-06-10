@@ -109,7 +109,7 @@ const allNiches = [
   { id: 33, name: "Dentist & Implant Clinics", icon: Stethoscope, category: "Healthcare & Medical", available: true, slug: "dentist-implant", description: "Dental care, implants, and oral surgery services" },
   { id: 34, name: "Private Medical Clinics", icon: Stethoscope, category: "Healthcare & Medical", description: "Private healthcare consultations and treatments" },
   { id: 35, name: "Plastic Surgery", icon: Stethoscope, category: "Healthcare & Medical", description: "Cosmetic and reconstructive surgery procedures" },
-  { id: 36, name: "Childcare Practitioners", icon: Heart, category: "Healthcare & Medical", description: "Individual childcare and nanny services" },
+  { id: 36, name: "Childcare Practitioners", icon: Heart, category: "Healthcare & Medical", available: true, slug: "childcare-practitioner", description: "Individual childcare and nanny services" },
   { id: 37, name: "Childcare Clinics", icon: Heart, category: "Healthcare & Medical", description: "Pediatric care and child wellness clinics" },
 
   // Pet Services (1 calculator)

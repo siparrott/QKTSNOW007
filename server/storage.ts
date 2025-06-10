@@ -119,6 +119,46 @@ export class MemStorage implements IStorage {
         }
       },
       {
+        name: "Event Videography Calculator",
+        slug: "event-videography",
+        category: "photography",
+        description: "Professional event videography quote calculator with cinematic quality",
+        defaultConfig: {
+          baseEvent: 450,
+          durations: {
+            "2-hours": 0,
+            "half-day": 300,
+            "full-day": 600,
+            "multi-day": 1200
+          },
+          deliverables: {
+            "full-video": 0,
+            "highlights": 250,
+            "raw-footage": 0,
+            "social-teasers": 120,
+            "drone": 200,
+            "same-day-edit": 400
+          },
+          crewSizes: {
+            "solo": 0,
+            "duo": 200,
+            "full-team": 400
+          },
+          locations: {
+            "local": 0,
+            "regional": 100,
+            "destination": 300
+          },
+          addOns: {
+            "voiceover": 80,
+            "music": 100,
+            "titles": 60,
+            "livestream": 300,
+            "express": 100
+          }
+        }
+      },
+      {
         name: "Wedding Photography Quote Calculator",
         slug: "wedding-photography",
         category: "photography",

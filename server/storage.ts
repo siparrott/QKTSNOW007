@@ -708,6 +708,38 @@ export class MemStorage implements IStorage {
         }
       },
       {
+        name: "Plumbing Services Calculator",
+        slug: "plumbing",
+        category: "home-services",
+        description: "Professional plumbing service pricing calculator with industrial styling",
+        defaultConfig: {
+          serviceTypes: {
+            "leak-repair": 120,
+            "pipe-installation": 200,
+            "water-heater": 450,
+            "toilet-faucet": 90,
+            "renovation": 800,
+            "emergency": 150
+          },
+          propertyTypes: {
+            "apartment": 1.0,
+            "house": 1.2,
+            "commercial": 1.8
+          },
+          urgencyLevels: {
+            "flexible": 0,
+            "48-hours": 50,
+            "emergency": 100
+          },
+          addOns: {
+            "inspection": 60,
+            "report": 40,
+            "warranty": 30
+          },
+          floorSurcharge: 10
+        }
+      },
+      {
         name: "Wedding Photography Quote Calculator",
         slug: "wedding-photography",
         category: "photography",

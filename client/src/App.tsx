@@ -54,6 +54,9 @@ import SEOAgencyCalculator from "@/pages/seo-agency-calculator";
 import VideoEditorCalculator from "@/pages/video-editor-calculator";
 import CopywriterCalculator from "@/pages/copywriter-calculator";
 import Features from "@/pages/features";
+import Login from "@/pages/login";
+import Register from "@/pages/register";
+import Dashboard from "@/pages/dashboard";
 
 
 function Router() {
@@ -109,6 +112,9 @@ function Router() {
       <Route path="/calculator/:slug" component={CalculatorPage} />
       <Route path="/niches" component={NichesPage} />
       <Route path="/features" component={Features} />
+      <Route path="/login" component={Login} />
+      <Route path="/register" component={Register} />
+      <Route path="/dashboard" component={Dashboard} />
       <Route path="/niches/:niche" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

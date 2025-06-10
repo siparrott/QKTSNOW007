@@ -683,6 +683,46 @@ export class MemStorage implements IStorage {
           }
         },
         createdAt: new Date(),
+      },
+      {
+        id: 16,
+        name: "Virtual Assistant Calculator",
+        slug: "virtual-assistant",
+        category: "business-services",
+        description: "Professional virtual assistant pricing calculator with teal and purple styling",
+        defaultConfig: {
+          serviceTypes: {
+            "inbox-management": 0,
+            "calendar-booking": 0,
+            "social-media": 0,
+            "data-entry": 0,
+            "customer-support": 0
+          },
+          hoursPerWeek: {
+            "1-5": 1,
+            "6-10": 8,
+            "11-20": 15,
+            "20+": 25
+          },
+          availabilityOptions: {
+            "mornings": 0,
+            "afternoons": 0,
+            "evenings": 0,
+            "flexible": 0
+          },
+          urgencyLevels: {
+            "asap": 50,
+            "within-2-weeks": 0,
+            "next-month": 0
+          },
+          contractTypes: {
+            "one-off": 0,
+            "monthly-retainer": -15,
+            "ongoing-hourly": 0
+          },
+          baseRate: 30
+        },
+        createdAt: new Date(),
       }
     ];
 

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { QuoteKitHeader } from "@/components/calculator-header";
 import { 
   Camera, 
   Clock, 
@@ -280,8 +281,9 @@ export default function WeddingPhotographyCalculator() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-rose-25 to-amber-25 py-8">
-      <div className="max-w-7xl mx-auto px-4">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-rose-25 to-amber-25">
+      <QuoteKitHeader />
+      <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-serif text-stone-800 mb-2">

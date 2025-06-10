@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { QuoteKitHeader } from "@/components/calculator-header";
 import { ArrowLeft, Camera, Heart, Star, Clock, Mail, ArrowRight, Check, Crown, MapPin, Home, Building, Sparkles } from "lucide-react";
 import { Link } from "wouter";
 

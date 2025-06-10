@@ -532,6 +532,47 @@ export class MemStorage implements IStorage {
           }
         },
         createdAt: new Date(),
+      },
+      {
+        id: 13,
+        name: "Car Detailing Calculator",
+        slug: "car-detailing",
+        category: "automotive-transportation",
+        description: "Sleek modern car detailing pricing calculator with dark grey and teal styling",
+        defaultConfig: {
+          vehicleTypes: {
+            "sedan": 0,
+            "suv": 20,
+            "truck": 25,
+            "van": 30,
+            "coupe": 5,
+            "motorcycle": -20
+          },
+          serviceLevels: {
+            "exterior-wash": 60,
+            "interior-clean": 80,
+            "full-detail": 150,
+            "engine-bay": 100,
+            "ceramic-coating": 210
+          },
+          conditions: {
+            "light": 0,
+            "average": 10,
+            "heavy": 20
+          },
+          serviceLocations: {
+            "shop": 0,
+            "mobile": 25
+          },
+          addOns: {
+            "headlight-restoration": 40,
+            "leather-conditioning": 25,
+            "odor-elimination": 35,
+            "stain-removal": 30,
+            "water-spot-treatment": 20
+          }
+        },
+        createdAt: new Date(),
       }
     ];
 

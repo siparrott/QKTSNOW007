@@ -841,6 +841,41 @@ export class MemStorage implements IStorage {
           baseRate: 80
         },
         createdAt: new Date(),
+      },
+      {
+        id: 20,
+        name: "Translation Services Calculator",
+        slug: "translation-services",
+        category: "business-services",
+        description: "Professional translation and language services pricing calculator with multilingual design",
+        defaultConfig: {
+          serviceTypes: {
+            "translation": 0.12,
+            "proofreading": 0.06,
+            "transcription": 0.08,
+            "subtitling": 0.15,
+            "certified": 0.18
+          },
+          documentTypes: {
+            "legal": 1.3,
+            "marketing": 1.1,
+            "technical": 1.4,
+            "academic": 1.2,
+            "personal": 1.0
+          },
+          urgencyMultipliers: {
+            "standard": 1.0,
+            "express": 1.25,
+            "same-day": 1.5
+          },
+          addOns: {
+            "certified-stamp": 20,
+            "formatting": 10,
+            "extra-proofreading": 0.04
+          },
+          baseRate: 0.12
+        },
+        createdAt: new Date(),
       }
     ];
 

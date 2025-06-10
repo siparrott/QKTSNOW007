@@ -685,3 +685,53 @@ Respond with JSON in this exact format:
     throw new Error("Failed to process request");
   }
 }
+
+export async function processTranslationServicesRequest(input: string) {
+  if (!input.trim()) {
+    throw new Error("Input is required");
+  }
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: `You are an AI assistant that analyzes customer requests for translation services and extracts structured data.
+
+Available options:
+- Service types: translation (Translation), proofreading (Proofreading), transcription (Transcription), subtitling (Subtitling), certified (Certified Translation)
+- Source languages: en (English), de (German), es (Spanish), fr (French), it (Italian), pt (Portuguese), nl (Dutch), ru (Russian), zh (Chinese), ja (Japanese), ar (Arabic)
+- Target languages: en (English), de (German), es (Spanish), fr (French), it (Italian), pt (Portuguese), nl (Dutch), ru (Russian), zh (Chinese), ja (Japanese), ar (Arabic)
+- Document types: legal (Legal), marketing (Marketing), technical (Technical), academic (Academic), personal (Personal)
+- Word counts: 0-500 (0–500 words), 500-1000 (500–1,000 words), 1000-5000 (1,000–5,000 words), 5000+ (5,000+ words)
+- Urgency: standard (Standard 3–5 days), express (Express 48 hours), same-day (Same Day)
+- Add-ons: certified-stamp (Certified Stamp), formatting (Formatting / Layout), extra-proofreading (Extra Proofreading)
+
+Respond with JSON in this exact format:
+{
+  "serviceType": "string or null",
+  "sourceLanguage": "string or null",
+  "targetLanguage": "string or null",
+  "documentType": "string or null",
+  "wordCount": "string or null",
+  "urgency": "string or null",
+  "addOns": ["array of strings or empty array"]
+}`
+        },
+        {
+          role: "user",
+          content: input
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.3
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result;
+  } catch (error) {
+    console.error('AI processing error:', error);
+    throw new Error("Failed to process request");
+  }
+}

@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { authService } from "./auth";
 import { stripeService } from "./stripe";
 import { emailService } from "./email";
-import { processCarWashRequest, processChauffeurRequest, processAirportTransferRequest, processVanRentalRequest, processBoatCharterRequest, processMovingServicesRequest, processMotorcycleRepairRequest, processDrivingInstructorRequest, processWebDesignerRequest, processMarketingConsultantRequest, processSEOAgencyRequest, processVideoEditorRequest, processCopywriterRequest, processLegalAdvisorRequest, processTaxPreparerRequest } from "./ai";
+import { processCarWashRequest, processChauffeurRequest, processAirportTransferRequest, processVanRentalRequest, processBoatCharterRequest, processMovingServicesRequest, processMotorcycleRepairRequest, processDrivingInstructorRequest, processWebDesignerRequest, processMarketingConsultantRequest, processSEOAgencyRequest, processVideoEditorRequest, processCopywriterRequest, processLegalAdvisorRequest, processTaxPreparerRequest, processTranslationServicesRequest } from "./ai";
 import { 
   insertUserSchema, 
   insertLeadSchema,
@@ -691,6 +691,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
           baseCost: 96,
           complexityFee: 0,
           formsFee: 0,
+          addOnCosts: [],
+          discounts: []
+        }
+      };
+      res.json(result);
+    } catch (error) {
+      console.error("AI processing error:", error);
+      res.status(500).json({ error: "Failed to process AI request" });
+    }
+  });
+
+  // AI processing for translation services calculator
+  app.post("/api/ai/process-translation", async (req, res) => {
+    try {
+      const { input } = req.body;
+      if (!input || typeof input !== "string") {
+        return res.status(400).json({ error: "Input text is required" });
+      }
+      
+      // Process with AI function
+      const aiResult = await processTranslationServicesRequest(input);
+      
+      // Return structured response for translation services
+      const result = {
+        serviceType: aiResult.serviceType || "translation",
+        sourceLanguage: aiResult.sourceLanguage || "en",
+        targetLanguage: aiResult.targetLanguage || "de",
+        documentType: aiResult.documentType || "personal",
+        wordCount: aiResult.wordCount || "1000-5000",
+        urgency: aiResult.urgency || "standard",
+        addOns: aiResult.addOns || [],
+        baseRate: 0.12,
+        totalCost: 360,
+        breakdown: {
+          baseCost: 360,
+          urgencyFee: 0,
           addOnCosts: [],
           discounts: []
         }

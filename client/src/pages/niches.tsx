@@ -135,7 +135,7 @@ const allNiches = [
   { id: 54, name: "Business Coach", icon: Briefcase, category: "Business & Digital Services", available: true, slug: "business-coach", description: "Business strategy and coaching services" },
   { id: 55, name: "Legal Advisor", icon: Scale, category: "Business & Digital Services", available: true, slug: "legal-advisor", description: "Legal consultation and document preparation" },
   { id: 56, name: "Tax Preparer", icon: Calculator, category: "Business & Digital Services", available: true, slug: "tax-preparer", description: "Tax preparation and accounting services" },
-  { id: 57, name: "Translation Services", icon: Globe, category: "Business & Digital Services", description: "Document and verbal translation services" },
+  { id: 57, name: "Translation Services", icon: Globe, category: "Business & Digital Services", available: true, slug: "translation-services", description: "Document and verbal translation services" },
 ];
 
 export default function NichesPage() {

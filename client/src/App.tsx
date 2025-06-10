@@ -57,6 +57,7 @@ import VirtualAssistantCalculator from "@/pages/virtual-assistant-calculator";
 import BusinessCoachCalculator from "@/pages/business-coach-calculator";
 import LegalAdvisorCalculator from "@/pages/legal-advisor-calculator";
 import TaxPreparerCalculator from "@/pages/tax-preparer-calculator";
+import TranslationServicesCalculator from "@/pages/translation-services-calculator";
 import Features from "@/pages/features";
 import Login from "@/pages/login";
 import Register from "@/pages/register";
@@ -117,6 +118,7 @@ function Router() {
       <Route path="/calculator/business-coach" component={BusinessCoachCalculator} />
       <Route path="/calculator/legal-advisor" component={LegalAdvisorCalculator} />
       <Route path="/calculator/tax-preparer" component={TaxPreparerCalculator} />
+      <Route path="/calculator/translation-services" component={TranslationServicesCalculator} />
       <Route path="/calculator/:slug" component={CalculatorPage} />
       <Route path="/niches" component={NichesPage} />
       <Route path="/features" component={Features} />

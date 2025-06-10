@@ -1,15 +1,235 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { authService } from "./auth";
+import { stripeService } from "./stripe";
+import { emailService } from "./email";
 import { processCarWashRequest, processChauffeurRequest, processAirportTransferRequest, processVanRentalRequest, processBoatCharterRequest, processMovingServicesRequest, processMotorcycleRepairRequest, processDrivingInstructorRequest, processWebDesignerRequest, processMarketingConsultantRequest, processSEOAgencyRequest, processVideoEditorRequest, processCopywriterRequest } from "./ai";
 import { 
   insertUserSchema, 
   insertLeadSchema,
-  insertUserCalculatorSchema
+  insertUserCalculatorSchema,
+  registerUserSchema,
+  loginUserSchema
 } from "@shared/schema";
+
+// Auth middleware
+async function requireAuth(req: Request, res: Response, next: NextFunction) {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Authorization token required' });
+    }
+
+    const token = authHeader.substring(7);
+    const user = await authService.verifyToken(token);
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid or expired token' });
+    }
+
+    (req as any).user = user;
+    next();
+  } catch (error) {
+    res.status(401).json({ error: 'Authentication failed' });
+  }
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
+  // Authentication routes
+  app.post("/api/auth/register", async (req, res) => {
+    try {
+      const userData = registerUserSchema.parse(req.body);
+      const result = await authService.register(userData);
+      
+      res.status(201).json({
+        user: {
+          id: result.user.id,
+          email: result.user.email,
+          fullName: result.user.fullName,
+          subscriptionStatus: result.user.subscriptionStatus
+        },
+        token: result.token
+      });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const credentials = loginUserSchema.parse(req.body);
+      const result = await authService.login(credentials);
+      
+      res.json({
+        user: {
+          id: result.user.id,
+          email: result.user.email,
+          fullName: result.user.fullName,
+          subscriptionStatus: result.user.subscriptionStatus,
+          quotesUsedThisMonth: result.user.quotesUsedThisMonth,
+          quotesLimit: result.user.quotesLimit
+        },
+        token: result.token
+      });
+    } catch (error: any) {
+      res.status(401).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/auth/logout", requireAuth, async (req, res) => {
+    try {
+      const sessionToken = req.headers.authorization?.substring(7);
+      if (sessionToken) {
+        await authService.logout(sessionToken);
+      }
+      res.json({ message: "Logged out successfully" });
+    } catch (error) {
+      res.status(500).json({ error: "Logout failed" });
+    }
+  });
+
+  app.get("/api/auth/me", requireAuth, async (req, res) => {
+    const user = (req as any).user;
+    res.json({
+      id: user.id,
+      email: user.email,
+      fullName: user.fullName,
+      subscriptionStatus: user.subscriptionStatus,
+      quotesUsedThisMonth: user.quotesUsedThisMonth,
+      quotesLimit: user.quotesLimit
+    });
+  });
+
+  // Subscription routes
+  app.get("/api/subscription/plans", async (req, res) => {
+    const plans = authService.getSubscriptionPlans();
+    res.json(plans);
+  });
+
+  app.post("/api/subscription/checkout", requireAuth, async (req, res) => {
+    try {
+      const { planId, calculatorSlug } = req.body;
+      const user = (req as any).user;
+      
+      const successUrl = `${process.env.REPLIT_DEV_DOMAIN || 'http://localhost:5000'}/dashboard/success`;
+      const cancelUrl = `${process.env.REPLIT_DEV_DOMAIN || 'http://localhost:5000'}/pricing`;
+      
+      const session = await stripeService.createCheckoutSession(
+        user.id,
+        planId,
+        calculatorSlug,
+        successUrl,
+        cancelUrl
+      );
+      
+      res.json({ checkoutUrl: session.url });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/subscription/success", requireAuth, async (req, res) => {
+    try {
+      const { sessionId, calculator } = req.body;
+      const user = (req as any).user;
+      
+      // Here you would verify the session with Stripe and complete setup
+      // For now, we'll simulate successful subscription
+      const result = await stripeService.handleSuccessfulSubscription(
+        user.id,
+        'starter', // Default to starter plan
+        calculator,
+        'sub_' + Math.random().toString(36).substring(7)
+      );
+      
+      // Send welcome email
+      const calc = await storage.getCalculatorBySlug(calculator);
+      if (calc) {
+        await emailService.sendWelcomeEmail(
+          result.user,
+          result.userCalculator,
+          calc.name
+        );
+      }
+      
+      res.json({
+        success: true,
+        userCalculator: result.userCalculator
+      });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/subscription/portal", requireAuth, async (req, res) => {
+    try {
+      const user = (req as any).user;
+      const returnUrl = `${process.env.REPLIT_DEV_DOMAIN || 'http://localhost:5000'}/dashboard`;
+      
+      const portalUrl = await stripeService.createCustomerPortalSession(user.id, returnUrl);
+      res.json({ portalUrl });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  // Stripe webhooks
+  app.post("/api/webhooks/stripe", async (req, res) => {
+    try {
+      const signature = req.headers['stripe-signature'] as string;
+      await stripeService.handleWebhook(req.body, signature);
+      res.json({ received: true });
+    } catch (error: any) {
+      console.error('Webhook error:', error.message);
+      res.status(400).send(`Webhook Error: ${error.message}`);
+    }
+  });
+
+  // User calculator management
+  app.get("/api/user-calculators", requireAuth, async (req, res) => {
+    try {
+      const user = (req as any).user;
+      const userCalculators = await storage.getUserCalculators(user.id);
+      res.json(userCalculators);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch user calculators" });
+    }
+  });
+
+  app.get("/api/user-calculators/:embedId", async (req, res) => {
+    try {
+      const { embedId } = req.params;
+      const userCalculator = await storage.getUserCalculatorByEmbedId(embedId);
+      if (!userCalculator) {
+        return res.status(404).json({ error: "Calculator not found" });
+      }
+      res.json(userCalculator);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch calculator" });
+    }
+  });
+
+  app.put("/api/user-calculators/:id", requireAuth, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const user = (req as any).user;
+      const updateData = req.body;
+      
+      // Verify ownership
+      const userCalculators = await storage.getUserCalculators(user.id);
+      const calculator = userCalculators.find(uc => uc.id === id);
+      if (!calculator) {
+        return res.status(404).json({ error: "Calculator not found" });
+      }
+      
+      const updated = await storage.updateUserCalculator(id, updateData);
+      res.json(updated);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update calculator" });
+    }
+  });
+
   // Get all calculators
   app.get("/api/calculators", async (req, res) => {
     try {

@@ -63,6 +63,8 @@ export class MemStorage implements IStorage {
     this.calculators = new Map();
     this.userCalculators = new Map();
     this.leads = new Map();
+    this.sessions = new Map();
+    this.subscriptions = new Map();
     this.currentCalculatorId = 1;
     this.seedCalculators();
   }
@@ -792,16 +794,122 @@ export class MemStorage implements IStorage {
     const lead: Lead = {
       id: crypto.randomUUID(),
       userCalculatorId: insertLead.userCalculatorId,
-      name: insertLead.name,
-      email: insertLead.email,
+      name: insertLead.name || null,
+      email: insertLead.email || null,
       phone: insertLead.phone || null,
       quoteData: insertLead.quoteData || {},
-      estimatedValue: insertLead.estimatedValue || 0,
-      status: insertLead.status || "new",
+      estimatedValue: insertLead.estimatedValue || null,
+      status: "new",
       createdAt: new Date(),
     };
     this.leads.set(lead.id, lead);
     return lead;
+  }
+
+  // Sessions
+  async createSession(insertSession: InsertSession): Promise<Session> {
+    const session: Session = {
+      id: crypto.randomUUID(),
+      userId: insertSession.userId,
+      token: insertSession.token,
+      expiresAt: insertSession.expiresAt,
+      createdAt: new Date(),
+    };
+    this.sessions.set(session.token, session);
+    return session;
+  }
+
+  async getSessionByToken(token: string): Promise<Session | undefined> {
+    return this.sessions.get(token);
+  }
+
+  async deleteSession(sessionId: string): Promise<void> {
+    for (const [token, session] of this.sessions.entries()) {
+      if (session.id === sessionId) {
+        this.sessions.delete(token);
+        break;
+      }
+    }
+  }
+
+  // Subscriptions
+  async createSubscription(insertSubscription: InsertSubscription): Promise<Subscription> {
+    const subscription: Subscription = {
+      id: crypto.randomUUID(),
+      userId: insertSubscription.userId,
+      stripeSubscriptionId: insertSubscription.stripeSubscriptionId || null,
+      status: insertSubscription.status,
+      currentPeriodStart: insertSubscription.currentPeriodStart || null,
+      currentPeriodEnd: insertSubscription.currentPeriodEnd || null,
+      cancelAtPeriodEnd: false,
+      createdAt: new Date(),
+    };
+    this.subscriptions.set(subscription.id, subscription);
+    return subscription;
+  }
+
+  async getSubscriptionByUserId(userId: string): Promise<Subscription | undefined> {
+    for (const subscription of this.subscriptions.values()) {
+      if (subscription.userId === userId) {
+        return subscription;
+      }
+    }
+    return undefined;
+  }
+
+  async updateSubscription(subscriptionId: string, data: Partial<Subscription>): Promise<Subscription> {
+    const subscription = this.subscriptions.get(subscriptionId);
+    if (!subscription) {
+      throw new Error('Subscription not found');
+    }
+    const updated = { ...subscription, ...data };
+    this.subscriptions.set(subscriptionId, updated);
+    return updated;
+  }
+
+  // User subscription management
+  async updateUserSubscription(userId: string, data: Partial<User>): Promise<User> {
+    const user = this.users.get(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    const updated = { ...user, ...data };
+    this.users.set(userId, updated);
+    return updated;
+  }
+
+  async resetUserQuotes(userId: string): Promise<void> {
+    const user = this.users.get(userId);
+    if (user) {
+      const updated = { 
+        ...user, 
+        quotesUsedThisMonth: 0, 
+        lastQuoteReset: new Date() 
+      };
+      this.users.set(userId, updated);
+    }
+  }
+
+  async incrementUserQuotes(userId: string): Promise<void> {
+    const user = this.users.get(userId);
+    if (user) {
+      const updated = { 
+        ...user, 
+        quotesUsedThisMonth: (user.quotesUsedThisMonth || 0) + 1 
+      };
+      this.users.set(userId, updated);
+    }
+  }
+
+  // User Calculator management
+  async updateUserCalculator(id: string, data: Partial<UserCalculator>): Promise<UserCalculator> {
+    const userCalculator = this.userCalculators.get(id);
+    if (!userCalculator) {
+      throw new Error('User calculator not found');
+    }
+    const updated = { ...userCalculator, ...data, lastUpdated: new Date() };
+    this.userCalculators.set(id, updated);
+    return updated;
   }
 }
 

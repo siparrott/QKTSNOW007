@@ -360,6 +360,46 @@ export class MemStorage implements IStorage {
           }
         },
         createdAt: new Date(),
+      },
+      {
+        id: 9,
+        name: "Life Coach Calculator",
+        slug: "life-coach",
+        category: "beauty-wellness",
+        description: "Warm, calming life coaching pricing calculator with sage green and lilac styling",
+        defaultConfig: {
+          coachingFocus: {
+            "personal-growth": 0,
+            "career-coaching": 0,
+            "confidence-building": 0,
+            "relationship-coaching": 0,
+            "life-purpose": 0
+          },
+          sessionFormats: {
+            "zoom-coaching": 0,
+            "group-sessions": -30,
+            "in-person": 40,
+            "asynchronous": -20
+          },
+          programDurations: {
+            "one-off": 80,
+            "4-week": 280,
+            "8-week": 480,
+            "monthly": 150
+          },
+          addOns: {
+            "accountability-checkins": 20,
+            "worksheets": 30,
+            "video-resources": 40,
+            "whatsapp-support": 15,
+            "discovery-call": 0
+          },
+          clientTypes: {
+            "new": 0,
+            "returning": 0.1
+          }
+        },
+        createdAt: new Date(),
       }
     ];
 

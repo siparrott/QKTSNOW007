@@ -95,7 +95,7 @@ const allNiches = [
   { id: 25, name: "Massage Therapy", icon: Heart, category: "Beauty & Wellness", available: true, slug: "massage-therapy", description: "Therapeutic and relaxation massage services" },
   { id: 26, name: "Personal Training", icon: Dumbbell, category: "Beauty & Wellness", available: true, slug: "personal-training", description: "1-on-1 and group fitness training sessions" },
   { id: 27, name: "Nutritionist", icon: Stethoscope, category: "Beauty & Wellness", available: true, slug: "nutritionist", description: "Meal planning and dietary consultation services" },
-  { id: 28, name: "Life Coach", icon: Target, category: "Beauty & Wellness", description: "Personal development and goal achievement coaching" },
+  { id: 28, name: "Life Coach", icon: Target, category: "Beauty & Wellness", available: true, slug: "life-coach", description: "Personal development and goal achievement coaching" },
   { id: 29, name: "Hypnotherapist", icon: Heart, category: "Beauty & Wellness", description: "Hypnosis therapy and mental wellness services" },
 
   // Education & Training (3 calculators)

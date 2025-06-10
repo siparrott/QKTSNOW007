@@ -439,6 +439,51 @@ export class MemStorage implements IStorage {
           }
         },
         createdAt: new Date(),
+      },
+      {
+        id: 11,
+        name: "Private Tutor Calculator",
+        slug: "private-tutor",
+        category: "education-training",
+        description: "Clean academic private tutoring pricing calculator with navy and slate styling",
+        defaultConfig: {
+          subjects: {
+            "mathematics": 0,
+            "science": 0,
+            "english-languages": 0,
+            "coding-it": 0,
+            "music": 0
+          },
+          studentLevels: {
+            "primary": 0,
+            "secondary": 10,
+            "university": 15,
+            "adult": 12
+          },
+          sessionTypes: {
+            "online": 0,
+            "student-home": 10,
+            "tutor-home": 5
+          },
+          sessionDurations: {
+            "30min": 25,
+            "60min": 30,
+            "90min": 40
+          },
+          sessionFrequencies: {
+            "one-off": 1,
+            "weekly": 1,
+            "twice-weekly": 1.9,
+            "intensive": 2.7
+          },
+          addOns: {
+            "exam-materials": 10,
+            "progress-reports": 15,
+            "homework-support": 10,
+            "emergency-booking": 25
+          }
+        },
+        createdAt: new Date(),
       }
     ];
 

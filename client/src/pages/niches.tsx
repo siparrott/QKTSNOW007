@@ -99,7 +99,7 @@ const allNiches = [
   { id: 29, name: "Hypnotherapist", icon: Heart, category: "Beauty & Wellness", available: true, slug: "hypnotherapist", description: "Hypnosis therapy and mental wellness services" },
 
   // Education & Training (3 calculators)
-  { id: 30, name: "Private Tutor", icon: GraduationCap, category: "Education & Training", description: "Academic tutoring and test preparation" },
+  { id: 30, name: "Private Tutor", icon: GraduationCap, category: "Education & Training", available: true, slug: "private-tutor", description: "Academic tutoring and test preparation" },
   { id: 31, name: "Private Schools", icon: GraduationCap, category: "Education & Training", description: "Private education tuition and enrollment services" },
   { id: 32, name: "Driving Instructor", icon: Car, category: "Education & Training", description: "Driver education and road test preparation" },
 

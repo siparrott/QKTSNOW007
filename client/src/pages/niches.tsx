@@ -133,7 +133,7 @@ const allNiches = [
   { id: 52, name: "Copywriter", icon: Edit, category: "Business & Digital Services", available: true, slug: "copywriter", description: "Content writing and copywriting services" },
   { id: 53, name: "Virtual Assistant", icon: Users, category: "Business & Digital Services", available: true, slug: "virtual-assistant", description: "Administrative support and virtual assistance" },
   { id: 54, name: "Business Coach", icon: Briefcase, category: "Business & Digital Services", available: true, slug: "business-coach", description: "Business strategy and coaching services" },
-  { id: 55, name: "Legal Advisor", icon: Scale, category: "Business & Digital Services", description: "Legal consultation and document preparation" },
+  { id: 55, name: "Legal Advisor", icon: Scale, category: "Business & Digital Services", available: true, slug: "legal-advisor", description: "Legal consultation and document preparation" },
   { id: 56, name: "Tax Preparer", icon: Calculator, category: "Business & Digital Services", description: "Tax preparation and accounting services" },
   { id: 57, name: "Translation Services", icon: Globe, category: "Business & Digital Services", description: "Document and verbal translation services" },
 ];

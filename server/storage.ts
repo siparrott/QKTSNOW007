@@ -764,6 +764,45 @@ export class MemStorage implements IStorage {
           baseRate: 200
         },
         createdAt: new Date(),
+      },
+      {
+        id: 18,
+        name: "Legal Advisor Calculator",
+        slug: "legal-advisor",
+        category: "business-services",
+        description: "Professional legal consultation pricing calculator with clean blue, white, and grey styling",
+        defaultConfig: {
+          serviceTypes: {
+            "contract-drafting": 0,
+            "business-setup": 0,
+            "family-law": 0,
+            "immigration": 0,
+            "estate-planning": 0,
+            "ip-trademark": 0
+          },
+          consultationTypes: {
+            "30min-call": 120,
+            "1hour-session": 200,
+            "ongoing-retainer": 500
+          },
+          urgencyLevels: {
+            "flexible": 0,
+            "priority": 50,
+            "urgent": 100
+          },
+          jurisdictionOptions: {
+            "local": 0,
+            "international": 100
+          },
+          addOns: {
+            "document-review": 90,
+            "legal-summary": 70,
+            "email-support": 40,
+            "in-person": 120
+          },
+          baseRate: 120
+        },
+        createdAt: new Date(),
       }
     ];
 

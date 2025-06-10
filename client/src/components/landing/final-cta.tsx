@@ -25,69 +25,43 @@ export default function FinalCTA() {
           viewport={{ once: true }}
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
-            💥 You've seen the DMs, ghosted leads, and price hagglers.
+            🎯 <span className="text-neon-400">Ready to Give Your Leads What They Want?</span>
           </h2>
-          <p className="text-2xl md:text-3xl text-neon-400 font-bold mb-8">
-            This is your fix.
+          <p className="text-2xl md:text-3xl text-white font-bold mb-8">
+            Stop quoting by hand.<br/>
+            Start closing with QuoteKit.
           </p>
           
           <div className="bg-midnight-800/50 border border-midnight-700 rounded-2xl p-8 mb-8">
-            <h3 className="text-xl font-semibold text-white mb-6">
-              🙌 Who Is QuoteKit.ai For?
-            </h3>
-            <div className="grid md:grid-cols-2 gap-4 text-gray-300">
-              <div className="flex items-center">
-                <CheckCircle className="text-neon-400 mr-3 h-5 w-5" />
-                <span>🔹 Freelancers</span>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-neon-400 font-bold mb-4">✅ Unlimited Embeds</h3>
+                <h3 className="text-neon-400 font-bold mb-4">✅ Branded PDF Quotes</h3>
+                <h3 className="text-neon-400 font-bold mb-4">✅ AI Price Logic</h3>
               </div>
-              <div className="flex items-center">
-                <CheckCircle className="text-neon-400 mr-3 h-5 w-5" />
-                <span>🔹 Agencies</span>
-              </div>
-              <div className="flex items-center">
-                <CheckCircle className="text-neon-400 mr-3 h-5 w-5" />
-                <span>🔹 Solopreneurs</span>
-              </div>
-              <div className="flex items-center">
-                <CheckCircle className="text-neon-400 mr-3 h-5 w-5" />
-                <span>🔹 Local service businesses</span>
-              </div>
-              <div className="flex items-center md:col-span-2 justify-center">
-                <CheckCircle className="text-neon-400 mr-3 h-5 w-5" />
-                <span>🔹 Anyone tired of quoting by hand</span>
+              <div>
+                <h3 className="text-neon-400 font-bold mb-4">✅ Instant Lead Capture</h3>
+                <h3 className="text-neon-400 font-bold mb-4">✅ No Setup Fees</h3>
+                <h3 className="text-neon-400 font-bold mb-4">✅ All 50+ Calculators</h3>
               </div>
             </div>
           </div>
 
           <div className="mb-8">
             <p className="text-xl text-white mb-4 font-semibold">
-              👉 Lock in all 50+ calculators now for just €5/month
+              All 50+ Calculators • €5/month (renews annually, cancel anytime)
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center text-gray-300">
-              <div className="flex items-center">
-                <CheckCircle className="text-neon-400 mr-2 h-4 w-4" />
-                <span>✅ No contracts</span>
-              </div>
-              <div className="flex items-center">
-                <CheckCircle className="text-neon-400 mr-2 h-4 w-4" />
-                <span>✅ Full access</span>
-              </div>
-              <div className="flex items-center">
-                <CheckCircle className="text-neon-400 mr-2 h-4 w-4" />
-                <span>✅ Cancel anytime</span>
-              </div>
-            </div>
           </div>
 
           <Button
             onClick={() => scrollToSection("pricing")}
             className="bg-neon-500 hover:bg-neon-600 text-white px-12 py-6 rounded-lg font-bold text-2xl transition-all duration-300 hover:shadow-glow transform hover:scale-105 animate-pulse"
           >
-            Get QuoteKit.ai Now →
+            💥 Get QuoteKit Now →
           </Button>
           
           <p className="text-sm text-gray-500 mt-4">
-            This is your unfair advantage.
+            Your competitors are still typing quotes by hand.
           </p>
         </motion.div>
       </div>

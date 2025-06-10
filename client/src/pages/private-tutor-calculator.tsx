@@ -293,17 +293,9 @@ export default function PrivateTutorCalculator() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-25 via-stone-50 to-blue-25 py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-medium text-slate-800 mb-2">
-            Private Tutor Quote Calculator
-          </h1>
-          <p className="text-slate-600 max-w-2xl mx-auto font-light">
-            Get your personalized tutoring session pricing instantly. Quality education tailored to your needs.
-          </p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-25 via-stone-50 to-blue-25">
+      <QuoteKitHeader />
+      <div className="max-w-7xl mx-auto px-4 py-8">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Form */}

@@ -256,17 +256,9 @@ export default function NutritionistCalculator() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-25 via-stone-50 to-amber-25 py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-medium text-stone-800 mb-2">
-            Nutrition Plan Quote Calculator
-          </h1>
-          <p className="text-stone-600 max-w-2xl mx-auto font-light">
-            Get your personalized nutrition plan pricing instantly. Transform your health with expert guidance.
-          </p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-emerald-25 via-stone-50 to-amber-25">
+      <QuoteKitHeader />
+      <div className="max-w-7xl mx-auto px-4 py-8">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Form */}

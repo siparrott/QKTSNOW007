@@ -280,17 +280,9 @@ export default function MaternityPhotographyCalculator() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-25 via-stone-50 to-rose-25 py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-light text-stone-800 mb-2">
-            Maternity Photography Quote Calculator
-          </h1>
-          <p className="text-stone-600 max-w-2xl mx-auto font-light">
-            Celebrate this beautiful chapter of your journey. Get your personalized quote for an elegant maternity photography session.
-          </p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-amber-25 via-stone-50 to-rose-25">
+      <QuoteKitHeader />
+      <div className="max-w-7xl mx-auto px-4 py-8">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Form */}

@@ -812,8 +812,36 @@ This quote is valid for 48 hours.
                       </div>
                     )}
 
+                    {/* Ready to Book Section */}
+                    <div className="mt-6 pt-6 border-t border-pink-200">
+                      <div className="text-center space-y-4">
+                        <h3 className="text-lg font-bold text-gray-800 font-serif">Ready to Book Your Session?</h3>
+                        <p className="text-sm text-gray-600">
+                          This quote is valid for 48 hours. Secure your preferred date today.
+                        </p>
+                        
+                        <Button 
+                          className="w-full bg-pink-500 hover:bg-pink-600 text-white font-serif py-3"
+                          onClick={() => window.open(`mailto:studio@example.com?subject=Boudoir Session Booking&body=I'm ready to book my boudoir session! My quote is €${pricing.total}`, "_blank")}
+                        >
+                          📅 Book My Session
+                        </Button>
+                        
+                        <div className="flex items-center justify-center space-x-6 text-xs text-gray-500">
+                          <div className="flex items-center">
+                            <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
+                            100% Confidential
+                          </div>
+                          <div className="flex items-center">
+                            <div className="w-2 h-2 bg-blue-500 rounded-full mr-1"></div>
+                            Professional
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                     {isQuoteLocked && (
-                      <div className="space-y-3 pt-4 border-t border-pink-200">
+                      <div className="space-y-3 pt-4 border-t border-pink-200 mt-4">
                         <div className="text-center">
                           <div className="text-lg font-bold text-green-600 mb-2">Quote Locked!</div>
                           <div className="flex items-center justify-center text-sm text-gray-600">
@@ -823,12 +851,6 @@ This quote is valid for 48 hours.
                         </div>
                         
                         <div className="space-y-2">
-                          <Button 
-                            className="w-full bg-pink-500 hover:bg-pink-600 text-white"
-                            onClick={() => window.open(`mailto:studio@example.com?subject=Boudoir Session Booking&body=I'm ready to book my boudoir session! My quote is €${pricing.total}`, "_blank")}
-                          >
-                            📅 Book My Session
-                          </Button>
                           <Button 
                             variant="outline"
                             className="w-full border-pink-300 text-pink-600 hover:bg-pink-50"

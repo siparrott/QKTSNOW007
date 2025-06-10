@@ -7,12 +7,14 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import CalculatorPage from "@/pages/calculator";
 import NichesPage from "@/pages/niches";
+import BoudoirPhotographyCalculator from "@/pages/boudoir-photography-calculator";
 
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/calculator/boudoir-photography" component={BoudoirPhotographyCalculator} />
       <Route path="/calculator/:slug" component={CalculatorPage} />
       <Route path="/niches" component={NichesPage} />
       <Route path="/niches/:niche" component={NotFound} />

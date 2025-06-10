@@ -73,6 +73,31 @@ export default function NichesGrid() {
   return (
     <section id="niches" className="py-20 lg:py-32">
       <div className="container mx-auto px-4 lg:px-8">
+        {/* Before/After Image Section */}
+        <motion.div
+          className="text-center mb-20"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+        >
+          <div className="mb-12">
+            <h3 className="text-2xl md:text-3xl font-bold text-neon-400 mb-6">
+              🚀 After: From Ghosted to Booked
+            </h3>
+            <p className="text-xl text-gray-300 mb-8">
+              With QuoteKit.ai, your site delivers exactly what they want
+            </p>
+            <div className="max-w-4xl mx-auto">
+              <img 
+                src="/attached_assets/ChatGPT Image Jun 10, 2025, 03_15_40 PM_1749564453328.png"
+                alt="Business owner overwhelmed with quote requests, showing the transformation from manual quote handling to automated solution"
+                className="w-full h-auto rounded-2xl shadow-2xl border border-neon-500/20"
+              />
+            </div>
+          </div>
+        </motion.div>
+
         <motion.div
           className="text-center mb-16"
           initial={{ opacity: 0, y: 30 }}

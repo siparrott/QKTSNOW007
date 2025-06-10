@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { processCarWashRequest, processChauffeurRequest, processAirportTransferRequest, processVanRentalRequest, processBoatCharterRequest, processMovingServicesRequest, processMotorcycleRepairRequest, processDrivingInstructorRequest, processWebDesignerRequest, processMarketingConsultantRequest } from "./ai";
+import { processCarWashRequest, processChauffeurRequest, processAirportTransferRequest, processVanRentalRequest, processBoatCharterRequest, processMovingServicesRequest, processMotorcycleRepairRequest, processDrivingInstructorRequest, processWebDesignerRequest, processMarketingConsultantRequest, processSEOAgencyRequest } from "./ai";
 import { 
   insertUserSchema, 
   insertLeadSchema,
@@ -296,6 +296,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const result = await processMarketingConsultantRequest(input);
+      res.json(result);
+    } catch (error) {
+      console.error("AI processing error:", error);
+      res.status(500).json({ error: "Failed to process AI request" });
+    }
+  });
+
+  // AI processing for SEO agency calculator
+  app.post("/api/ai/process-seo-agency", async (req, res) => {
+    try {
+      const { input } = req.body;
+      if (!input || typeof input !== "string") {
+        return res.status(400).json({ error: "Input text is required" });
+      }
+      
+      const result = await processSEOAgencyRequest(input);
       res.json(result);
     } catch (error) {
       console.error("AI processing error:", error);

@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Camera, Sparkles, Heart, Star, Clock, Mail } from "lucide-react";
+import { ArrowLeft, Camera, Heart, Star, Clock, Mail, ArrowRight, Check, Crown, MapPin, Home, Building } from "lucide-react";
 import { Link } from "wouter";
 
 interface BoudoirFormData {
@@ -15,7 +12,6 @@ interface BoudoirFormData {
   location: string;
   outfitCount: string;
   addOns: string[];
-  naturalLanguageInput: string;
   promoCode: string;
   contactInfo: {
     name: string;
@@ -43,7 +39,7 @@ const pricingConfig = {
     classic: 0,
     lingerie: 25,
     nude: 50,
-    glamour: 30
+    glamour: 35
   },
   durations: {
     "1hr": 0,
@@ -52,8 +48,8 @@ const pricingConfig = {
   },
   locations: {
     studio: 0,
-    location: 100,
-    hotel: 100
+    hotel: 100,
+    location: 100
   },
   outfitPricing: {
     "1": 0,
@@ -75,13 +71,13 @@ const pricingConfig = {
 };
 
 export default function BoudoirPhotographyCalculator() {
+  const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<BoudoirFormData>({
-    sessionType: "classic",
-    duration: "2hr",
-    location: "studio",
-    outfitCount: "3",
+    sessionType: "",
+    duration: "",
+    location: "",
+    outfitCount: "",
     addOns: [],
-    naturalLanguageInput: "",
     promoCode: "",
     contactInfo: {
       name: "",
@@ -91,8 +87,9 @@ export default function BoudoirPhotographyCalculator() {
   });
 
   const [pricing, setPricing] = useState<PricingBreakdown | null>(null);
-  const [showContactForm, setShowContactForm] = useState(false);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
+
+  const totalSteps = 4;
 
   const calculatePricing = (): PricingBreakdown => {
     let total = pricingConfig.basePrice;
@@ -174,52 +171,25 @@ export default function BoudoirPhotographyCalculator() {
     setPricing(calculatePricing());
   }, [formData]);
 
-  const parseNaturalLanguage = () => {
-    const input = formData.naturalLanguageInput.toLowerCase();
-    const updates: Partial<BoudoirFormData> = {};
-    
-    // Duration parsing
-    if (input.includes("2 hour") || input.includes("2hr")) updates.duration = "2hr";
-    else if (input.includes("3 hour") || input.includes("3hr")) updates.duration = "3hr";
-    else if (input.includes("1 hour") || input.includes("1hr")) updates.duration = "1hr";
-    
-    // Location parsing
-    if (input.includes("hotel")) updates.location = "hotel";
-    else if (input.includes("location") || input.includes("on-location")) updates.location = "location";
-    else if (input.includes("studio")) updates.location = "studio";
-    
-    // Session type parsing
-    if (input.includes("lingerie")) updates.sessionType = "lingerie";
-    else if (input.includes("nude")) updates.sessionType = "nude";
-    else if (input.includes("glamour")) updates.sessionType = "glamour";
-    
-    // Outfit count parsing
-    if (input.includes("5 outfit")) updates.outfitCount = "5";
-    else if (input.includes("4 outfit")) updates.outfitCount = "4";
-    else if (input.includes("3 outfit")) updates.outfitCount = "3";
-    else if (input.includes("2 outfit")) updates.outfitCount = "2";
-    else if (input.includes("1 outfit")) updates.outfitCount = "1";
-    
-    // Add-ons parsing
-    const addOns = [];
-    if (input.includes("makeup")) addOns.push("makeup");
-    if (input.includes("album")) addOns.push("album");
-    if (input.includes("deluxe") || input.includes("premium retouching")) addOns.push("deluxe-retouching");
-    if (addOns.length > 0) updates.addOns = addOns;
-    
-    setFormData(prev => ({ ...prev, ...updates }));
+  const handleNext = () => {
+    if (currentStep < totalSteps) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
   };
 
   const handleContactSubmit = () => {
     if (formData.contactInfo.name && formData.contactInfo.email) {
       setIsQuoteLocked(true);
-      // In production, this would save to database and send email
-      console.log("Quote locked and contact info saved:", formData.contactInfo, pricing);
     }
   };
 
   const downloadQuotePDF = () => {
-    // In production, this would generate a PDF
     const quoteText = `
 Boudoir Photography Quote
 Client: ${formData.contactInfo.name}
@@ -247,25 +217,97 @@ This quote is valid for 48 hours.
     URL.revokeObjectURL(url);
   };
 
+  const StepIndicator = () => (
+    <div className="flex items-center justify-center mb-8">
+      {Array.from({ length: totalSteps }, (_, i) => (
+        <div key={i} className="flex items-center">
+          <div
+            className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
+              i + 1 < currentStep
+                ? "bg-pink-500 text-white"
+                : i + 1 === currentStep
+                ? "bg-pink-500 text-white"
+                : "bg-gray-200 text-gray-500"
+            }`}
+          >
+            {i + 1 < currentStep ? <Check className="w-5 h-5" /> : i + 1}
+          </div>
+          {i < totalSteps - 1 && (
+            <div className={`w-16 h-1 mx-2 ${i + 1 < currentStep ? "bg-pink-500" : "bg-gray-200"}`} />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+
+  const OptionCard = ({ 
+    icon, 
+    title, 
+    subtitle, 
+    price, 
+    isSelected, 
+    onClick, 
+    isPopular = false 
+  }: {
+    icon: React.ReactNode;
+    title: string;
+    subtitle: string;
+    price?: string;
+    isSelected: boolean;
+    onClick: () => void;
+    isPopular?: boolean;
+  }) => (
+    <motion.div
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      className={`relative p-6 rounded-2xl border-2 cursor-pointer transition-all ${
+        isSelected
+          ? "border-pink-400 bg-pink-50 shadow-lg"
+          : "border-gray-200 bg-white hover:border-pink-200 hover:shadow-md"
+      }`}
+      onClick={onClick}
+    >
+      {isPopular && (
+        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+          <div className="bg-pink-500 text-white px-3 py-1 rounded-full text-xs font-medium">
+            Most Popular
+          </div>
+        </div>
+      )}
+      <div className="text-center">
+        <div className={`mx-auto mb-3 ${isSelected ? "text-pink-500" : "text-gray-400"}`}>
+          {icon}
+        </div>
+        <h3 className={`font-semibold mb-1 ${isSelected ? "text-pink-700" : "text-gray-700"}`}>
+          {title}
+        </h3>
+        <p className="text-sm text-gray-500 mb-2">{subtitle}</p>
+        {price && (
+          <p className="text-pink-500 font-medium text-sm">{price}</p>
+        )}
+      </div>
+    </motion.div>
+  );
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-rose-100">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-purple-50">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-rose-200">
+      <div className="bg-white/80 backdrop-blur-sm border-b border-pink-100">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center">
             <Link href="/niches">
-              <Button variant="ghost" size="sm" className="mr-4 text-rose-600 hover:text-rose-800">
+              <Button variant="ghost" size="sm" className="mr-4 text-pink-600 hover:text-pink-800">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Calculators
               </Button>
             </Link>
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-rose-400 to-pink-600 rounded-full flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-pink-400 to-rose-600 rounded-full flex items-center justify-center">
                 <Camera className="text-white h-6 w-6" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-rose-900 font-serif">Boudoir Photography Calculator</h1>
-                <p className="text-rose-600">Intimate and artistic photography sessions</p>
+                <h1 className="text-2xl font-bold text-gray-800 font-serif">Boudoir Photography Calculator</h1>
+                <p className="text-pink-600">Create your perfect session</p>
               </div>
             </div>
           </div>
@@ -273,269 +315,469 @@ This quote is valid for 48 hours.
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-          {/* Calculator Form */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <Card className="p-8 bg-white/70 backdrop-blur-sm border-rose-200 shadow-lg">
-              <h2 className="text-2xl font-bold mb-6 text-rose-900 font-serif">Design Your Session</h2>
-              
-              <div className="space-y-6">
-                {/* Natural Language Input */}
-                <div className="bg-rose-50/80 border border-rose-200 rounded-lg p-4">
-                  <div className="flex items-center mb-3">
-                    <Sparkles className="h-5 w-5 text-rose-500 mr-2" />
-                    <Label className="text-rose-700 font-semibold font-serif">Describe Your Vision (Optional)</Label>
-                  </div>
-                  <Textarea
-                    placeholder="e.g., 'I want a 2-hour boudoir shoot at a hotel with 3 outfits and professional makeup'"
-                    value={formData.naturalLanguageInput}
-                    onChange={(e) => setFormData(prev => ({ ...prev, naturalLanguageInput: e.target.value }))}
-                    className="bg-white/80 border-rose-200 mb-3 font-serif"
-                    rows={2}
-                  />
-                  <Button 
-                    onClick={parseNaturalLanguage}
-                    variant="outline" 
-                    size="sm" 
-                    className="border-rose-300 text-rose-600 hover:bg-rose-50 font-serif"
-                  >
-                    <Sparkles className="h-4 w-4 mr-2" />
-                    Parse with AI
-                  </Button>
-                </div>
-
-                {/* Session Type */}
-                <div>
-                  <Label className="text-rose-900 mb-2 block font-serif text-lg">Session Type</Label>
-                  <Select value={formData.sessionType} onValueChange={(value) => setFormData(prev => ({ ...prev, sessionType: value }))}>
-                    <SelectTrigger className="bg-white/80 border-rose-200">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="classic">Classic Boudoir</SelectItem>
-                      <SelectItem value="lingerie">Lingerie Session (+€25)</SelectItem>
-                      <SelectItem value="nude">Fine Art Nude (+€50)</SelectItem>
-                      <SelectItem value="glamour">Glamour Session (+€30)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Duration */}
-                <div>
-                  <Label className="text-rose-900 mb-2 block font-serif text-lg">Session Duration</Label>
-                  <Select value={formData.duration} onValueChange={(value) => setFormData(prev => ({ ...prev, duration: value }))}>
-                    <SelectTrigger className="bg-white/80 border-rose-200">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1hr">1 Hour</SelectItem>
-                      <SelectItem value="2hr">2 Hours (+€75) ⭐ Most Popular</SelectItem>
-                      <SelectItem value="3hr">3 Hours (+€150)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Location */}
-                <div>
-                  <Label className="text-rose-900 mb-2 block font-serif text-lg">Location</Label>
-                  <Select value={formData.location} onValueChange={(value) => setFormData(prev => ({ ...prev, location: value }))}>
-                    <SelectTrigger className="bg-white/80 border-rose-200">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="studio">In-Studio</SelectItem>
-                      <SelectItem value="location">On-Location (+€100)</SelectItem>
-                      <SelectItem value="hotel">Hotel Suite (+€100)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Outfit Count */}
-                <div>
-                  <Label className="text-rose-900 mb-2 block font-serif text-lg">Number of Outfits</Label>
-                  <Select value={formData.outfitCount} onValueChange={(value) => setFormData(prev => ({ ...prev, outfitCount: value }))}>
-                    <SelectTrigger className="bg-white/80 border-rose-200">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">1 Outfit</SelectItem>
-                      <SelectItem value="2">2 Outfits (+€50)</SelectItem>
-                      <SelectItem value="3">3 Outfits (+€100) ⭐ Most Popular</SelectItem>
-                      <SelectItem value="4">4 Outfits (+€150)</SelectItem>
-                      <SelectItem value="5">5 Outfits (+€200)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Add-ons */}
-                <div>
-                  <Label className="text-rose-900 mb-3 block font-serif text-lg">Add-Ons</Label>
-                  <div className="space-y-3">
-                    {[
-                      { id: "makeup", label: "Professional Makeup (+€60)" },
-                      { id: "album", label: "Printed Album (+€120)" },
-                      { id: "deluxe-retouching", label: "Deluxe Retouching (+€75)" }
-                    ].map((addOn) => (
-                      <div key={addOn.id} className="flex items-center space-x-3">
-                        <input
-                          type="checkbox"
-                          id={addOn.id}
-                          checked={formData.addOns.includes(addOn.id)}
-                          onChange={(e) => {
-                            const currentAddOns = formData.addOns;
-                            if (e.target.checked) {
-                              setFormData(prev => ({ ...prev, addOns: [...currentAddOns, addOn.id] }));
-                            } else {
-                              setFormData(prev => ({ ...prev, addOns: currentAddOns.filter(id => id !== addOn.id) }));
-                            }
-                          }}
-                          className="w-4 h-4 text-rose-600 bg-white border-rose-300 rounded focus:ring-rose-500"
+        <div className="max-w-6xl mx-auto">
+          <StepIndicator />
+          
+          <div className="grid lg:grid-cols-2 gap-8">
+            {/* Step Content */}
+            <div className="order-2 lg:order-1">
+              <Card className="p-8 bg-white/80 backdrop-blur-sm border-pink-100 shadow-lg min-h-[500px]">
+                <AnimatePresence mode="wait">
+                  {/* Step 1: Session Style */}
+                  {currentStep === 1 && (
+                    <motion.div
+                      key="step1"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      className="space-y-6"
+                    >
+                      <h2 className="text-2xl font-bold text-gray-800 font-serif mb-6">Choose Your Session Style</h2>
+                      <div className="grid grid-cols-2 gap-4">
+                        <OptionCard
+                          icon={<Star className="w-8 h-8" />}
+                          title="Classic"
+                          subtitle="Timeless elegance"
+                          isSelected={formData.sessionType === "classic"}
+                          onClick={() => setFormData(prev => ({ ...prev, sessionType: "classic" }))}
                         />
-                        <Label htmlFor={addOn.id} className="text-rose-800 font-normal font-serif">{addOn.label}</Label>
+                        <OptionCard
+                          icon={<Heart className="w-8 h-8" />}
+                          title="Lingerie"
+                          subtitle="Intimate beauty"
+                          price="+€25"
+                          isSelected={formData.sessionType === "lingerie"}
+                          onClick={() => setFormData(prev => ({ ...prev, sessionType: "lingerie" }))}
+                        />
+                        <OptionCard
+                          icon={<Star className="w-8 h-8" />}
+                          title="Nude"
+                          subtitle="Artistic celebration"
+                          price="+€50"
+                          isSelected={formData.sessionType === "nude"}
+                          onClick={() => setFormData(prev => ({ ...prev, sessionType: "nude" }))}
+                        />
+                        <OptionCard
+                          icon={<Crown className="w-8 h-8" />}
+                          title="Glamour"
+                          subtitle="High-fashion drama"
+                          price="+€35"
+                          isSelected={formData.sessionType === "glamour"}
+                          onClick={() => setFormData(prev => ({ ...prev, sessionType: "glamour" }))}
+                        />
                       </div>
-                    ))}
-                  </div>
-                </div>
+                      
+                      <div className="flex justify-end pt-6">
+                        <Button
+                          onClick={handleNext}
+                          disabled={!formData.sessionType}
+                          className="bg-pink-500 hover:bg-pink-600 text-white px-8"
+                        >
+                          Next <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                      </div>
+                    </motion.div>
+                  )}
 
-                {/* Promo Code */}
-                <div>
-                  <Label className="text-rose-900 mb-2 block font-serif text-lg">Promo Code (Optional)</Label>
-                  <Input
-                    placeholder="Enter promo code"
-                    value={formData.promoCode}
-                    onChange={(e) => setFormData(prev => ({ ...prev, promoCode: e.target.value }))}
-                    className="bg-white/80 border-rose-200 font-serif"
-                  />
-                  <p className="text-xs text-rose-600 mt-1 font-serif">Try: BOUDOIR10, NEWCLIENT, or GODDESS</p>
-                </div>
-              </div>
-            </Card>
-          </motion.div>
+                  {/* Step 2: Duration & Location */}
+                  {currentStep === 2 && (
+                    <motion.div
+                      key="step2"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      className="space-y-8"
+                    >
+                      <h2 className="text-2xl font-bold text-gray-800 font-serif">Duration & Location</h2>
+                      
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-700 mb-4">Session Duration</h3>
+                        <div className="grid grid-cols-3 gap-4">
+                          <OptionCard
+                            icon={<Clock className="w-6 h-6" />}
+                            title="1 Hour"
+                            subtitle="Perfect for beginners"
+                            isSelected={formData.duration === "1hr"}
+                            onClick={() => setFormData(prev => ({ ...prev, duration: "1hr" }))}
+                          />
+                          <OptionCard
+                            icon={<div className="flex"><Clock className="w-6 h-6" /><Clock className="w-6 h-6" /></div>}
+                            title="2 Hours"
+                            subtitle="Most popular choice"
+                            price="+€75"
+                            isSelected={formData.duration === "2hr"}
+                            onClick={() => setFormData(prev => ({ ...prev, duration: "2hr" }))}
+                            isPopular={true}
+                          />
+                          <OptionCard
+                            icon={<div className="flex"><Clock className="w-6 h-6" /><Clock className="w-6 h-6" /><Clock className="w-6 h-6" /></div>}
+                            title="3 Hours"
+                            subtitle="Ultimate experience"
+                            price="+€150"
+                            isSelected={formData.duration === "3hr"}
+                            onClick={() => setFormData(prev => ({ ...prev, duration: "3hr" }))}
+                          />
+                        </div>
+                      </div>
 
-          {/* Quote Display */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <Card className="p-8 bg-white/70 backdrop-blur-sm border-rose-200 shadow-lg sticky top-8">
-              <h2 className="text-2xl font-bold mb-6 text-rose-900 font-serif">Your Boudoir Experience</h2>
-              
-              {pricing && (
-                <div className="space-y-6">
-                  {/* Price Display */}
-                  <div className="text-center p-6 bg-gradient-to-br from-rose-100 to-pink-100 rounded-lg border border-rose-200">
-                    <div className="text-sm text-rose-600 mb-2 font-serif">Investment Total</div>
-                    <div className="text-4xl font-bold text-rose-700 font-serif">€{pricing.total.toLocaleString()}</div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-700 mb-4">Location</h3>
+                        <div className="grid grid-cols-3 gap-4">
+                          <OptionCard
+                            icon={<Home className="w-6 h-6" />}
+                            title="In-Studio"
+                            subtitle="Professional setting"
+                            isSelected={formData.location === "studio"}
+                            onClick={() => setFormData(prev => ({ ...prev, location: "studio" }))}
+                          />
+                          <OptionCard
+                            icon={<Building className="w-6 h-6" />}
+                            title="Hotel Suite"
+                            subtitle="Luxury accommodation"
+                            price="+€100"
+                            isSelected={formData.location === "hotel"}
+                            onClick={() => setFormData(prev => ({ ...prev, location: "hotel" }))}
+                          />
+                          <OptionCard
+                            icon={<MapPin className="w-6 h-6" />}
+                            title="On-Location"
+                            subtitle="Your chosen venue"
+                            price="+€100"
+                            isSelected={formData.location === "location"}
+                            onClick={() => setFormData(prev => ({ ...prev, location: "location" }))}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex justify-between pt-6">
+                        <Button
+                          onClick={handlePrevious}
+                          variant="outline"
+                          className="border-pink-300 text-pink-600"
+                        >
+                          <ArrowLeft className="mr-2 h-4 w-4" /> Previous
+                        </Button>
+                        <Button
+                          onClick={handleNext}
+                          disabled={!formData.duration || !formData.location}
+                          className="bg-pink-500 hover:bg-pink-600 text-white px-8"
+                        >
+                          Next <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* Step 3: Outfits & Enhancements */}
+                  {currentStep === 3 && (
+                    <motion.div
+                      key="step3"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      className="space-y-8"
+                    >
+                      <h2 className="text-2xl font-bold text-gray-800 font-serif">Outfits & Enhancements</h2>
+                      
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-700 mb-4">Number of Outfits</h3>
+                        <div className="grid grid-cols-5 gap-3">
+                          {["1", "2", "3", "4", "5"].map((count) => (
+                            <OptionCard
+                              key={count}
+                              icon={<span className="text-2xl">👗</span>}
+                              title={count}
+                              subtitle={count === "1" ? "Outfit" : "Outfits"}
+                              price={count !== "1" ? `+€${pricingConfig.outfitPricing[count as keyof typeof pricingConfig.outfitPricing]}` : undefined}
+                              isSelected={formData.outfitCount === count}
+                              onClick={() => setFormData(prev => ({ ...prev, outfitCount: count }))}
+                              isPopular={count === "3"}
+                            />
+                          ))}
+                        </div>
+                      </div>
+
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-700 mb-4">Premium Add-ons</h3>
+                        <div className="space-y-4">
+                          <div
+                            className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                              formData.addOns.includes("makeup")
+                                ? "border-pink-400 bg-pink-50"
+                                : "border-gray-200 hover:border-pink-200"
+                            }`}
+                            onClick={() => {
+                              const addOns = formData.addOns.includes("makeup")
+                                ? formData.addOns.filter(a => a !== "makeup")
+                                : [...formData.addOns, "makeup"];
+                              setFormData(prev => ({ ...prev, addOns }));
+                            }}
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-3">
+                                <span className="text-2xl">💄</span>
+                                <div>
+                                  <h4 className="font-medium">Professional Makeup</h4>
+                                  <p className="text-sm text-gray-500">Full makeup application by pro artist</p>
+                                </div>
+                              </div>
+                              <span className="text-pink-500 font-medium">+€60</span>
+                            </div>
+                          </div>
+
+                          <div
+                            className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                              formData.addOns.includes("album")
+                                ? "border-pink-400 bg-pink-50"
+                                : "border-gray-200 hover:border-pink-200"
+                            }`}
+                            onClick={() => {
+                              const addOns = formData.addOns.includes("album")
+                                ? formData.addOns.filter(a => a !== "album")
+                                : [...formData.addOns, "album"];
+                              setFormData(prev => ({ ...prev, addOns }));
+                            }}
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-3">
+                                <span className="text-2xl">📖</span>
+                                <div>
+                                  <h4 className="font-medium">Printed Album</h4>
+                                  <p className="text-sm text-gray-500">20-page premium photo album</p>
+                                </div>
+                              </div>
+                              <span className="text-pink-500 font-medium">+€120</span>
+                            </div>
+                          </div>
+
+                          <div
+                            className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                              formData.addOns.includes("deluxe-retouching")
+                                ? "border-pink-400 bg-pink-50"
+                                : "border-gray-200 hover:border-pink-200"
+                            }`}
+                            onClick={() => {
+                              const addOns = formData.addOns.includes("deluxe-retouching")
+                                ? formData.addOns.filter(a => a !== "deluxe-retouching")
+                                : [...formData.addOns, "deluxe-retouching"];
+                              setFormData(prev => ({ ...prev, addOns }));
+                            }}
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-3">
+                                <span className="text-2xl">✨</span>
+                                <div>
+                                  <h4 className="font-medium">Deluxe Retouching</h4>
+                                  <p className="text-sm text-gray-500">Advanced editing and enhancement</p>
+                                </div>
+                              </div>
+                              <span className="text-pink-500 font-medium">+€75</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-between pt-6">
+                        <Button
+                          onClick={handlePrevious}
+                          variant="outline"
+                          className="border-pink-300 text-pink-600"
+                        >
+                          <ArrowLeft className="mr-2 h-4 w-4" /> Previous
+                        </Button>
+                        <Button
+                          onClick={handleNext}
+                          disabled={!formData.outfitCount}
+                          className="bg-pink-500 hover:bg-pink-600 text-white px-8"
+                        >
+                          Next <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* Step 4: Final Details */}
+                  {currentStep === 4 && (
+                    <motion.div
+                      key="step4"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      className="space-y-6"
+                    >
+                      <h2 className="text-2xl font-bold text-gray-800 font-serif">Final Details</h2>
+                      
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Your Email (required for quote)
+                          </label>
+                          <Input
+                            type="email"
+                            placeholder="your@email.com"
+                            value={formData.contactInfo.email}
+                            onChange={(e) => setFormData(prev => ({
+                              ...prev,
+                              contactInfo: { ...prev.contactInfo, email: e.target.value }
+                            }))}
+                            className="bg-white border-pink-200"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Your Name
+                          </label>
+                          <Input
+                            placeholder="Your beautiful name"
+                            value={formData.contactInfo.name}
+                            onChange={(e) => setFormData(prev => ({
+                              ...prev,
+                              contactInfo: { ...prev.contactInfo, name: e.target.value }
+                            }))}
+                            className="bg-white border-pink-200"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Promo Code (optional)
+                          </label>
+                          <Input
+                            placeholder="Enter promo code"
+                            value={formData.promoCode}
+                            onChange={(e) => setFormData(prev => ({ ...prev, promoCode: e.target.value }))}
+                            className="bg-white border-pink-200"
+                          />
+                        </div>
+
+                        <div className="bg-pink-50 p-4 rounded-lg">
+                          <p className="text-sm text-pink-700">
+                            Your personalized quote will be valid for 48 hours. We'll email you a beautiful PDF with all the details.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-between pt-6">
+                        <Button
+                          onClick={handlePrevious}
+                          variant="outline"
+                          className="border-pink-300 text-pink-600"
+                        >
+                          <ArrowLeft className="mr-2 h-4 w-4" /> Previous
+                        </Button>
+                        <Button
+                          onClick={handleContactSubmit}
+                          disabled={!formData.contactInfo.email}
+                          className="bg-pink-500 hover:bg-pink-600 text-white px-8"
+                        >
+                          Get My Quote
+                        </Button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </Card>
+            </div>
+
+            {/* Quote Display */}
+            <div className="order-1 lg:order-2">
+              <Card className="p-6 bg-white/80 backdrop-blur-sm border-pink-100 shadow-lg sticky top-8">
+                <h2 className="text-xl font-bold text-gray-800 font-serif mb-4">Your Boudoir Experience</h2>
+                
+                {pricing && (
+                  <div className="space-y-4">
+                    <div className="text-center p-6 bg-gradient-to-br from-pink-100 to-purple-100 rounded-xl">
+                      <div className="text-4xl font-bold text-pink-600 font-serif">€{pricing.total}</div>
+                      <div className="text-sm text-gray-600 mt-1">Total Investment</div>
+                    </div>
+
+                    <div className="space-y-2">
+                      {formData.sessionType && (
+                        <div className="flex justify-between text-sm">
+                          <span>Base Session (1hr, 1 outfit)</span>
+                          <span>€250</span>
+                        </div>
+                      )}
+                      {formData.sessionType && formData.sessionType !== "classic" && (
+                        <div className="flex justify-between text-sm">
+                          <span>Session Type Upgrade</span>
+                          <span>€{pricing.sessionTypeAdd}</span>
+                        </div>
+                      )}
+                      {formData.duration && formData.duration !== "1hr" && (
+                        <div className="flex justify-between text-sm">
+                          <span>{formData.duration} Duration</span>
+                          <span>€{pricing.durationAdd}</span>
+                        </div>
+                      )}
+                      {formData.location && formData.location !== "studio" && (
+                        <div className="flex justify-between text-sm">
+                          <span>Location</span>
+                          <span>€{pricing.locationAdd}</span>
+                        </div>
+                      )}
+                      {formData.outfitCount && formData.outfitCount !== "1" && (
+                        <div className="flex justify-between text-sm">
+                          <span>{formData.outfitCount} Outfits</span>
+                          <span>€{pricing.outfitAdd}</span>
+                        </div>
+                      )}
+                      {formData.addOns.map(addOn => (
+                        <div key={addOn} className="flex justify-between text-sm">
+                          <span>{addOn === "deluxe-retouching" ? "Deluxe Retouching" : addOn.charAt(0).toUpperCase() + addOn.slice(1)}</span>
+                          <span>€{pricingConfig.addOns[addOn as keyof typeof pricingConfig.addOns]}</span>
+                        </div>
+                      ))}
+                      {pricing.discount > 0 && (
+                        <div className="flex justify-between text-sm text-green-600">
+                          <span>Discount</span>
+                          <span>-€{pricing.discount.toFixed(0)}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {formData.duration === "2hr" && formData.outfitCount === "3" && (
+                      <div className="bg-pink-50 p-3 rounded-lg border border-pink-200">
+                        <div className="flex items-center text-sm text-pink-700">
+                          <Star className="h-4 w-4 mr-2" />
+                          Most clients choose 2 hours + makeup + 3 outfits
+                        </div>
+                      </div>
+                    )}
+
                     {isQuoteLocked && (
-                      <div className="flex items-center justify-center mt-2 text-xs text-rose-500 font-serif italic">
-                        <Clock className="h-3 w-3 mr-1" />
-                        This price is locked for 48 hours
+                      <div className="space-y-3 pt-4 border-t border-pink-200">
+                        <div className="text-center">
+                          <div className="text-lg font-bold text-green-600 mb-2">Quote Locked!</div>
+                          <div className="flex items-center justify-center text-sm text-gray-600">
+                            <Clock className="h-4 w-4 mr-1" />
+                            Valid for 48 hours
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Button 
+                            className="w-full bg-pink-500 hover:bg-pink-600 text-white"
+                            onClick={() => window.open(`mailto:studio@example.com?subject=Boudoir Session Booking&body=I'm ready to book my boudoir session! My quote is €${pricing.total}`, "_blank")}
+                          >
+                            📅 Book My Session
+                          </Button>
+                          <Button 
+                            variant="outline"
+                            className="w-full border-pink-300 text-pink-600 hover:bg-pink-50"
+                            onClick={downloadQuotePDF}
+                          >
+                            📄 Download Quote PDF
+                          </Button>
+                        </div>
                       </div>
                     )}
                   </div>
-
-                  {/* Breakdown */}
-                  <div className="space-y-3">
-                    <h3 className="font-semibold text-rose-800 font-serif">Investment Breakdown:</h3>
-                    {pricing.breakdown.map((item, index) => (
-                      <div key={index} className="flex justify-between text-sm font-serif">
-                        <span className="text-rose-700">{item}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Action Buttons */}
-                  {!showContactForm ? (
-                    <div className="space-y-3">
-                      <Button 
-                        onClick={() => setShowContactForm(true)}
-                        className="w-full bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white font-serif"
-                      >
-                        <Heart className="mr-2 h-4 w-4" />
-                        Save My Quote & Contact Details
-                      </Button>
-                      <Button 
-                        variant="outline"
-                        className="w-full border-rose-300 text-rose-600 hover:bg-rose-50 font-serif"
-                        onClick={() => {
-                          window.open(`mailto:studio@example.com?subject=Boudoir Session Booking&body=I'm interested in booking a boudoir session. My quote is €${pricing.total}`, "_blank");
-                        }}
-                      >
-                        💌 Book My Session Now
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      <h3 className="font-semibold text-rose-800 font-serif">Save Your Quote:</h3>
-                      <div className="space-y-3">
-                        <Input
-                          placeholder="Your Name"
-                          value={formData.contactInfo.name}
-                          onChange={(e) => setFormData(prev => ({ 
-                            ...prev, 
-                            contactInfo: { ...prev.contactInfo, name: e.target.value } 
-                          }))}
-                          className="bg-white/80 border-rose-200 font-serif"
-                        />
-                        <Input
-                          type="email"
-                          placeholder="Email Address"
-                          value={formData.contactInfo.email}
-                          onChange={(e) => setFormData(prev => ({ 
-                            ...prev, 
-                            contactInfo: { ...prev.contactInfo, email: e.target.value } 
-                          }))}
-                          className="bg-white/80 border-rose-200 font-serif"
-                        />
-                        <Input
-                          type="tel"
-                          placeholder="Phone Number (optional)"
-                          value={formData.contactInfo.phone}
-                          onChange={(e) => setFormData(prev => ({ 
-                            ...prev, 
-                            contactInfo: { ...prev.contactInfo, phone: e.target.value } 
-                          }))}
-                          className="bg-white/80 border-rose-200 font-serif"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Button 
-                          onClick={handleContactSubmit}
-                          disabled={!formData.contactInfo.name || !formData.contactInfo.email}
-                          className="w-full bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white font-serif"
-                        >
-                          <Mail className="mr-2 h-4 w-4" />
-                          Lock This Price for 48 Hours
-                        </Button>
-                        {isQuoteLocked && (
-                          <Button 
-                            onClick={downloadQuotePDF}
-                            variant="outline"
-                            className="w-full border-rose-300 text-rose-600 hover:bg-rose-50 font-serif"
-                          >
-                            Download Quote PDF
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Popular Selection Badge */}
-                  {formData.duration === "2hr" && formData.outfitCount === "3" && (
-                    <div className="flex items-center justify-center p-3 bg-rose-50 rounded-lg border border-rose-200">
-                      <Star className="h-4 w-4 text-rose-500 mr-2" />
-                      <span className="text-sm text-rose-700 font-serif">Most clients choose this combination!</span>
-                    </div>
-                  )}
-                </div>
-              )}
-            </Card>
-          </motion.div>
+                )}
+              </Card>
+            </div>
+          </div>
         </div>
       </div>
     </div>

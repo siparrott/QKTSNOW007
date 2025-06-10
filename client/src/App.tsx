@@ -10,6 +10,7 @@ import NichesPage from "@/pages/niches";
 import BoudoirPhotographyCalculator from "@/pages/boudoir-photography-calculator";
 import ElectricianCalculator from "@/pages/electrician-calculator";
 import HomeRenovationCalculator from "@/pages/home-renovation-calculator-new";
+import DronePhotographyCalculator from "@/pages/drone-photography-calculator";
 
 
 function Router() {
@@ -19,6 +20,7 @@ function Router() {
       <Route path="/calculator/boudoir-photography" component={BoudoirPhotographyCalculator} />
       <Route path="/calculator/electrician" component={ElectricianCalculator} />
       <Route path="/calculator/home-renovation" component={HomeRenovationCalculator} />
+      <Route path="/calculator/drone-photography" component={DronePhotographyCalculator} />
       <Route path="/calculator/:slug" component={CalculatorPage} />
       <Route path="/niches" component={NichesPage} />
       <Route path="/niches/:niche" component={NotFound} />

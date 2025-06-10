@@ -86,6 +86,39 @@ export class MemStorage implements IStorage {
         }
       },
       {
+        name: "Drone & Aerial Photography Calculator",
+        slug: "drone-photography",
+        category: "photography",
+        description: "Professional aerial photography and videography quote calculator",
+        defaultConfig: {
+          baseShoot: 200,
+          durationMultipliers: {
+            "under-1hr": 1.0,
+            "half-day": 2.5,
+            "full-day": 4.0
+          },
+          outputTypes: {
+            "video-only": 100,
+            "stills-only": 0,
+            "both": 150,
+            "edited-highlights": 250,
+            "raw-footage": 50
+          },
+          locationTypes: {
+            "rural": 0,
+            "urban": 75,
+            "restricted": 200
+          },
+          addOns: {
+            "voiceover": 50,
+            "music": 80,
+            "promo-video": 300,
+            "cloud-delivery": 40,
+            "express-delivery": 100
+          }
+        }
+      },
+      {
         name: "Wedding Photography Quote Calculator",
         slug: "wedding-photography",
         category: "photography",

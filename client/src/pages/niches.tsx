@@ -206,7 +206,7 @@ export default function NichesPage() {
                 size="sm"
                 className={
                   selectedCategory === category
-                    ? "bg-green-500 hover:bg-green-600 text-white"
+                    ? "bg-green-500 hover:bg-green-600 text-black"
                     : "border-midnight-600 text-gray-300 hover:border-green-400 hover:text-white"
                 }
               >

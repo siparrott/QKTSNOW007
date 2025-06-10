@@ -58,85 +58,79 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 
-// Comprehensive list of all 60 calculators
+// Comprehensive list of all launch calculators
 const allNiches = [
-  // Home Services (15 calculators)
-  { id: 1, name: "Home Renovation", icon: Hammer, category: "Home Services", available: true, description: "Kitchen, bathroom, and full home renovations with AI pricing" },
-  { id: 2, name: "Landscaping", icon: TreePine, category: "Home Services", available: true, description: "Garden design, maintenance, and outdoor projects" },
-  { id: 3, name: "Interior Design", icon: Palette, category: "Home Services", description: "Room design, furniture selection, and space planning" },
-  { id: 4, name: "Cleaning Services", icon: Sparkles, category: "Home Services", description: "House cleaning, deep cleaning, and maintenance services" },
-  { id: 5, name: "Pool Maintenance", icon: Droplets, category: "Home Services", description: "Pool cleaning, chemical balancing, and equipment service" },
-  { id: 6, name: "Plumbing", icon: Wrench, category: "Home Services", description: "Pipe repair, installation, and emergency plumbing services" },
-  { id: 7, name: "Electrical Services", icon: Zap, category: "Home Services", description: "Wiring, lighting installation, and electrical repairs" },
-  { id: 8, name: "HVAC Services", icon: Building, category: "Home Services", description: "Heating, cooling, and ventilation system services" },
-  { id: 9, name: "Pool Installation", icon: Bath, category: "Home Services", description: "Swimming pool construction and installation projects" },
-  { id: 10, name: "Pest Control", icon: Shield, category: "Home Services", available: true, description: "Residential and commercial pest management services" },
-  { id: 11, name: "Roofing", icon: Home, category: "Home Services", description: "Roof repair, replacement, and maintenance services" },
-  { id: 12, name: "Flooring", icon: Home, category: "Home Services", description: "Hardwood, tile, carpet, and laminate flooring installation" },
-  { id: 13, name: "Painting", icon: Paintbrush, category: "Home Services", description: "Interior and exterior painting services" },
-  { id: 14, name: "Fencing", icon: Shield, category: "Home Services", description: "Fence installation, repair, and maintenance" },
-  { id: 15, name: "Deck & Patio", icon: Home, category: "Home Services", description: "Outdoor deck and patio construction services" },
+  // Photography & Videography (10 calculators)
+  { id: 1, name: "Wedding Photography", icon: Camera, category: "Photography & Videography", available: true, description: "Wedding packages with engagement and reception coverage" },
+  { id: 2, name: "Boudoir Photography", icon: Camera, category: "Photography & Videography", description: "Intimate and artistic boudoir photography sessions" },
+  { id: 3, name: "Corporate Headshots", icon: Camera, category: "Photography & Videography", description: "Professional business portraits and headshots" },
+  { id: 4, name: "Drone/Aerial Photography", icon: Camera, category: "Photography & Videography", description: "Aerial photography and videography services" },
+  { id: 5, name: "Event Videography", icon: Video, category: "Photography & Videography", description: "Event video production and live streaming" },
+  { id: 6, name: "Real Estate Photography", icon: Camera, category: "Photography & Videography", description: "Property photos for listings and marketing" },
+  { id: 7, name: "Food Photography", icon: Camera, category: "Photography & Videography", description: "Restaurant and culinary photography services" },
+  { id: 8, name: "Commercial Product Photography", icon: Camera, category: "Photography & Videography", description: "E-commerce and catalog product photography" },
+  { id: 9, name: "Portrait Studios", icon: Camera, category: "Photography & Videography", description: "Family portraits, headshots, and personal sessions" },
+  { id: 10, name: "Lifestyle Influencer Videography", icon: Video, category: "Photography & Videography", description: "Content creation for social media influencers" },
 
-  // Photography & Events (8 calculators)
-  { id: 16, name: "Wedding Photography", icon: Camera, category: "Photography & Events", available: true, description: "Wedding packages with engagement and reception coverage" },
-  { id: 17, name: "Event Photography", icon: Camera, category: "Photography & Events", description: "Corporate events, parties, and special occasions" },
-  { id: 18, name: "Portrait Photography", icon: Camera, category: "Photography & Events", description: "Family portraits, headshots, and personal sessions" },
-  { id: 19, name: "Real Estate Photography", icon: Camera, category: "Photography & Events", description: "Property photos for listings and marketing" },
-  { id: 20, name: "Product Photography", icon: Camera, category: "Photography & Events", description: "E-commerce and catalog product photography" },
-  { id: 21, name: "Event Planning", icon: Calendar, category: "Photography & Events", description: "Wedding and corporate event planning services" },
-  { id: 22, name: "DJ Services", icon: Music, category: "Photography & Events", description: "Wedding, party, and event DJ entertainment" },
-  { id: 23, name: "Catering", icon: Utensils, category: "Photography & Events", description: "Event catering and meal planning services" },
+  // Home Services (10 calculators)
+  { id: 11, name: "Home Renovation", icon: Hammer, category: "Home Services", available: true, description: "Kitchen, bathroom, and full home renovations with AI pricing" },
+  { id: 12, name: "Landscaping", icon: TreePine, category: "Home Services", available: true, description: "Garden design, maintenance, and outdoor projects" },
+  { id: 13, name: "Interior Design", icon: Palette, category: "Home Services", description: "Room design, furniture selection, and space planning" },
+  { id: 14, name: "Painting & Decorating", icon: Paintbrush, category: "Home Services", description: "Interior and exterior painting and decorating services" },
+  { id: 15, name: "Electrical Services", icon: Zap, category: "Home Services", description: "Wiring, lighting installation, and electrical repairs" },
+  { id: 16, name: "Plumbing Services", icon: Wrench, category: "Home Services", description: "Pipe repair, installation, and emergency plumbing services" },
+  { id: 17, name: "Roofing", icon: Home, category: "Home Services", description: "Roof repair, replacement, and maintenance services" },
+  { id: 18, name: "Solar Panel Installation", icon: Sun, category: "Home Services", description: "Solar energy system installation and maintenance" },
+  { id: 19, name: "Pest Control", icon: Shield, category: "Home Services", available: true, description: "Residential and commercial pest management services" },
+  { id: 20, name: "Window & Door Installation", icon: Home, category: "Home Services", description: "Window and door replacement and installation" },
 
-  // Health & Fitness (7 calculators)
-  { id: 24, name: "Personal Training", icon: Dumbbell, category: "Health & Fitness", available: true, description: "1-on-1 and group fitness training sessions" },
-  { id: 25, name: "Nutrition Coaching", icon: Stethoscope, category: "Health & Fitness", description: "Meal planning and dietary consultation services" },
-  { id: 26, name: "Yoga Instruction", icon: Heart, category: "Health & Fitness", description: "Private and group yoga classes" },
-  { id: 27, name: "Physical Therapy", icon: Stethoscope, category: "Health & Fitness", description: "Rehabilitation and injury recovery services" },
-  { id: 28, name: "Massage Therapy", icon: Heart, category: "Health & Fitness", description: "Therapeutic and relaxation massage services" },
-  { id: 29, name: "Life Coaching", icon: Target, category: "Health & Fitness", description: "Personal development and goal achievement coaching" },
-  { id: 30, name: "Mental Health Counseling", icon: Heart, category: "Health & Fitness", description: "Therapy and counseling services" },
+  // Beauty & Wellness (8 calculators)
+  { id: 21, name: "Makeup Artist", icon: Palette, category: "Beauty & Wellness", description: "Bridal, event, and special occasion makeup" },
+  { id: 22, name: "Hair Stylist", icon: Scissors, category: "Beauty & Wellness", description: "Cuts, coloring, and styling services" },
+  { id: 23, name: "Tattoo Artist", icon: Sparkles, category: "Beauty & Wellness", description: "Custom tattoo design and tattooing services" },
+  { id: 24, name: "Massage Therapy", icon: Heart, category: "Beauty & Wellness", description: "Therapeutic and relaxation massage services" },
+  { id: 25, name: "Personal Training", icon: Dumbbell, category: "Beauty & Wellness", available: true, description: "1-on-1 and group fitness training sessions" },
+  { id: 26, name: "Nutritionist", icon: Stethoscope, category: "Beauty & Wellness", description: "Meal planning and dietary consultation services" },
+  { id: 27, name: "Life Coach", icon: Target, category: "Beauty & Wellness", description: "Personal development and goal achievement coaching" },
+  { id: 28, name: "Hypnotherapist", icon: Heart, category: "Beauty & Wellness", description: "Hypnosis therapy and mental wellness services" },
 
-  // Beauty & Wellness (6 calculators)
-  { id: 31, name: "Hair Styling", icon: Scissors, category: "Beauty & Wellness", description: "Cuts, coloring, and styling services" },
-  { id: 32, name: "Makeup Artist", icon: Palette, category: "Beauty & Wellness", description: "Bridal, event, and special occasion makeup" },
-  { id: 33, name: "Nail Services", icon: Gem, category: "Beauty & Wellness", description: "Manicures, pedicures, and nail art" },
-  { id: 34, name: "Spa Services", icon: Flower, category: "Beauty & Wellness", description: "Facials, treatments, and wellness packages" },
-  { id: 35, name: "Skincare Treatments", icon: Sun, category: "Beauty & Wellness", description: "Professional skincare and facial treatments" },
-  { id: 36, name: "Lash Extensions", icon: Sparkles, category: "Beauty & Wellness", description: "Eyelash extension and beauty enhancement services" },
+  // Education & Training (3 calculators)
+  { id: 29, name: "Private Tutor", icon: GraduationCap, category: "Education & Training", description: "Academic tutoring and test preparation" },
+  { id: 30, name: "Private Schools", icon: GraduationCap, category: "Education & Training", description: "Private education tuition and enrollment services" },
+  { id: 31, name: "Driving Instructor", icon: Car, category: "Education & Training", description: "Driver education and road test preparation" },
 
-  // Education & Training (6 calculators)
-  { id: 37, name: "Tutoring", icon: GraduationCap, category: "Education & Training", description: "Academic tutoring and test preparation" },
-  { id: 38, name: "Language Lessons", icon: GraduationCap, category: "Education & Training", description: "Foreign language instruction and conversation practice" },
-  { id: 39, name: "Music Lessons", icon: Music, category: "Education & Training", description: "Instrument lessons and music theory instruction" },
-  { id: 40, name: "Driving Lessons", icon: Car, category: "Education & Training", description: "Driver education and road test preparation" },
-  { id: 41, name: "Online Courses", icon: Monitor, category: "Education & Training", description: "Digital course creation and online education" },
-  { id: 42, name: "Corporate Training", icon: Users2, category: "Education & Training", description: "Professional development and skills training" },
+  // Healthcare & Medical (5 calculators)
+  { id: 32, name: "Dentist & Implant Clinics", icon: Stethoscope, category: "Healthcare & Medical", description: "Dental care, implants, and oral surgery services" },
+  { id: 33, name: "Private Medical Clinics", icon: Stethoscope, category: "Healthcare & Medical", description: "Private healthcare consultations and treatments" },
+  { id: 34, name: "Plastic Surgery", icon: Stethoscope, category: "Healthcare & Medical", description: "Cosmetic and reconstructive surgery procedures" },
+  { id: 35, name: "Childcare Practitioners", icon: Heart, category: "Healthcare & Medical", description: "Individual childcare and nanny services" },
+  { id: 36, name: "Childcare Clinics", icon: Heart, category: "Healthcare & Medical", description: "Pediatric care and child wellness clinics" },
 
-  // Technology Services (6 calculators)
-  { id: 43, name: "Web Development", icon: Code, category: "Technology", description: "Website design and development services" },
-  { id: 44, name: "IT Support", icon: Monitor, category: "Technology", description: "Computer repair and technical support services" },
-  { id: 45, name: "App Development", icon: Smartphone, category: "Technology", description: "Mobile and web application development" },
-  { id: 46, name: "Network Setup", icon: Wifi, category: "Technology", description: "Business network installation and configuration" },
-  { id: 47, name: "Server Management", icon: Server, category: "Technology", description: "Server setup, maintenance, and cloud services" },
-  { id: 48, name: "Cybersecurity", icon: Shield, category: "Technology", description: "Security audits and protection services" },
+  // Pet Services (1 calculator)
+  { id: 37, name: "Dog Trainer", icon: Heart, category: "Pet Services", description: "Dog training and behavioral modification services" },
 
-  // Creative Services (5 calculators)
-  { id: 49, name: "Graphic Design", icon: PenTool, category: "Creative Services", description: "Logo design, branding, and visual identity" },
-  { id: 50, name: "Video Production", icon: Video, category: "Creative Services", description: "Video editing, production, and post-production" },
-  { id: 51, name: "Content Writing", icon: Edit, category: "Creative Services", description: "Blog posts, copywriting, and content creation" },
-  { id: 52, name: "Social Media Management", icon: Globe, category: "Creative Services", description: "Social media strategy and content management" },
-  { id: 53, name: "SEO Services", icon: TrendingUp, category: "Creative Services", description: "Search engine optimization and digital marketing" },
+  // Automotive & Transportation (9 calculators)
+  { id: 38, name: "Car Detailing", icon: Car, category: "Automotive & Transportation", description: "Professional car cleaning and detailing services" },
+  { id: 39, name: "Auto Mechanic", icon: Wrench, category: "Automotive & Transportation", description: "Car maintenance and mechanical repair services" },
+  { id: 40, name: "Mobile Car Wash", icon: Droplets, category: "Automotive & Transportation", description: "On-site car washing and cleaning services" },
+  { id: 41, name: "Moving Services", icon: Truck, category: "Automotive & Transportation", description: "Residential and commercial moving services" },
+  { id: 42, name: "Chauffeur/Limo Services", icon: Car, category: "Automotive & Transportation", description: "Luxury transportation and chauffeur services" },
+  { id: 43, name: "Airport Transfers", icon: Car, category: "Automotive & Transportation", description: "Airport pickup and drop-off services" },
+  { id: 44, name: "Van Rentals", icon: Truck, category: "Automotive & Transportation", description: "Van and vehicle rental services" },
+  { id: 45, name: "Boat Charters", icon: Truck, category: "Automotive & Transportation", description: "Boat rental and charter services" },
+  { id: 46, name: "Motorcycle Repair", icon: Wrench, category: "Automotive & Transportation", description: "Motorcycle maintenance and repair services" },
 
-  // Business Services (4 calculators)
-  { id: 54, name: "Accounting", icon: Calculator, category: "Business Services", description: "Bookkeeping, tax preparation, and financial services" },
-  { id: 55, name: "Legal Services", icon: Scale, category: "Business Services", description: "Legal consultation and document preparation" },
-  { id: 56, name: "Business Consulting", icon: Briefcase, category: "Business Services", description: "Strategy consulting and business development" },
-  { id: 57, name: "Virtual Assistant", icon: Users, category: "Business Services", description: "Administrative support and virtual assistance" },
-
-  // Automotive (3 calculators)
-  { id: 58, name: "Auto Repair", icon: Car, category: "Automotive", description: "Car maintenance and mechanical repair services" },
-  { id: 59, name: "Car Detailing", icon: Sparkles, category: "Automotive", description: "Professional car cleaning and detailing services" },
-  { id: 60, name: "Mobile Mechanic", icon: Wrench, category: "Automotive", description: "On-site automotive repair and maintenance" },
+  // Business & Digital Services (11 calculators)
+  { id: 47, name: "Web Designer", icon: Code, category: "Business & Digital Services", description: "Website design and development services" },
+  { id: 48, name: "Marketing Consultant", icon: BarChart3, category: "Business & Digital Services", description: "Marketing strategy and campaign management" },
+  { id: 49, name: "SEO Agency", icon: TrendingUp, category: "Business & Digital Services", description: "Search engine optimization and digital marketing" },
+  { id: 50, name: "Video Editor", icon: Video, category: "Business & Digital Services", description: "Video editing and post-production services" },
+  { id: 51, name: "Copywriter", icon: Edit, category: "Business & Digital Services", description: "Content writing and copywriting services" },
+  { id: 52, name: "Virtual Assistant", icon: Users, category: "Business & Digital Services", description: "Administrative support and virtual assistance" },
+  { id: 53, name: "Business Coach", icon: Briefcase, category: "Business & Digital Services", description: "Business strategy and coaching services" },
+  { id: 54, name: "Legal Advisor", icon: Scale, category: "Business & Digital Services", description: "Legal consultation and document preparation" },
+  { id: 55, name: "Tax Preparer", icon: Calculator, category: "Business & Digital Services", description: "Tax preparation and accounting services" },
+  { id: 56, name: "Translation Services", icon: Globe, category: "Business & Digital Services", description: "Document and verbal translation services" },
 ];
 
 export default function NichesPage() {

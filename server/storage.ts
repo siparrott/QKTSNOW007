@@ -613,6 +613,45 @@ export class MemStorage implements IStorage {
           }
         },
         createdAt: new Date(),
+      },
+      {
+        id: 15,
+        name: "Mobile Car Wash Calculator",
+        slug: "mobile-car-wash",
+        category: "automotive-transportation",
+        description: "Professional mobile car wash pricing calculator with clean blue design and water droplet styling",
+        defaultConfig: {
+          vehicleSizes: {
+            "compact": 0,
+            "sedan": 10,
+            "suv": 20,
+            "truck": 30
+          },
+          servicePackages: {
+            "exterior": 30,
+            "ext_int": 50,
+            "full_detail": 110,
+            "showroom": 180
+          },
+          urgencyLevels: {
+            "rush": 25,
+            "normal": 0,
+            "flexible": 0
+          },
+          serviceLocations: {
+            "home": 0,
+            "work": 0,
+            "other": 0
+          },
+          addOns: {
+            "engine": 25,
+            "pet_hair": 20,
+            "ceramic": 100,
+            "wax": 35,
+            "headlight": 40
+          }
+        },
+        createdAt: new Date(),
       }
     ];
 

@@ -40,6 +40,7 @@ import PrivateTutorCalculator from "@/pages/private-tutor-calculator";
 import DogTrainerCalculator from "@/pages/dog-trainer-calculator";
 import CarDetailingCalculator from "@/pages/car-detailing-calculator";
 import AutoMechanicCalculator from "@/pages/auto-mechanic-calculator";
+import MobileCarWashCalculator from "@/pages/mobile-car-wash-calculator";
 
 
 function Router() {
@@ -79,6 +80,7 @@ function Router() {
       <Route path="/calculator/dog-trainer" component={DogTrainerCalculator} />
       <Route path="/calculator/car-detailing" component={CarDetailingCalculator} />
       <Route path="/calculator/auto-mechanic" component={AutoMechanicCalculator} />
+      <Route path="/calculator/mobile-car-wash" component={MobileCarWashCalculator} />
       <Route path="/calculator/:slug" component={CalculatorPage} />
       <Route path="/niches" component={NichesPage} />
       <Route path="/niches/:niche" component={NotFound} />

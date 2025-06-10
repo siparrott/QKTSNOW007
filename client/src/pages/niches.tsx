@@ -85,7 +85,7 @@ const allNiches = [
   { id: 20, name: "Window & Door Installation", icon: Home, category: "Home Services", available: true, slug: "window-door", description: "Window and door replacement and installation" },
 
   // Beauty & Wellness (8 calculators)
-  { id: 21, name: "Makeup Artist", icon: Palette, category: "Beauty & Wellness", description: "Bridal, event, and special occasion makeup" },
+  { id: 21, name: "Makeup Artist", icon: Palette, category: "Beauty & Wellness", available: true, slug: "makeup-artist", description: "Bridal, event, and special occasion makeup" },
   { id: 22, name: "Hair Stylist", icon: Scissors, category: "Beauty & Wellness", description: "Cuts, coloring, and styling services" },
   { id: 23, name: "Tattoo Artist", icon: Sparkles, category: "Beauty & Wellness", description: "Custom tattoo design and tattooing services" },
   { id: 24, name: "Massage Therapy", icon: Heart, category: "Beauty & Wellness", description: "Therapeutic and relaxation massage services" },

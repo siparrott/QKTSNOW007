@@ -532,6 +532,39 @@ export class MemStorage implements IStorage {
         }
       },
       {
+        name: "Makeup Artist Calculator",
+        slug: "makeup-artist",
+        category: "beauty-wellness",
+        description: "Professional makeup artistry pricing calculator with elegant rose gold styling",
+        defaultConfig: {
+          occasionTypes: {
+            "bridal": 150,
+            "bridesmaid": 120,
+            "event-glam": 100,
+            "photoshoot": 130,
+            "prom": 90
+          },
+          makeupStyles: {
+            "natural": 0,
+            "full-glam": 25,
+            "editorial": 40,
+            "hd-ready": 30
+          },
+          locations: {
+            "studio": 0,
+            "on-site": 50
+          },
+          additionalPersonPrice: 80,
+          addOns: {
+            "lashes": 15,
+            "hair-styling": 40,
+            "skincare-prep": 20,
+            "touch-up-kit": 25,
+            "travel": 75
+          }
+        }
+      },
+      {
         name: "Wedding Photography Quote Calculator",
         slug: "wedding-photography",
         category: "photography",

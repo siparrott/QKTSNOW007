@@ -75,7 +75,7 @@ const allNiches = [
   // Home Services (10 calculators)
   { id: 11, name: "Home Renovation", icon: Hammer, category: "Home Services", available: true, slug: "home-renovation", description: "Kitchen, bathroom, and full home renovations with AI pricing" },
   { id: 12, name: "Landscaping", icon: TreePine, category: "Home Services", available: true, slug: "landscaping", description: "Garden design, maintenance, and outdoor projects" },
-  { id: 13, name: "Interior Design", icon: Palette, category: "Home Services", description: "Room design, furniture selection, and space planning" },
+  { id: 13, name: "Interior Design", icon: Palette, category: "Home Services", available: true, slug: "interior-design", description: "Room design, furniture selection, and space planning" },
   { id: 14, name: "Painting & Decorating", icon: Paintbrush, category: "Home Services", description: "Interior and exterior painting and decorating services" },
   { id: 15, name: "Electrical Services", icon: Zap, category: "Home Services", available: true, slug: "electrician", description: "Wiring, lighting installation, and electrical repairs" },
   { id: 16, name: "Plumbing Services", icon: Wrench, category: "Home Services", available: true, slug: "plumbing", description: "Pipe repair, installation, and emergency plumbing services" },

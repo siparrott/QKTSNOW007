@@ -28,6 +28,7 @@ import TattooArtistCalculator from "@/pages/tattoo-artist-calculator";
 import MassageTherapyCalculator from "@/pages/massage-therapy-calculator";
 import PersonalTrainingCalculator from "@/pages/personal-training-calculator";
 import PlumbingCalculator from "@/pages/plumbing-calculator";
+import InteriorDesignCalculator from "@/pages/interior-design-calculator";
 
 
 function Router() {
@@ -55,6 +56,7 @@ function Router() {
       <Route path="/calculator/massage-therapy" component={MassageTherapyCalculator} />
       <Route path="/calculator/personal-training" component={PersonalTrainingCalculator} />
       <Route path="/calculator/plumbing" component={PlumbingCalculator} />
+      <Route path="/calculator/interior-design" component={InteriorDesignCalculator} />
       <Route path="/calculator/:slug" component={CalculatorPage} />
       <Route path="/niches" component={NichesPage} />
       <Route path="/niches/:niche" component={NotFound} />

@@ -740,6 +740,44 @@ export class MemStorage implements IStorage {
         }
       },
       {
+        name: "Interior Design Calculator",
+        slug: "interior-design",
+        category: "home-services",
+        description: "Professional interior design pricing calculator with elegant styling",
+        defaultConfig: {
+          projectTypes: {
+            "living-room": 200,
+            "bedroom": 180,
+            "kitchen": 300,
+            "bathroom": 250,
+            "whole-home": 800
+          },
+          propertySizes: {
+            "under-50": 1.0,
+            "51-100": 1.2,
+            "101-150": 1.5,
+            "151-plus": 2.0
+          },
+          serviceLevels: {
+            "basic": 0,
+            "full-design": 300,
+            "renovation": 600,
+            "virtual": -100
+          },
+          urgencyLevels: {
+            "flexible": 0,
+            "one-month": 100,
+            "asap": 200
+          },
+          addOns: {
+            "3d-render": 100,
+            "furniture-sourcing": 80,
+            "mood-boards": 50,
+            "in-person": 120
+          }
+        }
+      },
+      {
         name: "Wedding Photography Quote Calculator",
         slug: "wedding-photography",
         category: "photography",

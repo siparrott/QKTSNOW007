@@ -1119,6 +1119,49 @@ export class MemStorage implements IStorage {
           }
         },
         createdAt: new Date(),
+      },
+      {
+        id: 27,
+        name: "Private Medical Clinic Calculator",
+        slug: "private-medical",
+        category: "healthcare-medical",
+        description: "Clinical private medical pricing calculator with clean teal/white/navy design for GP practices and specialist clinics",
+        defaultConfig: {
+          consultations: {
+            "general-gp": 90,
+            "specialist": 150,
+            "health-check": 200,
+            "second-opinion": 120,
+            "preventative-screening": 160
+          },
+          serviceCategories: {
+            "diagnostics": 80,
+            "preventative": 60,
+            "cosmetic": 200,
+            "mental-health": 140
+          },
+          urgency: {
+            "standard": 0,
+            "same-day": 60,
+            "priority": 40
+          },
+          addOns: {
+            "lab-tests": 75,
+            "basic-imaging": 120,
+            "advanced-imaging": 250,
+            "medical-certificate": 35,
+            "follow-up-call": 30
+          },
+          discounts: {
+            promo: 0.10
+          },
+          promoCodes: {
+            "HEALTH10": 0.10,
+            "CHECKUP15": 0.15,
+            "WELLNESS20": 0.20
+          }
+        },
+        createdAt: new Date(),
       }
     ];
 

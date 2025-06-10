@@ -211,7 +211,7 @@ export default function Features() {
                 Revolutionary Quote Technology
               </Badge>
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6">
-                Features That <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-400 to-blue-400">Convert</span>
+                Features That <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">Convert</span>
               </h1>
               <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
                 Every feature designed to turn website visitors into paying clients. 

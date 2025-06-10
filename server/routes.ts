@@ -9,6 +9,7 @@ import { processDentistRequest } from "./dental-ai";
 import { processChildcareRequest } from "./childcare-ai";
 import { processPlasticSurgeryRequest } from "./plastic-surgery-ai";
 import { processChildcareServicesRequest } from "./childcare-services-ai";
+import { processPrivateMedicalRequest } from "./private-medical-ai";
 import { 
   insertUserSchema, 
   insertLeadSchema,
@@ -892,6 +893,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         duration: aiResult.duration || "monthly",
         additionalServices: aiResult.additionalServices || [],
         numberOfChildren: aiResult.numberOfChildren || "1"
+      };
+      res.json(result);
+    } catch (error) {
+      console.error("AI processing error:", error);
+      res.status(500).json({ error: "Failed to process AI request" });
+    }
+  });
+
+  // AI processing for private medical clinic calculator
+  app.post("/api/ai/process-medical", async (req, res) => {
+    try {
+      const { input } = req.body;
+      if (!input || typeof input !== "string") {
+        return res.status(400).json({ error: "Input text is required" });
+      }
+      
+      // Process with AI function
+      const aiResult = await processPrivateMedicalRequest(input);
+      
+      // Return structured response for private medical services
+      const result = {
+        consultationType: aiResult.consultationType || "general-gp",
+        serviceCategory: aiResult.serviceCategory || null,
+        urgency: aiResult.urgency || "standard",
+        addOns: aiResult.addOns || []
       };
       res.json(result);
     } catch (error) {

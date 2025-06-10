@@ -39,6 +39,12 @@ interface CalculatorFormData {
   infestationLevel?: string;
   serviceType?: string;
   addOns?: string[];
+  // Boudoir photography fields
+  sessionType?: string;
+  boudoirDuration?: string;
+  boudoirLocation?: string;
+  outfitCount?: string;
+  retouchingLevel?: string;
 }
 
 interface QuoteResult {
@@ -302,6 +308,76 @@ export default function CalculatorPage() {
       adjustedPrice = total;
     }
 
+    // Boudoir Photography Calculator
+    if (calculator.slug === "boudoir-photography") {
+      let total = config.basePrice || 250;
+      breakdown.push(`Base Session (1hr, studio, 1 outfit): €${total}`);
+
+      // Session type adjustment
+      if (formData.sessionType && formData.sessionType !== "classic") {
+        const sessionCost = config.sessionTypes?.[formData.sessionType] || 0;
+        total += sessionCost;
+        const sessionName = formData.sessionType.charAt(0).toUpperCase() + formData.sessionType.slice(1);
+        breakdown.push(`${sessionName} Session: +€${sessionCost}`);
+      }
+
+      // Duration adjustment
+      if (formData.boudoirDuration && formData.boudoirDuration !== "1hr") {
+        const durationCost = config.durations?.[formData.boudoirDuration] || 0;
+        total += durationCost;
+        breakdown.push(`${formData.boudoirDuration} Duration: +€${durationCost}`);
+      }
+
+      // Location adjustment
+      if (formData.boudoirLocation && formData.boudoirLocation !== "studio") {
+        const locationCost = config.locations?.[formData.boudoirLocation] || 0;
+        total += locationCost;
+        const locationName = formData.boudoirLocation === "location" ? "On-Location" : "Hotel Suite";
+        breakdown.push(`${locationName}: +€${locationCost}`);
+      }
+
+      // Outfit count adjustment
+      if (formData.outfitCount && formData.outfitCount !== "1") {
+        const outfitCost = config.outfitPricing?.[formData.outfitCount] || 0;
+        total += outfitCost;
+        breakdown.push(`${formData.outfitCount} Outfits: +€${outfitCost}`);
+      }
+
+      // Add-ons
+      if (formData.addOns && formData.addOns.length > 0) {
+        formData.addOns.forEach(addOnId => {
+          const addOnCost = config.addOns?.[addOnId];
+          if (addOnCost) {
+            total += addOnCost;
+            let addOnLabel = addOnId.split('-').map(word => 
+              word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ');
+            if (addOnId === "deluxe-retouching") addOnLabel = "Deluxe Retouching";
+            breakdown.push(`${addOnLabel}: +€${addOnCost}`);
+          }
+        });
+      }
+
+      // Retouching level (if not in addOns)
+      if (formData.retouchingLevel === "deluxe" && !formData.addOns?.includes("deluxe-retouching")) {
+        const retouchingCost = config.addOns?.["deluxe-retouching"] || 75;
+        total += retouchingCost;
+        breakdown.push(`Deluxe Retouching: +€${retouchingCost}`);
+      }
+
+      // Promo code discount
+      if (formData.promoCode) {
+        const discount = config.promoCodes?.[formData.promoCode.toUpperCase()];
+        if (discount) {
+          const discountAmount = total * discount;
+          total -= discountAmount;
+          breakdown.push(`Promo Code (${formData.promoCode.toUpperCase()}): -€${discountAmount.toFixed(0)}`);
+        }
+      }
+
+      adjustedPrice = total;
+    }
+
     setQuote({
       basePrice,
       adjustedPrice: Math.round(adjustedPrice),
@@ -491,6 +567,164 @@ export default function CalculatorPage() {
                       <SelectItem value="luxury">Luxury Materials</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+              </div>
+            )}
+
+            {/* Boudoir Photography Form */}
+            {calculator.slug === "boudoir-photography" && (
+              <div className="space-y-6">
+                {/* Natural Language Input */}
+                <div className="bg-rose-500/10 border border-rose-500/30 rounded-lg p-4">
+                  <div className="flex items-center mb-3">
+                    <Sparkles className="h-5 w-5 text-rose-400 mr-2" />
+                    <Label className="text-rose-400 font-semibold font-serif">AI-Powered Input (Optional)</Label>
+                  </div>
+                  <Textarea
+                    placeholder="Describe your vision... e.g., 'I want a 2-hour boudoir shoot at a hotel with 3 outfits and professional makeup'"
+                    value={formData.naturalLanguageInput || ""}
+                    onChange={(e) => setFormData({...formData, naturalLanguageInput: e.target.value})}
+                    className="bg-midnight-700 border-midnight-600 mb-3"
+                    rows={2}
+                  />
+                  <Button 
+                    onClick={() => {
+                      const input = formData.naturalLanguageInput?.toLowerCase() || "";
+                      const updates: Partial<CalculatorFormData> = {};
+                      
+                      if (input.includes("2 hour") || input.includes("2hr")) updates.boudoirDuration = "2hr";
+                      else if (input.includes("3 hour") || input.includes("3hr")) updates.boudoirDuration = "3hr";
+                      else if (input.includes("1 hour") || input.includes("1hr")) updates.boudoirDuration = "1hr";
+                      
+                      if (input.includes("hotel")) updates.boudoirLocation = "hotel";
+                      else if (input.includes("location") || input.includes("on-location")) updates.boudoirLocation = "location";
+                      else if (input.includes("studio")) updates.boudoirLocation = "studio";
+                      
+                      if (input.includes("lingerie")) updates.sessionType = "lingerie";
+                      else if (input.includes("nude")) updates.sessionType = "nude";
+                      else if (input.includes("glamour")) updates.sessionType = "glamour";
+                      else updates.sessionType = "classic";
+                      
+                      if (input.includes("5 outfit")) updates.outfitCount = "5";
+                      else if (input.includes("4 outfit")) updates.outfitCount = "4";
+                      else if (input.includes("3 outfit")) updates.outfitCount = "3";
+                      else if (input.includes("2 outfit")) updates.outfitCount = "2";
+                      else updates.outfitCount = "1";
+                      
+                      const addOns = [];
+                      if (input.includes("makeup")) addOns.push("makeup");
+                      if (input.includes("album")) addOns.push("album");
+                      if (input.includes("deluxe") || input.includes("premium retouching")) addOns.push("deluxe-retouching");
+                      if (addOns.length > 0) updates.addOns = addOns;
+                      
+                      setFormData({...formData, ...updates});
+                    }}
+                    variant="outline" 
+                    size="sm" 
+                    className="border-rose-500/30 text-rose-400 hover:bg-rose-500/10"
+                  >
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Parse with AI
+                  </Button>
+                </div>
+
+                <div>
+                  <Label className="text-white mb-2 block font-serif text-lg">Session Type</Label>
+                  <Select value={formData.sessionType} onValueChange={(value) => setFormData({...formData, sessionType: value})}>
+                    <SelectTrigger className="bg-midnight-700 border-midnight-600">
+                      <SelectValue placeholder="Choose your session style" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="classic">Classic Boudoir</SelectItem>
+                      <SelectItem value="lingerie">Lingerie Session (+€25)</SelectItem>
+                      <SelectItem value="nude">Fine Art Nude (+€50)</SelectItem>
+                      <SelectItem value="glamour">Glamour Session (+€30)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label className="text-white mb-2 block font-serif text-lg">Session Duration</Label>
+                  <Select value={formData.boudoirDuration} onValueChange={(value) => setFormData({...formData, boudoirDuration: value})}>
+                    <SelectTrigger className="bg-midnight-700 border-midnight-600">
+                      <SelectValue placeholder="How long should your session be?" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1hr">1 Hour</SelectItem>
+                      <SelectItem value="2hr">2 Hours (+€75) ⭐ Most Popular</SelectItem>
+                      <SelectItem value="3hr">3 Hours (+€150)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label className="text-white mb-2 block font-serif text-lg">Location</Label>
+                  <Select value={formData.boudoirLocation} onValueChange={(value) => setFormData({...formData, boudoirLocation: value})}>
+                    <SelectTrigger className="bg-midnight-700 border-midnight-600">
+                      <SelectValue placeholder="Where would you like to shoot?" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="studio">In-Studio</SelectItem>
+                      <SelectItem value="location">On-Location (+€100)</SelectItem>
+                      <SelectItem value="hotel">Hotel Suite (+€100)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label className="text-white mb-2 block font-serif text-lg">Number of Outfits</Label>
+                  <Select value={formData.outfitCount} onValueChange={(value) => setFormData({...formData, outfitCount: value})}>
+                    <SelectTrigger className="bg-midnight-700 border-midnight-600">
+                      <SelectValue placeholder="How many looks?" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">1 Outfit</SelectItem>
+                      <SelectItem value="2">2 Outfits (+€50)</SelectItem>
+                      <SelectItem value="3">3 Outfits (+€100) ⭐ Most Popular</SelectItem>
+                      <SelectItem value="4">4 Outfits (+€150)</SelectItem>
+                      <SelectItem value="5">5 Outfits (+€200)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label className="text-white mb-3 block font-serif text-lg">Add-Ons</Label>
+                  <div className="space-y-3">
+                    {[
+                      { id: "makeup", label: "Professional Makeup (+€60)" },
+                      { id: "album", label: "Printed Album (+€120)" },
+                      { id: "deluxe-retouching", label: "Deluxe Retouching (+€75)" }
+                    ].map((addOn) => (
+                      <div key={addOn.id} className="flex items-center space-x-3">
+                        <input
+                          type="checkbox"
+                          id={addOn.id}
+                          checked={formData.addOns?.includes(addOn.id) || false}
+                          onChange={(e) => {
+                            const currentAddOns = formData.addOns || [];
+                            if (e.target.checked) {
+                              setFormData({...formData, addOns: [...currentAddOns, addOn.id]});
+                            } else {
+                              setFormData({...formData, addOns: currentAddOns.filter(id => id !== addOn.id)});
+                            }
+                          }}
+                          className="w-4 h-4 text-rose-600 bg-midnight-700 border-midnight-600 rounded focus:ring-rose-500"
+                        />
+                        <Label htmlFor={addOn.id} className="text-white font-normal">{addOn.label}</Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-white mb-2 block font-serif text-lg">Promo Code (Optional)</Label>
+                  <Input
+                    placeholder="Enter promo code"
+                    value={formData.promoCode || ""}
+                    onChange={(e) => setFormData({...formData, promoCode: e.target.value})}
+                    className="bg-midnight-700 border-midnight-600"
+                  />
+                  <p className="text-xs text-gray-400 mt-1">Try: BOUDOIR10, NEWCLIENT, or GODDESS</p>
                 </div>
               </div>
             )}

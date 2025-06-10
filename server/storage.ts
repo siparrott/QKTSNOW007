@@ -139,6 +139,48 @@ export class MemStorage implements IStorage {
         }
       },
       {
+        name: "Boudoir Photography Calculator",
+        slug: "boudoir-photography",
+        category: "photography",
+        description: "AI-powered boudoir photography quotes with natural language input",
+        defaultConfig: {
+          basePrice: 250,
+          sessionTypes: {
+            "classic": 0,
+            "lingerie": 25,
+            "nude": 50,
+            "glamour": 30
+          },
+          durations: {
+            "1hr": 0,
+            "2hr": 75,
+            "3hr": 150
+          },
+          locations: {
+            "studio": 0,
+            "location": 100,
+            "hotel": 100
+          },
+          outfitPricing: {
+            "1": 0,
+            "2": 50,
+            "3": 100,
+            "4": 150,
+            "5": 200
+          },
+          addOns: {
+            "makeup": 60,
+            "album": 120,
+            "deluxe-retouching": 75
+          },
+          promoCodes: {
+            "BOUDOIR10": 0.1,
+            "NEWCLIENT": 0.15,
+            "GODDESS": 0.2
+          }
+        }
+      },
+      {
         name: "Pest Control Services Calculator",
         slug: "pest-control",
         category: "home-services",

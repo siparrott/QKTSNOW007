@@ -20,30 +20,20 @@ export function QuoteKitHeader() {
 
           {/* Center - Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link href="/">
-              <a className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
-                Home
-              </a>
+            <Link href="/" className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
+              Home
             </Link>
-            <Link href="/features">
-              <a className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
-                Features
-              </a>
+            <Link href="/features" className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
+              Features
             </Link>
-            <Link href="/niches">
-              <a className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
-                Niches
-              </a>
+            <Link href="/niches" className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
+              Niches
             </Link>
-            <Link href="/pricing">
-              <a className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
-                Pricing
-              </a>
+            <Link href="/pricing" className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
+              Pricing
             </Link>
-            <Link href="/login">
-              <a className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
-                Login
-              </a>
+            <Link href="/login" className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
+              Login
             </Link>
           </div>
 

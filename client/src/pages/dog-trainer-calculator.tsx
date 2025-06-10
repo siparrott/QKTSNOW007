@@ -310,17 +310,9 @@ export default function DogTrainerCalculator() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-25 via-stone-50 to-green-25 py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-medium text-stone-800 mb-2">
-            Dog Training Quote Calculator
-          </h1>
-          <p className="text-stone-600 max-w-2xl mx-auto font-light">
-            Get your personalized dog training quote instantly. Professional training that builds lasting bonds.
-          </p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-25 via-stone-50 to-green-25">
+      <QuoteKitHeader />
+      <div className="max-w-7xl mx-auto px-4 py-8">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Form */}

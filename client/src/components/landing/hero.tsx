@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Rocket, Play, CheckCircle, Clock, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import { Typewriter } from "@/components/ui/typewriter";
 
 export default function Hero() {
   const scrollToSection = (sectionId: string) => {
@@ -61,8 +60,8 @@ export default function Hero() {
           >
             <span className="text-neon-400">💥 They Don't Want a Chat.</span>
             <br />
-            <span className="text-white">
-              <Typewriter text="They Want a Price." delay={1000} speed={120} />
+            <span className="text-white animate-pulse">
+              They Want a Price.
             </span>
           </motion.h1>
 

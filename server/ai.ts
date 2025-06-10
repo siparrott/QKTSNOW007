@@ -271,3 +271,47 @@ Respond with JSON in this exact format:
     throw new Error("Failed to process request");
   }
 }
+
+export async function processMotorcycleRepairRequest(input: string) {
+  if (!input.trim()) {
+    throw new Error("Input is required");
+  }
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: `You are an AI assistant that analyzes customer requests for motorcycle repair services and extracts structured data.
+
+Available options:
+- Bike types: cruiser (Cruiser), sportbike (Sportbike), touring (Touring), dirt_bike (Dirt Bike), scooter (Scooter / Moped), electric (Electric / Hybrid)
+- Service types: maintenance (General Maintenance), engine (Engine Repair), brakes (Brake Replacement), tires (Tire Change), suspension (Suspension Service), electrical (Electrical Diagnostics)
+- Urgency: standard (Standard), express (Express), emergency (Emergency)
+- Add-ons: oil_change (Oil & Filter Change), chain (Chain Replacement), valves (Valve Adjustment), pickup (Pickup & Dropoff)
+
+Respond with JSON in this exact format:
+{
+  "bikeType": "string or null",
+  "serviceType": "string or null",
+  "urgency": "string or null",
+  "addOns": ["array of strings or empty array"]
+}`
+        },
+        {
+          role: "user",
+          content: input
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.3
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result;
+  } catch (error) {
+    console.error('AI processing error:', error);
+    throw new Error("Failed to process request");
+  }
+}

@@ -122,7 +122,7 @@ const allNiches = [
   { id: 44, name: "Airport Transfers", icon: Car, category: "Automotive & Transportation", available: true, slug: "airport-transfer", description: "Airport pickup and drop-off services" },
   { id: 45, name: "Van Rentals", icon: Truck, category: "Automotive & Transportation", available: true, slug: "van-rental", description: "Van and vehicle rental services" },
   { id: 46, name: "Boat Charters", icon: Truck, category: "Automotive & Transportation", available: true, slug: "boat-charter", description: "Boat rental and charter services" },
-  { id: 47, name: "Motorcycle Repair", icon: Wrench, category: "Automotive & Transportation", description: "Motorcycle maintenance and repair services" },
+  { id: 47, name: "Motorcycle Repair", icon: Wrench, category: "Automotive & Transportation", available: true, slug: "motorcycle-repair", description: "Motorcycle maintenance and repair services" },
 
   // Business & Digital Services (11 calculators)
   { id: 48, name: "Web Designer", icon: Code, category: "Business & Digital Services", description: "Website design and development services" },

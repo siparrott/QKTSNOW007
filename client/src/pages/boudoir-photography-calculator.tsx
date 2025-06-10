@@ -395,7 +395,7 @@ This quote is valid for 48 hours.
                           disabled={!formData.naturalLanguageInput.trim()}
                         >
                           <Sparkles className="h-4 w-4 mr-2" />
-                          Parse with AI
+                          Calculate with AI
                         </Button>
                       </div>
 

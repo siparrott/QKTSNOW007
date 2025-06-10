@@ -400,6 +400,45 @@ export class MemStorage implements IStorage {
           }
         },
         createdAt: new Date(),
+      },
+      {
+        id: 10,
+        name: "Hypnotherapist Calculator",
+        slug: "hypnotherapist",
+        category: "beauty-wellness",
+        description: "Clean therapeutic hypnotherapy pricing calculator with sage green and teal styling",
+        defaultConfig: {
+          treatmentTypes: {
+            "stop-smoking": 0,
+            "weight-loss": 0,
+            "stress-anxiety": 0,
+            "confidence": 0,
+            "sleep-improvement": 0,
+            "rtt-deep-healing": 0
+          },
+          sessionFormats: {
+            "in-person": 0,
+            "online-zoom": -20,
+            "group-session": -40
+          },
+          sessionPlans: {
+            "one-off": 100,
+            "3-session": 270,
+            "6-session": 500
+          },
+          addOns: {
+            "audio-recording": 25,
+            "follow-up": 20,
+            "progress-journal": 15,
+            "nlp-addon": 30,
+            "urgent-booking": 40
+          },
+          clientTypes: {
+            "new": 0,
+            "returning": 0.1
+          }
+        },
+        createdAt: new Date(),
       }
     ];
 

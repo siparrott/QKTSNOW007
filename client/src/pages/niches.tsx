@@ -96,7 +96,7 @@ const allNiches = [
   { id: 26, name: "Personal Training", icon: Dumbbell, category: "Beauty & Wellness", available: true, slug: "personal-training", description: "1-on-1 and group fitness training sessions" },
   { id: 27, name: "Nutritionist", icon: Stethoscope, category: "Beauty & Wellness", available: true, slug: "nutritionist", description: "Meal planning and dietary consultation services" },
   { id: 28, name: "Life Coach", icon: Target, category: "Beauty & Wellness", available: true, slug: "life-coach", description: "Personal development and goal achievement coaching" },
-  { id: 29, name: "Hypnotherapist", icon: Heart, category: "Beauty & Wellness", description: "Hypnosis therapy and mental wellness services" },
+  { id: 29, name: "Hypnotherapist", icon: Heart, category: "Beauty & Wellness", available: true, slug: "hypnotherapist", description: "Hypnosis therapy and mental wellness services" },
 
   // Education & Training (3 calculators)
   { id: 30, name: "Private Tutor", icon: GraduationCap, category: "Education & Training", description: "Academic tutoring and test preparation" },

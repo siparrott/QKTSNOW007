@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Camera, Heart, Star, Clock, Mail, ArrowRight, Check, Crown, MapPin, Home, Building } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { ArrowLeft, Camera, Heart, Star, Clock, Mail, ArrowRight, Check, Crown, MapPin, Home, Building, Sparkles } from "lucide-react";
 import { Link } from "wouter";
 
 interface BoudoirFormData {
@@ -12,6 +13,7 @@ interface BoudoirFormData {
   location: string;
   outfitCount: string;
   addOns: string[];
+  naturalLanguageInput: string;
   promoCode: string;
   contactInfo: {
     name: string;
@@ -78,6 +80,7 @@ export default function BoudoirPhotographyCalculator() {
     location: "",
     outfitCount: "",
     addOns: [],
+    naturalLanguageInput: "",
     promoCode: "",
     contactInfo: {
       name: "",
@@ -170,6 +173,43 @@ export default function BoudoirPhotographyCalculator() {
   useEffect(() => {
     setPricing(calculatePricing());
   }, [formData]);
+
+  const parseNaturalLanguage = () => {
+    const input = formData.naturalLanguageInput.toLowerCase();
+    const updates: Partial<BoudoirFormData> = {};
+    
+    // Duration parsing
+    if (input.includes("2 hour") || input.includes("2hr") || input.includes("two hour")) updates.duration = "2hr";
+    else if (input.includes("3 hour") || input.includes("3hr") || input.includes("three hour")) updates.duration = "3hr";
+    else if (input.includes("1 hour") || input.includes("1hr") || input.includes("one hour")) updates.duration = "1hr";
+    
+    // Location parsing
+    if (input.includes("hotel")) updates.location = "hotel";
+    else if (input.includes("location") || input.includes("on-location") || input.includes("outdoor")) updates.location = "location";
+    else if (input.includes("studio")) updates.location = "studio";
+    
+    // Session type parsing
+    if (input.includes("lingerie")) updates.sessionType = "lingerie";
+    else if (input.includes("nude") || input.includes("artistic")) updates.sessionType = "nude";
+    else if (input.includes("glamour") || input.includes("fashion")) updates.sessionType = "glamour";
+    else if (input.includes("classic") || input.includes("traditional")) updates.sessionType = "classic";
+    
+    // Outfit count parsing
+    if (input.includes("5 outfit") || input.includes("five outfit")) updates.outfitCount = "5";
+    else if (input.includes("4 outfit") || input.includes("four outfit")) updates.outfitCount = "4";
+    else if (input.includes("3 outfit") || input.includes("three outfit")) updates.outfitCount = "3";
+    else if (input.includes("2 outfit") || input.includes("two outfit")) updates.outfitCount = "2";
+    else if (input.includes("1 outfit") || input.includes("one outfit")) updates.outfitCount = "1";
+    
+    // Add-ons parsing
+    const addOns = [];
+    if (input.includes("makeup") || input.includes("make up")) addOns.push("makeup");
+    if (input.includes("album") || input.includes("book")) addOns.push("album");
+    if (input.includes("deluxe") || input.includes("premium retouching") || input.includes("advanced editing")) addOns.push("deluxe-retouching");
+    if (addOns.length > 0) updates.addOns = addOns;
+    
+    setFormData(prev => ({ ...prev, ...updates }));
+  };
 
   const handleNext = () => {
     if (currentStep < totalSteps) {
@@ -333,6 +373,32 @@ This quote is valid for 48 hours.
                       className="space-y-6"
                     >
                       <h2 className="text-2xl font-bold text-gray-800 font-serif mb-6">Choose Your Session Style</h2>
+                      
+                      {/* Natural Language Input */}
+                      <div className="mb-8 bg-pink-50/80 border border-pink-200 rounded-lg p-4">
+                        <div className="flex items-center mb-3">
+                          <Sparkles className="h-5 w-5 text-pink-500 mr-2" />
+                          <h3 className="text-pink-700 font-semibold font-serif">Describe Your Vision (Optional)</h3>
+                        </div>
+                        <Textarea
+                          placeholder="e.g., 'I want a 2-hour boudoir shoot at a hotel with 3 outfits and professional makeup'"
+                          value={formData.naturalLanguageInput}
+                          onChange={(e) => setFormData(prev => ({ ...prev, naturalLanguageInput: e.target.value }))}
+                          className="bg-white/80 border-pink-200 mb-3 font-serif resize-none"
+                          rows={2}
+                        />
+                        <Button 
+                          onClick={parseNaturalLanguage}
+                          variant="outline" 
+                          size="sm" 
+                          className="border-pink-300 text-pink-600 hover:bg-pink-50 font-serif"
+                          disabled={!formData.naturalLanguageInput.trim()}
+                        >
+                          <Sparkles className="h-4 w-4 mr-2" />
+                          Parse with AI
+                        </Button>
+                      </div>
+
                       <div className="grid grid-cols-2 gap-4">
                         <OptionCard
                           icon={<Star className="w-8 h-8" />}

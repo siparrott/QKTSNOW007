@@ -160,10 +160,12 @@ export default function NichesGrid() {
           transition={{ duration: 0.8, delay: 0.3 }}
           viewport={{ once: true }}
         >
-          <Button className="bg-midnight-700 hover:bg-midnight-600 text-white px-8 py-4 rounded-lg font-semibold transition-all duration-300 border border-midnight-600 hover:border-neon-400">
-            View All 50+ Niches
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
+          <Link href="/niches">
+            <Button className="bg-midnight-700 hover:bg-midnight-600 text-white px-8 py-4 rounded-lg font-semibold transition-all duration-300 border border-midnight-600 hover:border-neon-400">
+              View All 56 Niches
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </Link>
         </motion.div>
       </div>
     </section>

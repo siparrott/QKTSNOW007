@@ -670,6 +670,44 @@ export class MemStorage implements IStorage {
         }
       },
       {
+        name: "Personal Training Calculator",
+        slug: "personal-training",
+        category: "beauty-wellness",
+        description: "Professional fitness training pricing calculator with bold fitness styling",
+        defaultConfig: {
+          trainingTypes: {
+            "general": 0,
+            "strength": 10,
+            "weight-loss": 15,
+            "prenatal": 20,
+            "online": -5
+          },
+          sessionFormats: {
+            "one-on-one": 50,
+            "small-group": 30,
+            "virtual": 35,
+            "outdoor": 55,
+            "in-gym": 50
+          },
+          frequencies: {
+            "1x": { sessions: 1, multiplier: 1 },
+            "2-3x": { sessions: 2.5, multiplier: 2.5 },
+            "4x+": { sessions: 4, multiplier: 4 }
+          },
+          durations: {
+            "30": 0.75,
+            "45": 0.9,
+            "60": 1.0
+          },
+          addOns: {
+            "meal-plan": 40,
+            "progress-app": 25,
+            "check-in": 20,
+            "pdf-plan": 30
+          }
+        }
+      },
+      {
         name: "Wedding Photography Quote Calculator",
         slug: "wedding-photography",
         category: "photography",

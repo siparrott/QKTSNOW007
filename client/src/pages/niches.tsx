@@ -80,7 +80,7 @@ const allNiches = [
   { id: 15, name: "Electrical Services", icon: Zap, category: "Home Services", available: true, slug: "electrician", description: "Wiring, lighting installation, and electrical repairs" },
   { id: 16, name: "Plumbing Services", icon: Wrench, category: "Home Services", description: "Pipe repair, installation, and emergency plumbing services" },
   { id: 17, name: "Roofing", icon: Home, category: "Home Services", available: true, slug: "roofing", description: "Roof repair, replacement, and maintenance services" },
-  { id: 18, name: "Solar Panel Installation", icon: Sun, category: "Home Services", description: "Solar energy system installation and maintenance" },
+  { id: 18, name: "Solar Panel Installation", icon: Sun, category: "Home Services", available: true, slug: "solar", description: "Solar energy system installation and maintenance" },
   { id: 19, name: "Pest Control", icon: Shield, category: "Home Services", available: true, slug: "pest-control", description: "Residential and commercial pest management services" },
   { id: 20, name: "Window & Door Installation", icon: Home, category: "Home Services", description: "Window and door replacement and installation" },
 

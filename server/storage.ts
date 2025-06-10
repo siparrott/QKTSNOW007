@@ -422,6 +422,41 @@ export class MemStorage implements IStorage {
         }
       },
       {
+        name: "Solar Panel Installation Calculator",
+        slug: "solar",
+        category: "home-services",
+        description: "Professional solar panel installation quote calculator with eco-tech styling",
+        defaultConfig: {
+          basePrice: 5000,
+          pricePerKW: 1000,
+          propertyMultipliers: {
+            "house": 1,
+            "apartment": 1.2,
+            "commercial": 1.5
+          },
+          roofComplexity: {
+            "flat": 1.1,
+            "sloped-south": 1,
+            "sloped-eastwest": 1.05,
+            "metal": 1.15,
+            "tile": 1.2,
+            "asphalt": 1
+          },
+          powerUsage: {
+            "low": 3,
+            "medium": 5,
+            "high": 8,
+            "very-high": 12
+          },
+          batteryStorage: 4500,
+          addOns: {
+            "ev-charger": 1200,
+            "smart-monitoring": 400,
+            "solar-roof-tiles": 2000
+          }
+        }
+      },
+      {
         name: "Wedding Photography Quote Calculator",
         slug: "wedding-photography",
         category: "photography",

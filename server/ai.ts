@@ -183,3 +183,47 @@ Respond with JSON in this exact format:
     throw new Error("Failed to process request");
   }
 }
+
+export async function processBoatCharterRequest(input: string) {
+  if (!input.trim()) {
+    throw new Error("Input is required");
+  }
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: `You are an AI assistant that analyzes customer requests for boat charter services and extracts structured data.
+
+Available options:
+- Boat types: sailboat (Sailboat), catamaran (Catamaran), motor_yacht (Motor Yacht), speedboat (Speedboat), fishing_boat (Fishing Boat), party_boat (Party Boat)
+- Duration: 2_hours (2 Hours), half_day (Half Day), full_day (Full Day), sunset (Sunset Cruise), multi_day (Multi-Day)
+- Guests: number from 1-50+ as string
+- Extras: captain_crew (Captain & Crew), catering (Catering / Drinks), water_toys (Water Toys), photographer (Photographer), dj_music (Live DJ / Music)
+
+Respond with JSON in this exact format:
+{
+  "boatType": "string or null",
+  "duration": "string or null",
+  "guests": "string or null",
+  "extras": ["array of strings or empty array"]
+}`
+        },
+        {
+          role: "user",
+          content: input
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.3
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result;
+  } catch (error) {
+    console.error('AI processing error:', error);
+    throw new Error("Failed to process request");
+  }
+}

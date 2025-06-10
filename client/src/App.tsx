@@ -53,12 +53,13 @@ import MarketingConsultantCalculator from "@/pages/marketing-consultant-calculat
 import SEOAgencyCalculator from "@/pages/seo-agency-calculator";
 import VideoEditorCalculator from "@/pages/video-editor-calculator";
 import CopywriterCalculator from "@/pages/copywriter-calculator";
+import Features from "@/pages/features";
 
 
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Home} exact />
+      <Route path="/" component={Home} />
       <Route path="/calculator/boudoir-photography" component={BoudoirPhotographyCalculator} />
       <Route path="/calculator/electrician" component={ElectricianCalculator} />
       <Route path="/calculator/home-renovation" component={HomeRenovationCalculator} />
@@ -107,6 +108,7 @@ function Router() {
       <Route path="/calculator/copywriter" component={CopywriterCalculator} />
       <Route path="/calculator/:slug" component={CalculatorPage} />
       <Route path="/niches" component={NichesPage} />
+      <Route path="/features" component={Features} />
       <Route path="/niches/:niche" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

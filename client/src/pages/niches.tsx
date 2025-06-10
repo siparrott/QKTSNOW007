@@ -212,7 +212,11 @@ export default function NichesPage() {
               >
                 {category}
                 {category !== "All" && (
-                  <Badge variant="secondary" className="ml-2 bg-midnight-600 text-gray-300">
+                  <Badge variant="secondary" className={`ml-2 ${
+                    selectedCategory === category 
+                      ? "bg-green-600 text-white" 
+                      : "bg-midnight-600 text-gray-300"
+                  }`}>
                     {allNiches.filter(n => n.category === category).length}
                   </Badge>
                 )}

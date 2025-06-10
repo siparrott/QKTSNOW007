@@ -62,12 +62,11 @@ export default function Header() {
                 Niches
               </button>
             </Link>
-            <button
-              onClick={() => scrollToSection("pricing")}
-              className="text-gray-300 hover:text-neon-400 transition-colors"
-            >
-              Pricing
-            </button>
+            <Link href="/pricing">
+              <button className="text-gray-300 hover:text-neon-400 transition-colors">
+                Pricing
+              </button>
+            </Link>
             <Link href="/login">
               <button className="text-gray-300 hover:text-neon-400 transition-colors">
                 Login
@@ -116,12 +115,11 @@ export default function Header() {
                 Niches
               </button>
             </Link>
-            <button
-              onClick={() => scrollToSection("pricing")}
-              className="block text-gray-300 hover:text-neon-400 transition-colors"
-            >
-              Pricing
-            </button>
+            <Link href="/pricing">
+              <button className="block text-gray-300 hover:text-neon-400 transition-colors">
+                Pricing
+              </button>
+            </Link>
             <Link href="/login">
               <button className="block text-gray-300 hover:text-neon-400 transition-colors">
                 Login

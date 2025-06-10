@@ -66,6 +66,7 @@ import PlasticSurgeryCalculator from "@/pages/plastic-surgery-calculator";
 import ChildcareServicesCalculator from "@/pages/childcare-services-calculator";
 import PrivateMedicalCalculator from "@/pages/private-medical-calculator";
 import Features from "@/pages/features";
+import Pricing from "@/pages/pricing";
 import Login from "@/pages/login";
 import Register from "@/pages/register";
 import Dashboard from "@/pages/dashboard";
@@ -136,6 +137,7 @@ function Router() {
       <Route path="/calculator/:slug" component={CalculatorPage} />
       <Route path="/niches" component={NichesPage} />
       <Route path="/features" component={Features} />
+      <Route path="/pricing" component={Pricing} />
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
       <Route path="/dashboard" component={Dashboard} />

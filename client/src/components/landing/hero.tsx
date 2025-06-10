@@ -47,7 +47,7 @@ export default function Hero() {
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
         <motion.div
-          className="text-center max-w-4xl mx-auto"
+          className="text-center max-w-4xl mx-auto pt-16"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
@@ -84,11 +84,6 @@ export default function Hero() {
             <p className="text-neon-300 font-bold text-xl md:text-2xl">
               But now it can be.
             </p>
-            
-            <p className="text-gray-200 text-lg md:text-xl">
-              QuoteKit calculators give you <span className="text-white font-semibold">confirmed bookings</span>, not question marks.<br />
-              No calls. No emails. No fuss.
-            </p>
           </motion.div>
 
           <motion.div
@@ -105,6 +100,11 @@ export default function Hero() {
             </Button>
             <p className="text-sm text-gray-400 text-center max-w-md">
               Limited Launch Offer • Renews annually • Cancel anytime
+            </p>
+            
+            <p className="text-gray-200 text-lg md:text-xl text-center max-w-2xl">
+              QuoteKit calculators give you <span className="text-white font-semibold">confirmed bookings</span>, not question marks.<br />
+              No calls. No emails. No fuss.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/niches">

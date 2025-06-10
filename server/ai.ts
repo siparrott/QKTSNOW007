@@ -549,3 +549,49 @@ Respond with JSON in this exact format:
     throw new Error("Failed to process request");
   }
 }
+
+export async function processCopywriterRequest(input: string) {
+  if (!input.trim()) {
+    throw new Error("Input is required");
+  }
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: `You are an AI assistant that analyzes customer requests for copywriting services and extracts structured data.
+
+Available options:
+- Project types: website (Website Copy), blog (Blog Post), sales (Sales Page), product (Product Description), email (Email Sequence)
+- Word counts: under500 (Under 500), 500to1000 (500-1,000), 1000to2000 (1,000-2,000), over2000 (Over 2,000)
+- Tone of voice: professional (Professional), friendly (Friendly), persuasive (Persuasive), witty (Witty)
+- Urgency: standard (Standard 5 days), express (Express 48 hours)
+- Add-ons: keywords (Keyword Research), seo (SEO Optimization), competitor (Competitor Analysis), format (Upload-ready Format), revisions (Revisions Package)
+
+Respond with JSON in this exact format:
+{
+  "projectType": "string or null",
+  "wordCount": "string or null",
+  "toneOfVoice": "string or null",
+  "urgency": "string or null",
+  "addOns": ["array of strings or empty array"]
+}`
+        },
+        {
+          role: "user",
+          content: input
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.3
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result;
+  } catch (error) {
+    console.error('AI processing error:', error);
+    throw new Error("Failed to process request");
+  }
+}

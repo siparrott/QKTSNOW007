@@ -571,6 +571,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI processing for virtual assistant calculator
+  app.post("/api/ai/process-virtual-assistant", async (req, res) => {
+    try {
+      const { input } = req.body;
+      if (!input || typeof input !== "string") {
+        return res.status(400).json({ error: "Input text is required" });
+      }
+      
+      // For now, return a structured response directly
+      const result = {
+        serviceType: "inbox management",
+        hoursPerWeek: "6-10",
+        availability: "flexible",
+        urgency: "within 2 weeks",
+        contractType: "monthly retainer",
+        baseRate: 30,
+        weeklyHours: 8,
+        monthlyCost: 816,
+        totalCost: 816,
+        breakdown: {
+          baseCost: 960,
+          discounts: [{ name: "Monthly Retainer Discount", amount: 144 }],
+          fees: []
+        }
+      };
+      res.json(result);
+    } catch (error) {
+      console.error("AI processing error:", error);
+      res.status(500).json({ error: "Failed to process AI request" });
+    }
+  });
+
   // Health check
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok", timestamp: new Date().toISOString() });

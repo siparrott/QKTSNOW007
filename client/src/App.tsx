@@ -110,6 +110,7 @@ function Router() {
       <Route path="/calculator/seo-agency" component={SEOAgencyCalculator} />
       <Route path="/calculator/video-editor" component={VideoEditorCalculator} />
       <Route path="/calculator/copywriter" component={CopywriterCalculator} />
+      <Route path="/calculator/virtual-assistant" component={VirtualAssistantCalculator} />
       <Route path="/calculator/:slug" component={CalculatorPage} />
       <Route path="/niches" component={NichesPage} />
       <Route path="/features" component={Features} />

@@ -18,6 +18,7 @@ import {
   ChevronRight,
   CheckCircle,
   Timer,
+  Calculator,
   User,
   Briefcase,
   Sparkles,

@@ -97,6 +97,11 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
     // Handle URL parameters for dynamic customization
     const urlParams = new URLSearchParams(window.location.search);
     
+    // Force comprehensive calculator view if specified
+    const forceDetailed = urlParams.get('forceDetailedView') === 'true' || 
+                         urlParams.get('useComprehensiveCalculator') === 'true' ||
+                         urlParams.get('calculatorType') === 'comprehensive-wedding-photography';
+    
     // Extract individual configuration parameters
     const config: any = {};
     const paramKeys = Array.from(urlParams.keys());

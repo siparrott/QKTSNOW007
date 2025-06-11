@@ -214,6 +214,76 @@ export default function Dashboard() {
 
     const calculatorRoute = calculatorRoutes[template.template_id] || `/calculator/${template.template_id}`;
     
+    // Create deep clone of the comprehensive calculator with all detailed features
+    const getDetailedConfig = (templateId: string) => {
+      switch (templateId) {
+        case 'wedding-photography':
+          return {
+            packageTypes: [
+              { id: "elopement", label: "Elopement / Small Ceremony", basePrice: 950, hours: 4, icon: "💕", popular: false },
+              { id: "half-day", label: "Half-Day Coverage", basePrice: 1200, hours: 6, icon: "☀️", popular: true },
+              { id: "full-day", label: "Full-Day Coverage", basePrice: 1800, hours: 10, icon: "💍", popular: true },
+              { id: "destination", label: "Destination Wedding", basePrice: 2500, hours: 12, icon: "✈️", popular: false }
+            ],
+            hourOptions: [
+              { id: "4", label: "4 Hours", surcharge: 0, popular: false },
+              { id: "6", label: "6 Hours", surcharge: 300, popular: true },
+              { id: "8", label: "8 Hours", surcharge: 600, popular: true },
+              { id: "10+", label: "10+ Hours", surcharge: 900, popular: false }
+            ],
+            locationOptions: [
+              { id: "1", label: "1 Location", surcharge: 0, popular: false },
+              { id: "2", label: "2 Locations", surcharge: 150, popular: true },
+              { id: "3+", label: "3+ Locations", surcharge: 350, popular: false }
+            ],
+            addOnOptions: [
+              { id: "engagement", label: "Engagement Session", price: 300, popular: true },
+              { id: "second-photographer", label: "Second Photographer", price: 250, popular: true },
+              { id: "drone", label: "Drone Coverage", price: 150, popular: false },
+              { id: "album", label: "Album & Prints", price: 200, popular: true },
+              { id: "rehearsal", label: "Rehearsal Dinner Coverage", price: 350, popular: false },
+              { id: "express", label: "Express Turnaround", price: 175, popular: false }
+            ],
+            deliveryOptions: [
+              { id: "gallery", label: "Online Gallery Only", price: 0, popular: false },
+              { id: "usb-album", label: "USB + Album", price: 250, popular: true },
+              { id: "video-highlights", label: "Video Highlights Add-On", price: 400, popular: true }
+            ],
+            multiStep: true,
+            aiPowered: true,
+            naturalLanguageInput: true,
+            calculatorType: "comprehensive-wedding-photography"
+          };
+        case 'home-renovation':
+          return {
+            projectTypes: ["kitchen", "bathroom", "living-room", "bedroom", "whole-house"],
+            propertyTypes: ["apartment", "house", "villa", "commercial"],
+            finishQualities: ["standard", "premium", "luxury"],
+            timeframes: ["flexible", "normal", "rush"],
+            multiStep: true,
+            aiPowered: true,
+            calculatorType: "comprehensive-home-renovation"
+          };
+        case 'portrait-photography':
+          return {
+            sessionTypes: ["studio", "outdoor", "lifestyle", "business"],
+            durations: ["30min", "1hour", "2hours", "half-day"],
+            groupSizes: ["individual", "couple", "family", "group"],
+            deliveryOptions: ["digital", "prints", "album"],
+            multiStep: true,
+            calculatorType: "comprehensive-portrait-photography"
+          };
+        default:
+          return {
+            isDetailed: true,
+            hasAdvancedFeatures: true,
+            calculatorType: `comprehensive-${templateId}`
+          };
+      }
+    };
+
+    const detailedConfig = getDetailedConfig(template.template_id);
+
     const newCalculator: UserCalculator = {
       id: `calc_${Date.now()}`,
       name: template.name,
@@ -221,14 +291,28 @@ export default function Dashboard() {
       embed_url: `${window.location.origin}${calculatorRoute}`,
       admin_url: `${window.location.origin}/dashboard`,
       calculator_id: parseInt(template.id),
-      config: {},
+      config: detailedConfig,
       custom_branding: {},
       is_active: true,
       template_id: template.template_id,
-      layout_json: {},
-      logic_json: {},
-      style_json: {},
-      prompt_md: "",
+      layout_json: {
+        type: template.template_id === 'wedding-photography' ? "multi-step-wizard" : "detailed-form",
+        steps: template.template_id === 'wedding-photography' ? 
+          ["package-coverage", "locations-addons", "wedding-details", "contact-info"] : 
+          ["service-selection", "requirements", "customization", "contact"],
+        components: template.template_id === 'wedding-photography' ? 
+          ["package-selector", "hour-selector", "location-grid", "addon-grid", "natural-language", "pricing-sidebar"] :
+          ["service-options", "requirements-form", "customization-panel", "quote-summary"],
+        forceDetailedView: true,
+        useComprehensiveCalculator: true
+      },
+      logic_json: detailedConfig,
+      style_json: template.template_id === 'wedding-photography' ? {
+        theme: "elegant-wedding",
+        colors: { primary: "#f43f5e", accent: "#fbbf24", neutral: "#6b7280" },
+        layout: "stepped-wizard"
+      } : {},
+      prompt_md: template.template_id === 'wedding-photography' ? "Professional wedding photography calculator with comprehensive multi-step form, package selection, venue options, and AI-powered pricing logic." : "",
       created_at: new Date().toISOString(),
       last_updated: new Date().toISOString()
     };
@@ -313,9 +397,21 @@ export default function Dashboard() {
     
     // Pass configuration as URL parameters for dynamic customization
     const configParams = new URLSearchParams();
+    
+    // Add layout configuration to force detailed view
+    if (calc.layout_json?.forceDetailedView) {
+      configParams.append('forceDetailedView', 'true');
+    }
+    if (calc.layout_json?.useComprehensiveCalculator) {
+      configParams.append('useComprehensiveCalculator', 'true');
+    }
+    if (calc.config?.calculatorType) {
+      configParams.append('calculatorType', calc.config.calculatorType);
+    }
+    
     if (calc.config) {
       Object.keys(calc.config).forEach(key => {
-        if (calc.config[key] !== undefined && calc.config[key] !== null) {
+        if (calc.config[key] !== undefined && calc.config[key] !== null && typeof calc.config[key] !== 'object') {
           configParams.append(key, String(calc.config[key]));
         }
       });

@@ -904,58 +904,181 @@ export default function Dashboard() {
                         </div>
 
                         {/* Calculator-Specific Fields */}
-                        {selectedCalculator.template_id === 'wedding-photography' && (
-                          <>
-                            <div className="border border-midnight-600 rounded-lg p-4">
-                              <h4 className="text-neon-400 font-medium mb-3 text-sm">Package Selection</h4>
-                              <div className="space-y-3">
-                                <div>
-                                  <Label className="text-gray-300 text-xs">Package Section Title</Label>
-                                  <Input
-                                    value={customConfig.packageSectionTitle || ''}
-                                    onChange={(e) => setCustomConfig({...customConfig, packageSectionTitle: e.target.value})}
-                                    placeholder="Choose your wedding photography package"
-                                    className="bg-midnight-900 border-midnight-600 text-white text-sm"
-                                  />
-                                </div>
-                                <div>
-                                  <Label className="text-gray-300 text-xs">Elopement Package Name</Label>
-                                  <Input
-                                    value={customConfig.elopementPackage || ''}
-                                    onChange={(e) => setCustomConfig({...customConfig, elopementPackage: e.target.value})}
-                                    placeholder="Elopement"
-                                    className="bg-midnight-900 border-midnight-600 text-white text-sm"
-                                  />
-                                </div>
-                                <div>
-                                  <Label className="text-gray-300 text-xs">Half-Day Package Name</Label>
-                                  <Input
-                                    value={customConfig.halfDayPackage || ''}
-                                    onChange={(e) => setCustomConfig({...customConfig, halfDayPackage: e.target.value})}
-                                    placeholder="Half-Day Coverage"
-                                    className="bg-midnight-900 border-midnight-600 text-white text-sm"
-                                  />
-                                </div>
-                                <div>
-                                  <Label className="text-gray-300 text-xs">Full-Day Package Name</Label>
-                                  <Input
-                                    value={customConfig.fullDayPackage || ''}
-                                    onChange={(e) => setCustomConfig({...customConfig, fullDayPackage: e.target.value})}
-                                    placeholder="Full-Day Coverage"
-                                    className="bg-midnight-900 border-midnight-600 text-white text-sm"
-                                  />
-                                </div>
-                                <div>
-                                  <Label className="text-gray-300 text-xs">Destination Package Name</Label>
-                                  <Input
-                                    value={customConfig.destinationPackage || ''}
-                                    onChange={(e) => setCustomConfig({...customConfig, destinationPackage: e.target.value})}
-                                    placeholder="Destination Wedding"
-                                    className="bg-midnight-900 border-midnight-600 text-white text-sm"
-                                  />
-                                </div>
+                        {(() => {
+                          const getCalculatorSpecificFields = () => {
+                            const calculatorConfigs = {
+                              'wedding-photography': {
+                                sections: [
+                                  {
+                                    title: 'Package Options',
+                                    fields: [
+                                      { key: 'elopementPackage', label: 'Elopement Package', placeholder: 'Elopement / Small Ceremony' },
+                                      { key: 'halfDayPackage', label: 'Half-Day Package', placeholder: 'Half-Day Coverage' },
+                                      { key: 'fullDayPackage', label: 'Full-Day Package', placeholder: 'Full-Day Coverage' },
+                                      { key: 'destinationPackage', label: 'Destination Package', placeholder: 'Destination Wedding' }
+                                    ]
+                                  },
+                                  {
+                                    title: 'Location Options',
+                                    fields: [
+                                      { key: 'singleLocation', label: 'Single Location', placeholder: '1 Location' },
+                                      { key: 'twoLocations', label: 'Two Locations', placeholder: '2 Locations' },
+                                      { key: 'multipleLocations', label: 'Multiple Locations', placeholder: '3+ Locations' }
+                                    ]
+                                  },
+                                  {
+                                    title: 'Add-on Services',
+                                    fields: [
+                                      { key: 'engagementSession', label: 'Engagement Session', placeholder: 'Engagement Session' },
+                                      { key: 'secondPhotographer', label: 'Second Photographer', placeholder: 'Second Photographer' },
+                                      { key: 'dronePhotography', label: 'Drone Photography', placeholder: 'Drone Photography' },
+                                      { key: 'weddingAlbum', label: 'Wedding Album', placeholder: 'Wedding Album' },
+                                      { key: 'rehearsalDinner', label: 'Rehearsal Dinner', placeholder: 'Rehearsal Dinner Coverage' },
+                                      { key: 'expressDelivery', label: 'Express Delivery', placeholder: 'Express Turnaround' }
+                                    ]
+                                  }
+                                ]
+                              },
+                              'boudoir-photography': {
+                                sections: [
+                                  {
+                                    title: 'Session Types',
+                                    fields: [
+                                      { key: 'standardSession', label: 'Standard Session', placeholder: 'Standard Boudoir Session' },
+                                      { key: 'deluxeSession', label: 'Deluxe Session', placeholder: 'Deluxe Session with Makeup' },
+                                      { key: 'couplesSession', label: 'Couples Session', placeholder: 'Couples Boudoir' },
+                                      { key: 'outdoorSession', label: 'Outdoor Session', placeholder: 'Outdoor Boudoir' }
+                                    ]
+                                  },
+                                  {
+                                    title: 'Add-on Services',
+                                    fields: [
+                                      { key: 'makeupArtist', label: 'Makeup Artist', placeholder: 'Professional Makeup' },
+                                      { key: 'hairStyling', label: 'Hair Styling', placeholder: 'Hair Styling Service' },
+                                      { key: 'outfitChanges', label: 'Extra Outfits', placeholder: 'Additional Outfit Changes' },
+                                      { key: 'albumUpgrade', label: 'Album Upgrade', placeholder: 'Luxury Album' }
+                                    ]
+                                  }
+                                ]
+                              },
+                              'portrait-photography': {
+                                sections: [
+                                  {
+                                    title: 'Portrait Types',
+                                    fields: [
+                                      { key: 'familyPortrait', label: 'Family Portrait', placeholder: 'Family Portrait Session' },
+                                      { key: 'individualPortrait', label: 'Individual Portrait', placeholder: 'Individual Portrait' },
+                                      { key: 'businessHeadshots', label: 'Business Headshots', placeholder: 'Professional Headshots' },
+                                      { key: 'seniorPortraits', label: 'Senior Portraits', placeholder: 'Senior Graduation Photos' }
+                                    ]
+                                  },
+                                  {
+                                    title: 'Session Options',
+                                    fields: [
+                                      { key: 'studioSession', label: 'Studio Session', placeholder: 'Studio Portrait Session' },
+                                      { key: 'outdoorSession', label: 'Outdoor Session', placeholder: 'Outdoor Portrait Session' },
+                                      { key: 'extendedSession', label: 'Extended Session', placeholder: 'Extended Time' },
+                                      { key: 'rushDelivery', label: 'Rush Delivery', placeholder: 'Same-Day Delivery' }
+                                    ]
+                                  }
+                                ]
+                              },
+                              'real-estate-photography': {
+                                sections: [
+                                  {
+                                    title: 'Listing Types',
+                                    fields: [
+                                      { key: 'standardListing', label: 'Standard Listing', placeholder: 'Standard Real Estate Photos' },
+                                      { key: 'luxuryListing', label: 'Luxury Listing', placeholder: 'Luxury Property Package' },
+                                      { key: 'commercialProperty', label: 'Commercial Property', placeholder: 'Commercial Real Estate' },
+                                      { key: 'rentalProperty', label: 'Rental Property', placeholder: 'Rental Listing Photos' }
+                                    ]
+                                  },
+                                  {
+                                    title: 'Additional Services',
+                                    fields: [
+                                      { key: 'virtualTour', label: 'Virtual Tour', placeholder: '360° Virtual Tour' },
+                                      { key: 'droneAerial', label: 'Drone Aerial', placeholder: 'Aerial Drone Photography' },
+                                      { key: 'twilightPhotos', label: 'Twilight Photos', placeholder: 'Twilight/Dusk Photos' },
+                                      { key: 'videoWalkthrough', label: 'Video Walkthrough', placeholder: 'Property Video Tour' },
+                                      { key: 'floorPlan', label: 'Floor Plan', placeholder: 'Professional Floor Plan' },
+                                      { key: 'virtualStaging', label: 'Virtual Staging', placeholder: 'Digital Furniture Staging' }
+                                    ]
+                                  }
+                                ]
+                              },
+                              'electrician': {
+                                sections: [
+                                  {
+                                    title: 'Service Types',
+                                    fields: [
+                                      { key: 'generalElectrical', label: 'General Electrical', placeholder: 'General Electrical Work' },
+                                      { key: 'emergencyRepair', label: 'Emergency Repair', placeholder: 'Emergency Electrical Repair' },
+                                      { key: 'panelUpgrade', label: 'Panel Upgrade', placeholder: 'Electrical Panel Upgrade' },
+                                      { key: 'newConstruction', label: 'New Construction', placeholder: 'New Construction Wiring' }
+                                    ]
+                                  },
+                                  {
+                                    title: 'Specialized Services',
+                                    fields: [
+                                      { key: 'lightingInstall', label: 'Lighting Installation', placeholder: 'Lighting Installation' },
+                                      { key: 'outletInstall', label: 'Outlet Installation', placeholder: 'New Outlet Installation' },
+                                      { key: 'smartHome', label: 'Smart Home Setup', placeholder: 'Smart Home Automation' },
+                                      { key: 'safetyInspection', label: 'Safety Inspection', placeholder: 'Electrical Safety Inspection' }
+                                    ]
+                                  }
+                                ]
+                              },
+                              'home-renovation': {
+                                sections: [
+                                  {
+                                    title: 'Renovation Types',
+                                    fields: [
+                                      { key: 'kitchenReno', label: 'Kitchen Renovation', placeholder: 'Kitchen Renovation' },
+                                      { key: 'bathroomReno', label: 'Bathroom Renovation', placeholder: 'Bathroom Renovation' },
+                                      { key: 'fullHouseReno', label: 'Full House Renovation', placeholder: 'Complete Home Renovation' },
+                                      { key: 'basementFinish', label: 'Basement Finishing', placeholder: 'Basement Finishing' }
+                                    ]
+                                  },
+                                  {
+                                    title: 'Additional Services',
+                                    fields: [
+                                      { key: 'additionBuild', label: 'Home Addition', placeholder: 'Room Addition' },
+                                      { key: 'flooringInstall', label: 'Flooring Installation', placeholder: 'New Flooring' },
+                                      { key: 'paintingService', label: 'Painting Service', placeholder: 'Interior/Exterior Painting' },
+                                      { key: 'roofingWork', label: 'Roofing Work', placeholder: 'Roof Repair/Replacement' }
+                                    ]
+                                  }
+                                ]
+                              }
+                            };
+                            
+                            return calculatorConfigs[selectedCalculator.template_id as keyof typeof calculatorConfigs] || null;
+                          };
+                          
+                          const config = getCalculatorSpecificFields();
+                          
+                          if (!config) return null;
+                          
+                          return config.sections.map((section, sectionIndex) => (
+                            <div key={sectionIndex} className="border border-midnight-600 rounded-lg p-4">
+                              <h4 className="text-neon-400 font-medium mb-3 text-sm">{section.title}</h4>
+                              <div className="grid grid-cols-2 gap-3">
+                                {section.fields.map((field) => (
+                                  <div key={field.key}>
+                                    <Label className="text-gray-300 text-xs">{field.label}</Label>
+                                    <Input
+                                      value={customConfig[field.key] || ''}
+                                      onChange={(e) => setCustomConfig({...customConfig, [field.key]: e.target.value})}
+                                      placeholder={field.placeholder}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                                    />
+                                  </div>
+                                ))}
                               </div>
                             </div>
+                          ));
+                        })()}
 
                             <div className="border border-midnight-600 rounded-lg p-4">
                               <h4 className="text-neon-400 font-medium mb-3 text-sm">Location Options</h4>
@@ -1049,8 +1172,6 @@ export default function Dashboard() {
                                 </div>
                               </div>
                             </div>
-                          </>
-                        )}
 
                         {/* Footer Section */}
                         <div className="border border-midnight-600 rounded-lg p-4">

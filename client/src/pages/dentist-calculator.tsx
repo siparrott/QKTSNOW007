@@ -28,6 +28,7 @@ import {
   Zap,
   X
 } from "lucide-react";
+import { QuoteKitHeader } from "@/components/calculator-header";
 
 // Dental-specific icons simulation
 const ToothIcon = () => (
@@ -102,7 +103,13 @@ const defaultConfig: TreatmentConfig = {
   }
 };
 
-export default function DentistCalculator() {
+interface DentistCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function DentistCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: DentistCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isCalculating, setIsCalculating] = useState(false);
   const [showQuote, setShowQuote] = useState(false);

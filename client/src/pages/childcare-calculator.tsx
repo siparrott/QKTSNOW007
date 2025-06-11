@@ -35,6 +35,7 @@ import {
   HeartHandshake,
   Gift
 } from "lucide-react";
+import { QuoteKitHeader } from "@/components/calculator-header";
 
 // Childcare-specific icons
 const TeddyBearIcon = () => (
@@ -117,7 +118,13 @@ const defaultConfig: ChildcareConfig = {
   }
 };
 
-export default function ChildcareCalculator() {
+interface ChildcareCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function ChildcareCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: ChildcareCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isCalculating, setIsCalculating] = useState(false);
   const [showQuote, setShowQuote] = useState(false);
@@ -712,6 +719,7 @@ export default function ChildcareCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-orange-50">
+      {!hideHeader && <QuoteKitHeader />}
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">

@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Link, useLocation } from "wouter";
+import type { CalculatorTemplate, UserCalculator } from "@shared/supabase";
 import { TestAuth } from "@/components/test-auth";
 import { 
   Settings, 
@@ -133,27 +134,40 @@ export default function Dashboard() {
     return matchesSearch && matchesCategory;
   });
 
-  // Add calculator mutation
-  const addCalculatorMutation = useMutation({
-    mutationFn: async ({ calculatorId }: { calculatorId: number }) => {
-      return apiRequest(`/api/user-calculators`, {
+  // Fetch user calculators from Supabase
+  const { data: userCalculators = [], isLoading: isLoadingCalculators } = useQuery({
+    queryKey: ['/api/supabase/user-calculators', user?.id],
+    enabled: !!user?.id
+  });
+
+  // Fetch calculator templates from Supabase
+  const { data: calculatorTemplates = [], isLoading: isLoadingTemplates } = useQuery({
+    queryKey: ['/api/supabase/templates']
+  });
+
+  // Clone calculator mutation for Supabase
+  const cloneCalculatorMutation = useMutation({
+    mutationFn: async ({ templateId }: { templateId: string }) => {
+      return apiRequest(`/api/supabase/clone-calculator`, {
         method: 'POST',
-        body: JSON.stringify({ calculatorId })
+        body: JSON.stringify({ 
+          userId: user?.id, 
+          templateId 
+        })
       });
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/user-calculators'] });
-      setDemoCalculators(prev => [...prev, data]);
+      queryClient.invalidateQueries({ queryKey: ['/api/supabase/user-calculators', user?.id] });
       toast({
-        title: "Calculator Added",
-        description: "Your new calculator has been added successfully.",
+        title: "Calculator Cloned",
+        description: "Your new calculator has been created successfully.",
       });
       setShowCalculatorModal(false);
     },
     onError: (error) => {
       toast({
         title: "Error",
-        description: "Failed to add calculator. Please try again.",
+        description: "Failed to clone calculator. Please try again.",
         variant: "destructive",
       });
     }
@@ -1002,9 +1016,9 @@ export default function Dashboard() {
                         <label className="text-sm text-gray-300 block mb-2">Theme Design</label>
                         <select
                           value={customConfig?.appearance?.theme || "modern"}
-                          onChange={(e) => setCustomConfig(prev => ({
+                          onChange={(e) => setCustomConfig((prev: any) => ({
                             ...prev,
-                            appearance: { ...prev.appearance, theme: e.target.value }
+                            appearance: { ...prev?.appearance, theme: e.target.value }
                           }))}
                           className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
                         >
@@ -1020,9 +1034,9 @@ export default function Dashboard() {
                         <label className="text-sm text-gray-300 block mb-2">Card Style</label>
                         <select
                           value={customConfig?.appearance?.cardStyle || "elevated"}
-                          onChange={(e) => setCustomConfig(prev => ({
+                          onChange={(e) => setCustomConfig((prev: any) => ({
                             ...prev,
-                            appearance: { ...prev.appearance, cardStyle: e.target.value }
+                            appearance: { ...prev?.appearance, cardStyle: e.target.value }
                           }))}
                           className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
                         >
@@ -1039,9 +1053,9 @@ export default function Dashboard() {
                       <label className="text-sm text-gray-300 block mb-2">Layout Style</label>
                       <select
                         value={customConfig?.appearance?.layout || "stepped"}
-                        onChange={(e) => setCustomConfig(prev => ({
+                        onChange={(e) => setCustomConfig((prev: any) => ({
                           ...prev,
-                          appearance: { ...prev.appearance, layout: e.target.value }
+                          appearance: { ...prev?.appearance, layout: e.target.value }
                         }))}
                         className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
                       >

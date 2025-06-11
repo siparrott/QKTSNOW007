@@ -229,6 +229,45 @@ export default function Dashboard() {
           }
         ]
       },
+      3: { // Home Renovation
+        ...defaultConfig,
+        text: {
+          headline: "Get Your Home Renovation Quote",
+          subheading: "Tell us about your project requirements",
+          ctaText: "Get Quote",
+          thankYouMessage: "Thank you for your request!"
+        },
+        questions: [
+          {
+            id: "project-type",
+            label: "What type of renovation project?",
+            type: "dropdown",
+            required: true,
+            options: ["Kitchen Remodel", "Bathroom Renovation", "Basement Finishing", "Room Addition", "Full Home Renovation"]
+          },
+          {
+            id: "project-size",
+            label: "Project size",
+            type: "dropdown",
+            required: true,
+            options: ["Small (under 100 sq ft)", "Medium (100-500 sq ft)", "Large (500-1000 sq ft)", "Extra Large (1000+ sq ft)"]
+          },
+          {
+            id: "budget-range",
+            label: "What's your budget range?",
+            type: "dropdown",
+            required: true,
+            options: ["Under $10,000", "$10,000 - $25,000", "$25,000 - $50,000", "$50,000+"]
+          },
+          {
+            id: "timeline",
+            label: "When do you want to start?",
+            type: "dropdown",
+            required: true,
+            options: ["ASAP", "Within 1 month", "Within 3 months", "Planning stage"]
+          }
+        ]
+      },
       4: { // Drone Photography
         ...defaultConfig,
         text: {
@@ -387,22 +426,21 @@ export default function Dashboard() {
     questions: [
       {
         id: "project-type",
-        label: "What type of aerial project?",
+        label: "What type of project?",
         type: "dropdown",
         required: true,
-        options: ["Real Estate Shoot", "Event Coverage", "Construction Site", "Agricultural Mapping", "Custom Job"]
+        options: ["Option 1", "Option 2", "Option 3", "Other"]
       },
       {
-        id: "duration",
-        label: "How many hours of filming?",
-        type: "number",
+        id: "timeline",
+        label: "Project timeline",
+        type: "dropdown",
         required: true,
-        min: 1,
-        max: 12
+        options: ["ASAP", "Within 1 week", "Within 1 month", "Flexible"]
       },
       {
-        id: "location",
-        label: "Project location",
+        id: "details",
+        label: "Project details",
         type: "text",
         required: true
       }
@@ -1219,7 +1257,7 @@ export default function Dashboard() {
                 </div>
 
                 {/* Questions & Content Section */}
-                <div className="space-y-4 mt-8">
+                <div className="space-y-4 mt-8 bg-midnight-800 p-6 rounded-lg border border-midnight-700">
                   <h3 className="text-lg font-semibold text-white flex items-center">
                     <Edit className="h-5 w-5 mr-2" />
                     Questions & Content
@@ -1278,7 +1316,7 @@ export default function Dashboard() {
                   </div>
 
                   {/* Questions Editor */}
-                  <div className="space-y-3">
+                  <div className="space-y-3 mt-6">
                     <div className="flex justify-between items-center">
                       <h4 className="text-md font-medium text-white">Form Questions</h4>
                       <button
@@ -1294,9 +1332,9 @@ export default function Dashboard() {
                             questions: [...(prev.questions || []), newQuestion]
                           }));
                         }}
-                        className="px-3 py-1 bg-neon-500 text-white rounded text-sm hover:bg-neon-600"
+                        className="px-4 py-2 bg-neon-500 text-white rounded text-sm hover:bg-neon-600 font-medium"
                       >
-                        Add Question
+                        + Add Question
                       </button>
                     </div>
                     

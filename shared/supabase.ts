@@ -103,6 +103,21 @@ export async function getCalculatorTemplate(slug: string): Promise<CalculatorTem
   }
 }
 
+// Helper function to generate UUID for temporary users
+function generateUuidForTempUser(tempUserId: string): string {
+  // Create a consistent UUID based on the temp user ID
+  const crypto = require('crypto');
+  const hash = crypto.createHash('md5').update(tempUserId).digest('hex');
+  // Format as UUID v4
+  return [
+    hash.substring(0, 8),
+    hash.substring(8, 12),
+    '4' + hash.substring(13, 16), // Version 4
+    '8' + hash.substring(17, 20), // Variant bits
+    hash.substring(20, 32)
+  ].join('-');
+}
+
 // Clone a calculator template for a user
 export async function cloneCalculator(userId: string, templateId: string): Promise<UserCalculator | null> {
   try {
@@ -134,6 +149,12 @@ export async function cloneCalculator(userId: string, templateId: string): Promi
 
     const template = templates[0];
 
+    // Handle UUID conversion for temporary users
+    let actualUserId = userId;
+    if (userId.startsWith('temp_')) {
+      actualUserId = generateUuidForTempUser(userId);
+    }
+
     // Generate unique slug for user calculator
     const uniqueSlug = `${template.slug}-${userId.slice(0, 8)}-${Date.now()}`;
     const embedUrl = `${process.env.REPL_URL || 'https://localhost:5000'}/embed/${uniqueSlug}`;
@@ -144,7 +165,7 @@ export async function cloneCalculator(userId: string, templateId: string): Promi
         user_id, template_id, slug, name, layout_json, logic_json, 
         style_json, prompt_md, is_active, embed_url
       ) VALUES (
-        ${userId}, ${template.id}, ${uniqueSlug}, ${template.name}, 
+        ${actualUserId}, ${template.id}, ${uniqueSlug}, ${template.name}, 
         ${template.layout_json}, ${template.logic_json}, 
         ${template.style_json}, ${template.prompt_md}, 
         true, ${embedUrl}
@@ -166,9 +187,15 @@ export async function cloneCalculator(userId: string, templateId: string): Promi
 // Get user's calculators
 export async function getUserCalculators(userId: string): Promise<UserCalculator[]> {
   try {
+    // Handle UUID conversion for temporary users
+    let actualUserId = userId;
+    if (userId.startsWith('temp_')) {
+      actualUserId = generateUuidForTempUser(userId);
+    }
+
     const data = await sql`
       SELECT * FROM user_calculators 
-      WHERE user_id = ${userId}
+      WHERE user_id = ${actualUserId}
       ORDER BY created_at DESC
     `;
     return data as any[];
@@ -181,9 +208,15 @@ export async function getUserCalculators(userId: string): Promise<UserCalculator
 // Get specific user calculator
 export async function getUserCalculator(userId: string, slug: string): Promise<UserCalculator | null> {
   try {
+    // Handle UUID conversion for temporary users
+    let actualUserId = userId;
+    if (userId.startsWith('temp_')) {
+      actualUserId = generateUuidForTempUser(userId);
+    }
+
     const data = await sql`
       SELECT * FROM user_calculators 
-      WHERE user_id = ${userId} AND slug = ${slug}
+      WHERE user_id = ${actualUserId} AND slug = ${slug}
       LIMIT 1
     `;
     return data.length ? data[0] as any : null;

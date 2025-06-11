@@ -139,8 +139,60 @@ function Router() {
       <Route path="/calculator/dentist-implant" component={DentistCalculator} />
       <Route path="/calculator/childcare-practitioner" component={ChildcareCalculator} />
       <Route path="/calculator/plastic-surgery" component={PlasticSurgeryCalculator} />
+      <Route path="/plastic-surgery-calculator" component={PlasticSurgeryCalculator} />
       <Route path="/calculator/childcare-services" component={ChildcareServicesCalculator} />
+      <Route path="/childcare-services-calculator" component={ChildcareServicesCalculator} />
       <Route path="/calculator/private-medical" component={PrivateMedicalCalculator} />
+      <Route path="/private-medical-calculator" component={PrivateMedicalCalculator} />
+      <Route path="/drone-photography-calculator" component={DronePhotographyCalculator} />
+      <Route path="/food-photography-calculator" component={FoodPhotographyCalculator} />
+      <Route path="/real-estate-photography-calculator" component={RealEstatePhotographyCalculator} />
+      <Route path="/commercial-photography-calculator" component={CommercialPhotographyCalculator} />
+      <Route path="/lifestyle-influencer-calculator" component={LifestyleInfluencerCalculator} />
+      <Route path="/landscaping-calculator" component={LandscapingCalculator} />
+      <Route path="/roofing-calculator" component={RoofingCalculator} />
+      <Route path="/solar-calculator" component={SolarCalculator} />
+      <Route path="/pest-control-calculator" component={PestControlCalculator} />
+      <Route path="/window-door-calculator" component={WindowDoorCalculator} />
+      <Route path="/makeup-artist-calculator" component={MakeupArtistCalculator} />
+      <Route path="/hair-stylist-calculator" component={HairStylistCalculator} />
+      <Route path="/tattoo-artist-calculator" component={TattooArtistCalculator} />
+      <Route path="/massage-therapy-calculator" component={MassageTherapyCalculator} />
+      <Route path="/personal-training-calculator" component={PersonalTrainingCalculator} />
+      <Route path="/plumbing-calculator" component={PlumbingCalculator} />
+      <Route path="/interior-design-calculator" component={InteriorDesignCalculator} />
+      <Route path="/painting-decorating-calculator" component={PaintingDecoratingCalculator} />
+      <Route path="/newborn-photography-calculator" component={NewbornPhotographyCalculator} />
+      <Route path="/maternity-photography-calculator" component={MaternityPhotographyCalculator} />
+      <Route path="/nutritionist-calculator" component={NutritionistCalculator} />
+      <Route path="/life-coach-calculator" component={LifeCoachCalculator} />
+      <Route path="/hypnotherapist-calculator" component={HypnotherapistCalculator} />
+      <Route path="/private-tutor-calculator" component={PrivateTutorCalculator} />
+      <Route path="/dog-trainer-calculator" component={DogTrainerCalculator} />
+      <Route path="/car-detailing-calculator" component={CarDetailingCalculator} />
+      <Route path="/auto-mechanic-calculator" component={AutoMechanicCalculator} />
+      <Route path="/mobile-car-wash-calculator" component={MobileCarWashCalculator} />
+      <Route path="/chauffeur-limo-calculator" component={ChauffeurLimoCalculator} />
+      <Route path="/airport-transfer-calculator" component={AirportTransferCalculator} />
+      <Route path="/van-rental-calculator" component={VanRentalCalculator} />
+      <Route path="/boat-charter-calculator" component={BoatCharterCalculator} />
+      <Route path="/moving-services-calculator" component={MovingServicesCalculator} />
+      <Route path="/motorcycle-repair-calculator" component={MotorcycleRepairCalculator} />
+      <Route path="/driving-instructor-calculator" component={DrivingInstructorCalculator} />
+      <Route path="/web-designer-calculator" component={WebDesignerCalculator} />
+      <Route path="/marketing-consultant-calculator" component={MarketingConsultantCalculator} />
+      <Route path="/seo-agency-calculator" component={SEOAgencyCalculator} />
+      <Route path="/video-editor-calculator" component={VideoEditorCalculator} />
+      <Route path="/copywriter-calculator" component={CopywriterCalculator} />
+      <Route path="/virtual-assistant-calculator" component={VirtualAssistantCalculator} />
+      <Route path="/business-coach-calculator" component={BusinessCoachCalculator} />
+      <Route path="/legal-advisor-calculator" component={LegalAdvisorCalculator} />
+      <Route path="/tax-preparer-calculator" component={TaxPreparerCalculator} />
+      <Route path="/translation-services-calculator" component={TranslationServicesCalculator} />
+      <Route path="/cleaning-services-calculator" component={CleaningServicesCalculator} />
+      <Route path="/private-school-calculator" component={PrivateSchoolCalculator} />
+      <Route path="/dentist-calculator" component={DentistCalculator} />
+      <Route path="/childcare-calculator" component={ChildcareCalculator} />
       <Route path="/calculator/:slug" component={CalculatorPage} />
       <Route path="/niches" component={NichesPage} />
       <Route path="/features" component={Features} />

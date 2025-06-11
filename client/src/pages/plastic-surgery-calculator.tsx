@@ -114,6 +114,67 @@ export default function PlasticSurgeryCalculator() {
   const [timeLeft, setTimeLeft] = useState(72 * 60 * 60); // 72 hours in seconds
   const [naturalLanguageInput, setNaturalLanguageInput] = useState("");
   const [isProcessingNL, setIsProcessingNL] = useState(false);
+  const [customConfig, setCustomConfig] = useState<any>(null);
+
+  // Listen for configuration updates from parent dashboard
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === 'APPLY_CONFIG') {
+        applyCustomConfig(event.data.config);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
+  const applyCustomConfig = (config: any) => {
+    console.log('Applying config to plastic surgery calculator:', config);
+    setCustomConfig(config);
+    
+    // Apply primary color
+    if (config.brandColors?.primary) {
+      document.documentElement.style.setProperty('--primary', config.brandColors.primary);
+      document.documentElement.style.setProperty('--pink-500', config.brandColors.primary);
+      document.documentElement.style.setProperty('--rose-500', config.brandColors.primary);
+    }
+    
+    // Apply secondary color
+    if (config.brandColors?.secondary) {
+      document.documentElement.style.setProperty('--secondary', config.brandColors.secondary);
+      document.documentElement.style.setProperty('--slate-700', config.brandColors.secondary);
+    }
+    
+    // Apply accent color
+    if (config.brandColors?.accent) {
+      document.documentElement.style.setProperty('--accent', config.brandColors.accent);
+      document.documentElement.style.setProperty('--purple-500', config.brandColors.accent);
+    }
+    
+    // Apply typography
+    if (config.styling?.fontFamily) {
+      document.documentElement.style.setProperty('--font-family', config.styling.fontFamily);
+      document.body.style.fontFamily = config.styling.fontFamily;
+    }
+    
+    // Apply border radius
+    if (config.styling?.borderRadius) {
+      document.documentElement.style.setProperty('--radius', config.styling.borderRadius);
+    }
+    
+    // Update company branding
+    if (config.companyBranding?.companyName) {
+      document.title = `${config.companyBranding.companyName} - Plastic Surgery Consultation`;
+    }
+    
+    // Force re-render
+    document.body.classList.add('config-applied');
+    setTimeout(() => document.body.classList.remove('config-applied'), 100);
+  };
+
+  const getCompanyName = () => {
+    return customConfig?.companyBranding?.companyName || 'Plastic Surgery Clinic';
+  };
 
   const [formData, setFormData] = useState({
     procedure: "",

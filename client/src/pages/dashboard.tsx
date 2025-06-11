@@ -111,6 +111,16 @@ export default function Dashboard() {
   const [showEmbedModal, setShowEmbedModal] = useState(false);
   const [selectedCalculator, setSelectedCalculator] = useState<any>(null);
   const [customConfig, setCustomConfig] = useState<any>(null);
+
+  // Debug customConfig changes
+  useEffect(() => {
+    console.log('customConfig changed:', customConfig);
+    console.log('customConfig type:', typeof customConfig);
+    console.log('customConfig is array:', Array.isArray(customConfig));
+    if (customConfig && typeof customConfig === 'object' && Object.keys(customConfig).length > 100) {
+      console.log('customConfig appears corrupted (too many keys)');
+    }
+  }, [customConfig]);
   const [iframeRef, setIframeRef] = useState<HTMLIFrameElement | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -291,10 +301,17 @@ export default function Dashboard() {
 
   const sendConfigToIframe = () => {
     if (iframeRef && customConfig) {
-      iframeRef.contentWindow?.postMessage({
-        type: 'APPLY_CONFIG',
-        config: customConfig
-      }, '*');
+      try {
+        // Ensure we're sending a proper object, not a corrupted string array
+        const configToSend = typeof customConfig === 'string' ? JSON.parse(customConfig) : customConfig;
+        console.log('Sending config to iframe (manual refresh):', configToSend);
+        iframeRef.contentWindow?.postMessage({
+          type: 'APPLY_CONFIG',
+          config: configToSend
+        }, '*');
+      } catch (error) {
+        console.error('Error in sendConfigToIframe:', error);
+      }
     }
   };
 
@@ -310,10 +327,12 @@ export default function Dashboard() {
     if (iframeRef && customConfig && showCustomizeModal) {
       const sendConfig = () => {
         try {
-          console.log('Sending config to iframe:', customConfig);
+          // Ensure we're sending a proper object, not a corrupted string array
+          const configToSend = typeof customConfig === 'string' ? JSON.parse(customConfig) : customConfig;
+          console.log('Sending config to iframe:', configToSend);
           iframeRef.contentWindow?.postMessage({
             type: 'APPLY_CONFIG',
-            config: customConfig,
+            config: configToSend,
             timestamp: Date.now()
           }, '*');
         } catch (error) {
@@ -515,6 +534,8 @@ export default function Dashboard() {
       });
     }
 
+    console.log('Setting custom config:', mergedConfig);
+    console.log('Type of mergedConfig:', typeof mergedConfig);
     setCustomConfig(mergedConfig);
     setShowCustomizeModal(true);
   };

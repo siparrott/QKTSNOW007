@@ -955,19 +955,268 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {/* Preview */}
+                {/* Styling Options */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-white">Preview</h3>
-                  <div className="bg-midnight-900 border border-midnight-600 rounded-lg p-6">
-                    <div className="text-center">
-                      <h2 className="text-xl font-bold mb-2" style={{ color: customConfig?.primaryColor || "#06D6A0" }}>
+                  <h3 className="text-lg font-medium text-white">Styling</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-gray-300">Button Style</Label>
+                      <select
+                        value={customConfig?.buttonStyle || "rounded"}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          buttonStyle: e.target.value
+                        }))}
+                        className="w-full mt-1 px-3 py-2 bg-midnight-900 border border-midnight-600 rounded text-white"
+                      >
+                        <option value="rounded">Rounded</option>
+                        <option value="square">Square</option>
+                        <option value="pill">Pill Shape</option>
+                      </select>
+                    </div>
+                    <div>
+                      <Label className="text-gray-300">Layout Style</Label>
+                      <select
+                        value={customConfig?.layoutStyle || "single"}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          layoutStyle: e.target.value
+                        }))}
+                        className="w-full mt-1 px-3 py-2 bg-midnight-900 border border-midnight-600 rounded text-white"
+                      >
+                        <option value="single">Single Page</option>
+                        <option value="multi">Multi-Step</option>
+                        <option value="sidebar">Sidebar Layout</option>
+                      </select>
+                    </div>
+                    <div>
+                      <Label className="text-gray-300">Font Size</Label>
+                      <select
+                        value={customConfig?.fontSize || "medium"}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          fontSize: e.target.value
+                        }))}
+                        className="w-full mt-1 px-3 py-2 bg-midnight-900 border border-midnight-600 rounded text-white"
+                      >
+                        <option value="small">Small</option>
+                        <option value="medium">Medium</option>
+                        <option value="large">Large</option>
+                      </select>
+                    </div>
+                    <div>
+                      <Label className="text-gray-300">Theme</Label>
+                      <select
+                        value={customConfig?.theme || "light"}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          theme: e.target.value
+                        }))}
+                        className="w-full mt-1 px-3 py-2 bg-midnight-900 border border-midnight-600 rounded text-white"
+                      >
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                        <option value="auto">Auto</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Pricing Configuration */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium text-white">Pricing</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label className="text-gray-300">Base Rate</Label>
+                      <input
+                        type="number"
+                        value={customConfig?.baseRate || 100}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          baseRate: parseInt(e.target.value) || 100
+                        }))}
+                        className="w-full mt-1 px-3 py-2 bg-midnight-900 border border-midnight-600 rounded text-white"
+                        placeholder="100"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gray-300">Currency</Label>
+                      <select
+                        value={customConfig?.currency || "USD"}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          currency: e.target.value
+                        }))}
+                        className="w-full mt-1 px-3 py-2 bg-midnight-900 border border-midnight-600 rounded text-white"
+                      >
+                        <option value="USD">USD ($)</option>
+                        <option value="EUR">EUR (€)</option>
+                        <option value="GBP">GBP (£)</option>
+                        <option value="CAD">CAD (C$)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <Label className="text-gray-300">Multiplier Range</Label>
+                      <input
+                        type="text"
+                        value={customConfig?.multiplierRange || "1.0 - 3.5"}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          multiplierRange: e.target.value
+                        }))}
+                        className="w-full mt-1 px-3 py-2 bg-midnight-900 border border-midnight-600 rounded text-white"
+                        placeholder="1.0 - 3.5"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Advanced Settings */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium text-white">Advanced Settings</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-300">Show Progress Bar</span>
+                      <input
+                        type="checkbox"
+                        checked={customConfig?.showProgress || true}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          showProgress: e.target.checked
+                        }))}
+                        className="rounded"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-300">Auto-Save Responses</span>
+                      <input
+                        type="checkbox"
+                        checked={customConfig?.autoSave || false}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          autoSave: e.target.checked
+                        }))}
+                        className="rounded"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-300">Analytics Tracking</span>
+                      <input
+                        type="checkbox"
+                        checked={customConfig?.analytics || true}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          analytics: e.target.checked
+                        }))}
+                        className="rounded"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <Label className="text-gray-300">Custom CSS</Label>
+                    <textarea
+                      value={customConfig?.customCSS || ""}
+                      onChange={(e) => setCustomConfig(prev => ({
+                        ...prev,
+                        customCSS: e.target.value
+                      }))}
+                      className="w-full mt-1 px-3 py-2 bg-midnight-900 border border-midnight-600 rounded text-white h-20"
+                      placeholder="Add custom CSS styles..."
+                    />
+                  </div>
+                </div>
+
+                {/* Live Preview */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium text-white">Live Preview</h3>
+                  <div className="bg-white border rounded-lg p-6 min-h-[400px]">
+                    {/* Calculator Header */}
+                    <div className="text-center mb-6">
+                      <h2 className="text-2xl font-bold mb-2" style={{ color: customConfig?.primaryColor || "#06D6A0" }}>
                         {customConfig?.headline || "Get Your Custom Quote"}
                       </h2>
-                      <p className="text-gray-400 mb-4">
+                      <p className="text-gray-600 mb-4">
                         {customConfig?.description || "Fill out the form below to receive your personalized quote."}
                       </p>
-                      <div className="text-sm text-gray-500">
-                        Calculator preview - actual form fields will appear here
+                      <div className="text-xs text-gray-500 mb-4">
+                        Powered by {customConfig?.companyName || "Your Business"}
+                      </div>
+                    </div>
+
+                    {/* Sample Form Fields */}
+                    <div className="space-y-4 max-w-md mx-auto">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Service Type</label>
+                        <select className="w-full p-2 border border-gray-300 rounded-md">
+                          <option>Select service...</option>
+                          <option>Basic Package</option>
+                          <option>Premium Package</option>
+                          <option>Custom Solution</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Project Size</label>
+                        <input 
+                          type="range" 
+                          className="w-full" 
+                          style={{ accentColor: customConfig?.primaryColor || "#06D6A0" }}
+                        />
+                        <div className="flex justify-between text-xs text-gray-500">
+                          <span>Small</span>
+                          <span>Large</span>
+                        </div>
+                      </div>
+
+                      {customConfig?.emailCapture && (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Email Address *</label>
+                          <input 
+                            type="email" 
+                            placeholder="your@email.com"
+                            className="w-full p-2 border border-gray-300 rounded-md"
+                          />
+                        </div>
+                      )}
+
+                      {customConfig?.phoneCapture && (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                          <input 
+                            type="tel" 
+                            placeholder="(555) 123-4567"
+                            className="w-full p-2 border border-gray-300 rounded-md"
+                          />
+                        </div>
+                      )}
+
+                      {/* Quote Result */}
+                      <div className="mt-6 p-4 rounded-lg" style={{ backgroundColor: `${customConfig?.primaryColor || "#06D6A0"}15` }}>
+                        <div className="text-center">
+                          <div className="text-sm text-gray-600 mb-1">Estimated Price</div>
+                          <div className="text-2xl font-bold" style={{ color: customConfig?.primaryColor || "#06D6A0" }}>
+                            $2,500 - $4,200
+                          </div>
+                          <div className="text-xs text-gray-500 mt-1">
+                            Final price may vary based on requirements
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="space-y-2 mt-4">
+                        <button 
+                          className="w-full py-2 px-4 rounded-md text-white font-medium"
+                          style={{ backgroundColor: customConfig?.primaryColor || "#06D6A0" }}
+                        >
+                          Get Detailed Quote
+                        </button>
+                        {customConfig?.pdfDownload && (
+                          <button className="w-full py-2 px-4 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                            Download PDF Quote
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>

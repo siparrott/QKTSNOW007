@@ -38,11 +38,8 @@ export default function Login() {
   const onSubmit = async (data: LoginForm) => {
     setIsLoading(true);
     try {
+      // Try Supabase login first
       const { user, session, error } = await loginWithEmail(data.email, data.password);
-
-      if (error) {
-        throw new Error(error.message);
-      }
 
       if (user && session) {
         localStorage.setItem('supabase_session', JSON.stringify(session));
@@ -54,6 +51,28 @@ export default function Login() {
         });
         
         setLocation('/dashboard');
+        return;
+      }
+
+      // If Supabase login failed, try temp user authentication
+      if (error?.message?.includes("Email not confirmed") || error?.message?.includes("Invalid login credentials")) {
+        const tempUser = getTempUser(data.email, data.password);
+        if (tempUser) {
+          createTempSession(tempUser);
+          
+          toast({
+            title: "Welcome back!",
+            description: "You've been successfully logged in.",
+          });
+          
+          setLocation('/dashboard');
+          return;
+        }
+      }
+
+      // If both methods fail, throw the original error
+      if (error) {
+        throw new Error(error.message);
       }
     } catch (error: any) {
       // Check if this is an email confirmation error

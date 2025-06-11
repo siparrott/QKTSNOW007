@@ -576,7 +576,7 @@ export default function Dashboard() {
               <div className="flex flex-1 min-h-0">
                 {/* Left Panel - Customization Options */}
                 <div className="w-1/2 border-r border-midnight-700 flex flex-col">
-                  <div className="flex-1 overflow-y-auto p-6 space-y-8">
+                  <div className="flex-1 overflow-y-auto p-6 space-y-8 pb-24">
                     {/* Branding */}
                       <div>
                         <h3 className="text-white font-medium mb-4 flex items-center">
@@ -1173,6 +1173,7 @@ export default function Dashboard() {
                       </div>
                     </div>
                   </div>
+                </div>
 
                   {/* Right Panel - Live Preview */}
                   <div className="w-1/2 flex flex-col">
@@ -1197,7 +1198,7 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </div>
-                
+              
                 <div className="flex justify-between items-center px-6 py-4 border-t border-midnight-700 bg-midnight-900 flex-shrink-0">
                   <Button
                     variant="outline"
@@ -1248,10 +1249,10 @@ export default function Dashboard() {
           </Dialog>
         )}
 
-        {/* Calculator Selection Modal */}
-        {showCalculatorModal && (
-          <Dialog open={showCalculatorModal} onOpenChange={setShowCalculatorModal}>
-            <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden bg-midnight-800 border-midnight-700">
+      </div>
+    </div>
+  );
+}
               <DialogHeader>
                 <DialogTitle className="text-white">Add Calculator</DialogTitle>
                 <DialogDescription className="text-gray-400">

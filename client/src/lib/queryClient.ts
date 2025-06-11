@@ -22,7 +22,13 @@ export async function apiRequest(
     defaultHeaders['Authorization'] = `Bearer ${token}`;
   }
 
-  const res = await fetch(url, {
+  // Ensure we're making requests to the correct base URL
+  const baseUrl = window.location.origin;
+  const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
+
+  console.log('Making API request to:', fullUrl);
+
+  const res = await fetch(fullUrl, {
     credentials: "include",
     ...options,
     headers: {
@@ -31,6 +37,7 @@ export async function apiRequest(
     },
   });
 
+  console.log('Response status:', res.status);
   await throwIfResNotOk(res);
   return await res.json();
 }

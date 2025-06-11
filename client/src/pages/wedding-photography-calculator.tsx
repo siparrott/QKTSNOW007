@@ -94,13 +94,36 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
   useEffect(() => {
     if (isPreview) return; // Skip URL params and message listener in preview mode
     
-    // Handle URL parameters
+    // Handle URL parameters for dynamic customization
     const urlParams = new URLSearchParams(window.location.search);
+    
+    // Extract individual configuration parameters
+    const config: any = {};
+    const paramKeys = Array.from(urlParams.keys());
+    for (let i = 0; i < paramKeys.length; i++) {
+      const key = paramKeys[i];
+      const value = urlParams.get(key) || '';
+      // Convert string values to appropriate types
+      if (value === 'true') config[key] = true;
+      else if (value === 'false') config[key] = false;
+      else if (!isNaN(Number(value)) && value !== '') config[key] = Number(value);
+      else config[key] = value;
+    }
+    
+    // Apply URL parameters as configuration
+    if (Object.keys(config).length > 0) {
+      setCustomConfig(config);
+      applyCustomConfig(config);
+    }
+    
+    // Legacy support for encoded config parameter
     const configParam = urlParams.get('config');
     if (configParam) {
       try {
-        const config = JSON.parse(decodeURIComponent(configParam));
-        applyCustomConfig(config);
+        const legacyConfig = JSON.parse(decodeURIComponent(configParam));
+        const mergedConfig = { ...config, ...legacyConfig };
+        setCustomConfig(mergedConfig);
+        applyCustomConfig(mergedConfig);
       } catch (error) {
         console.error('Failed to parse config:', error);
       }

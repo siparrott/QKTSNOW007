@@ -891,9 +891,9 @@ export default function Dashboard() {
                         <input
                           type="color"
                           value={customConfig?.branding?.primaryColor || "#38bdf8"}
-                          onChange={(e) => setCustomConfig(prev => ({
+                          onChange={(e) => setCustomConfig((prev: any) => ({
                             ...prev,
-                            branding: { ...prev.branding, primaryColor: e.target.value }
+                            branding: { ...prev?.branding, primaryColor: e.target.value }
                           }))}
                           className="w-full h-10 rounded border-0 bg-transparent cursor-pointer"
                         />
@@ -904,9 +904,9 @@ export default function Dashboard() {
                         <input
                           type="color"
                           value={customConfig?.branding?.accentColor || "#facc15"}
-                          onChange={(e) => setCustomConfig(prev => ({
+                          onChange={(e) => setCustomConfig((prev: any) => ({
                             ...prev,
-                            branding: { ...prev.branding, accentColor: e.target.value }
+                            branding: { ...prev?.branding, accentColor: e.target.value }
                           }))}
                           className="w-full h-10 rounded border-0 bg-transparent cursor-pointer"
                         />
@@ -925,9 +925,9 @@ export default function Dashboard() {
                             if (file) {
                               const reader = new FileReader();
                               reader.onload = (event) => {
-                                setCustomConfig(prev => ({
+                                setCustomConfig((prev: any) => ({
                                   ...prev,
-                                  branding: { ...prev.branding, logoUrl: event.target?.result as string }
+                                  branding: { ...prev?.branding, logoUrl: event.target?.result as string }
                                 }));
                               };
                               reader.readAsDataURL(file);
@@ -950,9 +950,9 @@ export default function Dashboard() {
                               }}
                             />
                             <button
-                              onClick={() => setCustomConfig(prev => ({
+                              onClick={() => setCustomConfig((prev: any) => ({
                                 ...prev,
-                                branding: { ...prev.branding, logoUrl: "" }
+                                branding: { ...prev?.branding, logoUrl: "" }
                               }))}
                               className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
                             >
@@ -972,9 +972,9 @@ export default function Dashboard() {
                             max="120"
                             step="4"
                             value={customConfig?.branding?.logoSize || 48}
-                            onChange={(e) => setCustomConfig(prev => ({
+                            onChange={(e) => setCustomConfig((prev: any) => ({
                               ...prev,
-                              branding: { ...prev.branding, logoSize: parseInt(e.target.value) }
+                              branding: { ...prev?.branding, logoSize: parseInt(e.target.value) }
                             }))}
                             className="w-full accent-neon-500"
                           />

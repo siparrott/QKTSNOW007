@@ -565,20 +565,19 @@ export default function Dashboard() {
         {/* Customization Modal */}
         {showCustomizeModal && selectedCalculator && (
           <Dialog open={showCustomizeModal} onOpenChange={setShowCustomizeModal}>
-            <DialogContent className="max-w-7xl w-[95vw] h-[95vh] overflow-hidden bg-midnight-800 border-midnight-700 p-0">
-              <div className="flex flex-col h-full">
-                <DialogHeader className="px-6 py-4 border-b border-midnight-700">
-                  <DialogTitle className="text-white">Customize Calculator</DialogTitle>
-                  <DialogDescription className="text-gray-400">
-                    Personalize your calculator appearance and functionality.
-                  </DialogDescription>
-                </DialogHeader>
-                
-                <div className="flex flex-1 overflow-hidden">
-                  {/* Left Panel - Customization Options */}
-                  <div className="w-1/2 border-r border-midnight-700 overflow-y-auto">
-                    <div className="p-6 space-y-8">
-                      {/* Branding */}
+            <DialogContent className="max-w-7xl w-[95vw] h-[95vh] bg-midnight-800 border-midnight-700 p-0 flex flex-col">
+              <DialogHeader className="px-6 py-4 border-b border-midnight-700 flex-shrink-0">
+                <DialogTitle className="text-white">Customize Calculator</DialogTitle>
+                <DialogDescription className="text-gray-400">
+                  Personalize your calculator appearance and functionality.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="flex flex-1 min-h-0">
+                {/* Left Panel - Customization Options */}
+                <div className="w-1/2 border-r border-midnight-700 flex flex-col">
+                  <div className="flex-1 overflow-y-auto p-6 space-y-8">
+                    {/* Branding */}
                       <div>
                         <h3 className="text-white font-medium mb-4 flex items-center">
                           <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
@@ -1198,8 +1197,8 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </div>
-
-                <div className="flex justify-between items-center px-6 py-4 border-t border-midnight-700 bg-midnight-900">
+                
+                <div className="flex justify-between items-center px-6 py-4 border-t border-midnight-700 bg-midnight-900 flex-shrink-0">
                   <Button
                     variant="outline"
                     onClick={() => setShowCustomizeModal(false)}

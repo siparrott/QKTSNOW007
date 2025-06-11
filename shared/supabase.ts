@@ -167,17 +167,33 @@ export async function cloneCalculator(userId: string, templateId: string): Promi
     // Generate unique slug for user calculator
     const uniqueSlug = `${template.slug}-${userId.slice(0, 8)}-${Date.now()}`;
     const embedUrl = `${process.env.REPL_URL || 'https://localhost:5000'}/embed/${uniqueSlug}`;
+    const adminUrl = `${process.env.REPL_URL || 'https://localhost:5000'}/admin/${uniqueSlug}`;
+    const embedId = `embed_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Generate calculator_id based on template mapping
+    const calculatorIdMap: { [key: string]: number } = {
+      'wedding-photography': 1,
+      'boudoir-photography': 2,
+      'real-estate-photography': 3,
+      'drone-photography': 4,
+      'event-videography': 5,
+      'electrician-services': 6,
+      'home-renovation': 7,
+      'plumbing-services': 8
+    };
+    const calculatorId = calculatorIdMap[template.slug] || 1;
 
     // Create user calculator clone
     const userCalculators = await sql`
       INSERT INTO user_calculators (
-        user_id, template_id, slug, name, layout_json, logic_json, 
-        style_json, prompt_md, is_active, embed_url
+        user_id, template_id, calculator_id, embed_id, slug, name, 
+        layout_json, logic_json, style_json, prompt_md, is_active, 
+        embed_url, admin_url
       ) VALUES (
-        ${actualUserId}, ${template.id}, ${uniqueSlug}, ${template.name}, 
-        ${template.layout_json}, ${template.logic_json}, 
-        ${template.style_json}, ${template.prompt_md}, 
-        true, ${embedUrl}
+        ${actualUserId}, ${template.id}, ${calculatorId}, ${embedId}, 
+        ${uniqueSlug}, ${template.name}, ${template.layout_json}, 
+        ${template.logic_json}, ${template.style_json}, ${template.prompt_md}, 
+        true, ${embedUrl}, ${adminUrl}
       ) RETURNING *
     `;
 

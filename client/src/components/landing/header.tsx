@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Calculator } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Link } from "wouter";
+import logoPath from "@assets/ChatGPT Image Jun 11, 2025, 11_57_41 AM_1749637333080.png";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -37,11 +38,12 @@ export default function Header() {
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-neon-400 to-neon-600 rounded-lg flex items-center justify-center">
-              <Calculator className="text-white text-sm" />
-            </div>
-            <span className="text-xl font-bold text-white">QuoteKit.ai</span>
+          <div className="flex items-center space-x-3">
+            <img 
+              src={logoPath} 
+              alt="QuoteKits Logo" 
+              className="h-8 w-auto object-contain"
+            />
           </div>
 
           {/* Desktop Navigation */}

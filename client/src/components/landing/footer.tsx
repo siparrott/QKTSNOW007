@@ -1,5 +1,5 @@
-import { Calculator } from "lucide-react";
 import { Link } from "wouter";
+import logoPath from "@assets/ChatGPT Image Jun 11, 2025, 11_57_41 AM_1749637333080.png";
 
 export default function Footer() {
   return (
@@ -8,11 +8,12 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="md:col-span-1">
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-neon-400 to-neon-600 rounded-lg flex items-center justify-center">
-                <Calculator className="text-white text-sm" />
-              </div>
-              <span className="text-xl font-bold text-white">QuoteKit.ai</span>
+            <div className="flex items-center space-x-3 mb-4">
+              <img 
+                src={logoPath} 
+                alt="QuoteKits Logo" 
+                className="h-8 w-auto object-contain"
+              />
             </div>
             <p className="text-gray-400 mb-6 leading-relaxed">
               AI-powered quote calculators that help service businesses convert more visitors into paying clients.
@@ -142,7 +143,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-midnight-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-400 text-sm">© 2025 QuoteKit.ai. All rights reserved.</p>
+          <p className="text-gray-400 text-sm">© 2025 QuoteKits. All rights reserved.</p>
           <div className="flex items-center space-x-6 mt-4 md:mt-0">
             <span className="text-gray-400 text-sm">Built with ❤️ for service businesses</span>
           </div>

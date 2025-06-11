@@ -122,6 +122,44 @@ export default function TranslationServicesCalculator() {
   const [showEmailCapture, setShowEmailCapture] = useState(false);
   const [showNLInput, setShowNLInput] = useState(false);
   const [isProcessingNL, setIsProcessingNL] = useState(false);
+  const [customConfig, setCustomConfig] = useState<any>(null);
+
+  // Listen for configuration updates from parent dashboard
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === 'APPLY_CONFIG') {
+        console.log('Translation calculator received config:', event.data.config);
+        applyCustomConfig(event.data.config);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
+  const applyCustomConfig = (config: any) => {
+    console.log('Applying config to translation calculator:', config);
+    setCustomConfig(config);
+    
+    // Apply primary color
+    if (config.brandColors?.primary) {
+      document.documentElement.style.setProperty('--primary', config.brandColors.primary);
+      document.documentElement.style.setProperty('--blue-500', config.brandColors.primary);
+      document.documentElement.style.setProperty('--indigo-500', config.brandColors.primary);
+    }
+    
+    // Apply secondary color
+    if (config.brandColors?.secondary) {
+      document.documentElement.style.setProperty('--secondary', config.brandColors.secondary);
+      document.documentElement.style.setProperty('--slate-700', config.brandColors.secondary);
+    }
+    
+    // Apply accent color
+    if (config.brandColors?.accent) {
+      document.documentElement.style.setProperty('--accent', config.brandColors.accent);
+      document.documentElement.style.setProperty('--amber-500', config.brandColors.accent);
+    }
+  };
 
   const totalSteps = 6;
   const progress = (currentStep / totalSteps) * 100;

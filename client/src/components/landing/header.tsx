@@ -42,7 +42,7 @@ export default function Header() {
             <img 
               src={logoPath} 
               alt="QuoteKits Logo" 
-              className="h-20 w-auto object-contain"
+              className="h-10 w-auto object-contain"
             />
           </div>
 

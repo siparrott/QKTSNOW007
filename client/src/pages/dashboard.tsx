@@ -1256,14 +1256,16 @@ export default function Dashboard() {
                   })()}
                 </div>
 
-                {/* Questions & Content Section */}
-                <div className="space-y-4 mt-8 bg-midnight-800 p-6 rounded-lg border border-midnight-700">
-                  <h3 className="text-lg font-semibold text-white flex items-center">
-                    <Edit className="h-5 w-5 mr-2" />
-                    Questions & Content
-                  </h3>
-                  
-                  {/* Text Content */}
+              {/* Questions & Content Section */}
+              <div className="bg-midnight-800 p-6 rounded-lg border border-midnight-700 mt-6">
+                <h3 className="text-lg font-semibold text-white flex items-center mb-6">
+                  <Edit className="h-5 w-5 mr-2" />
+                  Questions & Content
+                </h3>
+                
+                {/* Text Content */}
+                <div className="mb-8">
+                  <h4 className="text-md font-medium text-white mb-4">Calculator Text</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">Headline</label>
@@ -1275,6 +1277,7 @@ export default function Dashboard() {
                           text: { ...prev.text, headline: e.target.value }
                         }))}
                         className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        placeholder="Get Your Quote"
                       />
                     </div>
                     <div>
@@ -1287,6 +1290,7 @@ export default function Dashboard() {
                           text: { ...prev.text, subheading: e.target.value }
                         }))}
                         className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        placeholder="Tell us about your project"
                       />
                     </div>
                     <div>
@@ -1299,6 +1303,7 @@ export default function Dashboard() {
                           text: { ...prev.text, ctaText: e.target.value }
                         }))}
                         className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        placeholder="Get Quote"
                       />
                     </div>
                     <div>
@@ -1311,155 +1316,157 @@ export default function Dashboard() {
                           text: { ...prev.text, thankYouMessage: e.target.value }
                         }))}
                         className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        placeholder="Thank you for your request!"
                       />
                     </div>
                   </div>
+                </div>
 
-                  {/* Questions Editor */}
-                  <div className="space-y-3 mt-6">
-                    <div className="flex justify-between items-center">
-                      <h4 className="text-md font-medium text-white">Form Questions</h4>
-                      <button
-                        onClick={() => {
-                          const newQuestion = {
-                            id: `question-${Date.now()}`,
-                            label: "New Question",
-                            type: "text",
-                            required: false
-                          };
-                          setCustomConfig((prev: any) => ({
-                            ...prev,
-                            questions: [...(prev.questions || []), newQuestion]
-                          }));
-                        }}
-                        className="px-4 py-2 bg-neon-500 text-white rounded text-sm hover:bg-neon-600 font-medium"
-                      >
-                        + Add Question
-                      </button>
-                    </div>
-                    
-                    <div className="max-h-96 overflow-y-auto space-y-3 pr-2">
-                      {(customConfig?.questions || []).map((question: any, index: number) => (
-                        <div key={question.id} className="bg-midnight-700 p-4 rounded border border-midnight-600">
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-                            <div>
-                              <label className="block text-xs text-gray-400 mb-1">Question Text</label>
+                {/* Questions Editor */}
+                <div className="border-t border-midnight-600 pt-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <h4 className="text-md font-medium text-white">Form Questions</h4>
+                    <button
+                      onClick={() => {
+                        const newQuestion = {
+                          id: `question-${Date.now()}`,
+                          label: "New Question",
+                          type: "text",
+                          required: false
+                        };
+                        setCustomConfig((prev: any) => ({
+                          ...prev,
+                          questions: [...(prev.questions || []), newQuestion]
+                        }));
+                      }}
+                      className="px-4 py-2 bg-neon-500 text-white rounded text-sm hover:bg-neon-600 font-medium"
+                    >
+                      + Add Question
+                    </button>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    {(customConfig?.questions || []).map((question: any, index: number) => (
+                      <div key={question.id} className="bg-midnight-700 p-4 rounded border border-midnight-600">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+                          <div>
+                            <label className="block text-xs text-gray-400 mb-1">Question Text</label>
+                            <input
+                              type="text"
+                              value={question.label}
+                              onChange={(e) => {
+                                const updatedQuestions = [...(customConfig?.questions || [])];
+                                updatedQuestions[index] = { ...question, label: e.target.value };
+                                setCustomConfig((prev: any) => ({ ...prev, questions: updatedQuestions }));
+                              }}
+                              className="w-full px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-sm"
+                              placeholder="Enter question text..."
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-400 mb-1">Type</label>
+                            <select
+                              value={question.type}
+                              onChange={(e) => {
+                                const updatedQuestions = [...(customConfig?.questions || [])];
+                                updatedQuestions[index] = { ...question, type: e.target.value };
+                                setCustomConfig((prev: any) => ({ ...prev, questions: updatedQuestions }));
+                              }}
+                              className="w-full px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-sm"
+                            >
+                              <option value="text">Text</option>
+                              <option value="number">Number</option>
+                              <option value="date">Date</option>
+                              <option value="dropdown">Dropdown</option>
+                              <option value="checkbox">Checkbox</option>
+                            </select>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <label className="flex items-center text-xs text-gray-400">
                               <input
-                                type="text"
-                                value={question.label}
+                                type="checkbox"
+                                checked={question.required}
                                 onChange={(e) => {
                                   const updatedQuestions = [...(customConfig?.questions || [])];
-                                  updatedQuestions[index] = { ...question, label: e.target.value };
+                                  updatedQuestions[index] = { ...question, required: e.target.checked };
+                                  setCustomConfig((prev: any) => ({ ...prev, questions: updatedQuestions }));
+                                }}
+                                className="mr-1"
+                              />
+                              Required
+                            </label>
+                            <button
+                              onClick={() => {
+                                const updatedQuestions = (customConfig?.questions || []).filter((_: any, i: number) => i !== index);
+                                setCustomConfig((prev: any) => ({ ...prev, questions: updatedQuestions }));
+                              }}
+                              className="text-red-400 hover:text-red-300 text-xs px-2 py-1 rounded hover:bg-red-900"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        </div>
+                        
+                        {question.type === 'dropdown' && (
+                          <div>
+                            <label className="block text-xs text-gray-400 mb-1">Options (comma separated)</label>
+                            <input
+                              type="text"
+                              value={(question.options || []).join(', ')}
+                              onChange={(e) => {
+                                const options = e.target.value.split(',').map((opt: string) => opt.trim()).filter(Boolean);
+                                const updatedQuestions = [...(customConfig?.questions || [])];
+                                updatedQuestions[index] = { ...question, options };
+                                setCustomConfig((prev: any) => ({ ...prev, questions: updatedQuestions }));
+                              }}
+                              placeholder="Option 1, Option 2, Option 3"
+                              className="w-full px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-sm"
+                            />
+                          </div>
+                        )}
+                        
+                        {question.type === 'number' && (
+                          <div className="grid grid-cols-2 gap-3 mt-3">
+                            <div>
+                              <label className="block text-xs text-gray-400 mb-1">Min Value</label>
+                              <input
+                                type="number"
+                                value={question.min || 0}
+                                onChange={(e) => {
+                                  const updatedQuestions = [...(customConfig?.questions || [])];
+                                  updatedQuestions[index] = { ...question, min: parseInt(e.target.value) };
                                   setCustomConfig((prev: any) => ({ ...prev, questions: updatedQuestions }));
                                 }}
                                 className="w-full px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-sm"
-                                placeholder="Enter question text..."
                               />
                             </div>
                             <div>
-                              <label className="block text-xs text-gray-400 mb-1">Type</label>
-                              <select
-                                value={question.type}
+                              <label className="block text-xs text-gray-400 mb-1">Max Value</label>
+                              <input
+                                type="number"
+                                value={question.max || 1000}
                                 onChange={(e) => {
                                   const updatedQuestions = [...(customConfig?.questions || [])];
-                                  updatedQuestions[index] = { ...question, type: e.target.value };
+                                  updatedQuestions[index] = { ...question, max: parseInt(e.target.value) };
                                   setCustomConfig((prev: any) => ({ ...prev, questions: updatedQuestions }));
                                 }}
                                 className="w-full px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-sm"
-                              >
-                                <option value="text">Text</option>
-                                <option value="number">Number</option>
-                                <option value="date">Date</option>
-                                <option value="dropdown">Dropdown</option>
-                                <option value="checkbox">Checkbox</option>
-                              </select>
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <label className="flex items-center text-xs text-gray-400">
-                                <input
-                                  type="checkbox"
-                                  checked={question.required}
-                                  onChange={(e) => {
-                                    const updatedQuestions = [...(customConfig?.questions || [])];
-                                    updatedQuestions[index] = { ...question, required: e.target.checked };
-                                    setCustomConfig((prev: any) => ({ ...prev, questions: updatedQuestions }));
-                                  }}
-                                  className="mr-1"
-                                />
-                                Required
-                              </label>
-                              <button
-                                onClick={() => {
-                                  const updatedQuestions = (customConfig?.questions || []).filter((_: any, i: number) => i !== index);
-                                  setCustomConfig((prev: any) => ({ ...prev, questions: updatedQuestions }));
-                                }}
-                                className="text-red-400 hover:text-red-300 text-xs px-2 py-1 rounded hover:bg-red-900"
-                              >
-                                Remove
-                              </button>
+                              />
                             </div>
                           </div>
-                          
-                          {question.type === 'dropdown' && (
-                            <div>
-                              <label className="block text-xs text-gray-400 mb-1">Options (comma separated)</label>
-                              <input
-                                type="text"
-                                value={(question.options || []).join(', ')}
-                                onChange={(e) => {
-                                  const options = e.target.value.split(',').map((opt: string) => opt.trim()).filter(Boolean);
-                                  const updatedQuestions = [...(customConfig?.questions || [])];
-                                  updatedQuestions[index] = { ...question, options };
-                                  setCustomConfig((prev: any) => ({ ...prev, questions: updatedQuestions }));
-                                }}
-                                placeholder="Option 1, Option 2, Option 3"
-                                className="w-full px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-sm"
-                              />
-                            </div>
-                          )}
-                          
-                          {question.type === 'number' && (
-                            <div className="grid grid-cols-2 gap-3 mt-3">
-                              <div>
-                                <label className="block text-xs text-gray-400 mb-1">Min Value</label>
-                                <input
-                                  type="number"
-                                  value={question.min || 0}
-                                  onChange={(e) => {
-                                    const updatedQuestions = [...(customConfig?.questions || [])];
-                                    updatedQuestions[index] = { ...question, min: parseInt(e.target.value) };
-                                    setCustomConfig((prev: any) => ({ ...prev, questions: updatedQuestions }));
-                                  }}
-                                  className="w-full px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-sm"
-                                />
-                              </div>
-                              <div>
-                                <label className="block text-xs text-gray-400 mb-1">Max Value</label>
-                                <input
-                                  type="number"
-                                  value={question.max || 1000}
-                                  onChange={(e) => {
-                                    const updatedQuestions = [...(customConfig?.questions || [])];
-                                    updatedQuestions[index] = { ...question, max: parseInt(e.target.value) };
-                                    setCustomConfig((prev: any) => ({ ...prev, questions: updatedQuestions }));
-                                  }}
-                                  className="w-full px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-sm"
-                                />
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                      
-                      {(!customConfig?.questions || customConfig.questions.length === 0) && (
-                        <div className="text-center py-8 text-gray-400 border-2 border-dashed border-midnight-600 rounded-lg">
-                          <p className="mb-2">No questions added yet</p>
-                          <p className="text-sm">Click "Add Question" to create your first question</p>
-                        </div>
-                      )}
-                    </div>
+                        )}
+                      </div>
+                    ))}
+                    
+                    {(!customConfig?.questions || customConfig.questions.length === 0) && (
+                      <div className="text-center py-8 text-gray-400 border-2 border-dashed border-midnight-600 rounded-lg">
+                        <p className="mb-2">No questions added yet</p>
+                        <p className="text-sm">Click "Add Question" to create your first question</p>
+                      </div>
+                    )}
                   </div>
                 </div>
+              </div>
 
                 <div className="mt-6 flex justify-between">
                   <button 

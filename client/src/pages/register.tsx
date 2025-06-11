@@ -45,27 +45,30 @@ export default function Register() {
   const onSubmit = async (data: RegisterForm) => {
     setIsLoading(true);
     try {
-      // Test API connectivity first
-      console.log('Testing API connectivity...');
-      const testResponse = await fetch('/api/test');
-      console.log('Test response status:', testResponse.status);
-      
-      if (!testResponse.ok) {
-        throw new Error('Cannot connect to API server');
-      }
-      
-      const response = await apiRequest('/api/auth/register', {
+      // Direct fetch approach to bypass CORS issues
+      const response = await fetch('/api/auth/register', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
         body: JSON.stringify({
           fullName: data.fullName,
           email: data.email,
           password: data.password,
         }),
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Registration failed');
+      }
+
+      const result = await response.json();
       
-      if (response && response.token) {
-        localStorage.setItem('auth_token', response.token);
-        localStorage.setItem('user', JSON.stringify(response.user));
+      if (result && result.token) {
+        localStorage.setItem('auth_token', result.token);
+        localStorage.setItem('user', JSON.stringify(result.user));
         
         toast({
           title: "Account created successfully!",

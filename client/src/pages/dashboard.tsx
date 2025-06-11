@@ -1882,9 +1882,85 @@ export default function Dashboard() {
                             </p>
                           </div>
                           
+                          {/* Service Packages Preview */}
+                          {customConfig?.packages && customConfig.packages.length > 0 && (
+                            <div className="mb-8">
+                              <h2 className={`text-xl font-bold mb-6 ${theme === 'minimal' ? 'text-gray-800' : 'text-white'}`}>
+                                Choose your package
+                              </h2>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {customConfig.packages.slice(0, 4).map((pkg: any, index: number) => (
+                                  <div 
+                                    key={pkg.id} 
+                                    className={`p-6 rounded-xl transition-all cursor-pointer ${themeStyles.cardClass} ${
+                                      pkg.popular ? 'ring-2 ring-cyan-400' : ''
+                                    } hover:scale-105`}
+                                  >
+                                    <div className="flex items-center justify-between mb-4">
+                                      <div className="flex items-center gap-3">
+                                        <span className="text-2xl">{pkg.icon}</span>
+                                        <div>
+                                          <h3 className={`font-bold ${theme === 'minimal' ? 'text-gray-800' : 'text-white'}`}>
+                                            {pkg.label}
+                                          </h3>
+                                          {pkg.popular && (
+                                            <span className="text-xs bg-cyan-500 text-white px-2 py-1 rounded-full">
+                                              Popular
+                                            </span>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className={`text-2xl font-bold mb-2 ${theme === 'minimal' ? 'text-gray-900' : 'text-white'}`}>
+                                      €{pkg.basePrice}
+                                    </div>
+                                    <div className={`text-sm ${theme === 'minimal' ? 'text-gray-600' : 'text-white/70'}`}>
+                                      {pkg.hours} hours included
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Add-On Services Preview */}
+                          {customConfig?.addOns && customConfig.addOns.length > 0 && (
+                            <div className="mb-8">
+                              <h2 className={`text-xl font-bold mb-6 ${theme === 'minimal' ? 'text-gray-800' : 'text-white'}`}>
+                                Add-On Services
+                              </h2>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                {customConfig.addOns.slice(0, 6).map((addon: any, index: number) => (
+                                  <div 
+                                    key={addon.id}
+                                    className={`p-4 rounded-lg border-2 transition-all cursor-pointer ${
+                                      addon.popular ? 'border-cyan-400 bg-cyan-400/10' : 
+                                      theme === 'minimal' ? 'border-gray-200 hover:border-gray-400' : 'border-white/20 hover:border-white/40'
+                                    }`}
+                                  >
+                                    <div className="flex items-center justify-between">
+                                      <div>
+                                        <div className={`font-medium ${theme === 'minimal' ? 'text-gray-800' : 'text-white'}`}>
+                                          {addon.label}
+                                        </div>
+                                        <div className={`text-sm ${theme === 'minimal' ? 'text-gray-600' : 'text-white/70'}`}>
+                                          €{addon.price}
+                                        </div>
+                                      </div>
+                                      {addon.popular && (
+                                        <span className="text-cyan-400 text-xs font-medium">Popular</span>
+                                      )}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Form Questions Preview */}
                           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             <div className="lg:col-span-2 space-y-4">
-                              {customConfig?.questions?.slice(0, 3).map((question, index) => (
+                              {customConfig?.questions?.slice(0, 3).map((question: any, index: number) => (
                                 <div key={question.id} className={`p-6 rounded-xl ${themeStyles.cardClass}`}>
                                   <label className={`block text-sm font-semibold mb-3 ${theme === 'minimal' ? 'text-gray-700' : 'text-white/90'}`}>
                                     {question.label} {question.required && <span className="text-red-400">*</span>}
@@ -1894,7 +1970,7 @@ export default function Dashboard() {
                                     <>
                                       {layout === 'stepped' && question.options ? (
                                         <div className="grid grid-cols-2 gap-3">
-                                          {question.options.slice(0, 4).map((option, optIndex) => (
+                                          {question.options.slice(0, 4).map((option: any, optIndex: number) => (
                                             <button
                                               key={optIndex}
                                               className={`p-4 rounded-lg border-2 transition-all text-left ${
@@ -1917,7 +1993,7 @@ export default function Dashboard() {
                                           theme === 'minimal' ? 'border-gray-300 bg-white text-gray-900' : 'border-white/20 bg-white/10 text-white'
                                         }`}>
                                           <option>Select an option...</option>
-                                          {question.options?.map((option, optIndex) => (
+                                          {question.options?.map((option: any, optIndex: number) => (
                                             <option key={optIndex} value={option}>{option}</option>
                                           ))}
                                         </select>

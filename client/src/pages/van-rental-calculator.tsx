@@ -57,7 +57,13 @@ interface PricingBreakdown {
   kmAllowance: number;
 }
 
-export default function VanRentalCalculator() {
+interface VanRentalCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function VanRentalCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: VanRentalCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [quoteGenerated, setQuoteGenerated] = useState(false);
@@ -334,7 +340,7 @@ export default function VanRentalCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       
       <div className="container mx-auto px-4 py-8">
         {/* Hero Section */}

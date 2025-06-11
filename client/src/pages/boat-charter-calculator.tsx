@@ -56,7 +56,13 @@ interface PricingBreakdown {
   quoteExpiry: Date;
 }
 
-export default function BoatCharterCalculator() {
+interface BoatCharterCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function BoatCharterCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: BoatCharterCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [quoteGenerated, setQuoteGenerated] = useState(false);
@@ -325,7 +331,7 @@ export default function BoatCharterCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-teal-900">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       
       <div className="container mx-auto px-4 py-8">
         {/* Hero Section */}

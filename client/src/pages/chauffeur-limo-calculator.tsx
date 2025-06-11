@@ -54,7 +54,13 @@ interface PricingBreakdown {
   expiresAt: Date;
 }
 
-export default function ChauffeurLimoCalculator() {
+interface ChauffeurLimoCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function ChauffeurLimoCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: ChauffeurLimoCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [quoteGenerated, setQuoteGenerated] = useState(false);
@@ -320,7 +326,7 @@ export default function ChauffeurLimoCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-yellow-900">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       
       <div className="container mx-auto px-4 py-8">
         {/* Hero Section */}

@@ -912,7 +912,7 @@ export default function Dashboard() {
                       <label className="text-sm text-gray-300 block mb-2">Custom CTA URL</label>
                       <input
                         type="url"
-                        value={customConfig.functionality.ctaUrl}
+                        value={customConfig?.functionality?.ctaUrl || ""}
                         onChange={(e) => setCustomConfig(prev => ({
                           ...prev,
                           functionality: { ...prev.functionality, ctaUrl: e.target.value }
@@ -933,7 +933,7 @@ export default function Dashboard() {
                     <div>
                       <label className="text-sm text-gray-300 block mb-2">Background Type</label>
                       <select
-                        value={customConfig.appearance.background}
+                        value={customConfig?.appearance?.background || "gradient"}
                         onChange={(e) => setCustomConfig(prev => ({
                           ...prev,
                           appearance: { ...prev.appearance, background: e.target.value }
@@ -950,7 +950,7 @@ export default function Dashboard() {
                       <span className="text-sm text-gray-300">Dark Mode</span>
                       <input
                         type="checkbox"
-                        checked={customConfig.appearance.darkMode}
+                        checked={customConfig?.appearance?.darkMode || false}
                         onChange={(e) => setCustomConfig(prev => ({
                           ...prev,
                           appearance: { ...prev.appearance, darkMode: e.target.checked }
@@ -974,43 +974,43 @@ export default function Dashboard() {
                     <div 
                       className="h-full rounded-lg p-6"
                       style={{
-                        backgroundColor: customConfig.appearance.darkMode ? '#1e293b' : '#ffffff',
-                        color: customConfig.appearance.darkMode ? '#ffffff' : '#000000',
-                        fontFamily: customConfig.branding.fontFamily,
-                        fontSize: customConfig.branding.fontSize === 'small' ? '14px' : 
-                                 customConfig.branding.fontSize === 'large' ? '18px' : '16px'
+                        backgroundColor: customConfig?.appearance?.darkMode ? '#1e293b' : '#ffffff',
+                        color: customConfig?.appearance?.darkMode ? '#ffffff' : '#000000',
+                        fontFamily: customConfig?.branding?.fontFamily || 'sans-serif',
+                        fontSize: customConfig?.branding?.fontSize === 'small' ? '14px' : 
+                                 customConfig?.branding?.fontSize === 'large' ? '18px' : '16px'
                       }}
                     >
                       <div className="text-center mb-6">
                         <h1 
                           className="text-2xl font-bold mb-2"
-                          style={{ color: customConfig.branding.primaryColor }}
+                          style={{ color: customConfig?.branding?.primaryColor || "#38bdf8" }}
                         >
-                          {customConfig.text.headline}
+                          {customConfig?.text?.headline || "Get Your Free Estimate"}
                         </h1>
                         <p className="text-gray-600 mb-4">
-                          {customConfig.text.subheading}
+                          {customConfig?.text?.subheading || "Just answer a few quick questions"}
                         </p>
                       </div>
                       
                       <div className="space-y-4 mb-6">
-                        <div className="p-4 border rounded" style={{ borderRadius: `${customConfig.branding.roundedCorners}px` }}>
+                        <div className="p-4 border rounded" style={{ borderRadius: `${customConfig?.branding?.roundedCorners || 12}px` }}>
                           <label className="block text-sm font-medium mb-2">Sample Question</label>
-                          <select className="w-full p-2 border rounded" style={{ borderRadius: `${customConfig.branding.roundedCorners}px` }}>
+                          <select className="w-full p-2 border rounded" style={{ borderRadius: `${customConfig?.branding?.roundedCorners || 12}px` }}>
                             <option>Select an option...</option>
                             <option>Option 1</option>
                             <option>Option 2</option>
                           </select>
                         </div>
                         
-                        {customConfig.functionality.showEmailCapture && (
-                          <div className="p-4 border rounded" style={{ borderRadius: `${customConfig.branding.roundedCorners}px` }}>
+                        {(customConfig?.functionality?.showEmailCapture || true) && (
+                          <div className="p-4 border rounded" style={{ borderRadius: `${customConfig?.branding?.roundedCorners || 12}px` }}>
                             <label className="block text-sm font-medium mb-2">Email Address</label>
                             <input 
                               type="email" 
                               placeholder="your@email.com"
                               className="w-full p-2 border rounded" 
-                              style={{ borderRadius: `${customConfig.branding.roundedCorners}px` }}
+                              style={{ borderRadius: `${customConfig?.branding?.roundedCorners || 12}px` }}
                             />
                           </div>
                         )}
@@ -1020,16 +1020,16 @@ export default function Dashboard() {
                         <button 
                           className="px-6 py-3 text-white font-semibold rounded shadow-lg"
                           style={{ 
-                            backgroundColor: customConfig.branding.primaryColor,
-                            borderRadius: `${customConfig.branding.roundedCorners}px`
+                            backgroundColor: customConfig?.branding?.primaryColor || "#38bdf8",
+                            borderRadius: `${customConfig?.branding?.roundedCorners || 12}px`
                           }}
                         >
-                          {customConfig.text.ctaText}
+                          {customConfig?.text?.ctaText || "Calculate Now"}
                         </button>
                       </div>
                       
                       <div className="text-center text-sm text-gray-500">
-                        {customConfig.text.footerNote}
+                        {customConfig?.text?.footerNote || "*All quotes are subject to confirmation."}
                       </div>
                     </div>
                   </div>

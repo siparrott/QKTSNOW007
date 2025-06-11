@@ -1285,6 +1285,48 @@ export default function Dashboard() {
                           />
                         </div>
                         <div>
+                          <Label className="text-gray-300">Font Family</Label>
+                          <Select value={customConfig.fontFamily || 'Inter'} onValueChange={(value) => setCustomConfig({...customConfig, fontFamily: value})}>
+                            <SelectTrigger className="bg-midnight-900 border-midnight-600 text-white">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Inter">Inter</SelectItem>
+                              <SelectItem value="Roboto">Roboto</SelectItem>
+                              <SelectItem value="Open Sans">Open Sans</SelectItem>
+                              <SelectItem value="Poppins">Poppins</SelectItem>
+                              <SelectItem value="Montserrat">Montserrat</SelectItem>
+                              <SelectItem value="Playfair Display">Playfair Display</SelectItem>
+                              <SelectItem value="Arial">Arial</SelectItem>
+                              <SelectItem value="Helvetica">Helvetica</SelectItem>
+                              <SelectItem value="Georgia">Georgia</SelectItem>
+                              <SelectItem value="Times New Roman">Times New Roman</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Border Radius: {customConfig.borderRadius || 8}px</Label>
+                          <Slider
+                            value={[customConfig.borderRadius || 8]}
+                            onValueChange={(value) => setCustomConfig({...customConfig, borderRadius: value[0]})}
+                            max={50}
+                            min={0}
+                            step={1}
+                            className="mt-2"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Shadow Intensity: {customConfig.shadowIntensity || 10}%</Label>
+                          <Slider
+                            value={[customConfig.shadowIntensity || 10]}
+                            onValueChange={(value) => setCustomConfig({...customConfig, shadowIntensity: value[0]})}
+                            max={100}
+                            min={0}
+                            step={5}
+                            className="mt-2"
+                          />
+                        </div>
+                        <div>
                           <Label className="text-gray-300">Custom CSS</Label>
                           <Textarea
                             value={customConfig.customCSS || ''}

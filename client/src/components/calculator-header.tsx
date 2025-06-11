@@ -39,17 +39,13 @@ export function QuoteKitHeader() {
 
           {/* Right Side - CTA */}
           <div className="flex items-center space-x-3">
-            <Button 
-              className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-semibold text-sm transition-colors"
-              onClick={() => {
-                const element = document.getElementById('pricing-sidebar');
-                if (element) {
-                  element.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
-            >
-              Start Free Trial
-            </Button>
+            <Link href="/register">
+              <Button 
+                className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-semibold text-sm transition-colors"
+              >
+                Start Free Trial
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

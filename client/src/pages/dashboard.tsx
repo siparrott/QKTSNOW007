@@ -825,6 +825,7 @@ export default function Dashboard() {
                 <div className="bg-white rounded-lg h-full overflow-hidden">
                   <iframe
                     ref={(iframe) => {
+                      setIframeRef(iframe);
                       if (iframe && customConfig) {
                         iframe.onload = () => {
                           iframe.contentWindow?.postMessage({

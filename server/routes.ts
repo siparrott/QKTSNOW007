@@ -41,6 +41,10 @@ async function requireAuth(req: Request, res: Response, next: NextFunction) {
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
+  // Import Supabase routes
+  const { default: supabaseRoutes } = await import('./supabase-routes');
+  app.use('/api/supabase', supabaseRoutes);
+  
   // Test endpoint for connectivity verification
   app.get('/api/test', (req, res) => {
     res.json({ message: 'API is working', timestamp: new Date().toISOString() });

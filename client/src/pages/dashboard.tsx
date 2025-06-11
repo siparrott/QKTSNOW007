@@ -233,26 +233,36 @@ export default function Dashboard() {
   const [showCustomizeModal, setShowCustomizeModal] = useState(false);
   const [selectedCalculator, setSelectedCalculator] = useState<UserCalculator | null>(null);
   
-  // Default customization config
+  // Font library options
+  const fontOptions = [
+    "Inter", "Lato", "Montserrat", "Playfair Display", "Poppins", "Roboto", "Roboto Slab",
+    "Open Sans", "Source Sans Pro", "Merriweather", "Raleway", "Oswald", "Nunito", "DM Sans",
+    "Quicksand", "Work Sans", "Abril Fatface", "Mulish", "Libre Baskerville", "Cormorant Garamond"
+  ];
+
+  // Default customization config for new calculator instances
   const defaultConfig = {
+    userId: "demo-user",
+    calculatorId: "wedding-photography",
+    instanceId: "",
     branding: {
       primaryColor: "#38bdf8",
       accentColor: "#facc15", 
-      fontFamily: "sans-serif",
+      fontFamily: "Poppins",
       fontSize: "medium",
-      roundedCorners: 12
+      roundedCorners: 12,
+      logoUrl: ""
     },
     appearance: {
       background: "gradient",
       darkMode: false,
-      logoUrl: "",
       backgroundImage: ""
     },
     text: {
-      headline: "Get Your Free Estimate",
-      subheading: "Just answer a few quick questions", 
-      ctaText: "Calculate Now",
-      footerNote: "*All quotes are subject to confirmation."
+      headline: "Get Your Wedding Quote",
+      subheading: "Tell us about your special day", 
+      ctaText: "See My Price",
+      footerNote: "*Final pricing depends on confirmation."
     },
     functionality: {
       showEmailCapture: true,
@@ -260,9 +270,42 @@ export default function Dashboard() {
       enablePdfDownload: true,
       ctaUrl: ""
     },
-    language: {
-      selected: "EN"
-    }
+    quoteLogic: {
+      baseRate: 1200,
+      addOns: {
+        "engagementSession": 300,
+        "extraHours": 150,
+        "albumUpgrade": 400
+      },
+      discounts: {
+        "earlyBooking": 0.10,
+        "offSeason": 0.15
+      }
+    },
+    questions: [
+      {
+        id: "duration",
+        label: "Event Duration",
+        type: "dropdown",
+        options: ["Half Day (4 hours)", "Full Day (8 hours)", "Two Days"],
+        required: true
+      },
+      {
+        id: "guests",
+        label: "Number of Guests",
+        type: "number",
+        min: 10,
+        max: 500,
+        required: true
+      },
+      {
+        id: "location",
+        label: "Event Location",
+        type: "dropdown",
+        options: ["Local (within 30 miles)", "Regional (30-100 miles)", "Destination (100+ miles)"],
+        required: true
+      }
+    ]
   };
 
   const [customConfig, setCustomConfig] = useState(defaultConfig);
@@ -308,14 +351,27 @@ export default function Dashboard() {
 
   const addCalculatorMutation = useMutation({
     mutationFn: async (calculator: any) => {
-      // In demo mode, just add to local state
+      // Create a unique instance for this user
+      const instanceId = `calc-${Date.now()}`;
+      const clonedConfig = {
+        ...defaultConfig,
+        calculatorId: calculator.slug,
+        instanceId: instanceId,
+        text: {
+          headline: `Get Your ${calculator.name} Quote`,
+          subheading: "Tell us about your project needs",
+          ctaText: "Calculate My Price",
+          footerNote: "*Final pricing depends on project details."
+        }
+      };
+      
       const newCalculator = {
-        id: `calc-${Date.now()}`,
-        embedId: `qk-${calculator.slug}`,
-        embedUrl: `https://quotekit.ai/embed/qk-${calculator.slug}`,
-        adminUrl: `https://quotekit.ai/admin/qk-${calculator.slug}`,
+        id: instanceId,
+        embedId: `qk-${calculator.slug}-${instanceId}`,
+        embedUrl: `https://quotekit.ai/embed/${instanceId}`,
+        adminUrl: `https://quotekit.ai/admin/${instanceId}`,
         calculatorId: calculator.id,
-        config: { primaryColor: "#10b981" },
+        config: clonedConfig,
         customBranding: { companyName: "Your Business" },
         isActive: true
       };
@@ -327,15 +383,15 @@ export default function Dashboard() {
     },
     onSuccess: (newCalculator) => {
       toast({
-        title: "Calculator Added!",
-        description: `${newCalculator.embedId} has been added to your dashboard.`,
+        title: "Calculator Cloned!",
+        description: `Your personalized calculator instance has been created.`,
       });
       setShowCalculatorModal(false);
     },
     onError: () => {
       toast({
         title: "Error",
-        description: "Failed to add calculator. Please try again.",
+        description: "Failed to create calculator instance. Please try again.",
         variant: "destructive"
       });
     }
@@ -746,17 +802,16 @@ export default function Dashboard() {
                       <div>
                         <label className="text-sm text-gray-300 block mb-2">Font Family</label>
                         <select
-                          value={customConfig?.branding?.fontFamily || "sans-serif"}
+                          value={customConfig?.branding?.fontFamily || "Poppins"}
                           onChange={(e) => setCustomConfig(prev => ({
                             ...prev,
                             branding: { ...prev.branding, fontFamily: e.target.value }
                           }))}
                           className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
                         >
-                          <option value="sans-serif">Sans Serif</option>
-                          <option value="serif">Serif</option>
-                          <option value="monospace">Monospace</option>
-                          <option value="system-ui">System</option>
+                          {fontOptions.map(font => (
+                            <option key={font} value={font}>{font}</option>
+                          ))}
                         </select>
                       </div>
                       
@@ -793,6 +848,50 @@ export default function Dashboard() {
                         }))}
                         className="w-full"
                       />
+                    </div>
+
+                    <div>
+                      <label className="text-sm text-gray-300 block mb-2">Logo Upload</label>
+                      <div className="space-y-2">
+                        {customConfig?.branding?.logoUrl ? (
+                          <div className="flex items-center space-x-2">
+                            <img 
+                              src={customConfig.branding.logoUrl} 
+                              alt="Logo" 
+                              className="w-16 h-16 object-contain bg-white rounded border"
+                            />
+                            <button
+                              onClick={() => setCustomConfig(prev => ({
+                                ...prev,
+                                branding: { ...prev.branding, logoUrl: "" }
+                              }))}
+                              className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        ) : (
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                // In production, upload to storage service
+                                const reader = new FileReader();
+                                reader.onload = (event) => {
+                                  setCustomConfig(prev => ({
+                                    ...prev,
+                                    branding: { ...prev.branding, logoUrl: event.target?.result as string }
+                                  }));
+                                };
+                                reader.readAsDataURL(file);
+                              }
+                            }}
+                            className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white text-sm"
+                          />
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -923,6 +1022,148 @@ export default function Dashboard() {
                     </div>
                   </div>
 
+                  {/* Question Management Section */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                      <Settings className="h-5 w-5" />
+                      Question Management
+                    </h3>
+                    
+                    <div className="space-y-3">
+                      {customConfig?.questions?.map((question, index) => (
+                        <div key={question.id} className="p-4 bg-midnight-700 rounded border border-midnight-600">
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="text-white font-medium">Question {index + 1}</span>
+                            <button
+                              onClick={() => {
+                                const newQuestions = customConfig.questions.filter((_, i) => i !== index);
+                                setCustomConfig(prev => ({ ...prev, questions: newQuestions }));
+                              }}
+                              className="px-2 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                          
+                          <div className="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                              <label className="text-xs text-gray-300 block mb-1">Label</label>
+                              <input
+                                type="text"
+                                value={question.label}
+                                onChange={(e) => {
+                                  const newQuestions = [...customConfig.questions];
+                                  newQuestions[index] = { ...question, label: e.target.value };
+                                  setCustomConfig(prev => ({ ...prev, questions: newQuestions }));
+                                }}
+                                className="w-full px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-sm"
+                              />
+                            </div>
+                            
+                            <div>
+                              <label className="text-xs text-gray-300 block mb-1">Type</label>
+                              <select
+                                value={question.type}
+                                onChange={(e) => {
+                                  const newQuestions = [...customConfig.questions];
+                                  newQuestions[index] = { ...question, type: e.target.value };
+                                  setCustomConfig(prev => ({ ...prev, questions: newQuestions }));
+                                }}
+                                className="w-full px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-sm"
+                              >
+                                <option value="dropdown">Dropdown</option>
+                                <option value="number">Number</option>
+                                <option value="text">Text</option>
+                                <option value="radio">Radio Buttons</option>
+                              </select>
+                            </div>
+                          </div>
+                          
+                          {question.type === 'dropdown' && (
+                            <div>
+                              <label className="text-xs text-gray-300 block mb-1">Options (one per line)</label>
+                              <textarea
+                                value={question.options?.join('\n') || ''}
+                                onChange={(e) => {
+                                  const newQuestions = [...customConfig.questions];
+                                  newQuestions[index] = { 
+                                    ...question, 
+                                    options: e.target.value.split('\n').filter(opt => opt.trim()) 
+                                  };
+                                  setCustomConfig(prev => ({ ...prev, questions: newQuestions }));
+                                }}
+                                className="w-full px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-sm"
+                                rows={3}
+                                placeholder="Option 1&#10;Option 2&#10;Option 3"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                      
+                      <button
+                        onClick={() => {
+                          const newQuestion = {
+                            id: `question-${Date.now()}`,
+                            label: "New Question",
+                            type: "dropdown",
+                            options: ["Option 1", "Option 2"],
+                            required: true
+                          };
+                          setCustomConfig(prev => ({ 
+                            ...prev, 
+                            questions: [...(prev.questions || []), newQuestion] 
+                          }));
+                        }}
+                        className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                      >
+                        Add Question
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Pricing Logic Section */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                      <DollarSign className="h-5 w-5" />
+                      Pricing Logic
+                    </h3>
+                    
+                    <div>
+                      <label className="text-sm text-gray-300 block mb-2">Base Rate ($)</label>
+                      <input
+                        type="number"
+                        value={customConfig?.quoteLogic?.baseRate || 1200}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          quoteLogic: { ...prev.quoteLogic, baseRate: parseInt(e.target.value) }
+                        }))}
+                        className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="text-sm text-gray-300 block mb-2">Add-ons (JSON format)</label>
+                      <textarea
+                        value={JSON.stringify(customConfig?.quoteLogic?.addOns || {}, null, 2)}
+                        onChange={(e) => {
+                          try {
+                            const addOns = JSON.parse(e.target.value);
+                            setCustomConfig(prev => ({
+                              ...prev,
+                              quoteLogic: { ...prev.quoteLogic, addOns }
+                            }));
+                          } catch (error) {
+                            // Invalid JSON, ignore
+                          }
+                        }}
+                        className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white font-mono text-sm"
+                        rows={4}
+                        placeholder='{"extraHours": 150, "albumUpgrade": 400}'
+                      />
+                    </div>
+                  </div>
+
                   {/* Appearance Section */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-white flex items-center gap-2">
@@ -994,16 +1235,66 @@ export default function Dashboard() {
                       </div>
                       
                       <div className="space-y-4 mb-6">
-                        <div className="p-4 border rounded" style={{ borderRadius: `${customConfig?.branding?.roundedCorners || 12}px` }}>
-                          <label className="block text-sm font-medium mb-2">Sample Question</label>
-                          <select className="w-full p-2 border rounded" style={{ borderRadius: `${customConfig?.branding?.roundedCorners || 12}px` }}>
-                            <option>Select an option...</option>
-                            <option>Option 1</option>
-                            <option>Option 2</option>
-                          </select>
-                        </div>
+                        {/* Logo Display */}
+                        {customConfig?.branding?.logoUrl && (
+                          <div className="flex justify-center mb-4">
+                            <img 
+                              src={customConfig.branding.logoUrl} 
+                              alt="Company Logo" 
+                              className="h-12 object-contain"
+                            />
+                          </div>
+                        )}
                         
-                        {(customConfig?.functionality?.showEmailCapture || true) && (
+                        {/* Dynamic Questions from Config */}
+                        {customConfig?.questions?.map((question, index) => (
+                          <div key={question.id} className="p-4 border rounded" style={{ borderRadius: `${customConfig?.branding?.roundedCorners || 12}px` }}>
+                            <label className="block text-sm font-medium mb-2">{question.label}</label>
+                            
+                            {question.type === 'dropdown' && (
+                              <select className="w-full p-2 border rounded" style={{ borderRadius: `${customConfig?.branding?.roundedCorners || 12}px` }}>
+                                <option>Select an option...</option>
+                                {question.options?.map((option, optIndex) => (
+                                  <option key={optIndex} value={option}>{option}</option>
+                                ))}
+                              </select>
+                            )}
+                            
+                            {question.type === 'number' && (
+                              <input 
+                                type="number"
+                                min={question.min || 0}
+                                max={question.max || 1000}
+                                placeholder="Enter a number"
+                                className="w-full p-2 border rounded" 
+                                style={{ borderRadius: `${customConfig?.branding?.roundedCorners || 12}px` }}
+                              />
+                            )}
+                            
+                            {question.type === 'text' && (
+                              <input 
+                                type="text"
+                                placeholder="Enter text"
+                                className="w-full p-2 border rounded" 
+                                style={{ borderRadius: `${customConfig?.branding?.roundedCorners || 12}px` }}
+                              />
+                            )}
+                            
+                            {question.type === 'radio' && (
+                              <div className="space-y-2">
+                                {question.options?.map((option, optIndex) => (
+                                  <label key={optIndex} className="flex items-center">
+                                    <input type="radio" name={`question-${question.id}`} value={option} className="mr-2" />
+                                    {option}
+                                  </label>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                        
+                        {/* Email Capture if Enabled */}
+                        {customConfig?.functionality?.showEmailCapture && (
                           <div className="p-4 border rounded" style={{ borderRadius: `${customConfig?.branding?.roundedCorners || 12}px` }}>
                             <label className="block text-sm font-medium mb-2">Email Address</label>
                             <input 
@@ -1014,6 +1305,17 @@ export default function Dashboard() {
                             />
                           </div>
                         )}
+                        
+                        {/* Pricing Display */}
+                        <div className="p-4 bg-blue-50 border border-blue-200 rounded" style={{ borderRadius: `${customConfig?.branding?.roundedCorners || 12}px` }}>
+                          <div className="text-center">
+                            <div className="text-sm text-gray-600 mb-2">Estimated Price</div>
+                            <div className="text-3xl font-bold" style={{ color: customConfig?.branding?.primaryColor || "#38bdf8" }}>
+                              ${customConfig?.quoteLogic?.baseRate || 1200}
+                            </div>
+                            <div className="text-xs text-gray-500 mt-1">Base rate • Additional options may apply</div>
+                          </div>
+                        </div>
                       </div>
                       
                       <div className="text-center mb-4">

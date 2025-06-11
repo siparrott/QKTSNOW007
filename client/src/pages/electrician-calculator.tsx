@@ -45,13 +45,29 @@ interface PricingBreakdown {
   breakdown: string[];
 }
 
-export default function ElectricianCalculator() {
+interface ElectricianCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function ElectricianCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: ElectricianCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
-  const [customConfig, setCustomConfig] = useState<any>(null);
+  const [customConfig, setCustomConfig] = useState<any>(propConfig || null);
+
+  // Initialize with prop config
+  useEffect(() => {
+    if (propConfig) {
+      setCustomConfig(propConfig);
+      applyCustomConfig(propConfig);
+    }
+  }, [propConfig]);
 
   // Listen for configuration updates from parent dashboard
   useEffect(() => {
+    if (isPreview) return; // Skip message listener in preview mode
+    
     const handleMessage = (event: MessageEvent) => {
       if (event.data.type === 'APPLY_CONFIG') {
         applyCustomConfig(event.data.config);
@@ -60,7 +76,7 @@ export default function ElectricianCalculator() {
 
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
-  }, []);
+  }, [isPreview]);
 
   const applyCustomConfig = (config: any) => {
     console.log('Applying config to electrician calculator:', config);
@@ -102,12 +118,17 @@ export default function ElectricianCalculator() {
     }
     
     // Force re-render
-    document.body.classList.add('config-applied');
-    setTimeout(() => document.body.classList.remove('config-applied'), 100);
+  };
+
+  const getStyles = () => {
+    if (!customConfig) return {};
+    return {
+      '--primary-color': customConfig.primaryColor || '#06D6A0'
+    };
   };
 
   const getCompanyName = () => {
-    return customConfig?.companyBranding?.companyName || 'Electrician Services';
+    return customConfig?.companyBranding?.companyName || 'Professional Electrician';
   };
 
   const [formData, setFormData] = useState<ElectricianFormData>({
@@ -342,7 +363,7 @@ export default function ElectricianCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-amber-50" style={getStyles()}>
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">

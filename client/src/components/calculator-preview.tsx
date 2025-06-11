@@ -93,6 +93,7 @@ export default function CalculatorPreview({ slug, customConfig, className = "" }
         <CalculatorComponent 
           customConfig={customConfig}
           isPreview={true}
+          hideHeader={true}
         />
       </Suspense>
     </div>

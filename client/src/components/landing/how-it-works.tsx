@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Frown, Zap, Smile, Clock, CheckCircle, TrendingUp, Search, Code } from "lucide-react";
+import psychologyImage from "@assets/ChatGPT Image Jun 11, 2025, 03_34_22 PM_1749649267631.png";
 
 export default function HowItWorks() {
   const containerVariants = {
@@ -157,17 +158,11 @@ export default function HowItWorks() {
           transition={{ duration: 0.8, delay: 0.6 }}
           viewport={{ once: true }}
         >
-          <div className="bg-midnight-700/50 rounded-lg p-8 border border-midnight-600 max-w-2xl mx-auto">
-            <h3 className="text-2xl font-semibold text-white mb-4">
-              🧠 Why This Works (Science + Psychology)
-            </h3>
-            <div className="text-gray-300 space-y-2">
-              <p>Clients want clarity. Not contact forms.</p>
-              <p>They want confidence. Not vague estimates.</p>
-              <p>They want to feel like they're booking a professional.</p>
-              <p className="text-neon-400 font-medium">QuoteKit gives them that feeling—with every click.</p>
-            </div>
-          </div>
+          <img 
+            src={psychologyImage} 
+            alt="Why This Works - Science and Psychology behind QuoteKit's effectiveness"
+            className="w-full max-w-4xl mx-auto rounded-lg shadow-2xl"
+          />
         </motion.div>
       </div>
     </section>

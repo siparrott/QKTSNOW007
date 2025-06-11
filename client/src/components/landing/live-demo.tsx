@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Play, CheckCircle, Home, Camera, Dumbbell, Trees, Sparkles } from "lucide-react";
 import { Link } from "wouter";
+import statsImage from "@assets/ChatGPT Image Jun 11, 2025, 03_34_34 PM_1749649780004.png";
 
 const demoCalculators = [
   {
@@ -47,9 +48,23 @@ export default function LiveDemo() {
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
             See QuoteKit <span className="text-neon-400">In Action</span>
           </h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-12">
             Try our live calculators and see how they instantly convert visitors into qualified leads with professional quotes.
           </p>
+          
+          {/* Statistics Image */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            viewport={{ once: true }}
+          >
+            <img 
+              src={statsImage} 
+              alt="QuoteKit Statistics - 300% Average Conversion Increase, 24/7 Lead Generation, 5min Setup Time"
+              className="w-full max-w-4xl mx-auto rounded-lg shadow-2xl"
+            />
+          </motion.div>
         </motion.div>
 
         {/* Featured Calculator - Home Renovation AI */}

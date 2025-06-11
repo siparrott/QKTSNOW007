@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 
 // Dynamic calculator component imports
 const calculatorComponents: { [key: string]: React.LazyExoticComponent<React.ComponentType<any>> } = {
@@ -84,7 +84,64 @@ export default function CalculatorPreview({ slug, customConfig, className = "" }
     );
   }
 
-  // Apply custom styling from config
+  // Apply custom styling from config with dynamic CSS injection
+  useEffect(() => {
+    if (customConfig && Object.keys(customConfig).length > 0) {
+      const styleId = `preview-styles-${slug}`;
+      let existingStyle = document.getElementById(styleId);
+      if (existingStyle) {
+        existingStyle.remove();
+      }
+      
+      const style = document.createElement('style');
+      style.id = styleId;
+      
+      const primaryColor = customConfig.brandColors?.primary || '#06D6A0';
+      const secondaryColor = customConfig.brandColors?.secondary || '#2563eb';
+      const accentColor = customConfig.brandColors?.accent || '#f59e0b';
+      const fontFamily = customConfig.styling?.fontFamily || 'Inter';
+      const borderRadius = customConfig.styling?.borderRadius || '0.5rem';
+      
+      style.textContent = `
+        .calculator-preview-${slug} {
+          font-family: ${fontFamily} !important;
+        }
+        
+        .calculator-preview-${slug} * {
+          font-family: inherit !important;
+        }
+        
+        .calculator-preview-${slug} [class*="bg-rose-"], 
+        .calculator-preview-${slug} [class*="border-rose-"], 
+        .calculator-preview-${slug} [class*="text-rose-"] {
+          color: ${primaryColor} !important;
+          border-color: ${primaryColor} !important;
+        }
+        
+        .calculator-preview-${slug} [class*="bg-rose-50"] {
+          background-color: ${primaryColor}15 !important;
+        }
+        
+        .calculator-preview-${slug} [class*="bg-rose-400"] {
+          background-color: ${primaryColor} !important;
+          color: white !important;
+        }
+        
+        .calculator-preview-${slug} button:not([class*="outline"]) {
+          background-color: ${primaryColor} !important;
+          border-color: ${primaryColor} !important;
+          color: white !important;
+        }
+        
+        .calculator-preview-${slug} [class*="rounded"] {
+          border-radius: ${borderRadius} !important;
+        }
+      `;
+      
+      document.head.appendChild(style);
+    }
+  }, [customConfig, slug]);
+
   const previewStyles = {
     fontFamily: customConfig?.styling?.fontFamily || 'Inter',
     borderRadius: customConfig?.styling?.borderRadius || '0.5rem',
@@ -95,7 +152,7 @@ export default function CalculatorPreview({ slug, customConfig, className = "" }
 
   return (
     <div 
-      className={`bg-white rounded-lg border border-gray-200 overflow-hidden ${className}`}
+      className={`calculator-preview-${slug} bg-white rounded-lg border border-gray-200 overflow-hidden ${className}`}
       style={previewStyles}
     >
       <Suspense fallback={

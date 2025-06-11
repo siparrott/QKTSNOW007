@@ -125,46 +125,107 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
     console.log('Applying config to wedding calculator:', config);
     setCustomConfig(config);
     
-    // Apply primary color
-    if (config.brandColors?.primary) {
-      document.documentElement.style.setProperty('--primary', config.brandColors.primary);
-      document.documentElement.style.setProperty('--rose-500', config.brandColors.primary);
-      document.documentElement.style.setProperty('--rose-400', config.brandColors.primary);
-      document.documentElement.style.setProperty('--rose-300', config.brandColors.primary);
+    // Create dynamic CSS styles
+    const styleId = 'wedding-calculator-custom-styles';
+    let existingStyle = document.getElementById(styleId);
+    if (existingStyle) {
+      existingStyle.remove();
     }
     
-    // Apply secondary color
-    if (config.brandColors?.secondary) {
-      document.documentElement.style.setProperty('--secondary', config.brandColors.secondary);
-      document.documentElement.style.setProperty('--gray-900', config.brandColors.secondary);
-      document.documentElement.style.setProperty('--gray-800', config.brandColors.secondary);
-    }
+    const style = document.createElement('style');
+    style.id = styleId;
     
-    // Apply accent color
-    if (config.brandColors?.accent) {
-      document.documentElement.style.setProperty('--accent', config.brandColors.accent);
-      document.documentElement.style.setProperty('--yellow-500', config.brandColors.accent);
-    }
+    let css = `
+      :root {
+        --custom-primary: ${config.brandColors?.primary || '#06D6A0'};
+        --custom-secondary: ${config.brandColors?.secondary || '#2563eb'};
+        --custom-accent: ${config.brandColors?.accent || '#f59e0b'};
+        --custom-font: ${config.styling?.fontFamily || 'Inter'};
+        --custom-radius: ${config.styling?.borderRadius || '0.5rem'};
+      }
+      
+      .wedding-calculator {
+        font-family: var(--custom-font) !important;
+      }
+      
+      .wedding-calculator * {
+        font-family: inherit !important;
+      }
+      
+      /* Primary color applications */
+      .wedding-calculator .border-rose-300 {
+        border-color: var(--custom-primary) !important;
+      }
+      
+      .wedding-calculator .bg-rose-50 {
+        background-color: ${config.brandColors?.primary ? `${config.brandColors.primary}15` : 'rgb(255 241 242)'} !important;
+      }
+      
+      .wedding-calculator .text-rose-800,
+      .wedding-calculator .text-rose-600,
+      .wedding-calculator .text-rose-500 {
+        color: var(--custom-primary) !important;
+      }
+      
+      .wedding-calculator .bg-rose-400 {
+        background-color: var(--custom-primary) !important;
+        color: white !important;
+      }
+      
+      .wedding-calculator .border-rose-200 {
+        border-color: ${config.brandColors?.primary ? `${config.brandColors.primary}40` : 'rgb(254 205 211)'} !important;
+      }
+      
+      .wedding-calculator .border-rose-200:hover {
+        border-color: ${config.brandColors?.primary ? `${config.brandColors.primary}60` : 'rgb(251 113 133)'} !important;
+      }
+      
+      .wedding-calculator .hover\\:bg-rose-25:hover {
+        background-color: ${config.brandColors?.primary ? `${config.brandColors.primary}08` : 'rgb(255 251 252)'} !important;
+      }
+      
+      /* Button styling */
+      .wedding-calculator button:not(.outline) {
+        background-color: var(--custom-primary) !important;
+        border-color: var(--custom-primary) !important;
+        color: white !important;
+      }
+      
+      .wedding-calculator button:not(.outline):hover {
+        background-color: ${config.brandColors?.primary ? `${config.brandColors.primary}dd` : '#059669'} !important;
+      }
+      
+      /* Badge styling */
+      .wedding-calculator .bg-rose-400 {
+        background-color: var(--custom-primary) !important;
+      }
+      
+      /* Border radius */
+      .wedding-calculator .rounded-2xl {
+        border-radius: calc(var(--custom-radius) * 1.5) !important;
+      }
+      
+      .wedding-calculator .rounded-xl {
+        border-radius: var(--custom-radius) !important;
+      }
+      
+      .wedding-calculator .rounded-lg {
+        border-radius: calc(var(--custom-radius) * 0.75) !important;
+      }
+      
+      /* Shadow and selection states */
+      .wedding-calculator .shadow-lg {
+        box-shadow: 0 10px 15px -3px ${config.brandColors?.primary ? `${config.brandColors.primary}20` : 'rgb(0 0 0 / 0.1)'}, 0 4px 6px -2px ${config.brandColors?.primary ? `${config.brandColors.primary}10` : 'rgb(0 0 0 / 0.05)'} !important;
+      }
+    `;
     
-    // Apply typography
-    if (config.styling?.fontFamily) {
-      document.documentElement.style.setProperty('--font-family', config.styling.fontFamily);
-      document.body.style.fontFamily = config.styling.fontFamily;
-    }
+    style.textContent = css;
+    document.head.appendChild(style);
     
-    // Apply border radius
-    if (config.styling?.borderRadius) {
-      document.documentElement.style.setProperty('--radius', config.styling.borderRadius);
-    }
-    
-    // Update company branding
-    if (config.companyBranding?.companyName) {
-      document.title = `${config.companyBranding.companyName} - Wedding Photography Quote`;
-    }
-    
-    // Force re-render by adding a class to body
-    document.body.classList.add('config-applied');
-    setTimeout(() => document.body.classList.remove('config-applied'), 100);
+    // Force component re-render by triggering state update
+    setTimeout(() => {
+      setFormData(prev => ({...prev}));
+    }, 50);
   };
 
   const packageTypes = [
@@ -376,7 +437,7 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-rose-25 to-amber-25">
+    <div className="wedding-calculator min-h-screen bg-gradient-to-br from-stone-50 via-rose-25 to-amber-25">
       {!hideHeader && <QuoteKitHeader />}
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}

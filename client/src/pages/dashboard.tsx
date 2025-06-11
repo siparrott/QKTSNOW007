@@ -207,7 +207,7 @@ export default function Dashboard() {
       return apiRequest('/api/supabase/clone-calculator', {
         method: 'POST',
         body: JSON.stringify({ 
-          userId: currentUser?.id, 
+          userId: getActualUserId(currentUser?.id), 
           templateId 
         })
       });
@@ -237,7 +237,7 @@ export default function Dashboard() {
         body: JSON.stringify({ 
           calculatorId,
           config,
-          userId: currentUser?.id
+          userId: getActualUserId(currentUser?.id)
         })
       });
     },

@@ -109,6 +109,7 @@ export default function Dashboard() {
   // ALL HOOKS AT TOP LEVEL BEFORE ANY CONDITIONAL LOGIC
   const { data: userCalculators = [], isLoading: isLoadingCalculators } = useQuery<UserCalculator[]>({
     queryKey: ['/api/supabase/user-calculators', currentUser?.id],
+    queryFn: () => apiRequest('GET', `/api/supabase/user-calculators/${currentUser?.id}`),
     enabled: !!currentUser?.id
   });
 

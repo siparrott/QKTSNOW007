@@ -28,15 +28,19 @@ export async function apiRequest(
 
   console.log('Making API request to:', fullUrl);
 
-  const res = await fetch(fullUrl, {
+  const fetchOptions = {
     method: 'GET',
-    credentials: "include",
+    credentials: "include" as RequestCredentials,
     ...options,
     headers: {
       ...defaultHeaders,
       ...options?.headers,
     },
-  });
+  };
+
+  console.log('Fetch options:', fetchOptions);
+
+  const res = await fetch(fullUrl, fetchOptions);
 
   console.log('Response status:', res.status);
   await throwIfResNotOk(res);

@@ -45,6 +45,12 @@ export default function Register() {
   const onSubmit = async (data: RegisterForm) => {
     setIsLoading(true);
     try {
+      console.log('Starting registration with data:', { 
+        fullName: data.fullName, 
+        email: data.email, 
+        password: '***hidden***' 
+      });
+      
       const response = await apiRequest('/api/auth/register', {
         method: 'POST',
         body: JSON.stringify({
@@ -54,6 +60,8 @@ export default function Register() {
         }),
       });
 
+      console.log('Registration successful:', response);
+      
       if (response.token) {
         localStorage.setItem('auth_token', response.token);
         localStorage.setItem('user', JSON.stringify(response.user));
@@ -66,7 +74,12 @@ export default function Register() {
         setLocation('/dashboard');
       }
     } catch (error: any) {
-      console.error('Registration error:', error);
+      console.error('Registration error details:', {
+        message: error.message,
+        stack: error.stack,
+        cause: error.cause,
+        name: error.name
+      });
       toast({
         title: "Registration failed",
         description: error.message || "Please try again with different details.",

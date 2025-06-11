@@ -242,7 +242,18 @@ export default function Dashboard() {
   // Calculator functions
   const customizeCalculator = (calc: UserCalculator) => {
     setSelectedCalculator(calc);
-    setCustomConfig(calc.config || defaultConfig);
+    // Initialize with current config or default values
+    const initialConfig = {
+      companyName: calc.config?.companyName || "Your Business",
+      primaryColor: calc.config?.primaryColor || "#06D6A0",
+      headline: calc.config?.headline || "Get Your Custom Quote",
+      description: calc.config?.description || "Fill out the form below to receive your personalized quote.",
+      emailCapture: calc.config?.emailCapture !== undefined ? calc.config.emailCapture : true,
+      phoneCapture: calc.config?.phoneCapture || false,
+      pdfDownload: calc.config?.pdfDownload !== undefined ? calc.config.pdfDownload : true,
+      ...calc.config
+    };
+    setCustomConfig(initialConfig);
     setShowCustomizeModal(true);
   };
 
@@ -819,6 +830,179 @@ export default function Dashboard() {
                 >
                   <Copy className="h-4 w-4 mr-2" />
                   Copy Embed Code
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+
+        {/* Customize Calculator Modal */}
+        {showCustomizeModal && selectedCalculator && (
+          <Dialog open={showCustomizeModal} onOpenChange={setShowCustomizeModal}>
+            <DialogContent className="bg-midnight-800 border-midnight-700 text-white max-w-4xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Customize Calculator</DialogTitle>
+                <DialogDescription className="text-gray-400">
+                  Personalize your calculator appearance and functionality
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="space-y-6">
+                {/* Branding Section */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium text-white">Branding</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-gray-300">Company Name</Label>
+                      <input
+                        type="text"
+                        value={customConfig?.companyName || "Your Business"}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          companyName: e.target.value
+                        }))}
+                        className="w-full mt-1 px-3 py-2 bg-midnight-900 border border-midnight-600 rounded text-white"
+                        placeholder="Enter your company name"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gray-300">Primary Color</Label>
+                      <input
+                        type="color"
+                        value={customConfig?.primaryColor || "#06D6A0"}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          primaryColor: e.target.value
+                        }))}
+                        className="w-full mt-1 h-10 bg-midnight-900 border border-midnight-600 rounded"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Calculator Text */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium text-white">Calculator Text</h3>
+                  <div className="space-y-3">
+                    <div>
+                      <Label className="text-gray-300">Headline</Label>
+                      <input
+                        type="text"
+                        value={customConfig?.headline || "Get Your Custom Quote"}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          headline: e.target.value
+                        }))}
+                        className="w-full mt-1 px-3 py-2 bg-midnight-900 border border-midnight-600 rounded text-white"
+                        placeholder="Enter calculator headline"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gray-300">Description</Label>
+                      <textarea
+                        value={customConfig?.description || "Fill out the form below to receive your personalized quote."}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          description: e.target.value
+                        }))}
+                        className="w-full mt-1 px-3 py-2 bg-midnight-900 border border-midnight-600 rounded text-white h-20"
+                        placeholder="Enter calculator description"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Features */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium text-white">Features</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-300">Email Collection</span>
+                      <input
+                        type="checkbox"
+                        checked={customConfig?.emailCapture || true}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          emailCapture: e.target.checked
+                        }))}
+                        className="rounded"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-300">Phone Collection</span>
+                      <input
+                        type="checkbox"
+                        checked={customConfig?.phoneCapture || false}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          phoneCapture: e.target.checked
+                        }))}
+                        className="rounded"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-300">PDF Download</span>
+                      <input
+                        type="checkbox"
+                        checked={customConfig?.pdfDownload || true}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          pdfDownload: e.target.checked
+                        }))}
+                        className="rounded"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Preview */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium text-white">Preview</h3>
+                  <div className="bg-midnight-900 border border-midnight-600 rounded-lg p-6">
+                    <div className="text-center">
+                      <h2 className="text-xl font-bold mb-2" style={{ color: customConfig?.primaryColor || "#06D6A0" }}>
+                        {customConfig?.headline || "Get Your Custom Quote"}
+                      </h2>
+                      <p className="text-gray-400 mb-4">
+                        {customConfig?.description || "Fill out the form below to receive your personalized quote."}
+                      </p>
+                      <div className="text-sm text-gray-500">
+                        Calculator preview - actual form fields will appear here
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-between pt-6 border-t border-midnight-700">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowCustomizeModal(false)}
+                  className="border-midnight-600 text-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => {
+                    // Save customization
+                    const updatedCalculators = userCalculators.map(calc => 
+                      calc.id === selectedCalculator.id 
+                        ? { ...calc, config: customConfig }
+                        : calc
+                    );
+                    setUserCalculators(updatedCalculators);
+                    localStorage.setItem('userCalculators', JSON.stringify(updatedCalculators));
+                    
+                    toast({
+                      title: "Calculator Updated!",
+                      description: "Your customizations have been saved.",
+                    });
+                    
+                    setShowCustomizeModal(false);
+                  }}
+                  className="bg-neon-500 hover:bg-neon-600 text-black"
+                >
+                  Save Changes
                 </Button>
               </div>
             </DialogContent>

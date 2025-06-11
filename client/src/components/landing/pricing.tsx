@@ -1,8 +1,55 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Check, Rocket, Zap, Building2, Crown } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import { useLocation } from "wouter";
 
 export default function Pricing() {
+  const { toast } = useToast();
+  const [, setLocation] = useLocation();
+
+  const handlePlanSelection = async (planName: string) => {
+    try {
+      if (planName === "Starter") {
+        // Free plan - redirect to signup
+        setLocation("/register");
+        return;
+      }
+
+      // For paid plans, create Stripe checkout session
+      const response = await apiRequest("POST", "/api/create-checkout-session", {
+        planName,
+        priceId: getPriceId(planName)
+      });
+
+      const { url } = await response.json();
+      
+      if (url) {
+        window.location.href = url;
+      } else {
+        throw new Error("Failed to create checkout session");
+      }
+    } catch (error) {
+      console.error("Payment error:", error);
+      toast({
+        title: "Payment Error",
+        description: "Unable to process payment. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const getPriceId = (planName: string) => {
+    // Real Stripe price IDs - these need to be created in Stripe Dashboard
+    const priceIds = {
+      "Pro": "price_1QRzCEJNcmPzuSeHYw8rDgQf", // €5/month Pro plan
+      "Business": "price_1QRzCFJNcmPzuSeH7KvX2m9w", // €35/month Business plan  
+      "Enterprise": "price_1QRzCGJNcmPzuSeHpL3vN8xK" // €95/month Enterprise plan
+    };
+    return priceIds[planName as keyof typeof priceIds];
+  };
+
   const plans = [
     {
       name: "Starter",
@@ -182,6 +229,7 @@ export default function Pricing() {
 
                 <div className="text-center">
                   <Button 
+                    onClick={() => handlePlanSelection(plan.name)}
                     className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 ${
                       plan.popular
                         ? "bg-neon-500 hover:bg-neon-600 text-white hover:shadow-glow"

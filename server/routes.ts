@@ -121,6 +121,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(plans);
   });
 
+  // Create Stripe checkout session for pricing plans
+  app.post("/api/create-checkout-session", async (req, res) => {
+    try {
+      const { planName, priceId } = req.body;
+      
+      if (!planName || !priceId) {
+        return res.status(400).json({ error: "Plan name and price ID are required" });
+      }
+
+      const successUrl = `${req.protocol}://${req.get('host')}/dashboard?session_id={CHECKOUT_SESSION_ID}`;
+      const cancelUrl = `${req.protocol}://${req.get('host')}/pricing`;
+      
+      const session = await stripeService.createCheckoutSession({
+        priceId,
+        successUrl,
+        cancelUrl,
+        metadata: {
+          planName
+        }
+      });
+      
+      res.json({ url: session.url });
+    } catch (error: any) {
+      console.error('Checkout session error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   app.post("/api/subscription/checkout", requireAuth, async (req, res) => {
     try {
       const { planId, calculatorSlug } = req.body;

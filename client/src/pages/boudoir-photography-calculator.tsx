@@ -92,8 +92,21 @@ export default function BoudoirPhotographyCalculator() {
 
   const [pricing, setPricing] = useState<PricingBreakdown | null>(null);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
+  const [customConfig, setCustomConfig] = useState<any>(null);
 
   const totalSteps = 4;
+
+  // Listen for configuration updates from parent dashboard
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === 'APPLY_CONFIG') {
+        setCustomConfig(event.data.config);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
 
   const calculatePricing = (): PricingBreakdown => {
     let total = pricingConfig.basePrice;

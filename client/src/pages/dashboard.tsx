@@ -835,7 +835,20 @@ export default function Dashboard() {
                         };
                       }
                     }}
-                    src={selectedCalculator.embed_url}
+                    src={(() => {
+                      // Extract the base calculator type from the user calculator slug
+                      // Remove temp IDs and timestamps to get the base calculator name
+                      let baseSlug = selectedCalculator.slug;
+                      
+                      // Remove temp suffixes like -temp_123-1234567890
+                      baseSlug = baseSlug.replace(/-temp_\d+-\d+$/, '');
+                      
+                      // Find the matching calculator template
+                      const template = allCalculators.find((calc: any) => calc.slug === baseSlug);
+                      const targetSlug = template ? template.slug : baseSlug;
+                      
+                      return `/${targetSlug}-calculator?preview=true`;
+                    })()}
                     className="w-full h-full border-0"
                     title="Calculator Preview"
                   />

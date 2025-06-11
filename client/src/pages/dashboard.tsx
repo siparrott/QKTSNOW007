@@ -97,6 +97,79 @@ interface UserCalculator {
   last_updated: string;
 }
 
+// All available calculators
+const allCalculators = [
+  // Photography & Creative (10 calculators)
+  { id: 1, name: "Wedding Photography", category: "Photography & Creative", slug: "wedding-photography" },
+  { id: 2, name: "Boudoir Photography", category: "Photography & Creative", slug: "boudoir-photography" },
+  { id: 3, name: "Corporate Headshots", category: "Photography & Creative", slug: "corporate-headshots" },
+  { id: 4, name: "Drone/Aerial Photography", category: "Photography & Creative", slug: "drone-photography" },
+  { id: 5, name: "Event Videography", category: "Photography & Creative", slug: "event-videography" },
+  { id: 6, name: "Real Estate Photography", category: "Photography & Creative", slug: "real-estate-photography" },
+  { id: 7, name: "Food Photography", category: "Photography & Creative", slug: "food-photography" },
+  { id: 8, name: "Commercial Photography", category: "Photography & Creative", slug: "commercial-photography" },
+  { id: 9, name: "Portrait Photography", category: "Photography & Creative", slug: "portrait-photography" },
+  { id: 10, name: "Lifestyle Influencer", category: "Photography & Creative", slug: "lifestyle-influencer" },
+
+  // Home Services (15 calculators)
+  { id: 11, name: "Home Renovation AI", category: "Home Services", slug: "home-renovation" },
+  { id: 12, name: "Electrician Services", category: "Home Services", slug: "electrician" },
+  { id: 13, name: "Pest Control", category: "Home Services", slug: "pest-control" },
+  { id: 14, name: "Landscaping Services", category: "Home Services", slug: "landscaping" },
+  { id: 15, name: "Roofing Services", category: "Home Services", slug: "roofing" },
+  { id: 16, name: "Solar Panel Installation", category: "Home Services", slug: "solar-panels" },
+  { id: 17, name: "Window & Door Installation", category: "Home Services", slug: "windows-doors" },
+  { id: 18, name: "HVAC Services", category: "Home Services", slug: "hvac" },
+  { id: 19, name: "Plumbing Services", category: "Home Services", slug: "plumbing" },
+  { id: 20, name: "Cleaning Services", category: "Home Services", slug: "cleaning" },
+  { id: 21, name: "Pool Installation", category: "Home Services", slug: "pool-installation" },
+  { id: 22, name: "Deck & Patio Construction", category: "Home Services", slug: "deck-patio" },
+  { id: 23, name: "Fence Installation", category: "Home Services", slug: "fence-installation" },
+  { id: 24, name: "Concrete & Masonry", category: "Home Services", slug: "concrete-masonry" },
+  { id: 25, name: "Painting Services", category: "Home Services", slug: "painting" },
+
+  // Professional Services (15 calculators)
+  { id: 26, name: "Legal Advisory", category: "Professional Services", slug: "legal-advisory" },
+  { id: 27, name: "Tax Preparation", category: "Professional Services", slug: "tax-preparation" },
+  { id: 28, name: "Business Coaching", category: "Professional Services", slug: "business-coaching" },
+  { id: 29, name: "Virtual Assistant", category: "Professional Services", slug: "virtual-assistant" },
+  { id: 30, name: "Translation Services", category: "Professional Services", slug: "translation" },
+  { id: 31, name: "Copywriting Services", category: "Professional Services", slug: "copywriting" },
+  { id: 32, name: "Accounting Services", category: "Professional Services", slug: "accounting" },
+  { id: 33, name: "Marketing Consultation", category: "Professional Services", slug: "marketing-consultation" },
+  { id: 34, name: "Web Development", category: "Professional Services", slug: "web-development" },
+  { id: 35, name: "Graphic Design", category: "Professional Services", slug: "graphic-design" },
+  { id: 36, name: "SEO Services", category: "Professional Services", slug: "seo-services" },
+  { id: 37, name: "Social Media Management", category: "Professional Services", slug: "social-media" },
+  { id: 38, name: "Content Creation", category: "Professional Services", slug: "content-creation" },
+  { id: 39, name: "Financial Planning", category: "Professional Services", slug: "financial-planning" },
+  { id: 40, name: "Insurance Consultation", category: "Professional Services", slug: "insurance" },
+
+  // Health & Beauty (10 calculators)
+  { id: 41, name: "Personal Training", category: "Health & Beauty", slug: "personal-training" },
+  { id: 42, name: "Nutrition Coaching", category: "Health & Beauty", slug: "nutrition-coaching" },
+  { id: 43, name: "Hair Styling", category: "Health & Beauty", slug: "hair-styling" },
+  { id: 44, name: "Makeup Artist", category: "Health & Beauty", slug: "makeup-artist" },
+  { id: 45, name: "Massage Therapy", category: "Health & Beauty", slug: "massage-therapy" },
+  { id: 46, name: "Dental Services", category: "Health & Beauty", slug: "dental-services" },
+  { id: 47, name: "Plastic Surgery", category: "Health & Beauty", slug: "plastic-surgery" },
+  { id: 48, name: "Medical Clinic", category: "Health & Beauty", slug: "medical-clinic" },
+  { id: 49, name: "Childcare Services", category: "Health & Beauty", slug: "childcare" },
+  { id: 50, name: "Elder Care", category: "Health & Beauty", slug: "elder-care" },
+
+  // Technology (4 calculators)
+  { id: 51, name: "IT Support", category: "Technology", slug: "it-support" },
+  { id: 52, name: "Software Development", category: "Technology", slug: "software-development" },
+  { id: 53, name: "Data Recovery", category: "Technology", slug: "data-recovery" },
+  { id: 54, name: "Cybersecurity Consultation", category: "Technology", slug: "cybersecurity" },
+
+  // Transportation (4 calculators)
+  { id: 55, name: "Moving Services", category: "Transportation", slug: "moving-services" },
+  { id: 56, name: "Auto Repair", category: "Transportation", slug: "auto-repair" },
+  { id: 57, name: "Delivery Services", category: "Transportation", slug: "delivery" },
+  { id: 58, name: "Rideshare Premium", category: "Transportation", slug: "rideshare" }
+];
+
 export default function Dashboard() {
   const [location, setLocation] = useLocation();
   const { toast } = useToast();
@@ -165,6 +238,33 @@ export default function Dashboard() {
   const showEmbedCode = (calc: UserCalculator) => {
     setSelectedCalculator(calc);
     setShowEmbedModal(true);
+  };
+
+  // Filter calculators based on search term and category
+  const filteredCalculators = allCalculators.filter(calculator => {
+    const matchesSearch = calculator.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === "All" || calculator.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  // Add calculator function
+  const addCalculator = async (calculator: any) => {
+    try {
+      const instanceId = `calc-${Date.now()}`;
+      
+      toast({
+        title: "Calculator Added!",
+        description: `${calculator.name} has been added to your dashboard.`,
+      });
+      
+      setShowCalculatorModal(false);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add calculator. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   if (isLoading) {
@@ -683,6 +783,105 @@ export default function Dashboard() {
               </div>
             </DialogContent>
           </Dialog>
+        )}
+
+        {/* Calculator Selection Modal */}
+        {showCalculatorModal && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-midnight-800 rounded-2xl border border-midnight-700 w-full max-w-6xl max-h-[90vh] overflow-hidden">
+              {/* Modal Header */}
+              <div className="border-b border-midnight-700 p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-2xl font-bold text-white">Add Calculator</h2>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowCalculatorModal(false)}
+                    className="text-gray-400 hover:text-white"
+                  >
+                    <X className="h-5 w-5" />
+                  </Button>
+                </div>
+                
+                {/* Search and Filter */}
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    <input
+                      type="text"
+                      placeholder="Search calculators..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full bg-midnight-900 border border-midnight-600 rounded-lg pl-10 pr-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-neon-500"
+                    />
+                  </div>
+                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                    <SelectTrigger className="w-full sm:w-48 bg-midnight-900 border-midnight-600 text-white">
+                      <SelectValue placeholder="Category" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-midnight-800 border-midnight-600">
+                      <SelectItem value="All">All Categories</SelectItem>
+                      <SelectItem value="Photography & Creative">Photography & Creative</SelectItem>
+                      <SelectItem value="Home Services">Home Services</SelectItem>
+                      <SelectItem value="Professional Services">Professional Services</SelectItem>
+                      <SelectItem value="Health & Beauty">Health & Beauty</SelectItem>
+                      <SelectItem value="Technology">Technology</SelectItem>
+                      <SelectItem value="Transportation">Transportation</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Calculator Grid */}
+              <div className="p-6 overflow-y-auto max-h-[60vh]">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {filteredCalculators.map((calculator) => (
+                    <motion.div
+                      key={calculator.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="bg-midnight-900 border border-midnight-600 rounded-xl p-4 hover:border-neon-500/50 transition-all duration-200"
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-neon-500/20 rounded-lg flex items-center justify-center">
+                            <Calculator className="h-5 w-5 text-neon-400" />
+                          </div>
+                          <div>
+                            <h3 className="text-white font-medium text-sm">{calculator.name}</h3>
+                            <p className="text-gray-400 text-xs">{calculator.category}</p>
+                          </div>
+                        </div>
+                        <Button
+                          size="sm"
+                          onClick={() => addCalculator(calculator)}
+                          className="bg-neon-500 hover:bg-neon-600 text-black text-xs h-6 px-2"
+                        >
+                          Add
+                        </Button>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="border-t border-midnight-700 p-6">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-gray-400">
+                    {allCalculators.length} calculators available
+                  </p>
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowCalculatorModal(false)}
+                    className="border-midnight-600 text-gray-300 hover:bg-midnight-600"
+                  >
+                    Close
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>

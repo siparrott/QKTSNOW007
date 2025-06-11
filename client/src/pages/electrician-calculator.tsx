@@ -54,7 +54,7 @@ export default function ElectricianCalculator() {
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data.type === 'APPLY_CONFIG') {
-        setCustomConfig(event.data.config);
+        applyCustomConfig(event.data.config);
       }
     };
 
@@ -62,15 +62,48 @@ export default function ElectricianCalculator() {
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 
-  // Dynamic styling based on custom configuration
-  const getStyles = () => {
-    if (!customConfig) return {};
+  const applyCustomConfig = (config: any) => {
+    console.log('Applying config to electrician calculator:', config);
+    setCustomConfig(config);
     
-    return {
-      '--primary-color': customConfig.brandColors?.primary || '#f59e0b',
-      '--secondary-color': customConfig.brandColors?.secondary || '#3b82f6',
-      '--accent-color': customConfig.brandColors?.accent || '#10b981',
-    } as React.CSSProperties;
+    // Apply primary color
+    if (config.brandColors?.primary) {
+      document.documentElement.style.setProperty('--primary', config.brandColors.primary);
+      document.documentElement.style.setProperty('--amber-500', config.brandColors.primary);
+      document.documentElement.style.setProperty('--yellow-500', config.brandColors.primary);
+    }
+    
+    // Apply secondary color
+    if (config.brandColors?.secondary) {
+      document.documentElement.style.setProperty('--secondary', config.brandColors.secondary);
+      document.documentElement.style.setProperty('--blue-600', config.brandColors.secondary);
+    }
+    
+    // Apply accent color
+    if (config.brandColors?.accent) {
+      document.documentElement.style.setProperty('--accent', config.brandColors.accent);
+      document.documentElement.style.setProperty('--emerald-500', config.brandColors.accent);
+    }
+    
+    // Apply typography
+    if (config.styling?.fontFamily) {
+      document.documentElement.style.setProperty('--font-family', config.styling.fontFamily);
+      document.body.style.fontFamily = config.styling.fontFamily;
+    }
+    
+    // Apply border radius
+    if (config.styling?.borderRadius) {
+      document.documentElement.style.setProperty('--radius', config.styling.borderRadius);
+    }
+    
+    // Update company branding
+    if (config.companyBranding?.companyName) {
+      document.title = `${config.companyBranding.companyName} - Electrician Services Quote`;
+    }
+    
+    // Force re-render
+    document.body.classList.add('config-applied');
+    setTimeout(() => document.body.classList.remove('config-applied'), 100);
   };
 
   const getCompanyName = () => {

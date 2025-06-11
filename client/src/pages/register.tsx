@@ -45,6 +45,15 @@ export default function Register() {
   const onSubmit = async (data: RegisterForm) => {
     setIsLoading(true);
     try {
+      // Test API connectivity first
+      console.log('Testing API connectivity...');
+      const testResponse = await fetch('/api/test');
+      console.log('Test response status:', testResponse.status);
+      
+      if (!testResponse.ok) {
+        throw new Error('Cannot connect to API server');
+      }
+      
       const response = await apiRequest('/api/auth/register', {
         method: 'POST',
         body: JSON.stringify({

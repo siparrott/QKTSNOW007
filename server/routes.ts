@@ -41,6 +41,11 @@ async function requireAuth(req: Request, res: Response, next: NextFunction) {
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
+  // Test endpoint for connectivity verification
+  app.get('/api/test', (req, res) => {
+    res.json({ message: 'API is working', timestamp: new Date().toISOString() });
+  });
+  
   // Authentication routes
   app.post("/api/auth/register", async (req, res) => {
     try {

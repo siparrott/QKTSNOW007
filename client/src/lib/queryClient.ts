@@ -22,8 +22,8 @@ export async function apiRequest(
     defaultHeaders['Authorization'] = `Bearer ${token}`;
   }
 
-  // Handle Replit environment - use relative URLs for same-origin requests
-  const fullUrl = url.startsWith('http') ? url : url;
+  // Ensure same-origin requests in Replit environment
+  const fullUrl = url;
 
   const fetchOptions = {
     method: 'GET',

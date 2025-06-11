@@ -18,12 +18,18 @@ export default function Pricing() {
       }
 
       // For paid plans, create Stripe checkout session
-      const response = await apiRequest("POST", "/api/create-checkout-session", {
-        planName,
-        priceId: getPriceId(planName)
+      const response = await apiRequest("/api/create-checkout-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          planName,
+          priceId: getPriceId(planName)
+        })
       });
 
-      const { url } = await response.json();
+      const { url } = response;
       
       if (url) {
         window.location.href = url;

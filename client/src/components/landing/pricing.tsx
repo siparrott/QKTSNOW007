@@ -41,11 +41,11 @@ export default function Pricing() {
   };
 
   const getPriceId = (planName: string) => {
-    // Real Stripe price IDs - these need to be created in Stripe Dashboard
+    // Real Stripe price IDs created in Stripe
     const priceIds = {
-      "Pro": "price_1QRzCEJNcmPzuSeHYw8rDgQf", // €5/month Pro plan
-      "Business": "price_1QRzCFJNcmPzuSeH7KvX2m9w", // €35/month Business plan  
-      "Enterprise": "price_1QRzCGJNcmPzuSeHpL3vN8xK" // €95/month Enterprise plan
+      "Pro": "price_1RYoePIgi4Fqo7Cvk81kiiuZ", // €5/month Pro plan
+      "Business": "price_1RYoeQIgi4Fqo7CviSGzAy4h", // €35/month Business plan  
+      "Enterprise": "price_1RYoeQIgi4Fqo7CvCEuZyKcQ" // €95/month Enterprise plan
     };
     return priceIds[planName as keyof typeof priceIds];
   };

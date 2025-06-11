@@ -152,28 +152,38 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
         font-family: inherit !important;
       }
       
-      /* Primary color applications with higher specificity */
+      /* Primary color applications - Force override all rose colors */
       .wedding-calculator .border-rose-300,
-      .wedding-calculator *[class*="border-rose"] {
-        border-color: var(--custom-primary) !important;
+      .wedding-calculator .border-rose-200 {
+        border-color: ${primaryColor} !important;
       }
       
-      .wedding-calculator .bg-rose-50,
-      .wedding-calculator *[class*="bg-rose-5"] {
+      .wedding-calculator .bg-rose-50 {
         background-color: ${primaryColor}15 !important;
       }
       
       .wedding-calculator .text-rose-800,
       .wedding-calculator .text-rose-600,
-      .wedding-calculator .text-rose-500,
-      .wedding-calculator *[class*="text-rose"] {
-        color: var(--custom-primary) !important;
+      .wedding-calculator .text-rose-500 {
+        color: ${primaryColor} !important;
       }
       
-      .wedding-calculator .bg-rose-400,
-      .wedding-calculator *[class*="bg-rose-4"] {
-        background-color: var(--custom-primary) !important;
+      .wedding-calculator .bg-rose-400 {
+        background-color: ${primaryColor} !important;
         color: white !important;
+      }
+      
+      /* Target specific elements by content and structure */
+      .wedding-calculator [class*="bg-rose"] {
+        background-color: ${primaryColor} !important;
+      }
+      
+      .wedding-calculator [class*="text-rose"] {
+        color: ${primaryColor} !important;
+      }
+      
+      .wedding-calculator [class*="border-rose"] {
+        border-color: ${primaryColor} !important;
       }
       
       .wedding-calculator .border-rose-200 {
@@ -192,8 +202,8 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
       .wedding-calculator button,
       .wedding-calculator .button,
       .wedding-calculator [role="button"] {
-        background-color: var(--custom-primary) !important;
-        border-color: var(--custom-primary) !important;
+        background-color: ${primaryColor} !important;
+        border-color: ${primaryColor} !important;
         color: white !important;
       }
       
@@ -204,15 +214,34 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
         opacity: 0.9 !important;
       }
       
-      /* Card selection states */
-      .wedding-calculator .border-2.border-rose-300 {
-        border-color: var(--custom-primary) !important;
-        box-shadow: 0 0 0 1px ${primaryColor}40 !important;
+      /* Force override all existing rose colors with direct hex values */
+      .wedding-calculator .bg-rose-400,
+      .wedding-calculator .bg-rose-500,
+      .wedding-calculator .bg-rose-600 {
+        background-color: ${primaryColor} !important;
       }
       
-      /* Popular badges */
+      .wedding-calculator .border-rose-300,
+      .wedding-calculator .border-rose-400,
+      .wedding-calculator .border-2.border-rose-300 {
+        border-color: ${primaryColor} !important;
+      }
+      
+      .wedding-calculator .text-rose-500,
+      .wedding-calculator .text-rose-600,
+      .wedding-calculator .text-rose-700,
+      .wedding-calculator .text-rose-800 {
+        color: ${primaryColor} !important;
+      }
+      
+      /* Override Tailwind's compiled styles */
+      .wedding-calculator .bg-rose-50 {
+        background-color: ${primaryColor}10 !important;
+      }
+      
+      /* Popular badge specific override */
       .wedding-calculator .bg-rose-400.text-white {
-        background-color: var(--custom-primary) !important;
+        background-color: ${primaryColor} !important;
       }
       
       /* Badge styling */
@@ -242,8 +271,59 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
     style.textContent = css;
     document.head.appendChild(style);
     
-    // Force component re-render by triggering state update
+    // Apply aggressive DOM manipulation to force color changes
     setTimeout(() => {
+      const calculator = document.querySelector('.wedding-calculator');
+      if (calculator) {
+        // Create a comprehensive style override
+        const overrideStyle = document.createElement('style');
+        overrideStyle.id = 'force-color-override';
+        overrideStyle.textContent = `
+          .wedding-calculator .bg-rose-400 { background-color: ${primaryColor} !important; }
+          .wedding-calculator .bg-rose-50 { background-color: ${primaryColor}15 !important; }
+          .wedding-calculator .text-rose-800 { color: ${primaryColor} !important; }
+          .wedding-calculator .text-rose-600 { color: ${primaryColor} !important; }
+          .wedding-calculator .text-rose-500 { color: ${primaryColor} !important; }
+          .wedding-calculator .border-rose-300 { border-color: ${primaryColor} !important; }
+          .wedding-calculator .border-rose-200 { border-color: ${primaryColor}40 !important; }
+          .wedding-calculator button { background-color: ${primaryColor} !important; border-color: ${primaryColor} !important; }
+        `;
+        document.head.appendChild(overrideStyle);
+        
+        // Direct element targeting with specific selectors
+        const specificElements = [
+          '.bg-rose-400',
+          '.text-rose-800',
+          '.text-rose-600', 
+          '.text-rose-500',
+          '.border-rose-300',
+          'button'
+        ];
+        
+        specificElements.forEach(selector => {
+          const elements = calculator.querySelectorAll(selector);
+          elements.forEach(el => {
+            const htmlEl = el as HTMLElement;
+            if (selector.includes('bg-')) {
+              htmlEl.style.setProperty('background-color', primaryColor, 'important');
+            } else if (selector.includes('text-')) {
+              htmlEl.style.setProperty('color', primaryColor, 'important');
+            } else if (selector.includes('border-')) {
+              htmlEl.style.setProperty('border-color', primaryColor, 'important');
+            } else if (selector === 'button') {
+              htmlEl.style.setProperty('background-color', primaryColor, 'important');
+              htmlEl.style.setProperty('border-color', primaryColor, 'important');
+            }
+          });
+        });
+        
+        // Force browser repaint
+        const htmlCalc = calculator as HTMLElement;
+        htmlCalc.style.transform = 'translateZ(0)';
+        htmlCalc.offsetHeight; // Trigger reflow
+        htmlCalc.style.transform = '';
+      }
+      
       setFormData(prev => ({...prev}));
     }, 50);
   };

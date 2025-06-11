@@ -62,6 +62,9 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [customConfig, setCustomConfig] = useState<any>(propConfig || null);
+  const [headline, setHeadline] = useState("Get Your Custom Quote");
+  const [description, setDescription] = useState("Fill out the form below to receive your personalized quote.");
+  const [companyName, setCompanyName] = useState("Your Business");
   const [formData, setFormData] = useState<WeddingFormData>({
     packageType: "",
     hours: "",
@@ -117,6 +120,8 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
   const applyCustomConfig = (config: any) => {
     console.log('Applying config to wedding calculator:', config);
     setCustomConfig(config);
+    
+    // Update text content will be handled by component re-render
     
     // Create dynamic CSS styles
     const styleId = 'wedding-calculator-custom-styles';
@@ -496,38 +501,74 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
     onClick: () => void; 
     icon?: string; 
     popular?: boolean;
-  }) => (
-    <div
-      onClick={onClick}
-      className={`relative p-4 rounded-2xl border-2 cursor-pointer transition-all hover:shadow-lg ${
-        selected 
-          ? "border-rose-300 bg-rose-50 shadow-lg" 
-          : "border-stone-200 hover:border-rose-200 bg-white hover:bg-rose-25"
-      }`}
-    >
-      {popular && (
-        <Badge className="absolute -top-2 -right-2 bg-rose-400 text-white text-xs font-semibold">
-          Popular
-        </Badge>
-      )}
-      <div className="text-center">
-        {icon && <div className="text-2xl mb-2">{icon}</div>}
-        <div className={`font-serif font-semibold ${selected ? "text-rose-800" : "text-stone-700"}`}>{option.label}</div>
-        {option.basePrice !== undefined && (
-          <div className={`text-sm mt-1 ${selected ? "text-rose-600" : "text-stone-500"}`}>€{option.basePrice}</div>
+  }) => {
+    const primaryColor = customConfig?.brandColors?.primary || '#f43f5e';
+    
+    return (
+      <div
+        onClick={onClick}
+        className={`relative p-4 rounded-2xl border-2 cursor-pointer transition-all hover:shadow-lg ${
+          selected 
+            ? "border-rose-300 bg-rose-50 shadow-lg" 
+            : "border-stone-200 hover:border-rose-200 bg-white hover:bg-rose-25"
+        }`}
+        style={{
+          borderColor: selected ? primaryColor : undefined,
+          backgroundColor: selected ? primaryColor + '15' : undefined
+        }}
+      >
+        {popular && (
+          <Badge 
+            className="absolute -top-2 -right-2 bg-rose-400 text-white text-xs font-semibold"
+            style={{ backgroundColor: primaryColor }}
+          >
+            Popular
+          </Badge>
         )}
-        {option.surcharge !== undefined && option.surcharge > 0 && (
-          <div className={`text-sm mt-1 ${selected ? "text-rose-600" : "text-stone-500"}`}>+€{option.surcharge}</div>
-        )}
-        {option.price !== undefined && option.price > 0 && (
-          <div className={`text-sm mt-1 ${selected ? "text-rose-600" : "text-stone-500"}`}>+€{option.price}</div>
-        )}
-        {option.hours !== undefined && (
-          <div className={`text-xs mt-1 ${selected ? "text-rose-500" : "text-stone-400"}`}>{option.hours} hours included</div>
-        )}
+        <div className="text-center">
+          {icon && <div className="text-2xl mb-2">{icon}</div>}
+          <div 
+            className={`font-serif font-semibold ${selected ? "text-rose-800" : "text-stone-700"}`}
+            style={{ color: selected ? primaryColor : undefined }}
+          >
+            {option.label}
+          </div>
+          {option.basePrice !== undefined && (
+            <div 
+              className={`text-sm mt-1 ${selected ? "text-rose-600" : "text-stone-500"}`}
+              style={{ color: selected ? primaryColor : undefined }}
+            >
+              €{option.basePrice}
+            </div>
+          )}
+          {option.surcharge !== undefined && option.surcharge > 0 && (
+            <div 
+              className={`text-sm mt-1 ${selected ? "text-rose-600" : "text-stone-500"}`}
+              style={{ color: selected ? primaryColor : undefined }}
+            >
+              +€{option.surcharge}
+            </div>
+          )}
+          {option.price !== undefined && option.price > 0 && (
+            <div 
+              className={`text-sm mt-1 ${selected ? "text-rose-600" : "text-stone-500"}`}
+              style={{ color: selected ? primaryColor : undefined }}
+            >
+              +€{option.price}
+            </div>
+          )}
+          {option.hours !== undefined && (
+            <div 
+              className={`text-xs mt-1 ${selected ? "text-rose-500" : "text-stone-400"}`}
+              style={{ color: selected ? primaryColor : undefined }}
+            >
+              {option.hours} hours included
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const steps = [
     { number: 1, title: "Package & Coverage", completed: !!formData.packageType && !!formData.hours },
@@ -569,27 +610,40 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
             <Card className="p-8 bg-white/90 backdrop-blur-sm border-rose-200 rounded-3xl shadow-xl">
               {/* Progress Steps */}
               <div className="flex items-center justify-between mb-8">
-                {steps.map((step, index) => (
-                  <div key={step.number} className="flex items-center">
-                    <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
-                        step.completed
-                          ? "bg-rose-400 text-white"
-                          : currentStep === step.number
-                          ? "bg-rose-300 text-white"
-                          : "bg-stone-300 text-stone-600"
-                      }`}
-                    >
-                      {step.completed ? <CheckCircle className="h-4 w-4" /> : step.number}
+                {steps.map((step, index) => {
+                  const primaryColor = customConfig?.brandColors?.primary || '#f43f5e';
+                  return (
+                    <div key={step.number} className="flex items-center">
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
+                          step.completed
+                            ? "bg-rose-400 text-white"
+                            : currentStep === step.number
+                            ? "bg-rose-300 text-white"
+                            : "bg-stone-300 text-stone-600"
+                        }`}
+                        style={{
+                          backgroundColor: step.completed 
+                            ? primaryColor 
+                            : currentStep === step.number 
+                            ? primaryColor + 'CC' 
+                            : undefined
+                        }}
+                      >
+                        {step.completed ? <CheckCircle className="h-4 w-4" /> : step.number}
+                      </div>
+                      <span className="ml-2 text-sm font-medium text-stone-600">
+                        {step.title}
+                      </span>
+                      {index < steps.length - 1 && (
+                        <div 
+                          className="w-8 h-px bg-rose-200 mx-4"
+                          style={{ backgroundColor: primaryColor + '40' }}
+                        ></div>
+                      )}
                     </div>
-                    <span className="ml-2 text-sm font-medium text-stone-600">
-                      {step.title}
-                    </span>
-                    {index < steps.length - 1 && (
-                      <div className="w-8 h-px bg-rose-200 mx-4"></div>
-                    )}
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* Step 1: Package & Coverage */}

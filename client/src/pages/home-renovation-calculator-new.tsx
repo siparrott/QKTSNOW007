@@ -47,9 +47,16 @@ interface PricingBreakdown {
   breakdown: string[];
 }
 
-export default function HomeRenovationCalculator() {
+interface HomeRenovationCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function HomeRenovationCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: HomeRenovationCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
+  const [customConfig, setCustomConfig] = useState<any>(propConfig || null);
   const [formData, setFormData] = useState<RenovationFormData>({
     projectType: "",
     propertySize: "",
@@ -285,7 +292,7 @@ export default function HomeRenovationCalculator() {
 
   return (
     <div className="min-h-screen&">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">

@@ -428,6 +428,15 @@ export default function CalculatorPage({ customConfig: propConfig, isPreview = f
 
   return (
     <div className="min-h-screen bg-midnight-900 text-white">
+      {!hideHeader && (
+        <div className="bg-midnight-800 border-b border-midnight-700">
+          <div className="container mx-auto px-4 py-4">
+            <Link href="/" className="text-blue-400 hover:text-blue-300 transition-colors">
+              ← Back to Dashboard
+            </Link>
+          </div>
+        </div>
+      )}
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center mb-8">

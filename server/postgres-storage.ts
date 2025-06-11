@@ -230,4 +230,35 @@ export class PostgresStorage implements IStorage {
     const result = await db.insert(leads).values(lead).returning();
     return result[0];
   }
+
+  // Two-Factor Authentication methods
+  async enableTwoFactor(userId: string, secret: string, backupCodes: string[]): Promise<User> {
+    const result = await db.update(users).set({
+      twoFactorEnabled: true,
+      twoFactorSecret: secret,
+      backupCodes: backupCodes
+    }).where(eq(users.id, userId)).returning();
+    return result[0];
+  }
+
+  async disableTwoFactor(userId: string): Promise<User> {
+    const result = await db.update(users).set({
+      twoFactorEnabled: false,
+      twoFactorSecret: null,
+      backupCodes: null
+    }).where(eq(users.id, userId)).returning();
+    return result[0];
+  }
+
+  async updateUserBackupCodes(userId: string, backupCodes: string[]): Promise<User> {
+    const result = await db.update(users).set({
+      backupCodes: backupCodes
+    }).where(eq(users.id, userId)).returning();
+    return result[0];
+  }
+
+  async getUserById(userId: string): Promise<User | undefined> {
+    const result = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+    return result[0];
+  }
 }

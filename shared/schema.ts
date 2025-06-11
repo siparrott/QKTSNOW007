@@ -146,16 +146,10 @@ export type Lead = typeof leads.$inferSelect;
 export type Subscription = typeof subscriptions.$inferSelect;
 export type Session = typeof sessions.$inferSelect;
 
-// Types
+// Insert types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type RegisterUser = z.infer<typeof registerUserSchema>;
 export type LoginUser = z.infer<typeof loginUserSchema>;
-export type User = typeof users.$inferSelect;
-export type Calculator = typeof calculators.$inferSelect;
-export type UserCalculator = typeof userCalculators.$inferSelect;
-export type Lead = typeof leads.$inferSelect;
-export type Subscription = typeof subscriptions.$inferSelect;
-export type Session = typeof sessions.$inferSelect;
 export type InsertCalculator = z.infer<typeof insertCalculatorSchema>;
 export type InsertUserCalculator = z.infer<typeof insertUserCalculatorSchema>;
 export type InsertLead = z.infer<typeof insertLeadSchema>;

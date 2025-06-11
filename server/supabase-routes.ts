@@ -120,7 +120,7 @@ router.post('/update-calculator-config', async (req, res) => {
     
     const success = await updateUserCalculator(calculatorId, { 
       config,
-      custom_branding: config
+      customBranding: config
     });
     
     if (!success) {

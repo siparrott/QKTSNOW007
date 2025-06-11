@@ -254,7 +254,8 @@ export default function Dashboard() {
       fontFamily: "Poppins",
       fontSize: "medium",
       roundedCorners: 12,
-      logoUrl: ""
+      logoUrl: "",
+      logoSize: 48
     },
     appearance: {
       background: "gradient",
@@ -855,23 +856,52 @@ export default function Dashboard() {
 
                     <div>
                       <label className="text-sm text-gray-300 block mb-2">Logo Upload</label>
-                      <div className="space-y-2">
+                      <div className="space-y-3">
                         {customConfig?.branding?.logoUrl ? (
-                          <div className="flex items-center space-x-2">
-                            <img 
-                              src={customConfig.branding.logoUrl} 
-                              alt="Logo" 
-                              className="w-16 h-16 object-contain bg-white rounded border"
-                            />
-                            <button
-                              onClick={() => setCustomConfig(prev => ({
-                                ...prev,
-                                branding: { ...prev.branding, logoUrl: "" }
-                              }))}
-                              className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
-                            >
-                              Remove
-                            </button>
+                          <div className="space-y-3">
+                            <div className="flex items-center space-x-3">
+                              <img 
+                                src={customConfig.branding.logoUrl} 
+                                alt="Logo" 
+                                className="object-contain bg-white rounded border"
+                                style={{ 
+                                  height: `${customConfig?.branding?.logoSize || 48}px`,
+                                  width: 'auto',
+                                  maxWidth: '120px'
+                                }}
+                              />
+                              <button
+                                onClick={() => setCustomConfig(prev => ({
+                                  ...prev,
+                                  branding: { ...prev.branding, logoUrl: "" }
+                                }))}
+                                className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
+                              >
+                                Remove
+                              </button>
+                            </div>
+                            
+                            <div>
+                              <label className="text-xs text-gray-400 block mb-2">
+                                Logo Size: {customConfig?.branding?.logoSize || 48}px
+                              </label>
+                              <input
+                                type="range"
+                                min="24"
+                                max="120"
+                                step="4"
+                                value={customConfig?.branding?.logoSize || 48}
+                                onChange={(e) => setCustomConfig(prev => ({
+                                  ...prev,
+                                  branding: { ...prev.branding, logoSize: parseInt(e.target.value) }
+                                }))}
+                                className="w-full accent-neon-500"
+                              />
+                              <div className="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>Small</span>
+                                <span>Large</span>
+                              </div>
+                            </div>
                           </div>
                         ) : (
                           <input
@@ -1244,7 +1274,12 @@ export default function Dashboard() {
                             <img 
                               src={customConfig.branding.logoUrl} 
                               alt="Company Logo" 
-                              className="h-12 object-contain"
+                              className="object-contain"
+                              style={{
+                                height: `${customConfig?.branding?.logoSize || 48}px`,
+                                width: 'auto',
+                                maxWidth: '200px'
+                              }}
                             />
                           </div>
                         )}

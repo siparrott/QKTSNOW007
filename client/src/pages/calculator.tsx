@@ -54,7 +54,13 @@ interface QuoteResult {
   breakdown: string[];
 }
 
-export default function CalculatorPage() {
+interface CalculatorPageProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function CalculatorPage({ customConfig: propConfig, isPreview = false, hideHeader = false }: CalculatorPageProps = {}) {
   const { slug } = useParams<{ slug: string }>();
   const [formData, setFormData] = useState<CalculatorFormData>({
     extras: [],

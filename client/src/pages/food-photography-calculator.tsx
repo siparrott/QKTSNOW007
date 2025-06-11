@@ -49,7 +49,13 @@ interface PricingBreakdown {
   breakdown: string[];
 }
 
-export default function FoodPhotographyCalculator() {
+interface FoodPhotographyCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function FoodPhotographyCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: FoodPhotographyCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [formData, setFormData] = useState<FoodFormData>({

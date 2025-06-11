@@ -48,7 +48,13 @@ interface PricingBreakdown {
   breakdown: string[];
 }
 
-export default function EventVideographyCalculator() {
+interface EventVideographyCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function EventVideographyCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: EventVideographyCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [formData, setFormData] = useState<VideographyFormData>({

@@ -324,7 +324,7 @@ export default function MovingServicesCalculator({ customConfig: propConfig, isP
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 via-orange-50 to-red-100">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       
       <div className="container mx-auto px-4 py-8">
         {/* Hero Section */}

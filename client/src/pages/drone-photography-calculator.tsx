@@ -46,7 +46,13 @@ interface PricingBreakdown {
   breakdown: string[];
 }
 
-export default function DronePhotographyCalculator() {
+interface DronePhotographyCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function DronePhotographyCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: DronePhotographyCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [formData, setFormData] = useState<DroneFormData>({

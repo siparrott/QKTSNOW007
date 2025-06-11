@@ -381,10 +381,10 @@ export default function WeddingPhotographyCalculator({
   };
 
   const packageTypes = [
-    { id: "elopement", label: "Elopement / Small Ceremony", basePrice: 950, hours: 4, icon: "💕", popular: false },
-    { id: "half-day", label: "Half-Day Coverage", basePrice: 1200, hours: 6, icon: "☀️", popular: true },
-    { id: "full-day", label: "Full-Day Coverage", basePrice: 1800, hours: 10, icon: "💍", popular: true },
-    { id: "destination", label: "Destination Wedding", basePrice: 2500, hours: 12, icon: "✈️", popular: false },
+    { id: "elopement", label: customConfig?.elopementPackage || "Elopement / Small Ceremony", basePrice: 950, hours: 4, icon: "💕", popular: false },
+    { id: "half-day", label: customConfig?.halfDayPackage || "Half-Day Coverage", basePrice: 1200, hours: 6, icon: "☀️", popular: true },
+    { id: "full-day", label: customConfig?.fullDayPackage || "Full-Day Coverage", basePrice: 1800, hours: 10, icon: "💍", popular: true },
+    { id: "destination", label: customConfig?.destinationPackage || "Destination Wedding", basePrice: 2500, hours: 12, icon: "✈️", popular: false },
   ];
 
   const hourOptions = [
@@ -395,9 +395,9 @@ export default function WeddingPhotographyCalculator({
   ];
 
   const locationOptions = [
-    { id: "1", label: "1 Location", surcharge: 0, popular: false },
-    { id: "2", label: "2 Locations", surcharge: 150, popular: true },
-    { id: "3+", label: "3+ Locations", surcharge: 350, popular: false },
+    { id: "1", label: customConfig?.singleLocation || "1 Location", surcharge: 0, popular: false },
+    { id: "2", label: customConfig?.twoLocations || "2 Locations", surcharge: 150, popular: true },
+    { id: "3+", label: customConfig?.multipleLocations || "3+ Locations", surcharge: 350, popular: false },
   ];
 
   const deliveryOptions = [
@@ -407,12 +407,12 @@ export default function WeddingPhotographyCalculator({
   ];
 
   const addOnOptions = [
-    { id: "engagement", label: "Engagement Session", price: 300, popular: true },
-    { id: "second-photographer", label: "Second Photographer", price: 250, popular: true },
-    { id: "drone", label: "Drone Coverage", price: 150, popular: false },
-    { id: "album", label: "Album & Prints", price: 200, popular: true },
-    { id: "rehearsal", label: "Rehearsal Dinner Coverage", price: 350, popular: false },
-    { id: "express", label: "Express Turnaround", price: 175, popular: false },
+    { id: "engagement", label: customConfig?.engagementSession || "Engagement Session", price: 300, popular: true },
+    { id: "second-photographer", label: customConfig?.secondPhotographer || "Second Photographer", price: 250, popular: true },
+    { id: "drone", label: customConfig?.dronePhotography || "Drone Coverage", price: 150, popular: false },
+    { id: "album", label: customConfig?.weddingAlbum || "Album & Prints", price: 200, popular: true },
+    { id: "rehearsal", label: customConfig?.rehearsalDinner || "Rehearsal Dinner Coverage", price: 350, popular: false },
+    { id: "express", label: customConfig?.expressDelivery || "Express Turnaround", price: 175, popular: false },
   ];
 
   const calculatePricing = (): PricingBreakdown => {
@@ -699,7 +699,7 @@ export default function WeddingPhotographyCalculator({
                   <div>
                     <h2 className="text-2xl font-serif text-stone-800 mb-4 flex items-center">
                       <Camera className="h-6 w-6 mr-2 text-rose-400" />
-                      Choose your wedding photography package
+                      {customConfig?.mainTitle || "Choose your wedding photography package"}
                     </h2>
                     
                     {/* Natural Language Input */}

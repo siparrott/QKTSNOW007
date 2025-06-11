@@ -32,6 +32,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
+import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 
 interface User {
@@ -353,139 +354,315 @@ export default function Dashboard() {
         {/* Customization Modal */}
         {showCustomizeModal && selectedCalculator && (
           <Dialog open={showCustomizeModal} onOpenChange={setShowCustomizeModal}>
-            <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden bg-midnight-800 border-midnight-700">
-              <DialogHeader>
-                <DialogTitle className="text-white">Customize Calculator</DialogTitle>
-                <DialogDescription className="text-gray-400">
-                  Personalize your calculator appearance and functionality.
-                </DialogDescription>
-              </DialogHeader>
-              
-              <div className="flex h-[600px]">
-                {/* Left Panel - Customization Options */}
-                <div className="w-1/2 pr-4 overflow-y-auto">
-                  <div className="space-y-6">
-                    {/* Branding */}
-                    <div>
-                      <h3 className="text-white font-medium mb-3">Branding</h3>
-                      <div className="space-y-3">
-                        <div>
-                          <Label className="text-gray-300">Company Name</Label>
-                          <Input
-                            value={customConfig?.companyName || ""}
-                            onChange={(e) => setCustomConfig(prev => ({ ...prev, companyName: e.target.value }))}
-                            className="bg-midnight-900 border-midnight-600 text-white"
-                          />
+            <DialogContent className="max-w-7xl w-[95vw] h-[95vh] overflow-hidden bg-midnight-800 border-midnight-700 p-0">
+              <div className="flex flex-col h-full">
+                <DialogHeader className="px-6 py-4 border-b border-midnight-700">
+                  <DialogTitle className="text-white">Customize Calculator</DialogTitle>
+                  <DialogDescription className="text-gray-400">
+                    Personalize your calculator appearance and functionality.
+                  </DialogDescription>
+                </DialogHeader>
+                
+                <div className="flex flex-1 overflow-hidden">
+                  {/* Left Panel - Customization Options */}
+                  <div className="w-1/2 border-r border-midnight-700 overflow-y-auto">
+                    <div className="p-6 space-y-8">
+                      {/* Branding */}
+                      <div>
+                        <h3 className="text-white font-medium mb-4 flex items-center">
+                          <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
+                          Branding
+                        </h3>
+                        <div className="space-y-4">
+                          <div>
+                            <Label className="text-gray-300 text-sm">Company Name</Label>
+                            <Input
+                              placeholder="Your Business"
+                              value={customConfig?.companyBranding?.companyName || ""}
+                              onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                companyBranding: {
+                                  ...prev?.companyBranding,
+                                  companyName: e.target.value
+                                }
+                              }))}
+                              className="bg-midnight-900 border-midnight-600 text-white mt-1"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-gray-300 text-sm">Primary Color</Label>
+                            <div className="flex items-center space-x-2 mt-1">
+                              <Input
+                                type="color"
+                                value={customConfig?.brandColors?.primary || "#06D6A0"}
+                                onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                  ...prev, 
+                                  brandColors: {
+                                    ...prev?.brandColors,
+                                    primary: e.target.value
+                                  }
+                                }))}
+                                className="w-12 h-10 p-1 bg-midnight-900 border-midnight-600"
+                              />
+                              <Input
+                                value={customConfig?.brandColors?.primary || "#06D6A0"}
+                                onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                  ...prev, 
+                                  brandColors: {
+                                    ...prev?.brandColors,
+                                    primary: e.target.value
+                                  }
+                                }))}
+                                className="flex-1 bg-midnight-900 border-midnight-600 text-white"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <Label className="text-gray-300 text-sm">Secondary Color</Label>
+                            <div className="flex items-center space-x-2 mt-1">
+                              <Input
+                                type="color"
+                                value={customConfig?.brandColors?.secondary || "#2563eb"}
+                                onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                  ...prev, 
+                                  brandColors: {
+                                    ...prev?.brandColors,
+                                    secondary: e.target.value
+                                  }
+                                }))}
+                                className="w-12 h-10 p-1 bg-midnight-900 border-midnight-600"
+                              />
+                              <Input
+                                value={customConfig?.brandColors?.secondary || "#2563eb"}
+                                onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                  ...prev, 
+                                  brandColors: {
+                                    ...prev?.brandColors,
+                                    secondary: e.target.value
+                                  }
+                                }))}
+                                className="flex-1 bg-midnight-900 border-midnight-600 text-white"
+                              />
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <Label className="text-gray-300">Primary Color</Label>
-                          <Input
-                            type="color"
-                            value={customConfig?.primaryColor || "#06D6A0"}
-                            onChange={(e) => setCustomConfig(prev => ({ ...prev, primaryColor: e.target.value }))}
-                            className="bg-midnight-900 border-midnight-600 text-white h-10"
-                          />
+                      </div>
+
+                      {/* Calculator Text */}
+                      <div>
+                        <h3 className="text-white font-medium mb-4 flex items-center">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                          Calculator Text
+                        </h3>
+                        <div className="space-y-4">
+                          <div>
+                            <Label className="text-gray-300 text-sm">Headline</Label>
+                            <Input
+                              placeholder="Get Your Custom Quote"
+                              value={customConfig?.textCustomization?.headline || ""}
+                              onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                textCustomization: {
+                                  ...prev?.textCustomization,
+                                  headline: e.target.value
+                                }
+                              }))}
+                              className="bg-midnight-900 border-midnight-600 text-white mt-1"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-gray-300 text-sm">Description</Label>
+                            <Textarea
+                              placeholder="Fill out the form below to receive your personalized quote."
+                              value={customConfig?.textCustomization?.description || ""}
+                              onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                textCustomization: {
+                                  ...prev?.textCustomization,
+                                  description: e.target.value
+                                }
+                              }))}
+                              className="bg-midnight-900 border-midnight-600 text-white mt-1"
+                              rows={3}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Styling Options */}
+                      <div>
+                        <h3 className="text-white font-medium mb-4 flex items-center">
+                          <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
+                          Styling
+                        </h3>
+                        <div className="space-y-4">
+                          <div>
+                            <Label className="text-gray-300 text-sm">Font Family</Label>
+                            <select
+                              value={customConfig?.styling?.fontFamily || "Inter"}
+                              onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                styling: {
+                                  ...prev?.styling,
+                                  fontFamily: e.target.value
+                                }
+                              }))}
+                              className="w-full mt-1 bg-midnight-900 border border-midnight-600 text-white rounded-md px-3 py-2"
+                            >
+                              <option value="Inter">Inter</option>
+                              <option value="Arial">Arial</option>
+                              <option value="Helvetica">Helvetica</option>
+                              <option value="Georgia">Georgia</option>
+                              <option value="Times New Roman">Times New Roman</option>
+                            </select>
+                          </div>
+                          <div>
+                            <Label className="text-gray-300 text-sm">Border Radius</Label>
+                            <select
+                              value={customConfig?.styling?.borderRadius || "0.5rem"}
+                              onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                styling: {
+                                  ...prev?.styling,
+                                  borderRadius: e.target.value
+                                }
+                              }))}
+                              className="w-full mt-1 bg-midnight-900 border border-midnight-600 text-white rounded-md px-3 py-2"
+                            >
+                              <option value="0">None</option>
+                              <option value="0.25rem">Small</option>
+                              <option value="0.5rem">Medium</option>
+                              <option value="1rem">Large</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Features */}
+                      <div>
+                        <h3 className="text-white font-medium mb-4 flex items-center">
+                          <div className="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
+                          Features
+                        </h3>
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <Label className="text-gray-300 text-sm">Email Collection</Label>
+                              <p className="text-xs text-gray-500">Collect email addresses from users</p>
+                            </div>
+                            <Switch
+                              checked={customConfig?.features?.emailCollection || false}
+                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                features: {
+                                  ...prev?.features,
+                                  emailCollection: checked
+                                }
+                              }))}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <Label className="text-gray-300 text-sm">Phone Collection</Label>
+                              <p className="text-xs text-gray-500">Collect phone numbers from users</p>
+                            </div>
+                            <Switch
+                              checked={customConfig?.features?.phoneCollection || false}
+                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                features: {
+                                  ...prev?.features,
+                                  phoneCollection: checked
+                                }
+                              }))}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <Label className="text-gray-300 text-sm">PDF Download</Label>
+                              <p className="text-xs text-gray-500">Allow users to download quote as PDF</p>
+                            </div>
+                            <Switch
+                              checked={customConfig?.features?.pdfDownload || false}
+                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                features: {
+                                  ...prev?.features,
+                                  pdfDownload: checked
+                                }
+                              }))}
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
+                  </div>
 
-                    {/* Calculator Text */}
-                    <div>
-                      <h3 className="text-white font-medium mb-3">Calculator Text</h3>
-                      <div className="space-y-3">
-                        <div>
-                          <Label className="text-gray-300">Headline</Label>
-                          <Input
-                            value={customConfig?.headline || ""}
-                            onChange={(e) => setCustomConfig(prev => ({ ...prev, headline: e.target.value }))}
-                            className="bg-midnight-900 border-midnight-600 text-white"
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-gray-300">Description</Label>
-                          <Input
-                            value={customConfig?.description || ""}
-                            onChange={(e) => setCustomConfig(prev => ({ ...prev, description: e.target.value }))}
-                            className="bg-midnight-900 border-midnight-600 text-white"
-                          />
-                        </div>
-                      </div>
+                  {/* Right Panel - Live Preview */}
+                  <div className="w-1/2 flex flex-col">
+                    <div className="p-4 border-b border-midnight-700 bg-midnight-900">
+                      <h3 className="text-lg font-medium text-white flex items-center">
+                        <Eye className="h-5 w-5 mr-2 text-neon-400" />
+                        Live Preview
+                      </h3>
                     </div>
-
-                    {/* Features */}
-                    <div>
-                      <h3 className="text-white font-medium mb-3">Features</h3>
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <Label className="text-gray-300">Email Collection</Label>
-                          <Switch
-                            checked={customConfig?.emailCollection || false}
-                            onCheckedChange={(checked) => setCustomConfig(prev => ({ ...prev, emailCollection: checked }))}
-                          />
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <Label className="text-gray-300">Phone Collection</Label>
-                          <Switch
-                            checked={customConfig?.phoneCollection || false}
-                            onCheckedChange={(checked) => setCustomConfig(prev => ({ ...prev, phoneCollection: checked }))}
-                          />
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <Label className="text-gray-300">PDF Download</Label>
-                          <Switch
-                            checked={customConfig?.pdfDownload || false}
-                            onCheckedChange={(checked) => setCustomConfig(prev => ({ ...prev, pdfDownload: checked }))}
-                          />
-                        </div>
+                    <div className="flex-1 overflow-hidden bg-white">
+                      <div className="h-full overflow-y-auto">
+                        <CalculatorPreview 
+                          slug={selectedCalculator.slug} 
+                          customConfig={customConfig}
+                          className="min-h-full"
+                        />
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Right Panel - Live Preview */}
-                <div className="w-1/2 pl-4 border-l border-midnight-700">
-                  <div className="sticky top-0 bg-midnight-800 pb-4 mb-4">
-                    <h3 className="text-lg font-medium text-white">Live Preview</h3>
-                  </div>
-                  <div className="h-full overflow-y-auto">
-                    <CalculatorPreview 
-                      slug={selectedCalculator.slug} 
-                      customConfig={customConfig}
-                      className="h-full"
-                    />
+                <div className="flex justify-between items-center px-6 py-4 border-t border-midnight-700 bg-midnight-900">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowCustomizeModal(false)}
+                    className="border-midnight-600 text-gray-300 hover:bg-midnight-800"
+                  >
+                    Cancel
+                  </Button>
+                  <div className="flex items-center space-x-3">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setCustomConfig({});
+                        toast({
+                          title: "Reset Complete",
+                          description: "All customizations have been reset to default.",
+                        });
+                      }}
+                      className="border-midnight-600 text-gray-300 hover:bg-midnight-800"
+                    >
+                      Reset to Default
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        const updatedCalculators = userCalculators.map(calc => 
+                          calc.id === selectedCalculator.id 
+                            ? { ...calc, config: customConfig }
+                            : calc
+                        );
+                        setUserCalculators(updatedCalculators);
+                        localStorage.setItem('userCalculators', JSON.stringify(updatedCalculators));
+                        
+                        toast({
+                          title: "Calculator Updated!",
+                          description: "Your customizations have been saved.",
+                        });
+                        
+                        setShowCustomizeModal(false);
+                      }}
+                      className="bg-neon-500 hover:bg-neon-600 text-black font-medium"
+                    >
+                      Save Changes
+                    </Button>
                   </div>
                 </div>
-              </div>
-
-              <div className="flex justify-between pt-6 border-t border-midnight-700">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowCustomizeModal(false)}
-                  className="border-midnight-600 text-gray-300"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={() => {
-                    const updatedCalculators = userCalculators.map(calc => 
-                      calc.id === selectedCalculator.id 
-                        ? { ...calc, config: customConfig }
-                        : calc
-                    );
-                    setUserCalculators(updatedCalculators);
-                    localStorage.setItem('userCalculators', JSON.stringify(updatedCalculators));
-                    
-                    toast({
-                      title: "Calculator Updated!",
-                      description: "Your customizations have been saved.",
-                    });
-                    
-                    setShowCustomizeModal(false);
-                  }}
-                  className="bg-neon-500 hover:bg-neon-600 text-black"
-                >
-                  Save Changes
-                </Button>
               </div>
             </DialogContent>
           </Dialog>

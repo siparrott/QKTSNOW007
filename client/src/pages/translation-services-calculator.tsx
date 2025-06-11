@@ -102,7 +102,13 @@ const addOnOptions = [
   { value: "extra-proofreading", label: "Extra Proofreading", cost: 0.04, description: "Additional quality review", icon: Eye }
 ];
 
-export default function TranslationServicesCalculator() {
+interface TranslationServicesCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function TranslationServicesCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: TranslationServicesCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     serviceType: "",
@@ -122,7 +128,7 @@ export default function TranslationServicesCalculator() {
   const [showEmailCapture, setShowEmailCapture] = useState(false);
   const [showNLInput, setShowNLInput] = useState(false);
   const [isProcessingNL, setIsProcessingNL] = useState(false);
-  const [customConfig, setCustomConfig] = useState<any>(null);
+  const [customConfig, setCustomConfig] = useState<any>(propConfig || null);
 
   // Listen for configuration updates from parent dashboard
   useEffect(() => {
@@ -722,7 +728,7 @@ export default function TranslationServicesCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">

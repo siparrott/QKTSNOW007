@@ -150,20 +150,7 @@ export default function HowItWorks() {
           ))}
         </motion.div>
 
-        {/* Why This Works */}
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          viewport={{ once: true }}
-        >
-          <img 
-            src={psychologyImage} 
-            alt="Why This Works - Science and Psychology behind QuoteKit's effectiveness"
-            className="w-full max-w-4xl mx-auto rounded-lg shadow-2xl"
-          />
-        </motion.div>
+
       </div>
     </section>
   );

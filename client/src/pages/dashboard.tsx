@@ -191,6 +191,44 @@ export default function Dashboard() {
           }
         ]
       },
+      2: { // Boudoir Photography
+        ...defaultConfig,
+        text: {
+          headline: "Get Your Boudoir Photography Quote",
+          subheading: "Tell us about your project requirements",
+          ctaText: "Get Quote",
+          thankYouMessage: "Thank you for your request!"
+        },
+        questions: [
+          {
+            id: "session-type",
+            label: "What type of boudoir session?",
+            type: "dropdown",
+            required: true,
+            options: ["Individual Session", "Couples Session", "Maternity Boudoir", "Plus Size Boudoir"]
+          },
+          {
+            id: "session-location",
+            label: "Preferred session location?",
+            type: "dropdown",
+            required: true,
+            options: ["Studio", "Hotel Room", "Client's Home", "Outdoor Location"]
+          },
+          {
+            id: "session-duration",
+            label: "Session duration preference?",
+            type: "dropdown",
+            required: true,
+            options: ["1 hour", "2 hours", "3 hours", "Half day"]
+          },
+          {
+            id: "special-requests",
+            label: "Any special requests or themes?",
+            type: "text",
+            required: false
+          }
+        ]
+      },
       4: { // Drone Photography
         ...defaultConfig,
         text: {
@@ -1033,11 +1071,39 @@ export default function Dashboard() {
                           <div className="text-center mb-8">
                             <h1 
                               className="text-3xl font-bold mb-3"
-                              style={{ color: customConfig?.branding?.primaryColor || (theme === 'minimal' ? '#1f2937' : '#ffffff') }}
+                              style={{ 
+                                color: customConfig?.branding?.primaryColor || (theme === 'minimal' ? '#1f2937' : '#ffffff'),
+                                fontFamily: customConfig?.typography?.primaryFont === 'roboto' ? 'Roboto, sans-serif' :
+                                           customConfig?.typography?.primaryFont === 'poppins' ? 'Poppins, sans-serif' :
+                                           customConfig?.typography?.primaryFont === 'montserrat' ? 'Montserrat, sans-serif' :
+                                           customConfig?.typography?.primaryFont === 'playfair' ? 'Playfair Display, serif' :
+                                           customConfig?.typography?.primaryFont === 'source-sans' ? 'Source Sans Pro, sans-serif' :
+                                           'Inter, sans-serif',
+                                fontWeight: customConfig?.typography?.fontWeight === 'light' ? '300' :
+                                          customConfig?.typography?.fontWeight === 'medium' ? '500' :
+                                          customConfig?.typography?.fontWeight === 'semibold' ? '600' :
+                                          customConfig?.typography?.fontWeight === 'bold' ? '700' : '400',
+                                fontSize: customConfig?.typography?.headingSize === 'small' ? '1.5rem' :
+                                         customConfig?.typography?.headingSize === 'medium' ? '2rem' :
+                                         customConfig?.typography?.headingSize === 'extra-large' ? '3.5rem' : '3rem'
+                              }}
                             >
                               {customConfig?.text?.headline || "Your Drone Quote"}
                             </h1>
-                            <p className={`text-lg ${theme === 'minimal' ? 'text-gray-600' : 'text-white/80'}`}>
+                            <p 
+                              className={`text-lg ${theme === 'minimal' ? 'text-gray-600' : 'text-white/80'}`}
+                              style={{
+                                fontFamily: customConfig?.typography?.primaryFont === 'roboto' ? 'Roboto, sans-serif' :
+                                           customConfig?.typography?.primaryFont === 'poppins' ? 'Poppins, sans-serif' :
+                                           customConfig?.typography?.primaryFont === 'montserrat' ? 'Montserrat, sans-serif' :
+                                           customConfig?.typography?.primaryFont === 'playfair' ? 'Playfair Display, serif' :
+                                           customConfig?.typography?.primaryFont === 'source-sans' ? 'Source Sans Pro, sans-serif' :
+                                           'Inter, sans-serif',
+                                lineHeight: customConfig?.typography?.lineHeight === 'tight' ? '1.2' :
+                                          customConfig?.typography?.lineHeight === 'relaxed' ? '1.7' :
+                                          customConfig?.typography?.lineHeight === 'loose' ? '2.0' : '1.5'
+                              }}
+                            >
                               {customConfig?.text?.subheading || "Get a custom quote based on your project requirements"}
                             </p>
                           </div>

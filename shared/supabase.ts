@@ -167,8 +167,10 @@ export async function cloneCalculator(userId: string, templateId: string): Promi
 
     // Generate unique slug for user calculator
     const uniqueSlug = `${template.slug}-${userId.slice(0, 8)}-${Date.now()}`;
-    const embedUrl = `${process.env.REPL_URL || 'https://localhost:5000'}/embed/${uniqueSlug}`;
-    const adminUrl = `${process.env.REPL_URL || 'https://localhost:5000'}/admin/${uniqueSlug}`;
+    // Point to the actual calculator pages that exist on the homepage
+    const baseUrl = process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : 'https://7c3afad0-e42a-4035-89da-60d967bcf12e-00-cahqkruxgnqx.spock.replit.dev';
+    const embedUrl = `${baseUrl}/${template.slug}-calculator`;
+    const adminUrl = `${baseUrl}/${template.slug}-calculator`;
     const embedId = `embed_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
     // Generate calculator_id based on template mapping (only using valid IDs 1-3)

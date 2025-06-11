@@ -138,6 +138,14 @@ export const selectLeadSchema = createSelectSchema(leads);
 export const selectSubscriptionSchema = createSelectSchema(subscriptions);
 export const selectSessionSchema = createSelectSchema(sessions);
 
+// Type exports
+export type User = typeof users.$inferSelect;
+export type Calculator = typeof calculators.$inferSelect;
+export type UserCalculator = typeof userCalculators.$inferSelect;
+export type Lead = typeof leads.$inferSelect;
+export type Subscription = typeof subscriptions.$inferSelect;
+export type Session = typeof sessions.$inferSelect;
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type RegisterUser = z.infer<typeof registerUserSchema>;

@@ -22,7 +22,8 @@ import {
   TrendingUp,
   Calculator,
   Mail,
-  Globe
+  Globe,
+  Plus
 } from "lucide-react";
 
 interface User {
@@ -106,6 +107,23 @@ export default function Dashboard() {
       title: "Embed code copied!",
       description: "Paste this code on your website to add the calculator.",
     });
+  };
+
+  const previewCalculator = (calc: UserCalculator) => {
+    // Open calculator preview in new tab
+    const previewUrl = `/wedding-photography-calculator`; // Route to actual calculator
+    window.open(previewUrl, '_blank');
+  };
+
+  const customizeCalculator = (calc: UserCalculator) => {
+    toast({
+      title: "Customization Panel",
+      description: "Calculator customization interface will open here.",
+    });
+  };
+
+  const createNewCalculator = () => {
+    setLocation('/niches');
   };
 
   const handleUpgrade = async (planId: string) => {
@@ -259,11 +277,15 @@ export default function Dashboard() {
                 <CardHeader>
                   <CardTitle className="text-white flex items-center justify-between">
                     Your Calculators
-                    <Link href="/niches">
-                      <Button variant="outline" size="sm" className="border-midnight-600 text-gray-300">
-                        Create New
-                      </Button>
-                    </Link>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={createNewCalculator}
+                      className="border-midnight-600 text-gray-300 hover:bg-midnight-600"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Create New
+                    </Button>
                   </CardTitle>
                   <CardDescription className="text-gray-400">
                     Manage and customize your quote calculators
@@ -287,8 +309,8 @@ export default function Dashboard() {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => window.open(calc.embedUrl, '_blank')}
-                              className="border-midnight-600 text-gray-300"
+                              onClick={() => previewCalculator(calc)}
+                              className="border-midnight-600 text-gray-300 hover:bg-midnight-600"
                             >
                               <Eye className="h-4 w-4 mr-2" />
                               Preview
@@ -297,8 +319,8 @@ export default function Dashboard() {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => window.open(calc.adminUrl, '_blank')}
-                              className="border-midnight-600 text-gray-300"
+                              onClick={() => customizeCalculator(calc)}
+                              className="border-midnight-600 text-gray-300 hover:bg-midnight-600"
                             >
                               <Settings className="h-4 w-4 mr-2" />
                               Customize
@@ -308,7 +330,7 @@ export default function Dashboard() {
                               variant="outline"
                               size="sm"
                               onClick={() => copyEmbedCode(calc.embedUrl)}
-                              className="border-midnight-600 text-gray-300"
+                              className="border-midnight-600 text-gray-300 hover:bg-midnight-600"
                             >
                               <Copy className="h-4 w-4 mr-2" />
                               Embed Code
@@ -325,11 +347,13 @@ export default function Dashboard() {
                     <div className="text-center py-8">
                       <Calculator className="h-12 w-12 text-gray-600 mx-auto mb-4" />
                       <p className="text-gray-400 mb-4">No calculators yet</p>
-                      <Link href="/niches">
-                        <Button className="bg-neon-500 hover:bg-neon-600 text-white">
-                          Create Your First Calculator
-                        </Button>
-                      </Link>
+                      <Button 
+                        onClick={createNewCalculator}
+                        className="bg-neon-500 hover:bg-neon-600 text-white"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Create Your First Calculator
+                      </Button>
                     </div>
                   )}
                 </CardContent>

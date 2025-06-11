@@ -45,7 +45,13 @@ interface PricingBreakdown {
   breakdown: string[];
 }
 
-export default function MassageTherapyCalculator() {
+interface MassageTherapyCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function MassageTherapyCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: MassageTherapyCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [formData, setFormData] = useState<MassageFormData>({

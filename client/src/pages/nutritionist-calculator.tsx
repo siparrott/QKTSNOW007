@@ -50,7 +50,13 @@ interface PricingBreakdown {
   breakdown: string[];
 }
 
-export default function NutritionistCalculator() {
+interface NutritionistCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function NutritionistCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: NutritionistCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [formData, setFormData] = useState<NutritionistFormData>({

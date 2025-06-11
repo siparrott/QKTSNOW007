@@ -47,7 +47,13 @@ interface PricingBreakdown {
   breakdown: string[];
 }
 
-export default function PersonalTrainingCalculator() {
+interface PersonalTrainingCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function PersonalTrainingCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: PersonalTrainingCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [formData, setFormData] = useState<PersonalTrainingFormData>({
@@ -267,7 +273,7 @@ export default function PersonalTrainingCalculator() {
 
   return (
     <div className="min-h-screen&">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">

@@ -192,7 +192,33 @@ export default function Dashboard() {
 
   const customizeCalculator = (calc: UserCalculator) => {
     setSelectedCalculator(calc);
-    setCustomConfig(calc.config || defaultConfig);
+    // Initialize with meaningful defaults if no config exists
+    const initialConfig = calc.config && Object.keys(calc.config).length > 0 
+      ? calc.config 
+      : {
+          companyBranding: {
+            companyName: calc.custom_branding?.companyName || "Your Business"
+          },
+          brandColors: {
+            primary: "#06D6A0",
+            secondary: "#2563eb",
+            accent: "#f59e0b"
+          },
+          textCustomization: {
+            headline: "Get Your Custom Quote",
+            description: "Fill out the form below to receive your personalized quote."
+          },
+          styling: {
+            fontFamily: "Inter",
+            borderRadius: "0.5rem"
+          },
+          features: {
+            emailCollection: true,
+            phoneCollection: false,
+            pdfDownload: true
+          }
+        };
+    setCustomConfig(initialConfig);
     setShowCustomizeModal(true);
   };
 

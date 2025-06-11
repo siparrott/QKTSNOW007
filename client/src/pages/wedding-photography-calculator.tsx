@@ -79,13 +79,20 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
     },
   });
 
-  // Initialize with prop config
+  // Initialize with prop config and watch for changes
   useEffect(() => {
     if (propConfig) {
       setCustomConfig(propConfig);
       applyCustomConfig(propConfig);
     }
   }, [propConfig]);
+
+  // Watch for customConfig changes and re-apply
+  useEffect(() => {
+    if (customConfig && Object.keys(customConfig).length > 0) {
+      applyCustomConfig(customConfig);
+    }
+  }, [customConfig]);
 
   // Handle URL parameters and postMessage for preview mode
   useEffect(() => {

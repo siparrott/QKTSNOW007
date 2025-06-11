@@ -4,7 +4,7 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { QuoteKitHeader } from "@/components/calculator-header";
+import Header from "@/components/landing/header";
 import { 
   Search, 
   Camera, 
@@ -157,7 +157,7 @@ export default function NichesPage() {
 
   return (
     <div className="min-h-screen bg-black">
-      <QuoteKitHeader />
+      <Header />
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <motion.div

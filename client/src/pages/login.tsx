@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link, useLocation } from "wouter";
-import { QuoteKitHeader } from "@/components/calculator-header";
+import Header from "@/components/landing/header";
 import { useToast } from "@/hooks/use-toast";
 import { loginWithEmail } from "@/lib/supabase";
 import { getTempUser, createTempSession } from "@/lib/auth-bypass";

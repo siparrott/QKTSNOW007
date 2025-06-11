@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { QuoteKitHeader } from "@/components/calculator-header";
+import Header from "@/components/landing/header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -98,7 +98,7 @@ const pricingPlans = [
 export default function Pricing() {
   return (
     <div className="min-h-screen bg-black">
-      <QuoteKitHeader />
+      <Header />
       
       <div className="relative overflow-hidden">
         {/* Background Effects */}

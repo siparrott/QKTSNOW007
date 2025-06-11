@@ -109,6 +109,31 @@ router.put('/user-calculators/:id', async (req, res) => {
   }
 });
 
+// Update calculator configuration
+router.post('/update-calculator-config', async (req, res) => {
+  try {
+    const { calculatorId, config, userId } = req.body;
+    
+    if (!calculatorId || !config || !userId) {
+      return res.status(400).json({ error: 'calculatorId, config, and userId are required' });
+    }
+    
+    const success = await updateUserCalculator(calculatorId, { 
+      config,
+      custom_branding: config
+    });
+    
+    if (!success) {
+      return res.status(500).json({ error: 'Failed to update calculator configuration' });
+    }
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error updating calculator config:', error);
+    res.status(500).json({ error: 'Failed to update calculator configuration' });
+  }
+});
+
 // Delete user calculator
 router.delete('/user-calculators/:id', async (req, res) => {
   try {

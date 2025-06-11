@@ -186,6 +186,43 @@ export default function Dashboard() {
     }
   });
 
+  const saveCustomizationMutation = useMutation({
+    mutationFn: async ({ calculatorId, config }: { calculatorId: string, config: any }) => {
+      return apiRequest('/api/supabase/update-calculator-config', {
+        method: 'POST',
+        body: JSON.stringify({ 
+          calculatorId,
+          config,
+          userId: currentUser?.id
+        })
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/supabase/user-calculators'] });
+      toast({
+        title: "Customization Saved",
+        description: "Your calculator customization has been saved successfully.",
+      });
+      setShowCustomizeModal(false);
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to save customization. Please try again.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  const handleSaveCustomization = () => {
+    if (selectedCalculator && customConfig) {
+      saveCustomizationMutation.mutate({
+        calculatorId: selectedCalculator.id,
+        config: customConfig
+      });
+    }
+  };
+
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -575,7 +612,7 @@ export default function Dashboard() {
                 
                 <div className="bg-midnight-900 p-4 rounded-lg border border-midnight-600">
                   <code className="text-sm text-green-400 whitespace-pre-wrap break-all">
-                    {`<iframe src="${selectedCalculator.embedUrl}" width="100%" height="600" frameborder="0" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"></iframe>`}
+                    {`<iframe src="${selectedCalculator.embed_url}" width="100%" height="600" frameborder="0" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"></iframe>`}
                   </code>
                 </div>
                 
@@ -589,13 +626,197 @@ export default function Dashboard() {
                   </Button>
                   
                   <Button
-                    onClick={() => window.open(selectedCalculator.embedUrl, '_blank')}
+                    onClick={() => window.open(selectedCalculator.embed_url, '_blank')}
                     variant="outline"
                     className="border-midnight-600 text-gray-300 hover:text-white"
                   >
                     <ExternalLink className="h-4 w-4 mr-2" />
                     Preview
                   </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Customize Calculator Modal */}
+        {showCustomizeModal && selectedCalculator && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-midnight-800 rounded-lg w-full max-w-6xl h-[90vh] flex">
+              {/* Left Panel - Customization Options */}
+              <div className="w-1/3 border-r border-midnight-600 p-6 overflow-y-auto">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-white">Customize Calculator</h2>
+                  <button
+                    onClick={() => setShowCustomizeModal(false)}
+                    className="text-gray-400 hover:text-white"
+                  >
+                    <X className="h-6 w-6" />
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  {/* Brand Colors */}
+                  <div>
+                    <h3 className="text-lg font-semibold text-white mb-3">Brand Colors</h3>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Primary Color</label>
+                        <div className="flex items-center space-x-3">
+                          <input
+                            type="color"
+                            value={customConfig.primaryColor || "#10b981"}
+                            onChange={(e) => setCustomConfig(prev => ({ ...prev, primaryColor: e.target.value }))}
+                            className="w-12 h-12 rounded border border-midnight-600"
+                          />
+                          <input
+                            type="text"
+                            value={customConfig.primaryColor || "#10b981"}
+                            onChange={(e) => setCustomConfig(prev => ({ ...prev, primaryColor: e.target.value }))}
+                            className="flex-1 px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Secondary Color</label>
+                        <div className="flex items-center space-x-3">
+                          <input
+                            type="color"
+                            value={customConfig.secondaryColor || "#1f2937"}
+                            onChange={(e) => setCustomConfig(prev => ({ ...prev, secondaryColor: e.target.value }))}
+                            className="w-12 h-12 rounded border border-midnight-600"
+                          />
+                          <input
+                            type="text"
+                            value={customConfig.secondaryColor || "#1f2937"}
+                            onChange={(e) => setCustomConfig(prev => ({ ...prev, secondaryColor: e.target.value }))}
+                            className="flex-1 px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Typography */}
+                  <div>
+                    <h3 className="text-lg font-semibold text-white mb-3">Typography</h3>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Font Family</label>
+                        <select
+                          value={customConfig.fontFamily || "Inter"}
+                          onChange={(e) => setCustomConfig(prev => ({ ...prev, fontFamily: e.target.value }))}
+                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        >
+                          <option value="Inter">Inter</option>
+                          <option value="Arial">Arial</option>
+                          <option value="Helvetica">Helvetica</option>
+                          <option value="Georgia">Georgia</option>
+                          <option value="Times New Roman">Times New Roman</option>
+                        </select>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Border Radius</label>
+                        <select
+                          value={customConfig.borderRadius || "8px"}
+                          onChange={(e) => setCustomConfig(prev => ({ ...prev, borderRadius: e.target.value }))}
+                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        >
+                          <option value="0px">Sharp (0px)</option>
+                          <option value="4px">Small (4px)</option>
+                          <option value="8px">Medium (8px)</option>
+                          <option value="12px">Large (12px)</option>
+                          <option value="20px">Extra Large (20px)</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Branding */}
+                  <div>
+                    <h3 className="text-lg font-semibold text-white mb-3">Company Branding</h3>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Company Name</label>
+                        <input
+                          type="text"
+                          value={customConfig.companyName || ""}
+                          onChange={(e) => setCustomConfig(prev => ({ ...prev, companyName: e.target.value }))}
+                          placeholder="Enter your company name"
+                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white placeholder-gray-400"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Logo URL (optional)</label>
+                        <input
+                          type="url"
+                          value={customConfig.logoUrl || ""}
+                          onChange={(e) => setCustomConfig(prev => ({ ...prev, logoUrl: e.target.value }))}
+                          placeholder="https://example.com/logo.png"
+                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white placeholder-gray-400"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Contact Information</label>
+                        <textarea
+                          value={customConfig.contactInfo || ""}
+                          onChange={(e) => setCustomConfig(prev => ({ ...prev, contactInfo: e.target.value }))}
+                          placeholder="Phone, email, or website"
+                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white placeholder-gray-400 h-20 resize-none"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Call-to-Action */}
+                  <div>
+                    <h3 className="text-lg font-semibold text-white mb-3">Call-to-Action</h3>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Button Text</label>
+                        <input
+                          type="text"
+                          value={customConfig.ctaText || "Get Quote"}
+                          onChange={(e) => setCustomConfig(prev => ({ ...prev, ctaText: e.target.value }))}
+                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Success Message</label>
+                        <textarea
+                          value={customConfig.successMessage || "Thanks! We'll send your quote shortly."}
+                          onChange={(e) => setCustomConfig(prev => ({ ...prev, successMessage: e.target.value }))}
+                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white h-20 resize-none"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Save Button */}
+                  <Button
+                    onClick={handleSaveCustomization}
+                    disabled={saveCustomizationMutation.isPending}
+                    className="w-full bg-neon-500 hover:bg-neon-600 text-white"
+                  >
+                    {saveCustomizationMutation.isPending ? "Saving..." : "Save Customization"}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Right Panel - Live Preview */}
+              <div className="flex-1 p-6">
+                <h3 className="text-lg font-semibold text-white mb-4">Live Preview</h3>
+                <div className="bg-white rounded-lg h-full overflow-hidden">
+                  <iframe
+                    src={`${selectedCalculator.embed_url}?preview=true&config=${encodeURIComponent(JSON.stringify(customConfig))}`}
+                    className="w-full h-full border-0"
+                    title="Calculator Preview"
+                  />
                 </div>
               </div>
             </div>

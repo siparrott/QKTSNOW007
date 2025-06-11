@@ -227,7 +227,12 @@ export async function getUserCalculators(userId: string): Promise<UserCalculator
       WHERE user_id = ${actualUserId}
       ORDER BY created_at DESC
     `;
-    return data as any[];
+    
+    // Parse JSON fields properly
+    return data.map((calc: any) => ({
+      ...calc,
+      config: calc.config ? (typeof calc.config === 'string' ? JSON.parse(calc.config) : calc.config) : null
+    })) as any[];
   } catch (error) {
     console.error('Error fetching user calculators:', error);
     return [];
@@ -248,7 +253,15 @@ export async function getUserCalculator(userId: string, slug: string): Promise<U
       WHERE user_id = ${actualUserId} AND slug = ${slug}
       LIMIT 1
     `;
-    return data.length ? data[0] as any : null;
+    
+    if (!data.length) return null;
+    
+    const calc = data[0] as any;
+    // Parse JSON fields properly
+    return {
+      ...calc,
+      config: calc.config ? (typeof calc.config === 'string' ? JSON.parse(calc.config) : calc.config) : null
+    };
   } catch (error) {
     console.error('Error fetching user calculator:', error);
     return null;

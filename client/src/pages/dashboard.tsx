@@ -25,6 +25,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { getCalculatorConfig, generateCustomizationFields } from "@/lib/calculator-config-parser";
+import CalculatorPreview from "@/components/calculator-preview";
 import { 
   Settings, 
   Calculator,
@@ -258,7 +259,9 @@ export default function Dashboard() {
   };
 
   const previewCalculator = (calc: UserCalculator) => {
-    window.open(calc.embed_url, '_blank');
+    // Open the actual calculator page instead of generic embed URL
+    const calculatorRoute = `/calculator/${calc.slug}`;
+    window.open(calculatorRoute, '_blank');
   };
 
   const showEmbedCode = (calc: UserCalculator) => {
@@ -281,8 +284,8 @@ export default function Dashboard() {
         id: instanceId,
         name: calculator.name,
         slug: calculator.slug,
-        embed_url: `https://quotekit.ai/embed/${instanceId}`,
-        admin_url: `https://quotekit.ai/admin/${instanceId}`,
+        embed_url: `/calculator/${calculator.slug}`,
+        admin_url: `/calculator/${calculator.slug}`,
         calculator_id: calculator.id,
         config: {},
         custom_branding: { companyName: "Your Business" },

@@ -61,7 +61,14 @@ interface WeddingPhotographyCalculatorProps {
   calculatorType?: string;
 }
 
-export default function WeddingPhotographyCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: WeddingPhotographyCalculatorProps = {}) {
+export default function WeddingPhotographyCalculator({ 
+  customConfig: propConfig, 
+  isPreview = false, 
+  hideHeader = false,
+  forceDetailedView = false,
+  useComprehensiveCalculator = false,
+  calculatorType
+}: WeddingPhotographyCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [customConfig, setCustomConfig] = useState<any>(propConfig || null);
@@ -100,10 +107,13 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
     // Handle URL parameters for dynamic customization
     const urlParams = new URLSearchParams(window.location.search);
     
-    // Force comprehensive calculator view if specified
+    // Force comprehensive calculator view if specified via URL or props
     const forceDetailed = urlParams.get('forceDetailedView') === 'true' || 
                          urlParams.get('useComprehensiveCalculator') === 'true' ||
-                         urlParams.get('calculatorType') === 'comprehensive-wedding-photography';
+                         urlParams.get('calculatorType') === 'comprehensive-wedding-photography' ||
+                         forceDetailedView || 
+                         useComprehensiveCalculator ||
+                         calculatorType?.includes('comprehensive');
     
     if (forceDetailed) {
       console.log('Forcing detailed comprehensive wedding photography calculator view');

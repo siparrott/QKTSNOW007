@@ -26,8 +26,6 @@ export async function apiRequest(
   const baseUrl = window.location.origin;
   const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
 
-  console.log('Making API request to:', fullUrl);
-
   const fetchOptions = {
     method: 'GET',
     credentials: "include" as RequestCredentials,
@@ -38,17 +36,10 @@ export async function apiRequest(
     },
   };
 
-  console.log('Fetch options:', fetchOptions);
-
   const res = await fetch(fullUrl, fetchOptions);
-
-  console.log('Response status:', res.status);
-  console.log('Response ok:', res.ok);
   
   await throwIfResNotOk(res);
-  const data = await res.json();
-  console.log('Response data:', data);
-  return data;
+  return await res.json();
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";

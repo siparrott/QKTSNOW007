@@ -12,6 +12,8 @@ export function TestAuth() {
   const testRegister = async () => {
     try {
       console.log("Starting registration test...");
+      console.log("Request data:", { fullName, email, password });
+      
       const response = await apiRequest('/api/auth/register', {
         method: 'POST',
         body: JSON.stringify({
@@ -22,16 +24,17 @@ export function TestAuth() {
       });
       
       console.log("Registration response:", response);
-      setResult(JSON.stringify(response, null, 2));
+      setResult(`SUCCESS: ${JSON.stringify(response, null, 2)}`);
       
       if (response.token) {
         localStorage.setItem('auth_token', response.token);
         localStorage.setItem('user', JSON.stringify(response.user));
         console.log("Token stored successfully");
+        setResult(prev => prev + "\n\nToken stored in localStorage!");
       }
     } catch (error: any) {
       console.error("Registration error:", error);
-      setResult(`Error: ${error.message}`);
+      setResult(`ERROR: ${error.message}\n\nFull error: ${JSON.stringify(error, null, 2)}`);
     }
   };
 

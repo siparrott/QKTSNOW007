@@ -78,7 +78,13 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/calculator/boudoir-photography" component={BoudoirPhotographyCalculator} />
+      <Route path="/boudoir-photography-calculator" component={BoudoirPhotographyCalculator} />
       <Route path="/calculator/electrician" component={ElectricianCalculator} />
+      <Route path="/electrician-calculator" component={ElectricianCalculator} />
+      <Route path="/wedding-photography-calculator" component={WeddingPhotographyCalculator} />
+      <Route path="/portrait-photography-calculator" component={PortraitPhotographyCalculator} />
+      <Route path="/event-videography-calculator" component={EventVideographyCalculator} />
+      <Route path="/home-renovation-new-calculator" component={HomeRenovationCalculator} />
       <Route path="/calculator/home-renovation" component={HomeRenovationCalculator} />
       <Route path="/calculator/drone-photography" component={DronePhotographyCalculator} />
       <Route path="/calculator/event-videography" component={EventVideographyCalculator} />

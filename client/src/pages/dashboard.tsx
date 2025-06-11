@@ -97,15 +97,29 @@ export default function Dashboard() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        // First try Supabase authentication
         const { user, error } = await getCurrentUser();
         const { session } = await getCurrentSession();
         
-        if (error || !user || !session) {
-          setLocation('/login');
+        if (user && session) {
+          setCurrentUser(user);
+          setIsLoading(false);
           return;
         }
         
-        setCurrentUser(user);
+        // If Supabase auth fails, check for temp user session
+        const storedUser = localStorage.getItem('user');
+        const storedSession = localStorage.getItem('supabase_session');
+        
+        if (storedUser && storedSession) {
+          const userData = JSON.parse(storedUser);
+          setCurrentUser(userData);
+          setIsLoading(false);
+          return;
+        }
+        
+        // No valid authentication found
+        setLocation('/login');
       } catch (error) {
         console.error('Auth check failed:', error);
         setLocation('/login');
@@ -800,6 +814,7 @@ export default function Dashboard() {
           <div>
             <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
             <p className="text-gray-400">Welcome back, {currentUser?.email}</p>
+            <p className="text-xs text-gray-500">User ID: {currentUser?.id}</p>
           </div>
           <Button
             onClick={handleLogout}

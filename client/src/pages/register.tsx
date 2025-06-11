@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link, useLocation } from "wouter";
-import { QuoteKitHeader } from "@/components/calculator-header";
+import Header from "@/components/landing/header";
 import { useToast } from "@/hooks/use-toast";
 import { signUpWithEmail, loginWithEmail } from "@/lib/supabase";
 import { storeTempUser, createTempSession } from "@/lib/auth-bypass";
@@ -98,7 +98,7 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-midnight-900">
-      <QuoteKitHeader />
+      <Header />
       
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-md mx-auto">

@@ -387,10 +387,10 @@ export default function Dashboard() {
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold text-white">
-                          {allCalculators.find(c => c.id === calc.calculatorId)?.name || "Calculator"}
+                          {allCalculators.find((c: any) => c.slug === calc.slug)?.name || calc.name || "Calculator"}
                         </h3>
                         <p className="text-gray-400">
-                          {allCalculators.find(c => c.id === calc.calculatorId)?.description || "Custom quote calculator"}
+                          {allCalculators.find((c: any) => c.slug === calc.slug)?.description || "Custom quote calculator"}
                         </p>
                       </div>
                     </div>
@@ -495,7 +495,7 @@ export default function Dashboard() {
                         </div>
                         <p className="text-xs text-gray-300 mb-3">{calculator.description}</p>
                         <Button
-                          onClick={() => cloneCalculatorMutation.mutate({ templateId: calculator.id.toString() })}
+                          onClick={() => cloneCalculatorMutation.mutate({ templateId: calculator.slug })}
                           disabled={cloneCalculatorMutation.isPending}
                           className="w-full bg-neon-500 hover:bg-neon-600 text-white text-sm"
                           size="sm"

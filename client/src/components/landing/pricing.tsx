@@ -17,30 +17,44 @@ export default function Pricing() {
         return;
       }
 
+      const priceId = getPriceId(planName);
+      if (!priceId) {
+        throw new Error(`No price ID found for plan: ${planName}`);
+      }
+
+      console.log("Creating checkout session for:", { planName, priceId });
+
       // For paid plans, create Stripe checkout session
-      const response = await apiRequest("/api/create-checkout-session", {
+      const response = await fetch("/api/create-checkout-session", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           planName,
-          priceId: getPriceId(planName)
+          priceId
         })
       });
 
-      const { url } = response;
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log("Checkout session response:", data);
       
-      if (url) {
-        window.location.href = url;
+      if (data.url) {
+        console.log("Redirecting to Stripe checkout:", data.url);
+        window.location.href = data.url;
       } else {
-        throw new Error("Failed to create checkout session");
+        throw new Error("No checkout URL received from server");
       }
     } catch (error) {
       console.error("Payment error:", error);
       toast({
         title: "Payment Error",
-        description: "Unable to process payment. Please try again.",
+        description: error instanceof Error ? error.message : "Unable to process payment. Please try again.",
         variant: "destructive",
       });
     }

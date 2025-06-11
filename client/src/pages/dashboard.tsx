@@ -230,10 +230,75 @@ export default function Dashboard() {
     window.open(previewUrl, '_blank');
   };
 
+  const [showCustomizeModal, setShowCustomizeModal] = useState(false);
+  const [selectedCalculator, setSelectedCalculator] = useState<UserCalculator | null>(null);
+  
+  // Default customization config
+  const defaultConfig = {
+    branding: {
+      primaryColor: "#38bdf8",
+      accentColor: "#facc15", 
+      fontFamily: "sans-serif",
+      fontSize: "medium",
+      roundedCorners: 12
+    },
+    appearance: {
+      background: "gradient",
+      darkMode: false,
+      logoUrl: "",
+      backgroundImage: ""
+    },
+    text: {
+      headline: "Get Your Free Estimate",
+      subheading: "Just answer a few quick questions", 
+      ctaText: "Calculate Now",
+      footerNote: "*All quotes are subject to confirmation."
+    },
+    functionality: {
+      showEmailCapture: true,
+      enableQuoteLock: true,
+      enablePdfDownload: true,
+      ctaUrl: ""
+    },
+    language: {
+      selected: "EN"
+    }
+  };
+
+  const [customConfig, setCustomConfig] = useState(defaultConfig);
+
   const customizeCalculator = (calc: UserCalculator) => {
+    setSelectedCalculator(calc);
+    // Load existing config if available, otherwise use defaults
+    const existingConfig = calc.config || defaultConfig;
+    setCustomConfig(existingConfig);
+    setShowCustomizeModal(true);
+  };
+
+  const saveCustomization = () => {
+    if (selectedCalculator) {
+      // Update the calculator's config
+      setDemoCalculators(prev => 
+        prev.map(calc => 
+          calc.id === selectedCalculator.id 
+            ? { ...calc, config: customConfig }
+            : calc
+        )
+      );
+      
+      toast({
+        title: "Settings Saved!",
+        description: "Your calculator customization has been updated.",
+      });
+      setShowCustomizeModal(false);
+    }
+  };
+
+  const resetToDefaults = () => {
+    setCustomConfig(defaultConfig);
     toast({
-      title: "Customization Panel",
-      description: "Calculator customization interface will open here.",
+      title: "Reset to Defaults",
+      description: "All customization settings have been restored.",
     });
   };
 
@@ -593,6 +658,415 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* Customization Modal */}
+      {showCustomizeModal && selectedCalculator && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-midnight-800 rounded-2xl border border-midnight-700 w-full max-w-7xl max-h-[95vh] overflow-hidden">
+            {/* Modal Header */}
+            <div className="border-b border-midnight-700 p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-white">Customize Calculator</h2>
+                  <p className="text-gray-400 mt-1">Calculator: {selectedCalculator.embedId}</p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowCustomizeModal(false)}
+                  className="text-gray-400 hover:text-white"
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex h-[calc(95vh-120px)]">
+              {/* Customization Panel */}
+              <div className="w-1/2 p-6 overflow-y-auto border-r border-midnight-700">
+                <div className="space-y-6">
+                  {/* Branding Section */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                      <Palette className="h-5 w-5" />
+                      Branding & Colors
+                    </h3>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-sm text-gray-300 block mb-2">Primary Color</label>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="color"
+                            value={customConfig.branding.primaryColor}
+                            onChange={(e) => setCustomConfig(prev => ({
+                              ...prev,
+                              branding: { ...prev.branding, primaryColor: e.target.value }
+                            }))}
+                            className="w-10 h-8 rounded border border-midnight-600"
+                          />
+                          <input
+                            type="text"
+                            value={customConfig.branding.primaryColor}
+                            onChange={(e) => setCustomConfig(prev => ({
+                              ...prev,
+                              branding: { ...prev.branding, primaryColor: e.target.value }
+                            }))}
+                            className="flex-1 px-3 py-1 bg-midnight-700 border border-midnight-600 rounded text-white text-sm"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm text-gray-300 block mb-2">Accent Color</label>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="color"
+                            value={customConfig.branding.accentColor}
+                            onChange={(e) => setCustomConfig(prev => ({
+                              ...prev,
+                              branding: { ...prev.branding, accentColor: e.target.value }
+                            }))}
+                            className="w-10 h-8 rounded border border-midnight-600"
+                          />
+                          <input
+                            type="text"
+                            value={customConfig.branding.accentColor}
+                            onChange={(e) => setCustomConfig(prev => ({
+                              ...prev,
+                              branding: { ...prev.branding, accentColor: e.target.value }
+                            }))}
+                            className="flex-1 px-3 py-1 bg-midnight-700 border border-midnight-600 rounded text-white text-sm"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-sm text-gray-300 block mb-2">Font Family</label>
+                        <select
+                          value={customConfig.branding.fontFamily}
+                          onChange={(e) => setCustomConfig(prev => ({
+                            ...prev,
+                            branding: { ...prev.branding, fontFamily: e.target.value }
+                          }))}
+                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        >
+                          <option value="sans-serif">Sans Serif</option>
+                          <option value="serif">Serif</option>
+                          <option value="monospace">Monospace</option>
+                          <option value="system-ui">System</option>
+                        </select>
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm text-gray-300 block mb-2">Font Size</label>
+                        <select
+                          value={customConfig.branding.fontSize}
+                          onChange={(e) => setCustomConfig(prev => ({
+                            ...prev,
+                            branding: { ...prev.branding, fontSize: e.target.value }
+                          }))}
+                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        >
+                          <option value="small">Small</option>
+                          <option value="medium">Medium</option>
+                          <option value="large">Large</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-sm text-gray-300 block mb-2">
+                        Rounded Corners: {customConfig.branding.roundedCorners}px
+                      </label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="24"
+                        step="2"
+                        value={customConfig.branding.roundedCorners}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          branding: { ...prev.branding, roundedCorners: parseInt(e.target.value) }
+                        }))}
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Text Content Section */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                      <Edit className="h-5 w-5" />
+                      Text & Content
+                    </h3>
+                    
+                    <div>
+                      <label className="text-sm text-gray-300 block mb-2">Headline</label>
+                      <input
+                        type="text"
+                        value={customConfig.text.headline}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          text: { ...prev.text, headline: e.target.value }
+                        }))}
+                        className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        placeholder="Get Your Free Estimate"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="text-sm text-gray-300 block mb-2">Subheading</label>
+                      <input
+                        type="text"
+                        value={customConfig.text.subheading}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          text: { ...prev.text, subheading: e.target.value }
+                        }))}
+                        className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        placeholder="Just answer a few quick questions"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="text-sm text-gray-300 block mb-2">Button Text</label>
+                      <input
+                        type="text"
+                        value={customConfig.text.ctaText}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          text: { ...prev.text, ctaText: e.target.value }
+                        }))}
+                        className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        placeholder="Calculate Now"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="text-sm text-gray-300 block mb-2">Footer Note</label>
+                      <input
+                        type="text"
+                        value={customConfig.text.footerNote}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          text: { ...prev.text, footerNote: e.target.value }
+                        }))}
+                        className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        placeholder="*All quotes are subject to confirmation."
+                      />
+                    </div>
+                  </div>
+
+                  {/* Functionality Section */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                      <Settings className="h-5 w-5" />
+                      Functionality
+                    </h3>
+                    
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-300">Email Capture</span>
+                        <input
+                          type="checkbox"
+                          checked={customConfig.functionality.showEmailCapture}
+                          onChange={(e) => setCustomConfig(prev => ({
+                            ...prev,
+                            functionality: { ...prev.functionality, showEmailCapture: e.target.checked }
+                          }))}
+                          className="rounded"
+                        />
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-300">Quote Lock Timer</span>
+                        <input
+                          type="checkbox"
+                          checked={customConfig.functionality.enableQuoteLock}
+                          onChange={(e) => setCustomConfig(prev => ({
+                            ...prev,
+                            functionality: { ...prev.functionality, enableQuoteLock: e.target.checked }
+                          }))}
+                          className="rounded"
+                        />
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-300">PDF Download</span>
+                        <input
+                          type="checkbox"
+                          checked={customConfig.functionality.enablePdfDownload}
+                          onChange={(e) => setCustomConfig(prev => ({
+                            ...prev,
+                            functionality: { ...prev.functionality, enablePdfDownload: e.target.checked }
+                          }))}
+                          className="rounded"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="text-sm text-gray-300 block mb-2">Custom CTA URL</label>
+                      <input
+                        type="url"
+                        value={customConfig.functionality.ctaUrl}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          functionality: { ...prev.functionality, ctaUrl: e.target.value }
+                        }))}
+                        className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        placeholder="https://yourdomain.com/book"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Appearance Section */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                      <Eye className="h-5 w-5" />
+                      Appearance
+                    </h3>
+                    
+                    <div>
+                      <label className="text-sm text-gray-300 block mb-2">Background Type</label>
+                      <select
+                        value={customConfig.appearance.background}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          appearance: { ...prev.appearance, background: e.target.value }
+                        }))}
+                        className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                      >
+                        <option value="solid">Solid Color</option>
+                        <option value="gradient">Gradient</option>
+                        <option value="image">Background Image</option>
+                      </select>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-300">Dark Mode</span>
+                      <input
+                        type="checkbox"
+                        checked={customConfig.appearance.darkMode}
+                        onChange={(e) => setCustomConfig(prev => ({
+                          ...prev,
+                          appearance: { ...prev.appearance, darkMode: e.target.checked }
+                        }))}
+                        className="rounded"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Preview Panel */}
+              <div className="w-1/2 p-6 bg-midnight-900">
+                <div className="h-full">
+                  <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <Monitor className="h-5 w-5" />
+                    Live Preview
+                  </h3>
+                  
+                  <div className="bg-white rounded-lg p-6 h-[calc(100%-60px)] overflow-auto">
+                    <div 
+                      className="h-full rounded-lg p-6"
+                      style={{
+                        backgroundColor: customConfig.appearance.darkMode ? '#1e293b' : '#ffffff',
+                        color: customConfig.appearance.darkMode ? '#ffffff' : '#000000',
+                        fontFamily: customConfig.branding.fontFamily,
+                        fontSize: customConfig.branding.fontSize === 'small' ? '14px' : 
+                                 customConfig.branding.fontSize === 'large' ? '18px' : '16px'
+                      }}
+                    >
+                      <div className="text-center mb-6">
+                        <h1 
+                          className="text-2xl font-bold mb-2"
+                          style={{ color: customConfig.branding.primaryColor }}
+                        >
+                          {customConfig.text.headline}
+                        </h1>
+                        <p className="text-gray-600 mb-4">
+                          {customConfig.text.subheading}
+                        </p>
+                      </div>
+                      
+                      <div className="space-y-4 mb-6">
+                        <div className="p-4 border rounded" style={{ borderRadius: `${customConfig.branding.roundedCorners}px` }}>
+                          <label className="block text-sm font-medium mb-2">Sample Question</label>
+                          <select className="w-full p-2 border rounded" style={{ borderRadius: `${customConfig.branding.roundedCorners}px` }}>
+                            <option>Select an option...</option>
+                            <option>Option 1</option>
+                            <option>Option 2</option>
+                          </select>
+                        </div>
+                        
+                        {customConfig.functionality.showEmailCapture && (
+                          <div className="p-4 border rounded" style={{ borderRadius: `${customConfig.branding.roundedCorners}px` }}>
+                            <label className="block text-sm font-medium mb-2">Email Address</label>
+                            <input 
+                              type="email" 
+                              placeholder="your@email.com"
+                              className="w-full p-2 border rounded" 
+                              style={{ borderRadius: `${customConfig.branding.roundedCorners}px` }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="text-center mb-4">
+                        <button 
+                          className="px-6 py-3 text-white font-semibold rounded shadow-lg"
+                          style={{ 
+                            backgroundColor: customConfig.branding.primaryColor,
+                            borderRadius: `${customConfig.branding.roundedCorners}px`
+                          }}
+                        >
+                          {customConfig.text.ctaText}
+                        </button>
+                      </div>
+                      
+                      <div className="text-center text-sm text-gray-500">
+                        {customConfig.text.footerNote}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="border-t border-midnight-700 p-6">
+              <div className="flex items-center justify-between">
+                <Button
+                  variant="outline"
+                  onClick={resetToDefaults}
+                  className="border-midnight-600 text-gray-300 hover:bg-midnight-600"
+                >
+                  Reset to Defaults
+                </Button>
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowCustomizeModal(false)}
+                    className="border-midnight-600 text-gray-300 hover:bg-midnight-600"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={saveCustomization}
+                    className="bg-neon-500 hover:bg-neon-600 text-black"
+                  >
+                    Save Changes
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Calculator Selection Modal */}
       {showCalculatorModal && (

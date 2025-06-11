@@ -813,7 +813,7 @@ export default function Dashboard() {
                 <h3 className="text-lg font-semibold text-white mb-4">Live Preview</h3>
                 <div className="bg-white rounded-lg h-full overflow-hidden">
                   <iframe
-                    src={selectedCalculator.embed_url}
+                    src={`${selectedCalculator.embed_url}?preview=true&config=${encodeURIComponent(JSON.stringify(customConfig))}`}
                     className="w-full h-full border-0"
                     title="Calculator Preview"
                     key={JSON.stringify(customConfig)} // Force reload when config changes

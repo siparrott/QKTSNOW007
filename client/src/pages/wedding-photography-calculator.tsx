@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -55,6 +55,7 @@ interface PricingBreakdown {
 export default function WeddingPhotographyCalculator() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
+  const [customConfig, setCustomConfig] = useState<any>(null);
   const [formData, setFormData] = useState<WeddingFormData>({
     packageType: "",
     hours: "",
@@ -71,6 +72,34 @@ export default function WeddingPhotographyCalculator() {
       phone: "",
     },
   });
+
+  // Handle URL parameters for preview mode
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const configParam = urlParams.get('config');
+    if (configParam) {
+      try {
+        const config = JSON.parse(decodeURIComponent(configParam));
+        setCustomConfig(config);
+        
+        // Apply custom styling
+        if (config.brandColors?.primaryColor) {
+          document.documentElement.style.setProperty('--primary', config.brandColors.primaryColor);
+        }
+        if (config.brandColors?.secondaryColor) {
+          document.documentElement.style.setProperty('--secondary', config.brandColors.secondaryColor);
+        }
+        if (config.typography?.fontFamily) {
+          document.documentElement.style.setProperty('--font-family', config.typography.fontFamily);
+        }
+        if (config.companyBranding?.companyName) {
+          document.title = `${config.companyBranding.companyName} - Wedding Photography Quote`;
+        }
+      } catch (error) {
+        console.error('Failed to parse config:', error);
+      }
+    }
+  }, []);
 
   const packageTypes = [
     { id: "elopement", label: "Elopement / Small Ceremony", basePrice: 950, hours: 4, icon: "💕", popular: false },
@@ -286,8 +315,18 @@ export default function WeddingPhotographyCalculator() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
+          {customConfig?.companyBranding?.logoUrl && (
+            <img 
+              src={customConfig.companyBranding.logoUrl} 
+              alt={customConfig.companyBranding.companyName || "Company Logo"}
+              className="h-16 mx-auto mb-4"
+            />
+          )}
           <h1 className="text-4xl font-serif text-stone-800 mb-2">
-            Wedding Photography Quote Calculator
+            {customConfig?.companyBranding?.companyName ? 
+              `${customConfig.companyBranding.companyName} - Wedding Photography` : 
+              "Wedding Photography Quote Calculator"
+            }
           </h1>
           <p className="text-stone-600 max-w-2xl mx-auto font-light">
             Create beautiful memories with professional wedding photography. Get your personalized quote for your special day.

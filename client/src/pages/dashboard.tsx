@@ -227,12 +227,39 @@ export default function Dashboard() {
   // Send config updates to iframe when customConfig changes
   useEffect(() => {
     if (iframeRef && customConfig && showCustomizeModal) {
+      console.log('Sending config to iframe:', customConfig);
       iframeRef.contentWindow?.postMessage({
         type: 'APPLY_CONFIG',
         config: customConfig
       }, '*');
     }
   }, [customConfig, iframeRef, showCustomizeModal]);
+
+  // Enhanced iframe communication with retry mechanism
+  useEffect(() => {
+    let retryCount = 0;
+    const maxRetries = 5;
+    
+    const sendConfigWithRetry = () => {
+      if (iframeRef && customConfig && showCustomizeModal) {
+        console.log(`Attempting to send config (attempt ${retryCount + 1}):`, customConfig);
+        iframeRef.contentWindow?.postMessage({
+          type: 'APPLY_CONFIG',
+          config: customConfig,
+          timestamp: Date.now()
+        }, '*');
+        
+        retryCount++;
+        if (retryCount < maxRetries) {
+          setTimeout(sendConfigWithRetry, 500);
+        }
+      }
+    };
+
+    if (showCustomizeModal && iframeRef) {
+      setTimeout(sendConfigWithRetry, 100);
+    }
+  }, [showCustomizeModal, iframeRef]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -768,6 +795,32 @@ export default function Dashboard() {
                           />
                         </div>
                       </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Accent Color</label>
+                        <div className="flex items-center space-x-3">
+                          <input
+                            type="color"
+                            value={customConfig?.brandColors?.accent || "#f59e0b"}
+                            onChange={(e) => setCustomConfig((prev: any) => ({ 
+                              ...prev, 
+                              brandColors: { ...prev.brandColors, accent: e.target.value },
+                              accentColor: e.target.value 
+                            }))}
+                            className="w-12 h-12 rounded border border-midnight-600"
+                          />
+                          <input
+                            type="text"
+                            value={customConfig?.brandColors?.accent || "#f59e0b"}
+                            onChange={(e) => setCustomConfig((prev: any) => ({ 
+                              ...prev, 
+                              brandColors: { ...prev.brandColors, accent: e.target.value },
+                              accentColor: e.target.value 
+                            }))}
+                            className="flex-1 px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -810,6 +863,84 @@ export default function Dashboard() {
                           <option value="8px">Medium (8px)</option>
                           <option value="12px">Large (12px)</option>
                           <option value="20px">Extra Large (20px)</option>
+                        </select>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Font Size</label>
+                        <select
+                          value={customConfig?.styling?.fontSize || "medium"}
+                          onChange={(e) => setCustomConfig((prev: any) => ({ 
+                            ...prev, 
+                            styling: { ...prev.styling, fontSize: e.target.value },
+                            fontSize: e.target.value 
+                          }))}
+                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        >
+                          <option value="small">Small</option>
+                          <option value="medium">Medium</option>
+                          <option value="large">Large</option>
+                          <option value="xl">Extra Large</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Layout & Spacing */}
+                  <div>
+                    <h3 className="text-lg font-semibold text-white mb-3">Layout & Spacing</h3>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Layout Style</label>
+                        <select
+                          value={customConfig?.styling?.layout || "standard"}
+                          onChange={(e) => setCustomConfig((prev: any) => ({ 
+                            ...prev, 
+                            styling: { ...prev.styling, layout: e.target.value },
+                            layout: e.target.value 
+                          }))}
+                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        >
+                          <option value="compact">Compact</option>
+                          <option value="standard">Standard</option>
+                          <option value="spacious">Spacious</option>
+                          <option value="minimal">Minimal</option>
+                        </select>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Card Shadow</label>
+                        <select
+                          value={customConfig?.styling?.shadow || "medium"}
+                          onChange={(e) => setCustomConfig((prev: any) => ({ 
+                            ...prev, 
+                            styling: { ...prev.styling, shadow: e.target.value },
+                            shadow: e.target.value 
+                          }))}
+                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        >
+                          <option value="none">None</option>
+                          <option value="light">Light</option>
+                          <option value="medium">Medium</option>
+                          <option value="heavy">Heavy</option>
+                        </select>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Animation Style</label>
+                        <select
+                          value={customConfig?.styling?.animation || "subtle"}
+                          onChange={(e) => setCustomConfig((prev: any) => ({ 
+                            ...prev, 
+                            styling: { ...prev.styling, animation: e.target.value },
+                            animation: e.target.value 
+                          }))}
+                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        >
+                          <option value="none">No Animation</option>
+                          <option value="subtle">Subtle</option>
+                          <option value="smooth">Smooth</option>
+                          <option value="dynamic">Dynamic</option>
                         </select>
                       </div>
                     </div>

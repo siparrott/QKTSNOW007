@@ -99,24 +99,49 @@ export default function WeddingPhotographyCalculator() {
   }, []);
 
   const applyCustomConfig = (config: any) => {
+    console.log('Applying config to wedding calculator:', config);
     setCustomConfig(config);
     
-    // Apply custom styling
-    if (config.brandColors?.primaryColor) {
-      document.documentElement.style.setProperty('--primary', config.brandColors.primaryColor);
-      document.documentElement.style.setProperty('--rose-400', config.brandColors.primaryColor);
-      document.documentElement.style.setProperty('--rose-300', config.brandColors.primaryColor);
+    // Apply primary color
+    if (config.brandColors?.primary) {
+      document.documentElement.style.setProperty('--primary', config.brandColors.primary);
+      document.documentElement.style.setProperty('--rose-500', config.brandColors.primary);
+      document.documentElement.style.setProperty('--rose-400', config.brandColors.primary);
+      document.documentElement.style.setProperty('--rose-300', config.brandColors.primary);
     }
-    if (config.brandColors?.secondaryColor) {
-      document.documentElement.style.setProperty('--secondary', config.brandColors.secondaryColor);
+    
+    // Apply secondary color
+    if (config.brandColors?.secondary) {
+      document.documentElement.style.setProperty('--secondary', config.brandColors.secondary);
+      document.documentElement.style.setProperty('--gray-900', config.brandColors.secondary);
+      document.documentElement.style.setProperty('--gray-800', config.brandColors.secondary);
     }
-    if (config.typography?.fontFamily) {
-      document.documentElement.style.setProperty('--font-family', config.typography.fontFamily);
-      document.body.style.fontFamily = config.typography.fontFamily;
+    
+    // Apply accent color
+    if (config.brandColors?.accent) {
+      document.documentElement.style.setProperty('--accent', config.brandColors.accent);
+      document.documentElement.style.setProperty('--yellow-500', config.brandColors.accent);
     }
+    
+    // Apply typography
+    if (config.styling?.fontFamily) {
+      document.documentElement.style.setProperty('--font-family', config.styling.fontFamily);
+      document.body.style.fontFamily = config.styling.fontFamily;
+    }
+    
+    // Apply border radius
+    if (config.styling?.borderRadius) {
+      document.documentElement.style.setProperty('--radius', config.styling.borderRadius);
+    }
+    
+    // Update company branding
     if (config.companyBranding?.companyName) {
       document.title = `${config.companyBranding.companyName} - Wedding Photography Quote`;
     }
+    
+    // Force re-render by adding a class to body
+    document.body.classList.add('config-applied');
+    setTimeout(() => document.body.classList.remove('config-applied'), 100);
   };
 
   const packageTypes = [

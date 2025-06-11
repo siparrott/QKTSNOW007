@@ -63,7 +63,13 @@ interface PricingBreakdown {
   breakdown: string[];
 }
 
-export default function AutoMechanicCalculator() {
+interface AutoMechanicCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function AutoMechanicCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: AutoMechanicCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [formData, setFormData] = useState<AutoMechanicFormData>({
@@ -298,7 +304,7 @@ export default function AutoMechanicCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 via-slate-100 to-blue-100">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       <div className="max-w-7xl mx-auto px-4 py-8">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

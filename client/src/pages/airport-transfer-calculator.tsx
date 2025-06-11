@@ -59,7 +59,13 @@ interface PricingBreakdown {
   breakdown: string[];
 }
 
-export default function AirportTransferCalculator() {
+interface AirportTransferCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function AirportTransferCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: AirportTransferCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [quoteGenerated, setQuoteGenerated] = useState(false);
@@ -331,7 +337,7 @@ export default function AirportTransferCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-sky-100">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       
       <div className="container mx-auto px-4 py-8">
         {/* Hero Section */}

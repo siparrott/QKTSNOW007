@@ -33,6 +33,7 @@ import {
   Crown,
   Sparkles
 } from "lucide-react";
+import { QuoteKitHeader } from "@/components/calculator-header";
 
 // Plastic surgery specific icons
 const ScalpelIcon = () => (
@@ -107,7 +108,13 @@ const defaultConfig: SurgeryConfig = {
   }
 };
 
-export default function PlasticSurgeryCalculator() {
+interface PlasticSurgeryCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function PlasticSurgeryCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: PlasticSurgeryCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isCalculating, setIsCalculating] = useState(false);
   const [showQuote, setShowQuote] = useState(false);
@@ -747,6 +754,7 @@ export default function PlasticSurgeryCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-amber-50 to-rose-50">
+      {!hideHeader && <QuoteKitHeader />}
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">

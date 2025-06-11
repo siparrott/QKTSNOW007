@@ -39,6 +39,7 @@ import {
   Scan,
   PillBottle
 } from "lucide-react";
+import { QuoteKitHeader } from "@/components/calculator-header";
 
 // Medical specific icons
 const MedicalIcon = () => (
@@ -113,7 +114,13 @@ const defaultConfig: MedicalConfig = {
   }
 };
 
-export default function PrivateMedicalCalculator() {
+interface PrivateMedicalCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function PrivateMedicalCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: PrivateMedicalCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isCalculating, setIsCalculating] = useState(false);
   const [showQuote, setShowQuote] = useState(false);
@@ -721,6 +728,7 @@ export default function PrivateMedicalCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50">
+      {!hideHeader && <QuoteKitHeader />}
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">

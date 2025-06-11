@@ -109,7 +109,7 @@ export default function Dashboard() {
   const [showCustomizeModal, setShowCustomizeModal] = useState(false);
   const [selectedCalculator, setSelectedCalculator] = useState<any>(null);
   const [customConfig, setCustomConfig] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState("calculators");
   const [selectedQuote, setSelectedQuote] = useState<any>(null);
   const [showQuoteModal, setShowQuoteModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -259,6 +259,16 @@ export default function Dashboard() {
         {/* Navigation Tabs */}
         <div className="flex gap-4 mb-8 border-b border-midnight-700">
           <button
+            onClick={() => setActiveTab("calculators")}
+            className={`px-6 py-3 font-medium transition-colors ${
+              activeTab === "calculators"
+                ? "text-neon-500 border-b-2 border-neon-500"
+                : "text-gray-400 hover:text-white"
+            }`}
+          >
+            Calculators
+          </button>
+          <button
             onClick={() => setActiveTab("overview")}
             className={`px-6 py-3 font-medium transition-colors ${
               activeTab === "overview"
@@ -287,16 +297,6 @@ export default function Dashboard() {
             }`}
           >
             Client Quotes
-          </button>
-          <button
-            onClick={() => setActiveTab("calculators")}
-            className={`px-6 py-3 font-medium transition-colors ${
-              activeTab === "calculators"
-                ? "text-neon-500 border-b-2 border-neon-500"
-                : "text-gray-400 hover:text-white"
-            }`}
-          >
-            Calculators
           </button>
         </div>
 

@@ -1,40 +1,17 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { QuoteKitHeader } from "@/components/calculator-header";
-import { useToast } from "@/hooks/use-toast";
-import { Link, useLocation } from "wouter";
-import CalculatorPreview from "@/components/calculator-preview";
-import { 
-  Settings, 
-  BarChart3, 
-  ExternalLink, 
-  Copy, 
-  Eye, 
-  Calendar,
-  CreditCard,
-  Users,
-  TrendingUp,
-  Calculator,
-  Mail,
-  Globe,
-  Plus,
-  X,
-  Search,
-  Phone
-} from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
+import { useToast } from "@/hooks/use-toast";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
-import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
+import { Calculator, Plus, Settings, Eye, Copy, ExternalLink, BarChart3, Users, TrendingUp, Activity, Calendar, DollarSign, Palette, Type, Layout, Zap, Bell, Smartphone, Monitor, Tablet } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart as RechartsBarChart, Bar } from "recharts";
 
 interface User {
   id: string;
@@ -64,85 +41,63 @@ interface UserCalculator {
   last_updated: string;
 }
 
-export default function Dashboard() {
-  const [, setLocation] = useLocation();
-  const { toast } = useToast();
-  
-  // Demo user for preview
-  const [user] = useState<User>({
-    id: "demo-123",
-    email: "demo@quotekit.ai", 
-    fullName: "Demo User",
-    subscriptionStatus: "pro",
-    quotesUsedThisMonth: 47,
-    quotesLimit: 500
-  });
+interface CalculatorTemplate {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  template_id: string;
+  slug: string;
+}
 
+const mockUser: User = {
+  id: "1",
+  email: "user@example.com",
+  fullName: "John Doe",
+  subscriptionStatus: "Pro",
+  quotesUsedThisMonth: 245,
+  quotesLimit: 1000
+};
+
+const calculatorTemplates: CalculatorTemplate[] = [
+  { id: "1", name: "Wedding Photography Quote", category: "Photography", description: "Professional wedding photography pricing calculator", template_id: "wedding-photography", slug: "wedding-photography" },
+  { id: "2", name: "Home Renovation Estimate", category: "Construction", description: "Comprehensive home renovation cost calculator", template_id: "home-renovation", slug: "home-renovation" },
+  { id: "3", name: "Legal Services Quote", category: "Legal", description: "Legal consultation and services pricing", template_id: "legal-services", slug: "legal-services" },
+  { id: "4", name: "Pest Control Services", category: "Professional", description: "Pest control treatment pricing calculator", template_id: "pest-control", slug: "pest-control" },
+  { id: "5", name: "Portrait Photography", category: "Photography", description: "Portrait session pricing calculator", template_id: "portrait-photography", slug: "portrait-photography" },
+  { id: "6", name: "Roofing Services", category: "Construction", description: "Roofing installation and repair quotes", template_id: "roofing-services", slug: "roofing-services" }
+];
+
+const performanceData = [
+  { name: 'Jan', quotes: 65, conversions: 45 },
+  { name: 'Feb', quotes: 78, conversions: 52 },
+  { name: 'Mar', quotes: 90, conversions: 61 },
+  { name: 'Apr', quotes: 85, conversions: 58 },
+  { name: 'May', quotes: 105, conversions: 72 },
+  { name: 'Jun', quotes: 120, conversions: 84 }
+];
+
+const clientData = [
+  { id: 1, name: "Sarah Johnson", email: "sarah@email.com", project: "Wedding Photography", quote: "$2,500", status: "Accepted", date: "2024-06-10" },
+  { id: 2, name: "Michael Chen", email: "mike@email.com", project: "Home Renovation", quote: "$15,000", status: "Pending", date: "2024-06-09" },
+  { id: 3, name: "Emily Davis", email: "emily@email.com", project: "Legal Consultation", quote: "$350", status: "Accepted", date: "2024-06-08" },
+  { id: 4, name: "Robert Wilson", email: "robert@email.com", project: "Pest Control", quote: "$180", status: "Declined", date: "2024-06-07" },
+  { id: 5, name: "Lisa Anderson", email: "lisa@email.com", project: "Portrait Session", quote: "$450", status: "Accepted", date: "2024-06-06" }
+];
+
+export default function Dashboard() {
+  const [user] = useState<User>(mockUser);
+  const [userCalculators, setUserCalculators] = useState<UserCalculator[]>([]);
   const [showCalculatorModal, setShowCalculatorModal] = useState(false);
   const [showCustomizeModal, setShowCustomizeModal] = useState(false);
   const [showEmbedModal, setShowEmbedModal] = useState(false);
   const [selectedCalculator, setSelectedCalculator] = useState<UserCalculator | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [userCalculators, setUserCalculators] = useState<UserCalculator[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [customConfig, setCustomConfig] = useState<any>({});
-  const [previewKey, setPreviewKey] = useState(0);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const { toast } = useToast();
 
-  // Force preview refresh when config changes
-  useEffect(() => {
-    if (customConfig && Object.keys(customConfig).length > 0) {
-      setPreviewKey(prev => prev + 1);
-    }
-  }, [customConfig]);
-
-  // Available calculator templates - matching the actual files we have
-  const allCalculators = [
-    { id: 1, name: "Electrician Services", category: "Home Services", slug: "electrician" },
-    { id: 2, name: "Home Renovation", category: "Home Services", slug: "home-renovation" },
-    { id: 3, name: "Landscaping Services", category: "Home Services", slug: "landscaping" },
-    { id: 4, name: "Wedding Photography", category: "Photography & Creative", slug: "wedding-photography" },
-    { id: 5, name: "Pest Control", category: "Home Services", slug: "pest-control" },
-    { id: 6, name: "Roofing Services", category: "Home Services", slug: "roofing" },
-    { id: 7, name: "Plumbing Services", category: "Home Services", slug: "plumbing" },
-    { id: 8, name: "Cleaning Services", category: "Home Services", slug: "cleaning-services" },
-    { id: 9, name: "Personal Training", category: "Health & Beauty", slug: "personal-training" },
-    { id: 10, name: "Makeup Artist", category: "Health & Beauty", slug: "makeup-artist" },
-    { id: 11, name: "Hair Stylist", category: "Health & Beauty", slug: "hair-stylist" },
-    { id: 12, name: "Massage Therapy", category: "Health & Beauty", slug: "massage-therapy" },
-    { id: 13, name: "Nutritionist", category: "Health & Beauty", slug: "nutritionist" },
-    { id: 14, name: "Life Coach", category: "Professional Services", slug: "life-coach" },
-    { id: 15, name: "Business Coach", category: "Professional Services", slug: "business-coach" },
-    { id: 16, name: "Legal Advisor", category: "Professional Services", slug: "legal-advisor" },
-    { id: 17, name: "Tax Preparer", category: "Professional Services", slug: "tax-preparer" },
-    { id: 18, name: "Translation Services", category: "Professional Services", slug: "translation-services" },
-    { id: 19, name: "Virtual Assistant", category: "Professional Services", slug: "virtual-assistant" },
-    { id: 20, name: "Private School", category: "Education & Training", slug: "private-school" },
-    { id: 21, name: "Private Tutor", category: "Education & Training", slug: "private-tutor" },
-    { id: 22, name: "Driving Instructor", category: "Education & Training", slug: "driving-instructor" },
-    { id: 23, name: "Dentist", category: "Health & Medical", slug: "dentist" },
-    { id: 24, name: "Private Medical", category: "Health & Medical", slug: "private-medical" },
-    { id: 25, name: "Plastic Surgery", category: "Health & Medical", slug: "plastic-surgery" },
-    { id: 26, name: "Childcare", category: "Health & Medical", slug: "childcare" },
-    { id: 27, name: "Auto Mechanic", category: "Transportation", slug: "auto-mechanic" },
-    { id: 28, name: "Car Detailing", category: "Transportation", slug: "car-detailing" },
-    { id: 29, name: "Moving Services", category: "Transportation", slug: "moving-services" },
-    { id: 30, name: "Van Rental", category: "Transportation", slug: "van-rental" },
-  ];
-
-  // Default configuration for new calculators
-  const defaultConfig = {
-    companyName: "Your Business",
-    primaryColor: "#06D6A0",
-    headline: "Get Your Custom Quote",
-    description: "Fill out the form below to receive your personalized quote.",
-    emailCollection: true,
-    phoneCollection: false,
-    pdfDownload: true,
-    showPoweredBy: true,
-    customCSS: ""
-  };
-
-  // Load user calculators from localStorage
   useEffect(() => {
     const saved = localStorage.getItem('userCalculators');
     if (saved) {
@@ -150,89 +105,50 @@ export default function Dashboard() {
     }
   }, []);
 
-  // Filter calculators based on search term and category
-  const filteredCalculators = allCalculators.filter(calculator => {
-    const matchesSearch = calculator.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === "All" || calculator.category === selectedCategory;
+  const filteredCalculators = calculatorTemplates.filter(calc => {
+    const matchesSearch = calc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         calc.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === "all" || calc.category.toLowerCase() === selectedCategory.toLowerCase();
     return matchesSearch && matchesCategory;
   });
 
-  // Add calculator function
-  const addCalculator = async (calculator: any) => {
-    try {
-      const instanceId = `calc-${Date.now()}`;
-      const newCalculator: UserCalculator = {
-        id: instanceId,
-        name: calculator.name,
-        slug: calculator.slug,
-        embed_url: `/calculator/${calculator.slug}`,
-        admin_url: `/calculator/${calculator.slug}`,
-        calculator_id: calculator.id,
-        config: defaultConfig,
-        custom_branding: { companyName: "Your Business" },
-        is_active: true,
-        template_id: calculator.slug,
-        layout_json: {},
-        logic_json: {},
-        style_json: {},
-        prompt_md: "",
-        created_at: new Date().toISOString(),
-        last_updated: new Date().toISOString()
-      };
+  const addCalculator = (template: CalculatorTemplate) => {
+    const newCalculator: UserCalculator = {
+      id: `calc_${Date.now()}`,
+      name: template.name,
+      slug: `${template.slug}-${Date.now()}`,
+      embed_url: `https://quotekit.ai/embed/${template.slug}-${Date.now()}`,
+      admin_url: `https://quotekit.ai/admin/${template.slug}-${Date.now()}`,
+      calculator_id: parseInt(template.id),
+      config: {},
+      custom_branding: {},
+      is_active: true,
+      template_id: template.template_id,
+      layout_json: {},
+      logic_json: {},
+      style_json: {},
+      prompt_md: "",
+      created_at: new Date().toISOString(),
+      last_updated: new Date().toISOString()
+    };
 
-      const updatedCalculators = [...userCalculators, newCalculator];
-      setUserCalculators(updatedCalculators);
-      localStorage.setItem('userCalculators', JSON.stringify(updatedCalculators));
-      
-      toast({
-        title: "Calculator Added!",
-        description: `${calculator.name} has been added to your dashboard.`,
-      });
-      
-      setShowCalculatorModal(false);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to add calculator. Please try again.",
-        variant: "destructive"
-      });
-    }
+    const updated = [...userCalculators, newCalculator];
+    setUserCalculators(updated);
+    localStorage.setItem('userCalculators', JSON.stringify(updated));
+    setShowCalculatorModal(false);
+    
+    setShowSuccessMessage(true);
+    setTimeout(() => setShowSuccessMessage(false), 3000);
   };
 
   const customizeCalculator = (calc: UserCalculator) => {
     setSelectedCalculator(calc);
-    // Initialize with meaningful defaults if no config exists
-    const initialConfig = calc.config && Object.keys(calc.config).length > 0 
-      ? calc.config 
-      : {
-          companyBranding: {
-            companyName: calc.custom_branding?.companyName || "Your Business"
-          },
-          brandColors: {
-            primary: "#06D6A0",
-            secondary: "#2563eb",
-            accent: "#f59e0b"
-          },
-          textCustomization: {
-            headline: "Get Your Custom Quote",
-            description: "Fill out the form below to receive your personalized quote."
-          },
-          styling: {
-            fontFamily: "Inter",
-            borderRadius: "0.5rem"
-          },
-          features: {
-            emailCollection: true,
-            phoneCollection: false,
-            pdfDownload: true
-          }
-        };
-    setCustomConfig(initialConfig);
+    setCustomConfig(calc.config || {});
     setShowCustomizeModal(true);
   };
 
   const previewCalculator = (calc: UserCalculator) => {
-    window.open(`/calculator/${calc.slug}`, '_blank');
+    window.open(`/calculator/${calc.template_id}`, '_blank');
   };
 
   const showEmbedCode = (calc: UserCalculator) => {
@@ -241,326 +157,282 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-midnight-900 via-midnight-800 to-midnight-900">
-      <QuoteKitHeader />
-      
+    <div className="min-h-screen bg-gradient-to-br from-midnight-950 via-midnight-900 to-midnight-800">
       <div className="container mx-auto px-6 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
-            <p className="text-gray-400">Manage your quote calculators and track performance</p>
-          </div>
-          <Button
-            onClick={() => setShowCalculatorModal(true)}
-            className="bg-neon-500 hover:bg-neon-600 text-black font-medium"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Calculator
-          </Button>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
+          <p className="text-gray-400">Manage your quote calculators and track performance</p>
+        </div>
+
+        {/* Stats Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <Card className="bg-midnight-800 border-midnight-700">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-400 text-sm">Active Calculators</p>
+                  <p className="text-2xl font-bold text-white">{userCalculators.length}</p>
+                </div>
+                <Calculator className="h-8 w-8 text-neon-400" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-midnight-800 border-midnight-700">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-400 text-sm">Quotes This Month</p>
+                  <p className="text-2xl font-bold text-white">{user.quotesUsedThisMonth}</p>
+                </div>
+                <BarChart3 className="h-8 w-8 text-neon-400" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-midnight-800 border-midnight-700">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-400 text-sm">Conversion Rate</p>
+                  <p className="text-2xl font-bold text-white">68%</p>
+                </div>
+                <TrendingUp className="h-8 w-8 text-neon-400" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-midnight-800 border-midnight-700">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-400 text-sm">Revenue Generated</p>
+                  <p className="text-2xl font-bold text-white">$23,450</p>
+                </div>
+                <DollarSign className="h-8 w-8 text-neon-400" />
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Your Calculators */}
         <Card className="bg-midnight-800 border-midnight-700 mb-8">
           <CardHeader>
-            <CardTitle className="text-white">Your Calculators</CardTitle>
-            <CardDescription className="text-gray-400">
-              Manage and customize your quote calculators
-            </CardDescription>
+            <div className="flex justify-between items-center">
+              <CardTitle className="text-white flex items-center">
+                <Calculator className="h-5 w-5 mr-2 text-neon-400" />
+                Your Calculators
+              </CardTitle>
+              <Button
+                onClick={() => setShowCalculatorModal(true)}
+                className="bg-neon-500 hover:bg-neon-600 text-black font-medium"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Calculator
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             {userCalculators.length === 0 ? (
               <div className="text-center py-12">
-                <Calculator className="h-12 w-12 text-gray-600 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-400 mb-2">No calculators yet</h3>
-                <p className="text-gray-500 mb-4">Add your first calculator to get started</p>
-                <Button 
+                <Calculator className="h-16 w-16 text-gray-600 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-white mb-2">No calculators yet</h3>
+                <p className="text-gray-400 mb-4">Create your first calculator to start generating quotes</p>
+                <Button
                   onClick={() => setShowCalculatorModal(true)}
-                  className="bg-neon-500 hover:bg-neon-600 text-black"
+                  className="bg-neon-500 hover:bg-neon-600 text-black font-medium"
                 >
                   <Plus className="h-4 w-4 mr-2" />
-                  Add Calculator
+                  Add Your First Calculator
                 </Button>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {userCalculators.map((calc) => (
-                  <div key={calc.id} className="flex items-center justify-between p-4 bg-midnight-900 rounded-lg border border-midnight-600">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-10 h-10 bg-neon-500/20 rounded-lg flex items-center justify-center">
-                        <Calculator className="h-5 w-5 text-neon-400" />
+                  <Card key={calc.id} className="bg-midnight-900 border-midnight-700 hover:border-neon-500/50 transition-all duration-200">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="font-medium text-white truncate">{calc.name}</h3>
+                        <Badge 
+                          variant={calc.is_active ? "default" : "secondary"}
+                          className={calc.is_active ? "bg-green-500 text-white" : "bg-gray-600 text-gray-300"}
+                        >
+                          {calc.is_active ? "Active" : "Inactive"}
+                        </Badge>
                       </div>
-                      <div>
-                        <h3 className="text-white font-medium">{calc.name}</h3>
-                        <p className="text-gray-400 text-sm">Created {new Date(calc.created_at).toLocaleDateString()}</p>
-                        <div className="flex items-center space-x-4 mt-1">
-                          <span className="text-xs text-gray-500">Status: {calc.is_active ? 'Active' : 'Inactive'}</span>
-                          {calc.is_active && (
-                            <span className="text-xs text-neon-400">Ready for embedding</span>
-                          )}
-                        </div>
+                      
+                      <p className="text-sm text-gray-400 mb-4">
+                        Created {new Date(calc.created_at).toLocaleDateString()}
+                      </p>
+                      
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => customizeCalculator(calc)}
+                          className="border-midnight-600 text-gray-300 hover:bg-midnight-800"
+                        >
+                          <Settings className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => previewCalculator(calc)}
+                          className="border-midnight-600 text-gray-300 hover:bg-midnight-800"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => showEmbedCode(calc)}
+                          className="border-midnight-600 text-gray-300 hover:bg-midnight-800"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                        </Button>
                       </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Badge variant={calc.is_active ? "default" : "secondary"}>
-                        {calc.is_active ? "Active" : "Inactive"}
-                      </Badge>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => previewCalculator(calc)}
-                        className="text-gray-400 hover:text-white"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => customizeCalculator(calc)}
-                        className="text-gray-400 hover:text-white"
-                      >
-                        <Settings className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => showEmbedCode(calc)}
-                        className="text-gray-400 hover:text-white"
-                      >
-                        <Copy className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
             )}
           </CardContent>
         </Card>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-midnight-800 border-midnight-700">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-400">Active Calculators</CardTitle>
-              <Calculator className="h-4 w-4 text-neon-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">{userCalculators.length}</div>
-              <p className="text-xs text-gray-500">+2 from last month</p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-midnight-800 border-midnight-700">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-400">Total Quotes</CardTitle>
-              <BarChart3 className="h-4 w-4 text-neon-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">0</div>
-              <p className="text-xs text-gray-500">No submissions yet</p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-midnight-800 border-midnight-700">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-400">Conversion Rate</CardTitle>
-              <TrendingUp className="h-4 w-4 text-neon-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">--</div>
-              <p className="text-xs text-gray-500">No data available</p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-midnight-800 border-midnight-700">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-400">Monthly Usage</CardTitle>
-              <Users className="h-4 w-4 text-neon-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">{user.quotesUsedThisMonth}</div>
-              <div className="mt-2">
-                <Progress 
-                  value={(user.quotesUsedThisMonth / user.quotesLimit) * 100} 
-                  className="h-2"
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  {user.quotesUsedThisMonth} of {user.quotesLimit} quotes used
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Analytics Dashboard */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {/* Analytics Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Performance Chart */}
           <Card className="bg-midnight-800 border-midnight-700">
             <CardHeader>
               <CardTitle className="text-white flex items-center">
                 <BarChart3 className="h-5 w-5 mr-2 text-neon-400" />
-                Performance Analytics
+                Performance Overview
               </CardTitle>
-              <CardDescription className="text-gray-400">
-                Monthly conversion trends and engagement metrics
-              </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-midnight-900 p-3 rounded-lg text-center">
-                    <div className="text-lg font-bold text-neon-400">
-                      {userCalculators.length > 0 ? `${((userCalculators.filter(c => c.is_active).length / userCalculators.length) * 100).toFixed(1)}%` : '0%'}
-                    </div>
-                    <div className="text-xs text-gray-400">Active Rate</div>
-                    <div className="text-xs text-gray-500">Calculator activity</div>
-                  </div>
-                  <div className="bg-midnight-900 p-3 rounded-lg text-center">
-                    <div className="text-lg font-bold text-blue-400">{userCalculators.length}</div>
-                    <div className="text-xs text-gray-400">Total Calcs</div>
-                    <div className="text-xs text-gray-500">Your calculators</div>
-                  </div>
-                  <div className="bg-midnight-900 p-3 rounded-lg text-center">
-                    <div className="text-lg font-bold text-purple-400">{user.quotesUsedThisMonth}</div>
-                    <div className="text-xs text-gray-400">Quotes Used</div>
-                    <div className="text-xs text-gray-500">This month</div>
-                  </div>
-                </div>
-                
-                {/* Calculator Usage Chart */}
-                <div className="bg-midnight-900 p-4 rounded-lg">
-                  <div className="text-sm text-gray-400 mb-3">Calculator Usage Distribution</div>
-                  {userCalculators.length > 0 ? (
-                    <div className="h-32 flex items-end justify-center space-x-2">
-                      {userCalculators.slice(0, 8).map((calc, index) => {
-                        const height = calc.is_active ? 70 + (index * 5) : 30;
-                        return (
-                          <div key={calc.id} className="flex flex-col items-center space-y-1">
-                            <div
-                              className={`w-8 bg-gradient-to-t rounded-sm opacity-80 hover:opacity-100 transition-opacity ${
-                                calc.is_active ? 'from-neon-500 to-neon-400' : 'from-gray-600 to-gray-500'
-                              }`}
-                              style={{ height: `${height}%` }}
-                            />
-                            <div className="text-xs text-gray-500 text-center w-12 truncate">
-                              {calc.name.split(' ')[0]}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <div className="h-32 flex items-center justify-center text-gray-500 text-sm">
-                      No calculators to display
-                    </div>
-                  )}
-                </div>
-              </div>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={performanceData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis dataKey="name" stroke="#9CA3AF" />
+                  <YAxis stroke="#9CA3AF" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#1F2937', 
+                      border: '1px solid #374151',
+                      borderRadius: '8px',
+                      color: '#F3F4F6'
+                    }} 
+                  />
+                  <Line type="monotone" dataKey="quotes" stroke="#10B981" strokeWidth={2} />
+                  <Line type="monotone" dataKey="conversions" stroke="#3B82F6" strokeWidth={2} />
+                </LineChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
 
-          {/* Top Performing Calculators */}
+          {/* Recent Activity */}
           <Card className="bg-midnight-800 border-midnight-700">
             <CardHeader>
               <CardTitle className="text-white flex items-center">
-                <TrendingUp className="h-5 w-5 mr-2 text-green-400" />
-                Top Performing Calculators
+                <Activity className="h-5 w-5 mr-2 text-neon-400" />
+                Recent Activity
               </CardTitle>
-              <CardDescription className="text-gray-400">
-                Your highest converting calculators this month
-              </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {userCalculators.length > 0 ? (
-                  userCalculators
-                    .sort((a, b) => Number(b.is_active) - Number(a.is_active))
-                    .slice(0, 5)
-                    .map((calc, index) => {
-                      const colors = ["bg-neon-500", "bg-blue-500", "bg-purple-500", "bg-orange-500", "bg-red-500"];
-                      return (
-                        <div key={calc.id} className="flex items-center justify-between p-3 bg-midnight-900 rounded-lg hover:bg-midnight-700 transition-colors">
-                          <div className="flex items-center space-x-3">
-                            <div className="flex items-center space-x-2">
-                              <div className={`w-3 h-3 rounded-full ${colors[index % colors.length]}`} />
-                              <span className="text-xs text-gray-500">#{index + 1}</span>
-                            </div>
-                            <div>
-                              <div className="text-white text-sm font-medium">{calc.name}</div>
-                              <div className="text-gray-400 text-xs">
-                                Created {new Date(calc.created_at).toLocaleDateString()} • 
-                                {calc.is_active ? ' Active' : ' Inactive'}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-neon-400 font-medium text-sm">
-                              {calc.is_active ? 'Live' : 'Draft'}
-                            </div>
-                            <div className="text-gray-500 text-xs">status</div>
-                          </div>
-                        </div>
-                      );
-                    })
-                ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    <Calculator className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">No calculators created yet</p>
-                    <p className="text-xs">Add your first calculator to see performance data</p>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-3 p-3 bg-midnight-900 rounded">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <div className="flex-1">
+                    <p className="text-sm text-white">New quote generated</p>
+                    <p className="text-xs text-gray-400">Wedding Photography - $2,500</p>
                   </div>
-                )}
+                  <span className="text-xs text-gray-500">2 min ago</span>
+                </div>
+                
+                <div className="flex items-center space-x-3 p-3 bg-midnight-900 rounded">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <div className="flex-1">
+                    <p className="text-sm text-white">Calculator customized</p>
+                    <p className="text-xs text-gray-400">Home Renovation Calculator</p>
+                  </div>
+                  <span className="text-xs text-gray-500">1 hour ago</span>
+                </div>
+                
+                <div className="flex items-center space-x-3 p-3 bg-midnight-900 rounded">
+                  <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                  <div className="flex-1">
+                    <p className="text-sm text-white">Quote accepted</p>
+                    <p className="text-xs text-gray-400">Legal Services - $350</p>
+                  </div>
+                  <span className="text-xs text-gray-500">3 hours ago</span>
+                </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Client Management Table */}
-        <Card className="bg-midnight-800 border-midnight-700 mb-8">
+        {/* Client Management */}
+        <Card className="bg-midnight-800 border-midnight-700">
           <CardHeader>
             <CardTitle className="text-white flex items-center">
-              <Users className="h-5 w-5 mr-2 text-blue-400" />
-              Recent Quote Requests
+              <Users className="h-5 w-5 mr-2 text-neon-400" />
+              Recent Client Quotes
             </CardTitle>
-            <CardDescription className="text-gray-400">
-              Latest quotes submitted by potential clients with contact details
-            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-midnight-600">
-                    <th className="text-left text-gray-400 text-xs font-medium uppercase tracking-wider py-3">Client Details</th>
-                    <th className="text-left text-gray-400 text-xs font-medium uppercase tracking-wider py-3">Service Type</th>
-                    <th className="text-left text-gray-400 text-xs font-medium uppercase tracking-wider py-3">Quote Value</th>
-                    <th className="text-left text-gray-400 text-xs font-medium uppercase tracking-wider py-3">Status</th>
-                    <th className="text-left text-gray-400 text-xs font-medium uppercase tracking-wider py-3">Submitted</th>
-                    <th className="text-left text-gray-400 text-xs font-medium uppercase tracking-wider py-3">Actions</th>
+                  <tr className="border-b border-midnight-700">
+                    <th className="text-left text-sm font-medium text-gray-400 pb-2">Client</th>
+                    <th className="text-left text-sm font-medium text-gray-400 pb-2">Project</th>
+                    <th className="text-left text-sm font-medium text-gray-400 pb-2">Quote</th>
+                    <th className="text-left text-sm font-medium text-gray-400 pb-2">Status</th>
+                    <th className="text-left text-sm font-medium text-gray-400 pb-2">Date</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-midnight-600">
-                  <tr>
-                    <td colSpan={6} className="py-12">
-                      <div className="text-center text-gray-500">
-                        <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                        <h3 className="text-lg font-medium text-gray-400 mb-2">No quote requests yet</h3>
-                        <p className="text-sm">Quote submissions will appear here when clients use your calculators</p>
-                        <p className="text-xs mt-2">
-                          {userCalculators.length > 0 
-                            ? "Share your calculator embed codes to start receiving quotes"
-                            : "Create your first calculator to start collecting quote requests"
+                <tbody>
+                  {clientData.map((client) => (
+                    <tr key={client.id} className="border-b border-midnight-700/50">
+                      <td className="py-3">
+                        <div>
+                          <p className="text-sm font-medium text-white">{client.name}</p>
+                          <p className="text-xs text-gray-400">{client.email}</p>
+                        </div>
+                      </td>
+                      <td className="py-3">
+                        <p className="text-sm text-gray-300">{client.project}</p>
+                      </td>
+                      <td className="py-3">
+                        <p className="text-sm font-medium text-white">{client.quote}</p>
+                      </td>
+                      <td className="py-3">
+                        <Badge 
+                          variant={
+                            client.status === 'Accepted' ? 'default' : 
+                            client.status === 'Pending' ? 'secondary' : 
+                            'destructive'
                           }
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
+                          className={
+                            client.status === 'Accepted' ? 'bg-green-500 text-white' :
+                            client.status === 'Pending' ? 'bg-yellow-500 text-black' :
+                            'bg-red-500 text-white'
+                          }
+                        >
+                          {client.status}
+                        </Badge>
+                      </td>
+                      <td className="py-3">
+                        <p className="text-sm text-gray-400">{client.date}</p>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
           </CardContent>
         </Card>
-
-
 
         {/* Customization Modal */}
         {showCustomizeModal && selectedCalculator && (
@@ -577,762 +449,520 @@ export default function Dashboard() {
                 {/* Left Panel - Customization Options */}
                 <div className="w-1/2 border-r border-midnight-700 flex flex-col">
                   <div className="flex-1 overflow-y-auto p-6 space-y-8 pb-24">
+                    
                     {/* Branding */}
-                      <div>
-                        <h3 className="text-white font-medium mb-4 flex items-center">
-                          <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
-                          Branding
-                        </h3>
-                        <div className="space-y-4">
-                          <div>
-                            <Label className="text-gray-300 text-sm">Company Name</Label>
-                            <Input
-                              placeholder="Your Business"
-                              value={customConfig?.companyBranding?.companyName || ""}
-                              onChange={(e) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                companyBranding: {
-                                  ...prev?.companyBranding,
-                                  companyName: e.target.value
-                                }
-                              }))}
-                              className="bg-midnight-900 border-midnight-600 text-white mt-1"
-                            />
-                          </div>
-                          <div>
-                            <Label className="text-gray-300 text-sm">Primary Color</Label>
-                            <div className="flex items-center space-x-2 mt-1">
-                              <Input
-                                type="color"
-                                value={customConfig?.brandColors?.primary || "#06D6A0"}
-                                onChange={(e) => setCustomConfig((prev: any) => ({ 
-                                  ...prev, 
-                                  brandColors: {
-                                    ...prev?.brandColors,
-                                    primary: e.target.value
-                                  }
-                                }))}
-                                className="w-12 h-10 p-1 bg-midnight-900 border-midnight-600"
-                              />
-                              <Input
-                                value={customConfig?.brandColors?.primary || "#06D6A0"}
-                                onChange={(e) => setCustomConfig((prev: any) => ({ 
-                                  ...prev, 
-                                  brandColors: {
-                                    ...prev?.brandColors,
-                                    primary: e.target.value
-                                  }
-                                }))}
-                                className="flex-1 bg-midnight-900 border-midnight-600 text-white"
-                              />
-                            </div>
-                          </div>
-                          <div>
-                            <Label className="text-gray-300 text-sm">Secondary Color</Label>
-                            <div className="flex items-center space-x-2 mt-1">
-                              <Input
-                                type="color"
-                                value={customConfig?.brandColors?.secondary || "#2563eb"}
-                                onChange={(e) => setCustomConfig((prev: any) => ({ 
-                                  ...prev, 
-                                  brandColors: {
-                                    ...prev?.brandColors,
-                                    secondary: e.target.value
-                                  }
-                                }))}
-                                className="w-12 h-10 p-1 bg-midnight-900 border-midnight-600"
-                              />
-                              <Input
-                                value={customConfig?.brandColors?.secondary || "#2563eb"}
-                                onChange={(e) => setCustomConfig((prev: any) => ({ 
-                                  ...prev, 
-                                  brandColors: {
-                                    ...prev?.brandColors,
-                                    secondary: e.target.value
-                                  }
-                                }))}
-                                className="flex-1 bg-midnight-900 border-midnight-600 text-white"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Calculator Text */}
-                      <div>
-                        <h3 className="text-white font-medium mb-4 flex items-center">
-                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
-                          Calculator Text
-                        </h3>
-                        <div className="space-y-4">
-                          <div>
-                            <Label className="text-gray-300 text-sm">Headline</Label>
-                            <Input
-                              placeholder="Get Your Custom Quote"
-                              value={customConfig?.textCustomization?.headline || ""}
-                              onChange={(e) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                textCustomization: {
-                                  ...prev?.textCustomization,
-                                  headline: e.target.value
-                                }
-                              }))}
-                              className="bg-midnight-900 border-midnight-600 text-white mt-1"
-                            />
-                          </div>
-                          <div>
-                            <Label className="text-gray-300 text-sm">Description</Label>
-                            <Textarea
-                              placeholder="Fill out the form below to receive your personalized quote."
-                              value={customConfig?.textCustomization?.description || ""}
-                              onChange={(e) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                textCustomization: {
-                                  ...prev?.textCustomization,
-                                  description: e.target.value
-                                }
-                              }))}
-                              className="bg-midnight-900 border-midnight-600 text-white mt-1"
-                              rows={3}
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Advanced Styling Options */}
-                      <div>
-                        <h3 className="text-white font-medium mb-4 flex items-center">
-                          <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
-                          Advanced Styling
-                        </h3>
-                        <div className="space-y-4">
-                          <div>
-                            <Label className="text-gray-300 text-sm">Font Family</Label>
-                            <select
-                              value={customConfig?.styling?.fontFamily || "Inter"}
-                              onChange={(e) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                styling: {
-                                  ...prev?.styling,
-                                  fontFamily: e.target.value
-                                }
-                              }))}
-                              className="w-full mt-1 bg-midnight-900 border border-midnight-600 text-white rounded-md px-3 py-2"
-                            >
-                              <option value="Inter">Inter (Modern)</option>
-                              <option value="Arial">Arial (Clean)</option>
-                              <option value="Helvetica">Helvetica (Professional)</option>
-                              <option value="Georgia">Georgia (Elegant)</option>
-                              <option value="Times New Roman">Times New Roman (Classic)</option>
-                              <option value="Roboto">Roboto (Google)</option>
-                              <option value="Open Sans">Open Sans (Friendly)</option>
-                              <option value="Lato">Lato (Humanist)</option>
-                            </select>
-                          </div>
-                          <div>
-                            <Label className="text-gray-300 text-sm">Border Radius</Label>
-                            <select
-                              value={customConfig?.styling?.borderRadius || "0.5rem"}
-                              onChange={(e) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                styling: {
-                                  ...prev?.styling,
-                                  borderRadius: e.target.value
-                                }
-                              }))}
-                              className="w-full mt-1 bg-midnight-900 border border-midnight-600 text-white rounded-md px-3 py-2"
-                            >
-                              <option value="0">Sharp (0px)</option>
-                              <option value="0.125rem">Minimal (2px)</option>
-                              <option value="0.25rem">Small (4px)</option>
-                              <option value="0.5rem">Medium (8px)</option>
-                              <option value="0.75rem">Large (12px)</option>
-                              <option value="1rem">Extra Large (16px)</option>
-                              <option value="1.5rem">Rounded (24px)</option>
-                            </select>
-                          </div>
-                          <div>
-                            <Label className="text-gray-300 text-sm">Background Style</Label>
-                            <select
-                              value={customConfig?.styling?.backgroundStyle || "solid"}
-                              onChange={(e) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                styling: {
-                                  ...prev?.styling,
-                                  backgroundStyle: e.target.value
-                                }
-                              }))}
-                              className="w-full mt-1 bg-midnight-900 border border-midnight-600 text-white rounded-md px-3 py-2"
-                            >
-                              <option value="solid">Solid Color</option>
-                              <option value="gradient">Gradient</option>
-                              <option value="subtle-pattern">Subtle Pattern</option>
-                              <option value="minimal">Minimal White</option>
-                            </select>
-                          </div>
-                          <div>
-                            <Label className="text-gray-300 text-sm">Button Style</Label>
-                            <select
-                              value={customConfig?.styling?.buttonStyle || "modern"}
-                              onChange={(e) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                styling: {
-                                  ...prev?.styling,
-                                  buttonStyle: e.target.value
-                                }
-                              }))}
-                              className="w-full mt-1 bg-midnight-900 border border-midnight-600 text-white rounded-md px-3 py-2"
-                            >
-                              <option value="modern">Modern Filled</option>
-                              <option value="outline">Outline Style</option>
-                              <option value="gradient">Gradient Fill</option>
-                              <option value="minimal">Minimal</option>
-                              <option value="rounded">Fully Rounded</option>
-                            </select>
-                          </div>
-                          <div>
-                            <Label className="text-gray-300 text-sm">Shadow Intensity</Label>
-                            <select
-                              value={customConfig?.styling?.shadowIntensity || "medium"}
-                              onChange={(e) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                styling: {
-                                  ...prev?.styling,
-                                  shadowIntensity: e.target.value
-                                }
-                              }))}
-                              className="w-full mt-1 bg-midnight-900 border border-midnight-600 text-white rounded-md px-3 py-2"
-                            >
-                              <option value="none">No Shadow</option>
-                              <option value="light">Light Shadow</option>
-                              <option value="medium">Medium Shadow</option>
-                              <option value="strong">Strong Shadow</option>
-                              <option value="dramatic">Dramatic Shadow</option>
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Layout & Spacing */}
-                      <div>
-                        <h3 className="text-white font-medium mb-4 flex items-center">
-                          <div className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></div>
-                          Layout & Spacing
-                        </h3>
-                        <div className="space-y-4">
-                          <div>
-                            <Label className="text-gray-300 text-sm">Container Width</Label>
-                            <select
-                              value={customConfig?.layout?.containerWidth || "standard"}
-                              onChange={(e) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                layout: {
-                                  ...prev?.layout,
-                                  containerWidth: e.target.value
-                                }
-                              }))}
-                              className="w-full mt-1 bg-midnight-900 border border-midnight-600 text-white rounded-md px-3 py-2"
-                            >
-                              <option value="narrow">Narrow (600px)</option>
-                              <option value="standard">Standard (800px)</option>
-                              <option value="wide">Wide (1000px)</option>
-                              <option value="full">Full Width</option>
-                            </select>
-                          </div>
-                          <div>
-                            <Label className="text-gray-300 text-sm">Form Layout</Label>
-                            <select
-                              value={customConfig?.layout?.formLayout || "single-column"}
-                              onChange={(e) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                layout: {
-                                  ...prev?.layout,
-                                  formLayout: e.target.value
-                                }
-                              }))}
-                              className="w-full mt-1 bg-midnight-900 border border-midnight-600 text-white rounded-md px-3 py-2"
-                            >
-                              <option value="single-column">Single Column</option>
-                              <option value="two-column">Two Column</option>
-                              <option value="compact">Compact</option>
-                              <option value="spacious">Spacious</option>
-                            </select>
-                          </div>
-                          <div>
-                            <Label className="text-gray-300 text-sm">Step Indicator Style</Label>
-                            <select
-                              value={customConfig?.layout?.stepIndicator || "progress-bar"}
-                              onChange={(e) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                layout: {
-                                  ...prev?.layout,
-                                  stepIndicator: e.target.value
-                                }
-                              }))}
-                              className="w-full mt-1 bg-midnight-900 border border-midnight-600 text-white rounded-md px-3 py-2"
-                            >
-                              <option value="progress-bar">Progress Bar</option>
-                              <option value="numbered-steps">Numbered Steps</option>
-                              <option value="dots">Dot Indicators</option>
-                              <option value="minimal">Minimal</option>
-                              <option value="hidden">Hidden</option>
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Advanced Features */}
-                      <div>
-                        <h3 className="text-white font-medium mb-4 flex items-center">
-                          <div className="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
-                          Advanced Features
-                        </h3>
-                        <div className="space-y-4">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <Label className="text-gray-300 text-sm">Email Collection</Label>
-                              <p className="text-xs text-gray-500">Collect email addresses from users</p>
-                            </div>
-                            <Switch
-                              checked={customConfig?.features?.emailCollection || false}
-                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                features: {
-                                  ...prev?.features,
-                                  emailCollection: checked
-                                }
-                              }))}
-                            />
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <Label className="text-gray-300 text-sm">Phone Collection</Label>
-                              <p className="text-xs text-gray-500">Collect phone numbers from users</p>
-                            </div>
-                            <Switch
-                              checked={customConfig?.features?.phoneCollection || false}
-                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                features: {
-                                  ...prev?.features,
-                                  phoneCollection: checked
-                                }
-                              }))}
-                            />
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <Label className="text-gray-300 text-sm">PDF Download</Label>
-                              <p className="text-xs text-gray-500">Allow users to download quote as PDF</p>
-                            </div>
-                            <Switch
-                              checked={customConfig?.features?.pdfDownload || false}
-                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                features: {
-                                  ...prev?.features,
-                                  pdfDownload: checked
-                                }
-                              }))}
-                            />
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <Label className="text-gray-300 text-sm">Real-time Updates</Label>
-                              <p className="text-xs text-gray-500">Update pricing as user types</p>
-                            </div>
-                            <Switch
-                              checked={customConfig?.features?.realTimeUpdates || true}
-                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                features: {
-                                  ...prev?.features,
-                                  realTimeUpdates: checked
-                                }
-                              }))}
-                            />
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <Label className="text-gray-300 text-sm">Progress Saving</Label>
-                              <p className="text-xs text-gray-500">Save form progress automatically</p>
-                            </div>
-                            <Switch
-                              checked={customConfig?.features?.progressSaving || true}
-                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                features: {
-                                  ...prev?.features,
-                                  progressSaving: checked
-                                }
-                              }))}
-                            />
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <Label className="text-gray-300 text-sm">Social Sharing</Label>
-                              <p className="text-xs text-gray-500">Allow sharing quotes on social media</p>
-                            </div>
-                            <Switch
-                              checked={customConfig?.features?.socialSharing || false}
-                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                features: {
-                                  ...prev?.features,
-                                  socialSharing: checked
-                                }
-                              }))}
-                            />
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <Label className="text-gray-300 text-sm">AI Field Enhancement</Label>
-                              <p className="text-xs text-gray-500">Auto-fill fields using AI analysis</p>
-                            </div>
-                            <Switch
-                              checked={customConfig?.features?.aiFieldMutation || true}
-                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                features: {
-                                  ...prev?.features,
-                                  aiFieldMutation: checked
-                                }
-                              }))}
-                            />
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <Label className="text-gray-300 text-sm">Smart Suggestions</Label>
-                              <p className="text-xs text-gray-500">Provide intelligent recommendations</p>
-                            </div>
-                            <Switch
-                              checked={customConfig?.features?.smartSuggestions || true}
-                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                features: {
-                                  ...prev?.features,
-                                  smartSuggestions: checked
-                                }
-                              }))}
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Form Behavior */}
-                      <div>
-                        <h3 className="text-white font-medium mb-4 flex items-center">
-                          <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                          Form Behavior
-                        </h3>
-                        <div className="space-y-4">
-                          <div>
-                            <Label className="text-gray-300 text-sm">Validation Style</Label>
-                            <select
-                              value={customConfig?.formBehavior?.validationStyle || "on-submit"}
-                              onChange={(e) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                formBehavior: {
-                                  ...prev?.formBehavior,
-                                  validationStyle: e.target.value
-                                }
-                              }))}
-                              className="w-full mt-1 bg-midnight-900 border border-midnight-600 text-white rounded-md px-3 py-2"
-                            >
-                              <option value="on-submit">Validate on Submit</option>
-                              <option value="on-blur">Validate on Field Exit</option>
-                              <option value="on-change">Validate on Type</option>
-                              <option value="disabled">No Validation</option>
-                            </select>
-                          </div>
-                          <div>
-                            <Label className="text-gray-300 text-sm">Required Field Style</Label>
-                            <select
-                              value={customConfig?.formBehavior?.requiredStyle || "asterisk"}
-                              onChange={(e) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                formBehavior: {
-                                  ...prev?.formBehavior,
-                                  requiredStyle: e.target.value
-                                }
-                              }))}
-                              className="w-full mt-1 bg-midnight-900 border border-midnight-600 text-white rounded-md px-3 py-2"
-                            >
-                              <option value="asterisk">Asterisk (*)</option>
-                              <option value="required-text">(Required)</option>
-                              <option value="red-border">Red Border</option>
-                              <option value="none">No Indicator</option>
-                            </select>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <Label className="text-gray-300 text-sm">Auto-advance Steps</Label>
-                              <p className="text-xs text-gray-500">Move to next step when current is complete</p>
-                            </div>
-                            <Switch
-                              checked={customConfig?.formBehavior?.autoAdvance || false}
-                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                formBehavior: {
-                                  ...prev?.formBehavior,
-                                  autoAdvance: checked
-                                }
-                              }))}
-                            />
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <Label className="text-gray-300 text-sm">Show Field Tooltips</Label>
-                              <p className="text-xs text-gray-500">Display helpful tips on form fields</p>
-                            </div>
-                            <Switch
-                              checked={customConfig?.formBehavior?.showTooltips || true}
-                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                formBehavior: {
-                                  ...prev?.formBehavior,
-                                  showTooltips: checked
-                                }
-                              }))}
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Notifications & Analytics */}
-                      <div>
-                        <h3 className="text-white font-medium mb-4 flex items-center">
-                          <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
-                          Notifications & Analytics
-                        </h3>
-                        <div className="space-y-4">
-                          <div>
-                            <Label className="text-gray-300 text-sm">Email Notification Recipients</Label>
-                            <Input
-                              placeholder="admin@yourcompany.com, sales@yourcompany.com"
-                              value={customConfig?.notifications?.emailRecipients || ""}
-                              onChange={(e) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                notifications: {
-                                  ...prev?.notifications,
-                                  emailRecipients: e.target.value
-                                }
-                              }))}
-                              className="bg-midnight-900 border-midnight-600 text-white mt-1"
-                            />
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <Label className="text-gray-300 text-sm">Instant Notifications</Label>
-                              <p className="text-xs text-gray-500">Send immediate email when quote is submitted</p>
-                            </div>
-                            <Switch
-                              checked={customConfig?.notifications?.instantNotifications || true}
-                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                notifications: {
-                                  ...prev?.notifications,
-                                  instantNotifications: checked
-                                }
-                              }))}
-                            />
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <Label className="text-gray-300 text-sm">Analytics Tracking</Label>
-                              <p className="text-xs text-gray-500">Track form completion and conversion rates</p>
-                            </div>
-                            <Switch
-                              checked={customConfig?.analytics?.tracking || true}
-                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                analytics: {
-                                  ...prev?.analytics,
-                                  tracking: checked
-                                }
-                              }))}
-                            />
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <Label className="text-gray-300 text-sm">Show Powered By</Label>
-                              <p className="text-xs text-gray-500">Display "Powered by QuoteKits" footer</p>
-                            </div>
-                            <Switch
-                              checked={customConfig?.branding?.showPoweredBy !== false}
-                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
-                                ...prev, 
-                                branding: {
-                                  ...prev?.branding,
-                                  showPoweredBy: checked
-                                }
-                              }))}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                  {/* Right Panel - Live Preview */}
-                  <div className="w-1/2 flex flex-col">
-                    <div className="p-4 border-b border-midnight-700 bg-midnight-900 flex-shrink-0">
-                      <h3 className="text-lg font-medium text-white flex items-center">
-                        <Eye className="h-5 w-5 mr-2 text-neon-400" />
-                        Live Preview
+                    <div>
+                      <h3 className="text-white font-medium mb-4 flex items-center">
+                        <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
+                        <Palette className="h-4 w-4 mr-2" />
+                        Branding
                       </h3>
-                      <p className="text-xs text-gray-400 mt-1">Scroll to view the full calculator</p>
+                      <div className="space-y-4">
+                        <div>
+                          <Label className="text-gray-300">Business Name</Label>
+                          <Input
+                            value={customConfig.businessName || ''}
+                            onChange={(e) => setCustomConfig({...customConfig, businessName: e.target.value})}
+                            placeholder="Your Business Name"
+                            className="bg-midnight-900 border-midnight-600 text-white"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Logo URL</Label>
+                          <Input
+                            value={customConfig.logoUrl || ''}
+                            onChange={(e) => setCustomConfig({...customConfig, logoUrl: e.target.value})}
+                            placeholder="https://yoursite.com/logo.png"
+                            className="bg-midnight-900 border-midnight-600 text-white"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Primary Color</Label>
+                          <Input
+                            type="color"
+                            value={customConfig.primaryColor || '#10B981'}
+                            onChange={(e) => setCustomConfig({...customConfig, primaryColor: e.target.value})}
+                            className="h-12 bg-midnight-900 border-midnight-600"
+                          />
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex-1 bg-gray-100 relative">
-                      <div className="absolute inset-0 overflow-y-auto overflow-x-hidden">
-                        <div className="min-h-full p-4">
-                          <CalculatorPreview 
-                            key={previewKey}
-                            slug={selectedCalculator.slug} 
-                            customConfig={customConfig}
-                            className="w-full h-auto"
+
+                    {/* Calculator Text */}
+                    <div>
+                      <h3 className="text-white font-medium mb-4 flex items-center">
+                        <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
+                        <Type className="h-4 w-4 mr-2" />
+                        Calculator Text
+                      </h3>
+                      <div className="space-y-4">
+                        <div>
+                          <Label className="text-gray-300">Calculator Title</Label>
+                          <Input
+                            value={customConfig.title || selectedCalculator.name}
+                            onChange={(e) => setCustomConfig({...customConfig, title: e.target.value})}
+                            className="bg-midnight-900 border-midnight-600 text-white"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Description</Label>
+                          <Textarea
+                            value={customConfig.description || ''}
+                            onChange={(e) => setCustomConfig({...customConfig, description: e.target.value})}
+                            placeholder="Brief description of your service"
+                            className="bg-midnight-900 border-midnight-600 text-white"
+                            rows={3}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Submit Button Text</Label>
+                          <Input
+                            value={customConfig.submitText || 'Get My Quote'}
+                            onChange={(e) => setCustomConfig({...customConfig, submitText: e.target.value})}
+                            className="bg-midnight-900 border-midnight-600 text-white"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Layout & Spacing */}
+                    <div>
+                      <h3 className="text-white font-medium mb-4 flex items-center">
+                        <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
+                        <Layout className="h-4 w-4 mr-2" />
+                        Layout & Spacing
+                      </h3>
+                      <div className="space-y-4">
+                        <div>
+                          <Label className="text-gray-300">Layout Style</Label>
+                          <Select value={customConfig.layout || 'vertical'} onValueChange={(value) => setCustomConfig({...customConfig, layout: value})}>
+                            <SelectTrigger className="bg-midnight-900 border-midnight-600 text-white">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="vertical">Vertical (Single Column)</SelectItem>
+                              <SelectItem value="horizontal">Horizontal (Multi-Column)</SelectItem>
+                              <SelectItem value="wizard">Step-by-Step Wizard</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Padding: {customConfig.padding || 20}px</Label>
+                          <Slider
+                            value={[customConfig.padding || 20]}
+                            onValueChange={(value) => setCustomConfig({...customConfig, padding: value[0]})}
+                            max={60}
+                            min={0}
+                            step={5}
+                            className="mt-2"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Border Radius: {customConfig.borderRadius || 8}px</Label>
+                          <Slider
+                            value={[customConfig.borderRadius || 8]}
+                            onValueChange={(value) => setCustomConfig({...customConfig, borderRadius: value[0]})}
+                            max={24}
+                            min={0}
+                            step={2}
+                            className="mt-2"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Form Behavior */}
+                    <div>
+                      <h3 className="text-white font-medium mb-4 flex items-center">
+                        <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
+                        <Zap className="h-4 w-4 mr-2" />
+                        Form Behavior
+                      </h3>
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <Label className="text-gray-300">Real-time Updates</Label>
+                          <Switch
+                            checked={customConfig.realTimeUpdates !== false}
+                            onCheckedChange={(checked) => setCustomConfig({...customConfig, realTimeUpdates: checked})}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Label className="text-gray-300">Show Progress Bar</Label>
+                          <Switch
+                            checked={customConfig.showProgress || false}
+                            onCheckedChange={(checked) => setCustomConfig({...customConfig, showProgress: checked})}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Label className="text-gray-300">Required Field Validation</Label>
+                          <Switch
+                            checked={customConfig.validation !== false}
+                            onCheckedChange={(checked) => setCustomConfig({...customConfig, validation: checked})}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Animation Speed</Label>
+                          <Select value={customConfig.animationSpeed || 'normal'} onValueChange={(value) => setCustomConfig({...customConfig, animationSpeed: value})}>
+                            <SelectTrigger className="bg-midnight-900 border-midnight-600 text-white">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="slow">Slow</SelectItem>
+                              <SelectItem value="normal">Normal</SelectItem>
+                              <SelectItem value="fast">Fast</SelectItem>
+                              <SelectItem value="none">No Animation</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Notifications & Analytics */}
+                    <div>
+                      <h3 className="text-white font-medium mb-4 flex items-center">
+                        <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
+                        <Bell className="h-4 w-4 mr-2" />
+                        Notifications & Analytics
+                      </h3>
+                      <div className="space-y-4">
+                        <div>
+                          <Label className="text-gray-300">Email Notifications</Label>
+                          <Input
+                            value={customConfig.notificationEmail || ''}
+                            onChange={(e) => setCustomConfig({...customConfig, notificationEmail: e.target.value})}
+                            placeholder="your@email.com"
+                            type="email"
+                            className="bg-midnight-900 border-midnight-600 text-white"
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Label className="text-gray-300">Track Conversions</Label>
+                          <Switch
+                            checked={customConfig.trackConversions !== false}
+                            onCheckedChange={(checked) => setCustomConfig({...customConfig, trackConversions: checked})}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Label className="text-gray-300">Capture Lead Info</Label>
+                          <Switch
+                            checked={customConfig.captureLeads || false}
+                            onCheckedChange={(checked) => setCustomConfig({...customConfig, captureLeads: checked})}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Google Analytics ID</Label>
+                          <Input
+                            value={customConfig.googleAnalytics || ''}
+                            onChange={(e) => setCustomConfig({...customConfig, googleAnalytics: e.target.value})}
+                            placeholder="GA4-XXXXXXXXXX"
+                            className="bg-midnight-900 border-midnight-600 text-white"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Device Optimization */}
+                    <div>
+                      <h3 className="text-white font-medium mb-4 flex items-center">
+                        <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
+                        <Smartphone className="h-4 w-4 mr-2" />
+                        Device Optimization
+                      </h3>
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <Label className="text-gray-300">Mobile Optimized</Label>
+                          <Switch
+                            checked={customConfig.mobileOptimized !== false}
+                            onCheckedChange={(checked) => setCustomConfig({...customConfig, mobileOptimized: checked})}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Responsive Breakpoint</Label>
+                          <Select value={customConfig.breakpoint || 'md'} onValueChange={(value) => setCustomConfig({...customConfig, breakpoint: value})}>
+                            <SelectTrigger className="bg-midnight-900 border-midnight-600 text-white">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="sm">Small (640px)</SelectItem>
+                              <SelectItem value="md">Medium (768px)</SelectItem>
+                              <SelectItem value="lg">Large (1024px)</SelectItem>
+                              <SelectItem value="xl">Extra Large (1280px)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Font Size: {customConfig.fontSize || 16}px</Label>
+                          <Slider
+                            value={[customConfig.fontSize || 16]}
+                            onValueChange={(value) => setCustomConfig({...customConfig, fontSize: value[0]})}
+                            max={24}
+                            min={12}
+                            step={1}
+                            className="mt-2"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Advanced Styling */}
+                    <div>
+                      <h3 className="text-white font-medium mb-4 flex items-center">
+                        <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
+                        <Palette className="h-4 w-4 mr-2" />
+                        Advanced Styling
+                      </h3>
+                      <div className="space-y-4">
+                        <div>
+                          <Label className="text-gray-300">Background Color</Label>
+                          <Input
+                            type="color"
+                            value={customConfig.backgroundColor || '#ffffff'}
+                            onChange={(e) => setCustomConfig({...customConfig, backgroundColor: e.target.value})}
+                            className="h-12 bg-midnight-900 border-midnight-600"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Text Color</Label>
+                          <Input
+                            type="color"
+                            value={customConfig.textColor || '#000000'}
+                            onChange={(e) => setCustomConfig({...customConfig, textColor: e.target.value})}
+                            className="h-12 bg-midnight-900 border-midnight-600"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Custom CSS</Label>
+                          <Textarea
+                            value={customConfig.customCSS || ''}
+                            onChange={(e) => setCustomConfig({...customConfig, customCSS: e.target.value})}
+                            placeholder="/* Custom CSS styles */\n.calculator-form {\n  /* your styles here */\n}"
+                            className="bg-midnight-900 border-midnight-600 text-white font-mono text-sm"
+                            rows={6}
                           />
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
+
+                {/* Right Panel - Live Preview */}
+                <div className="w-1/2 flex flex-col">
+                  <div className="p-4 border-b border-midnight-700 bg-midnight-900 flex-shrink-0">
+                    <h3 className="text-lg font-medium text-white flex items-center">
+                      <Eye className="h-5 w-5 mr-2 text-neon-400" />
+                      Live Preview
+                    </h3>
+                    <p className="text-sm text-gray-400 mt-1">See changes in real-time</p>
+                  </div>
+                  
+                  <div className="flex-1 overflow-hidden bg-gray-100 relative">
+                    <div 
+                      className="w-full h-full overflow-y-auto p-6"
+                      style={{
+                        backgroundColor: customConfig.backgroundColor || '#ffffff',
+                        color: customConfig.textColor || '#000000',
+                        fontSize: `${customConfig.fontSize || 16}px`,
+                        padding: `${customConfig.padding || 20}px`
+                      }}
+                    >
+                      <div 
+                        className="max-w-md mx-auto bg-white rounded-lg shadow-lg"
+                        style={{
+                          borderRadius: `${customConfig.borderRadius || 8}px`,
+                          borderColor: customConfig.primaryColor || '#10B981',
+                          borderWidth: '2px',
+                          borderStyle: 'solid'
+                        }}
+                      >
+                        <div className="p-6">
+                          {customConfig.logoUrl && (
+                            <img 
+                              src={customConfig.logoUrl} 
+                              alt="Logo" 
+                              className="h-12 mx-auto mb-4"
+                            />
+                          )}
+                          
+                          <h2 className="text-2xl font-bold text-center mb-2">
+                            {customConfig.title || selectedCalculator.name}
+                          </h2>
+                          
+                          {customConfig.description && (
+                            <p className="text-gray-600 text-center mb-6">
+                              {customConfig.description}
+                            </p>
+                          )}
+                          
+                          {customConfig.businessName && (
+                            <div className="text-center mb-4">
+                              <span className="text-sm text-gray-500">by </span>
+                              <span className="font-medium">{customConfig.businessName}</span>
+                            </div>
+                          )}
+                          
+                          <div className="space-y-4">
+                            <div>
+                              <label className="block text-sm font-medium mb-1">Service Type</label>
+                              <select className="w-full p-2 border rounded">
+                                <option>Select service...</option>
+                                <option>Basic Package</option>
+                                <option>Premium Package</option>
+                              </select>
+                            </div>
+                            
+                            <div>
+                              <label className="block text-sm font-medium mb-1">Project Size</label>
+                              <input 
+                                type="range" 
+                                className="w-full"
+                                style={{ accentColor: customConfig.primaryColor || '#10B981' }}
+                              />
+                            </div>
+                            
+                            {customConfig.showProgress && (
+                              <div className="w-full bg-gray-200 rounded-full h-2">
+                                <div 
+                                  className="h-2 rounded-full" 
+                                  style={{ 
+                                    width: '60%',
+                                    backgroundColor: customConfig.primaryColor || '#10B981'
+                                  }}
+                                ></div>
+                              </div>
+                            )}
+                            
+                            <button 
+                              className="w-full py-3 rounded font-medium text-white"
+                              style={{ backgroundColor: customConfig.primaryColor || '#10B981' }}
+                            >
+                              {customConfig.submitText || 'Get My Quote'}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
               
-                <div className="flex justify-between items-center px-6 py-4 border-t border-midnight-700 bg-midnight-900 flex-shrink-0">
+              <div className="flex justify-between items-center px-6 py-4 border-t border-midnight-700 bg-midnight-900 flex-shrink-0">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowCustomizeModal(false)}
+                  className="border-midnight-600 text-gray-300 hover:bg-midnight-800"
+                >
+                  Cancel
+                </Button>
+                <div className="flex items-center space-x-3">
                   <Button
                     variant="outline"
-                    onClick={() => setShowCustomizeModal(false)}
+                    onClick={() => {
+                      setCustomConfig({});
+                      toast({
+                        title: "Reset Complete",
+                        description: "All customizations have been reset to default.",
+                      });
+                    }}
                     className="border-midnight-600 text-gray-300 hover:bg-midnight-800"
                   >
-                    Cancel
+                    Reset to Default
                   </Button>
-                  <div className="flex items-center space-x-3">
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setCustomConfig({});
-                        toast({
-                          title: "Reset Complete",
-                          description: "All customizations have been reset to default.",
-                        });
-                      }}
-                      className="border-midnight-600 text-gray-300 hover:bg-midnight-800"
-                    >
-                      Reset to Default
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        const updatedCalculators = userCalculators.map(calc => 
-                          calc.id === selectedCalculator.id 
-                            ? { ...calc, config: customConfig }
-                            : calc
-                        );
-                        setUserCalculators(updatedCalculators);
-                        localStorage.setItem('userCalculators', JSON.stringify(updatedCalculators));
-                        
-                        toast({
-                          title: "Calculator Updated!",
-                          description: "Your customizations have been saved.",
-                        });
-                        
-                        setShowCustomizeModal(false);
-                      }}
-                      className="bg-neon-500 hover:bg-neon-600 text-black font-medium"
-                    >
-                      Save Changes
-                    </Button>
-                  </div>
+                  <Button
+                    onClick={() => {
+                      const updatedCalculators = userCalculators.map(calc => 
+                        calc.id === selectedCalculator.id 
+                          ? { ...calc, config: customConfig }
+                          : calc
+                      );
+                      setUserCalculators(updatedCalculators);
+                      localStorage.setItem('userCalculators', JSON.stringify(updatedCalculators));
+                      
+                      toast({
+                        title: "Calculator Updated!",
+                        description: "Your customizations have been saved.",
+                      });
+                      
+                      setShowCustomizeModal(false);
+                    }}
+                    className="bg-neon-500 hover:bg-neon-600 text-black font-medium"
+                  >
+                    Save Changes
+                  </Button>
                 </div>
               </div>
             </DialogContent>
           </Dialog>
         )}
 
-      </div>
-    </div>
-  );
-}
+        {/* Calculator Selection Modal */}
+        {showCalculatorModal && (
+          <Dialog open={showCalculatorModal} onOpenChange={setShowCalculatorModal}>
+            <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden bg-midnight-800 border-midnight-700">
               <DialogHeader>
                 <DialogTitle className="text-white">Add Calculator</DialogTitle>
                 <DialogDescription className="text-gray-400">
                   Choose from our library of professional calculator templates.
                 </DialogDescription>
               </DialogHeader>
-              
-              {/* Search and Filter */}
-              <div className="flex flex-col sm:flex-row gap-4 mb-6">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+
+              <div className="flex flex-col space-y-4 p-6">
+                {/* Search and Filter */}
+                <div className="flex flex-col sm:flex-row gap-4">
                   <Input
-                    type="text"
                     placeholder="Search calculators..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 bg-midnight-900 border-midnight-600 text-white"
+                    className="bg-midnight-900 border-midnight-600 text-white placeholder-gray-400"
                   />
+                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                    <SelectTrigger className="sm:w-48 bg-midnight-900 border-midnight-600 text-white">
+                      <SelectValue placeholder="All Categories" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-midnight-900 border-midnight-600">
+                      <SelectItem value="all">All Categories</SelectItem>
+                      <SelectItem value="construction">Construction</SelectItem>
+                      <SelectItem value="photography">Photography</SelectItem>
+                      <SelectItem value="professional">Professional Services</SelectItem>
+                      <SelectItem value="legal">Legal</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger className="w-full sm:w-48 bg-midnight-900 border-midnight-600 text-white">
-                    <SelectValue placeholder="Category" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-midnight-800 border-midnight-600">
-                    <SelectItem value="All">All Categories</SelectItem>
-                    <SelectItem value="Photography & Creative">Photography & Creative</SelectItem>
-                    <SelectItem value="Home Services">Home Services</SelectItem>
-                    <SelectItem value="Professional Services">Professional Services</SelectItem>
-                    <SelectItem value="Health & Beauty">Health & Beauty</SelectItem>
-                    <SelectItem value="Education & Training">Education & Training</SelectItem>
-                    <SelectItem value="Health & Medical">Health & Medical</SelectItem>
-                    <SelectItem value="Transportation">Transportation</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
 
-              {/* Calculator Grid */}
-              <div className="overflow-y-auto max-h-[60vh]">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Calculator Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
                   {filteredCalculators.map((calculator) => (
-                    <motion.div
-                      key={calculator.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="bg-midnight-900 border border-midnight-600 rounded-xl p-4 hover:border-neon-500/50 transition-all duration-200"
+                    <Card 
+                      key={calculator.id} 
+                      className="bg-midnight-900 border-midnight-700 hover:border-neon-500/50 cursor-pointer transition-all duration-200 hover:shadow-lg hover:shadow-neon-500/20"
+                      onClick={() => addCalculator(calculator)}
                     >
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-neon-500/20 rounded-lg flex items-center justify-center">
-                            <Calculator className="h-5 w-5 text-neon-400" />
+                      <CardContent className="p-4">
+                        <div className="flex items-center space-x-3 mb-2">
+                          <div className="w-10 h-10 bg-gradient-to-br from-neon-400 to-neon-600 rounded-lg flex items-center justify-center">
+                            <Calculator className="h-5 w-5 text-black" />
                           </div>
                           <div>
-                            <h3 className="text-white font-medium text-sm">{calculator.name}</h3>
-                            <p className="text-gray-400 text-xs">{calculator.category}</p>
+                            <h3 className="font-medium text-white text-sm">{calculator.name}</h3>
+                            <p className="text-xs text-gray-400">{calculator.category}</p>
                           </div>
                         </div>
-                        <Button
-                          size="sm"
-                          onClick={() => addCalculator(calculator)}
-                          className="bg-neon-500 hover:bg-neon-600 text-black text-xs h-6 px-2"
-                        >
-                          Add
-                        </Button>
-                      </div>
-                    </motion.div>
+                        <p className="text-xs text-gray-500">{calculator.description}</p>
+                      </CardContent>
+                    </Card>
                   ))}
+                  {filteredCalculators.length === 0 && (
+                    <div className="col-span-full text-center py-8">
+                      <p className="text-gray-400">No calculators found matching your criteria.</p>
+                      <Button
+                        variant="outline"
+                        onClick={() => setShowCalculatorModal(false)}
+                        className="mt-2 border-midnight-600 text-gray-300 hover:bg-midnight-800"
+                      >
+                        Clear Filters
+                      </Button>
+                    </div>
+                  )}
                 </div>
-              </div>
-
-              <div className="flex items-center justify-between pt-6 border-t border-midnight-700">
-                <p className="text-sm text-gray-400">
-                  {filteredCalculators.length} calculators available
-                </p>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowCalculatorModal(false)}
-                  className="border-midnight-600 text-gray-300"
-                >
-                  Close
-                </Button>
               </div>
             </DialogContent>
           </Dialog>
@@ -1345,153 +975,86 @@ export default function Dashboard() {
               <DialogHeader>
                 <DialogTitle className="text-white">Embed Code</DialogTitle>
                 <DialogDescription className="text-gray-400">
-                  Copy this code to embed your calculator on your website.
+                  Copy and paste this code into your website to embed the calculator.
                 </DialogDescription>
               </DialogHeader>
               
               <div className="space-y-6">
-                {/* Embed Options */}
-                <div className="grid grid-cols-3 gap-2 p-1 bg-midnight-900 rounded-lg">
-                  <button className="px-3 py-2 bg-neon-500 text-black rounded text-sm font-medium">
-                    iFrame
-                  </button>
-                  <button className="px-3 py-2 text-gray-400 hover:text-white rounded text-sm">
-                    JavaScript
-                  </button>
-                  <button className="px-3 py-2 text-gray-400 hover:text-white rounded text-sm">
-                    Widget
-                  </button>
-                </div>
-
-                {/* iFrame Embed Code */}
+                {/* Preview URL */}
                 <div>
-                  <Label className="text-gray-300">Standard iFrame Embed</Label>
-                  <div className="mt-2 p-3 bg-midnight-900 border border-midnight-600 rounded-lg">
-                    <code className="text-sm text-gray-300 break-all">
-                      {`<iframe src="${window.location.origin}/calculator/${selectedCalculator.slug}${selectedCalculator.config ? '?config=' + encodeURIComponent(JSON.stringify(selectedCalculator.config)) : ''}" width="100%" height="700" frameborder="0" style="border-radius: 8px;"></iframe>`}
-                    </code>
-                  </div>
-                </div>
-
-                {/* JavaScript API Embed */}
-                <div>
-                  <Label className="text-gray-300">JavaScript API (Advanced)</Label>
-                  <div className="mt-2 p-3 bg-midnight-900 border border-midnight-600 rounded-lg">
-                    <code className="text-xs text-gray-300 whitespace-pre-wrap">
-{`<div id="quotekit-calculator"></div>
-<script>
-(function() {
-  var script = document.createElement('script');
-  script.src = '${window.location.origin}/embed.js';
-  script.onload = function() {
-    QuoteKit.render('${selectedCalculator.slug}', {
-      container: '#quotekit-calculator',
-      config: ${JSON.stringify(selectedCalculator.config || {}, null, 2)},
-      onQuoteGenerated: function(quote) {
-        console.log('Quote generated:', quote);
-      }
-    });
-  };
-  document.head.appendChild(script);
-})();
-</script>`}
-                    </code>
-                  </div>
-                </div>
-
-                {/* WordPress Shortcode */}
-                <div>
-                  <Label className="text-gray-300">WordPress Shortcode</Label>
-                  <div className="mt-2 p-3 bg-midnight-900 border border-midnight-600 rounded-lg">
-                    <code className="text-sm text-gray-300">
-                      {`[quotekit calculator="${selectedCalculator.slug}" height="700"]`}
-                    </code>
-                  </div>
-                </div>
-
-                {/* Direct Link */}
-                <div>
-                  <Label className="text-gray-300">Direct Link</Label>
-                  <div className="mt-2 p-3 bg-midnight-900 border border-midnight-600 rounded-lg">
-                    <code className="text-sm text-gray-300 break-all">
-                      {`${window.location.origin}/calculator/${selectedCalculator.slug}`}
-                    </code>
-                  </div>
-                </div>
-                
-                {/* Copy Actions */}
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    size="sm"
-                    onClick={() => {
-                      const iframeCode = `<iframe src="${window.location.origin}/calculator/${selectedCalculator.slug}${selectedCalculator.config ? '?config=' + encodeURIComponent(JSON.stringify(selectedCalculator.config)) : ''}" width="100%" height="700" frameborder="0" style="border-radius: 8px;"></iframe>`;
-                      navigator.clipboard.writeText(iframeCode);
-                      toast({ title: "iFrame code copied!", description: "Standard embed code copied to clipboard." });
-                    }}
-                    className="bg-neon-500 hover:bg-neon-600 text-black"
-                  >
-                    <Copy className="h-3 w-3 mr-1" />
-                    Copy iFrame
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      const jsCode = `<div id="quotekit-calculator"></div>\n<script>\n(function() {\n  var script = document.createElement('script');\n  script.src = '${window.location.origin}/embed.js';\n  script.onload = function() {\n    QuoteKit.render('${selectedCalculator.slug}', {\n      container: '#quotekit-calculator',\n      config: ${JSON.stringify(selectedCalculator.config || {}, null, 2)},\n      onQuoteGenerated: function(quote) {\n        console.log('Quote generated:', quote);\n      }\n    });\n  };\n  document.head.appendChild(script);\n})();\n</script>`;
-                      navigator.clipboard.writeText(jsCode);
-                      toast({ title: "JavaScript API copied!", description: "Advanced embed code copied to clipboard." });
-                    }}
-                    className="border-midnight-600 text-gray-300"
-                  >
-                    <Copy className="h-3 w-3 mr-1" />
-                    Copy JS API
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      navigator.clipboard.writeText(`${window.location.origin}/calculator/${selectedCalculator.slug}`);
-                      toast({ title: "Direct link copied!", description: "Calculator URL copied to clipboard." });
-                    }}
-                    className="border-midnight-600 text-gray-300"
-                  >
-                    <Copy className="h-3 w-3 mr-1" />
-                    Copy Link
-                  </Button>
-                </div>
-
-                <div className="flex justify-between pt-4 border-t border-midnight-700">
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowEmbedModal(false)}
-                    className="border-midnight-600 text-gray-300"
-                  >
-                    Close
-                  </Button>
+                  <label className="block text-sm font-medium text-white mb-2">
+                    Direct Link
+                  </label>
                   <div className="flex items-center space-x-2">
+                    <code className="flex-1 px-3 py-2 bg-midnight-900 border border-midnight-600 rounded text-sm text-gray-300 font-mono">
+                      {`https://quotekit.ai/calc/${selectedCalculator.slug}`}
+                    </code>
                     <Button
-                      variant="outline"
-                      onClick={() => window.open(`/calculator/${selectedCalculator.slug}`, '_blank')}
-                      className="border-midnight-600 text-gray-300"
-                    >
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      Test Live
-                    </Button>
-                    <Button
+                      size="sm"
                       onClick={() => {
-                        navigator.clipboard.writeText(`<iframe src="${window.location.origin}/calculator/${selectedCalculator.slug}${selectedCalculator.config ? '?config=' + encodeURIComponent(JSON.stringify(selectedCalculator.config)) : ''}" width="100%" height="700" frameborder="0" style="border-radius: 8px;"></iframe>`);
-                        toast({ title: "Primary embed code copied!", description: "Ready to paste into your website." });
+                        navigator.clipboard.writeText(`https://quotekit.ai/calc/${selectedCalculator.slug}`);
+                        toast({
+                          title: "Copied!",
+                          description: "Direct link copied to clipboard.",
+                        });
                       }}
                       className="bg-neon-500 hover:bg-neon-600 text-black"
                     >
-                      <Copy className="h-4 w-4 mr-2" />
-                      Copy Primary Code
+                      <Copy className="h-4 w-4" />
                     </Button>
                   </div>
+                </div>
+
+                {/* Embed Code */}
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">
+                    Embed Code
+                  </label>
+                  <div className="flex items-start space-x-2">
+                    <code className="flex-1 px-3 py-2 bg-midnight-900 border border-midnight-600 rounded text-sm text-gray-300 font-mono whitespace-pre-wrap">
+{`<iframe 
+  src="https://quotekit.ai/calc/${selectedCalculator.slug}" 
+  width="100%" 
+  height="600" 
+  frameborder="0">
+</iframe>`}
+                    </code>
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        const embedCode = `<iframe src="https://quotekit.ai/calc/${selectedCalculator.slug}" width="100%" height="600" frameborder="0"></iframe>`;
+                        navigator.clipboard.writeText(embedCode);
+                        toast({
+                          title: "Copied!",
+                          description: "Embed code copied to clipboard.",
+                        });
+                      }}
+                      className="bg-neon-500 hover:bg-neon-600 text-black"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="flex justify-end">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowEmbedModal(false)}
+                    className="border-midnight-600 text-gray-300 hover:bg-midnight-800"
+                  >
+                    Close
+                  </Button>
                 </div>
               </div>
             </DialogContent>
           </Dialog>
+        )}
+
+        {/* Success Message */}
+        {showSuccessMessage && (
+          <div className="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50">
+            Calculator added successfully!
+          </div>
         )}
       </div>
     </div>

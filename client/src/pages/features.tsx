@@ -246,6 +246,15 @@ export default function Features() {
                 </Button>
               </div>
 
+              {/* Feature Grid Image */}
+              <div className="mb-16">
+                <img 
+                  src="/attached_assets/ChatGPT Image Jun 11, 2025, 03_36_34 PM_1749650396269.png" 
+                  alt="QuoteKit Features: Unlimited Embeds, Instant Lead Capture, AI Pricing Logic, Powerful Admin Tools"
+                  className="mx-auto max-w-2xl w-full rounded-2xl shadow-2xl"
+                />
+              </div>
+
               <div className="flex flex-col sm:flex-row gap-6 justify-center items-center text-gray-300 mb-8">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-green-400" />

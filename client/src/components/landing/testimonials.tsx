@@ -48,7 +48,7 @@ export default function Testimonials() {
   };
 
   return (
-    <section className="py-20 lg:py-32">
+    <section className="py-12 lg:py-16">
       <div className="container mx-auto px-4 lg:px-8">
         <motion.div
           className="text-center mb-16"
@@ -99,20 +99,19 @@ export default function Testimonials() {
           ))}
         </motion.div>
 
-        {/* Stats Row */}
+        {/* Statistics Image */}
         <motion.div
-          className="grid sm:grid-cols-3 gap-8 mt-16 pt-16 border-t border-midnight-700"
+          className="mt-16 text-center"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
           viewport={{ once: true }}
         >
-          {stats.map((stat) => (
-            <div key={stat.label} className="text-center">
-              <div className="text-4xl font-bold text-neon-400 mb-2">{stat.value}</div>
-              <div className="text-gray-300">{stat.label}</div>
-            </div>
-          ))}
+          <img 
+            src="/attached_assets/1a_1749650402887.png" 
+            alt="Customer testimonials and statistics showing 300% conversion increase, 24/7 lead generation, 5min setup"
+            className="mx-auto max-w-4xl w-full rounded-2xl shadow-2xl"
+          />
         </motion.div>
       </div>
     </section>

@@ -123,10 +123,19 @@ export default function Pricing() {
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6">
                 Choose Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-400 to-blue-400">Growth Plan</span>
               </h1>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-12">
                 Start free and scale as you grow. No hidden fees, no surprises.
                 Cancel anytime.
               </p>
+              
+              {/* Statistics and Testimonials Image */}
+              <div className="mb-16">
+                <img 
+                  src="/attached_assets/1a_1749650402887.png" 
+                  alt="Customer testimonials and statistics showing 300% conversion increase, 24/7 lead generation, 5min setup"
+                  className="mx-auto max-w-4xl w-full rounded-2xl shadow-2xl"
+                />
+              </div>
             </motion.div>
           </div>
         </section>

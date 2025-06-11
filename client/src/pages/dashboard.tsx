@@ -176,7 +176,7 @@ export default function Dashboard() {
     return matchesSearch && matchesCategory;
   });
 
-  const demoCalculators: UserCalculator[] = [
+  const [demoCalculators, setDemoCalculators] = useState<UserCalculator[]>([
     {
       id: "calc-1",
       embedId: "qk-wedding-photo",
@@ -197,7 +197,7 @@ export default function Dashboard() {
       customBranding: { companyName: "Premier Renovations" },
       isActive: true
     }
-  ];
+  ]);
 
   useEffect(() => {
     // Demo mode for dashboard preview
@@ -244,7 +244,7 @@ export default function Dashboard() {
   const addCalculatorMutation = useMutation({
     mutationFn: async (calculator: any) => {
       // In demo mode, just add to local state
-      return {
+      const newCalculator = {
         id: `calc-${Date.now()}`,
         embedId: `qk-${calculator.slug}`,
         embedUrl: `https://quotekit.ai/embed/qk-${calculator.slug}`,
@@ -254,6 +254,11 @@ export default function Dashboard() {
         customBranding: { companyName: "Your Business" },
         isActive: true
       };
+      
+      // Update local state immediately
+      setDemoCalculators(prev => [...prev, newCalculator]);
+      
+      return newCalculator;
     },
     onSuccess: (newCalculator) => {
       toast({
@@ -261,8 +266,6 @@ export default function Dashboard() {
         description: `${newCalculator.embedId} has been added to your dashboard.`,
       });
       setShowCalculatorModal(false);
-      // In a real app, invalidate the calculators query
-      // queryClient.invalidateQueries({ queryKey: ['/api/user-calculators'] });
     },
     onError: () => {
       toast({

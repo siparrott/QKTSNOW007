@@ -40,7 +40,6 @@ export default function Profile() {
           confirmPassword: ""
         });
       } catch (error) {
-        console.error('Error loading user:', error);
         setLocation('/login');
       } finally {
         setIsLoading(false);

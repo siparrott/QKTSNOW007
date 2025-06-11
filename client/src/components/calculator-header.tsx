@@ -1,53 +1,29 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import logoPath from "@assets/ChatGPT Image Jun 11, 2025, 11_57_41 AM_1749637333080.png";
 
 export function QuoteKitHeader() {
   return (
     <div className="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          {/* Left Side - Logo */}
+          {/* Left Side - Company Name or Custom Branding */}
           <div className="flex items-center space-x-6">
-            <Link href="/">
-              <div className="flex items-center space-x-3 cursor-pointer">
-                <img 
-                  src={logoPath} 
-                  alt="QuoteKits Logo" 
-                  className="h-13 w-auto object-contain"
-                />
-              </div>
-            </Link>
+            <div className="text-white text-lg font-semibold">
+              {/* This will be replaced by custom company name when configured */}
+              Quote Calculator
+            </div>
           </div>
 
-          {/* Center - Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            <Link href="/" className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
-              Home
-            </Link>
-            <Link href="/features" className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
-              Features
-            </Link>
-            <Link href="/niches" className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
-              Niches
-            </Link>
-            <Link href="/pricing" className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
-              Pricing
-            </Link>
-            <Link href="/login" className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
-              Login
-            </Link>
-          </div>
-
-          {/* Right Side - CTA */}
+          {/* Right Side - Powered by link */}
           <div className="flex items-center space-x-3">
-            <Link href="/register">
-              <Button 
-                className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-semibold text-sm transition-colors"
-              >
-                Start Free Trial
-              </Button>
-            </Link>
+            <a 
+              href="https://quotekits.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-xs text-gray-400 hover:text-gray-300 transition-colors"
+            >
+              Powered by QuoteKits.com
+            </a>
           </div>
         </div>
       </div>

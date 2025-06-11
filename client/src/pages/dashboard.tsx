@@ -187,7 +187,6 @@ export default function Dashboard() {
   const [showQuoteModal, setShowQuoteModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
-
   // Analytics data - shows real data when available, otherwise empty states
   const analytics = {
     totalVisits: 0,
@@ -200,11 +199,27 @@ export default function Dashboard() {
   // Quotes data - empty for new users
   const quotes: any[] = [];
 
-  // Query for user calculators
-  const { data: userCalculators = [], isLoading: isLoadingCalculators } = useQuery({
-    queryKey: ['/api/supabase/user-calculators'],
-    enabled: !!currentUser?.id,
-  });
+  // State for user calculators
+  const [userCalculators, setUserCalculators] = useState<UserCalculator[]>([]);
+  const [isLoadingCalculators, setIsLoadingCalculators] = useState(false);
+
+  // Load calculators from localStorage
+  useEffect(() => {
+    const loadCalculators = () => {
+      try {
+        const savedCalculators = localStorage.getItem('userCalculators');
+        if (savedCalculators) {
+          setUserCalculators(JSON.parse(savedCalculators));
+        }
+      } catch (error) {
+        console.error('Error loading calculators:', error);
+      }
+    };
+
+    if (currentUser) {
+      loadCalculators();
+    }
+  }, [currentUser]);
 
   // Load current user
   useEffect(() => {
@@ -251,6 +266,31 @@ export default function Dashboard() {
   const addCalculator = async (calculator: any) => {
     try {
       const instanceId = `calc-${Date.now()}`;
+      const newCalculator = {
+        id: instanceId,
+        name: calculator.name,
+        slug: calculator.slug,
+        embed_url: `https://quotekit.ai/embed/${instanceId}`,
+        admin_url: `https://quotekit.ai/admin/${instanceId}`,
+        calculator_id: calculator.id,
+        config: {},
+        custom_branding: { companyName: "Your Business" },
+        is_active: true,
+        template_id: calculator.slug,
+        layout_json: {},
+        logic_json: {},
+        style_json: {},
+        prompt_md: "",
+        created_at: new Date().toISOString(),
+        last_updated: new Date().toISOString()
+      };
+
+      // Update local state immediately
+      const updatedCalculators = [...userCalculators, newCalculator];
+      setUserCalculators(updatedCalculators);
+      
+      // Save to localStorage
+      localStorage.setItem('userCalculators', JSON.stringify(updatedCalculators));
       
       toast({
         title: "Calculator Added!",

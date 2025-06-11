@@ -213,7 +213,11 @@ export default function Profile() {
                   </p>
                 </div>
                 <Separator className="bg-midnight-600" />
-                <Button variant="outline" className="w-full border-midnight-600 text-gray-300">
+                <Button 
+                  variant="outline" 
+                  className="w-full border-midnight-600 text-gray-300"
+                  onClick={() => window.open('/pricing', '_blank')}
+                >
                   View Billing
                 </Button>
               </CardContent>

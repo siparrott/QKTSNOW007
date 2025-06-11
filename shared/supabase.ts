@@ -42,6 +42,35 @@ export interface UserCalculator {
   updated_at: string;
 }
 
+// Get all calculator templates
+export async function getCalculatorTemplates(): Promise<CalculatorTemplate[]> {
+  try {
+    const data = await sql`
+      SELECT * FROM calculator_templates 
+      ORDER BY created_at DESC
+    `;
+    return data as any[];
+  } catch (error) {
+    console.error('Error fetching calculator templates:', error);
+    return [];
+  }
+}
+
+// Get specific calculator template by slug
+export async function getCalculatorTemplate(slug: string): Promise<CalculatorTemplate | null> {
+  try {
+    const data = await sql`
+      SELECT * FROM calculator_templates 
+      WHERE slug = ${slug}
+      LIMIT 1
+    `;
+    return data.length ? data[0] as any : null;
+  } catch (error) {
+    console.error('Error fetching calculator template:', error);
+    return null;
+  }
+}
+
 // Clone a calculator template for a user
 export async function cloneCalculator(userId: string, templateId: string): Promise<UserCalculator | null> {
   try {
@@ -81,7 +110,7 @@ export async function cloneCalculator(userId: string, templateId: string): Promi
       return null;
     }
 
-    return userCalculators[0] as UserCalculator;
+    return userCalculators[0] as any;
   } catch (error) {
     console.error('Error in cloneCalculator:', error);
     return null;
@@ -96,7 +125,7 @@ export async function getUserCalculators(userId: string): Promise<UserCalculator
       WHERE user_id = ${userId}
       ORDER BY created_at DESC
     `;
-    return data as UserCalculator[];
+    return data as any[];
   } catch (error) {
     console.error('Error fetching user calculators:', error);
     return [];
@@ -106,21 +135,14 @@ export async function getUserCalculators(userId: string): Promise<UserCalculator
 // Get specific user calculator
 export async function getUserCalculator(userId: string, slug: string): Promise<UserCalculator | null> {
   try {
-    const { data, error } = await supabase
-      .from('user_calculators')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('slug', slug)
-      .single();
-
-    if (error) {
-      console.error('Error fetching user calculator:', error);
-      return null;
-    }
-
-    return data;
+    const data = await sql`
+      SELECT * FROM user_calculators 
+      WHERE user_id = ${userId} AND slug = ${slug}
+      LIMIT 1
+    `;
+    return data.length ? data[0] as any : null;
   } catch (error) {
-    console.error('Error in getUserCalculator:', error);
+    console.error('Error fetching user calculator:', error);
     return null;
   }
 }
@@ -128,84 +150,30 @@ export async function getUserCalculator(userId: string, slug: string): Promise<U
 // Update user calculator
 export async function updateUserCalculator(id: string, updates: Partial<UserCalculator>): Promise<boolean> {
   try {
-    const { error } = await supabase
-      .from('user_calculators')
-      .update({
-        ...updates,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', id);
-
-    if (error) {
-      console.error('Error updating user calculator:', error);
-      return false;
-    }
-
+    const updateFields = Object.entries(updates).map(([key, value]) => sql`${sql(key)} = ${value}`);
+    
+    await sql`
+      UPDATE user_calculators 
+      SET ${sql.join(updateFields, sql`, `)}, updated_at = NOW()
+      WHERE id = ${id}
+    `;
     return true;
   } catch (error) {
-    console.error('Error in updateUserCalculator:', error);
+    console.error('Error updating user calculator:', error);
     return false;
-  }
-}
-
-// Get all calculator templates
-export async function getCalculatorTemplates(): Promise<CalculatorTemplate[]> {
-  try {
-    const { data, error } = await supabase
-      .from('calculator_templates')
-      .select('*')
-      .order('name');
-
-    if (error) {
-      console.error('Error fetching templates:', error);
-      return [];
-    }
-
-    return data || [];
-  } catch (error) {
-    console.error('Error in getCalculatorTemplates:', error);
-    return [];
-  }
-}
-
-// Get specific calculator template
-export async function getCalculatorTemplate(slug: string): Promise<CalculatorTemplate | null> {
-  try {
-    const { data, error } = await supabase
-      .from('calculator_templates')
-      .select('*')
-      .eq('slug', slug)
-      .single();
-
-    if (error) {
-      console.error('Error fetching template:', error);
-      return null;
-    }
-
-    return data;
-  } catch (error) {
-    console.error('Error in getCalculatorTemplate:', error);
-    return null;
   }
 }
 
 // Delete user calculator
 export async function deleteUserCalculator(id: string, userId: string): Promise<boolean> {
   try {
-    const { error } = await supabase
-      .from('user_calculators')
-      .delete()
-      .eq('id', id)
-      .eq('user_id', userId);
-
-    if (error) {
-      console.error('Error deleting user calculator:', error);
-      return false;
-    }
-
+    await sql`
+      DELETE FROM user_calculators 
+      WHERE id = ${id} AND user_id = ${userId}
+    `;
     return true;
   } catch (error) {
-    console.error('Error in deleteUserCalculator:', error);
+    console.error('Error deleting user calculator:', error);
     return false;
   }
 }

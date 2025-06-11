@@ -6,8 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { QuoteKitHeader } from "@/components/calculator-header";
 import { useToast } from "@/hooks/use-toast";
-import { useQuery } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Link, useLocation } from "wouter";
 import { TestAuth } from "@/components/test-auth";
 import { 
@@ -23,7 +23,34 @@ import {
   Calculator,
   Mail,
   Globe,
-  Plus
+  Plus,
+  X,
+  Search,
+  Camera,
+  Home,
+  Wrench,
+  Zap,
+  Stethoscope,
+  Heart,
+  Car,
+  Code,
+  GraduationCap,
+  Truck,
+  Briefcase,
+  Scale,
+  Scissors,
+  Paintbrush,
+  TreePine,
+  Shield,
+  Droplets,
+  Video,
+  Edit,
+  Monitor,
+  Palette,
+  Dumbbell,
+  Target,
+  Building,
+  Crown
 } from "lucide-react";
 
 interface User {
@@ -59,6 +86,94 @@ export default function Dashboard() {
     subscriptionStatus: "pro",
     quotesUsedThisMonth: 47,
     quotesLimit: 500
+  });
+
+  const [showCalculatorModal, setShowCalculatorModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
+  // All available calculators
+  const allCalculators = [
+    // Photography & Creative (10 calculators)
+    { id: 1, name: "Wedding Photography", icon: Camera, category: "Photography & Creative", slug: "wedding-photography" },
+    { id: 2, name: "Boudoir Photography", icon: Heart, category: "Photography & Creative", slug: "boudoir-photography" },
+    { id: 3, name: "Corporate Headshots", icon: Briefcase, category: "Photography & Creative", slug: "corporate-headshots" },
+    { id: 4, name: "Drone/Aerial Photography", icon: Camera, category: "Photography & Creative", slug: "drone-photography" },
+    { id: 5, name: "Event Videography", icon: Video, category: "Photography & Creative", slug: "event-videography" },
+    { id: 6, name: "Real Estate Photography", icon: Home, category: "Photography & Creative", slug: "real-estate-photography" },
+    { id: 7, name: "Food Photography", icon: Camera, category: "Photography & Creative", slug: "food-photography" },
+    { id: 8, name: "Commercial Photography", icon: Camera, category: "Photography & Creative", slug: "commercial-photography" },
+    { id: 9, name: "Portrait Photography", icon: Camera, category: "Photography & Creative", slug: "portrait-photography" },
+    { id: 10, name: "Lifestyle Influencer", icon: Users, category: "Photography & Creative", slug: "lifestyle-influencer" },
+
+    // Home & Construction (10 calculators)
+    { id: 11, name: "Home Renovation", icon: Home, category: "Home & Construction", slug: "home-renovation" },
+    { id: 12, name: "Landscaping", icon: TreePine, category: "Home & Construction", slug: "landscaping" },
+    { id: 13, name: "Interior Design", icon: Palette, category: "Home & Construction", slug: "interior-design" },
+    { id: 14, name: "Painting & Decorating", icon: Paintbrush, category: "Home & Construction", slug: "painting-decorating" },
+    { id: 15, name: "Electrical Services", icon: Zap, category: "Home & Construction", slug: "electrical" },
+    { id: 16, name: "Plumbing Services", icon: Wrench, category: "Home & Construction", slug: "plumbing" },
+    { id: 17, name: "Roofing", icon: Home, category: "Home & Construction", slug: "roofing" },
+    { id: 18, name: "Solar Panel Installation", icon: Zap, category: "Home & Construction", slug: "solar" },
+    { id: 19, name: "Pest Control", icon: Shield, category: "Home & Construction", slug: "pest-control" },
+    { id: 20, name: "Window & Door Installation", icon: Home, category: "Home & Construction", slug: "window-door" },
+
+    // Beauty & Wellness (8 calculators)
+    { id: 21, name: "Makeup Artist", icon: Palette, category: "Beauty & Wellness", slug: "makeup-artist" },
+    { id: 22, name: "Hair Stylist", icon: Scissors, category: "Beauty & Wellness", slug: "hair-stylist" },
+    { id: 23, name: "Tattoo Artist", icon: Palette, category: "Beauty & Wellness", slug: "tattoo-artist" },
+    { id: 24, name: "Massage Therapy", icon: Heart, category: "Beauty & Wellness", slug: "massage-therapy" },
+    { id: 25, name: "Personal Trainer", icon: Dumbbell, category: "Beauty & Wellness", slug: "personal-training" },
+    { id: 26, name: "Nutritionist", icon: Heart, category: "Beauty & Wellness", slug: "nutritionist" },
+    { id: 27, name: "Life Coach", icon: Target, category: "Beauty & Wellness", slug: "life-coach" },
+    { id: 28, name: "Hypnotherapist", icon: Heart, category: "Beauty & Wellness", slug: "hypnotherapist" },
+
+    // Education & Training (3 calculators)
+    { id: 29, name: "Private Tutor", icon: GraduationCap, category: "Education & Training", slug: "private-tutor" },
+    { id: 30, name: "Private Schools", icon: GraduationCap, category: "Education & Training", slug: "private-school" },
+    { id: 31, name: "Driving Instructor", icon: Car, category: "Education & Training", slug: "driving-instructor" },
+
+    // Healthcare & Medical (5 calculators)
+    { id: 32, name: "Dentist & Implant Clinics", icon: Stethoscope, category: "Healthcare & Medical", slug: "dentist" },
+    { id: 33, name: "Private Medical Clinics", icon: Stethoscope, category: "Healthcare & Medical", slug: "private-medical" },
+    { id: 34, name: "Plastic Surgery", icon: Stethoscope, category: "Healthcare & Medical", slug: "plastic-surgery" },
+    { id: 35, name: "Childcare Practitioners", icon: Heart, category: "Healthcare & Medical", slug: "childcare" },
+    { id: 36, name: "Childcare Services", icon: Heart, category: "Healthcare & Medical", slug: "childcare-services" },
+
+    // Pet Services (1 calculator)
+    { id: 37, name: "Dog Trainer", icon: Heart, category: "Pet Services", slug: "dog-trainer" },
+
+    // Automotive & Transportation (9 calculators)
+    { id: 38, name: "Car Detailing", icon: Car, category: "Automotive & Transportation", slug: "car-detailing" },
+    { id: 39, name: "Auto Mechanic", icon: Wrench, category: "Automotive & Transportation", slug: "auto-mechanic" },
+    { id: 40, name: "Mobile Car Wash", icon: Droplets, category: "Automotive & Transportation", slug: "mobile-car-wash" },
+    { id: 41, name: "Moving Services", icon: Truck, category: "Automotive & Transportation", slug: "moving-services" },
+    { id: 42, name: "Chauffeur/Limo Services", icon: Car, category: "Automotive & Transportation", slug: "chauffeur-limo" },
+    { id: 43, name: "Airport Transfers", icon: Car, category: "Automotive & Transportation", slug: "airport-transfer" },
+    { id: 44, name: "Van Rentals", icon: Truck, category: "Automotive & Transportation", slug: "van-rental" },
+    { id: 45, name: "Boat Charters", icon: Truck, category: "Automotive & Transportation", slug: "boat-charter" },
+    { id: 46, name: "Motorcycle Repair", icon: Wrench, category: "Automotive & Transportation", slug: "motorcycle-repair" },
+
+    // Business & Digital Services (11 calculators)
+    { id: 47, name: "Web Designer", icon: Code, category: "Business & Digital Services", slug: "web-designer" },
+    { id: 48, name: "Marketing Consultant", icon: BarChart3, category: "Business & Digital Services", slug: "marketing-consultant" },
+    { id: 49, name: "SEO Agency", icon: TrendingUp, category: "Business & Digital Services", slug: "seo-agency" },
+    { id: 50, name: "Video Editor", icon: Video, category: "Business & Digital Services", slug: "video-editor" },
+    { id: 51, name: "Copywriter", icon: Edit, category: "Business & Digital Services", slug: "copywriter" },
+    { id: 52, name: "Virtual Assistant", icon: Users, category: "Business & Digital Services", slug: "virtual-assistant" },
+    { id: 53, name: "Business Coach", icon: Briefcase, category: "Business & Digital Services", slug: "business-coach" },
+    { id: 54, name: "Legal Advisor", icon: Scale, category: "Business & Digital Services", slug: "legal-advisor" },
+    { id: 55, name: "Tax Preparer", icon: Calculator, category: "Business & Digital Services", slug: "tax-preparer" },
+    { id: 56, name: "Translation Services", icon: Globe, category: "Business & Digital Services", slug: "translation-services" },
+    { id: 57, name: "Cleaning Services", icon: Home, category: "Business & Digital Services", slug: "cleaning-services" }
+  ];
+
+  const categories = ["All", ...Array.from(new Set(allCalculators.map(calc => calc.category)))];
+  
+  const filteredCalculators = allCalculators.filter(calc => {
+    const matchesSearch = calc.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === "All" || calc.category === selectedCategory;
+    return matchesSearch && matchesCategory;
   });
 
   const demoCalculators: UserCalculator[] = [
@@ -123,7 +238,43 @@ export default function Dashboard() {
   };
 
   const createNewCalculator = () => {
-    setLocation('/niches');
+    setShowCalculatorModal(true);
+  };
+
+  const addCalculatorMutation = useMutation({
+    mutationFn: async (calculator: any) => {
+      // In demo mode, just add to local state
+      return {
+        id: `calc-${Date.now()}`,
+        embedId: `qk-${calculator.slug}`,
+        embedUrl: `https://quotekit.ai/embed/qk-${calculator.slug}`,
+        adminUrl: `https://quotekit.ai/admin/qk-${calculator.slug}`,
+        calculatorId: calculator.id,
+        config: { primaryColor: "#10b981" },
+        customBranding: { companyName: "Your Business" },
+        isActive: true
+      };
+    },
+    onSuccess: (newCalculator) => {
+      toast({
+        title: "Calculator Added!",
+        description: `${newCalculator.embedId} has been added to your dashboard.`,
+      });
+      setShowCalculatorModal(false);
+      // In a real app, invalidate the calculators query
+      // queryClient.invalidateQueries({ queryKey: ['/api/user-calculators'] });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to add calculator. Please try again.",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const handleAddCalculator = (calculator: any) => {
+    addCalculatorMutation.mutate(calculator);
   };
 
   const handleUpgrade = async (planId: string) => {

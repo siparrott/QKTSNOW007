@@ -107,9 +107,40 @@ export default function Dashboard() {
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   // ALL HOOKS AT TOP LEVEL BEFORE ANY CONDITIONAL LOGIC
+  // Helper function to generate UUID for temporary users (matching backend logic)
+  const generateUuidForTempUser = (tempUserId: string): string => {
+    let hash = 0;
+    for (let i = 0; i < tempUserId.length; i++) {
+      const char = tempUserId.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    
+    // Convert to positive number and pad with zeros
+    const hashStr = Math.abs(hash).toString(16).padStart(8, '0');
+    // Use deterministic suffix based on the hash instead of random
+    const deterministicSuffix = Math.abs(hash * 31).toString(16).padStart(8, '0');
+    
+    // Format as UUID v4
+    return [
+      hashStr.substring(0, 8),
+      hashStr.substring(0, 4),
+      '4' + hashStr.substring(1, 4),
+      '8' + deterministicSuffix.substring(0, 3),
+      deterministicSuffix + hashStr.substring(4, 8)
+    ].join('-');
+  };
+
+  const getActualUserId = (userId: string): string => {
+    if (userId?.startsWith('temp_')) {
+      return generateUuidForTempUser(userId);
+    }
+    return userId;
+  };
+
   const { data: userCalculators = [], isLoading: isLoadingCalculators } = useQuery<UserCalculator[]>({
     queryKey: ['/api/supabase/user-calculators', currentUser?.id],
-    queryFn: () => apiRequest('GET', `/api/supabase/user-calculators/${currentUser?.id}`),
+    queryFn: () => apiRequest('GET', `/api/supabase/user-calculators/${getActualUserId(currentUser?.id)}`),
     enabled: !!currentUser?.id
   });
 

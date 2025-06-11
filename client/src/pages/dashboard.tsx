@@ -59,7 +59,8 @@ import {
   Baby,
   School,
   MapPin,
-  MessageSquare
+  MessageSquare,
+  Code2
 } from "lucide-react";
 
 interface User {
@@ -87,6 +88,7 @@ export default function Dashboard() {
   const { toast } = useToast();
   const [showCustomizeModal, setShowCustomizeModal] = useState(false);
   const [showCalculatorModal, setShowCalculatorModal] = useState(false);
+  const [showEmbedModal, setShowEmbedModal] = useState(false);
   const [selectedCalculator, setSelectedCalculator] = useState<any>(null);
   const [customConfig, setCustomConfig] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -665,6 +667,30 @@ export default function Dashboard() {
     }
   };
 
+  const showEmbedCode = (calc: UserCalculator) => {
+    setSelectedCalculator(calc);
+    setShowEmbedModal(true);
+  };
+
+  const copyEmbedCode = async (calc: UserCalculator) => {
+    const embedCode = `<iframe src="${calc.embedUrl}" width="100%" height="600" frameborder="0" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"></iframe>`;
+    
+    try {
+      await navigator.clipboard.writeText(embedCode);
+      toast({
+        title: "Embed Code Copied!",
+        description: "The embed code has been copied to your clipboard.",
+      });
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+      toast({
+        title: "Copy Failed", 
+        description: "Please copy the embed code manually.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const resetToDefaults = () => {
     setCustomConfig(defaultConfig);
   };
@@ -816,6 +842,16 @@ export default function Dashboard() {
                       >
                         <Settings className="h-4 w-4 mr-1" />
                         Customize
+                      </Button>
+                      
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => showEmbedCode(calc)}
+                        className="border-midnight-600 text-gray-300 hover:text-white"
+                      >
+                        <Code className="h-4 w-4 mr-1" />
+                        Embed
                       </Button>
                     </div>
                   </div>

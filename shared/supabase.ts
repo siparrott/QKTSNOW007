@@ -70,6 +70,7 @@ export interface UserCalculator {
   logo_url?: string;
   is_active: boolean;
   embed_url: string;
+  config?: any;
   created_at: string;
   updated_at: string;
 }
@@ -257,13 +258,17 @@ export async function getUserCalculator(userId: string, slug: string): Promise<U
 // Update user calculator
 export async function updateUserCalculator(id: string, updates: Partial<UserCalculator>): Promise<boolean> {
   try {
-    const updateFields = Object.entries(updates).map(([key, value]) => sql`${sql(key)} = ${value}`);
+    if (Object.keys(updates).length === 0) return true;
+
+    // Simple approach: update only config field for now
+    if (updates.config) {
+      await sql`
+        UPDATE user_calculators 
+        SET config = ${JSON.stringify(updates.config)}, updated_at = NOW()
+        WHERE id = ${id}
+      `;
+    }
     
-    await sql`
-      UPDATE user_calculators 
-      SET ${sql.join(updateFields, sql`, `)}, updated_at = NOW()
-      WHERE id = ${id}
-    `;
     return true;
   } catch (error) {
     console.error('Error updating user calculator:', error);

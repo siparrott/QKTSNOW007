@@ -308,39 +308,37 @@ export default function Dashboard() {
   // Send config updates to iframe when customConfig changes
   useEffect(() => {
     if (iframeRef && customConfig && showCustomizeModal) {
-      console.log('Sending config to iframe:', customConfig);
-      iframeRef.contentWindow?.postMessage({
-        type: 'APPLY_CONFIG',
-        config: customConfig
-      }, '*');
+      const sendConfig = () => {
+        try {
+          console.log('Sending config to iframe:', customConfig);
+          iframeRef.contentWindow?.postMessage({
+            type: 'APPLY_CONFIG',
+            config: customConfig,
+            timestamp: Date.now()
+          }, '*');
+        } catch (error) {
+          console.error('Error sending config to iframe:', error);
+        }
+      };
+
+      // Send immediately and then with delay to ensure iframe is loaded
+      sendConfig();
+      setTimeout(sendConfig, 500);
+      setTimeout(sendConfig, 1000);
     }
   }, [customConfig, iframeRef, showCustomizeModal]);
 
-  // Enhanced iframe communication with retry mechanism
+  // Auto-refresh preview when config changes
   useEffect(() => {
-    let retryCount = 0;
-    const maxRetries = 5;
-    
-    const sendConfigWithRetry = () => {
-      if (iframeRef && customConfig && showCustomizeModal) {
-        console.log(`Attempting to send config (attempt ${retryCount + 1}):`, customConfig);
-        iframeRef.contentWindow?.postMessage({
-          type: 'APPLY_CONFIG',
-          config: customConfig,
-          timestamp: Date.now()
-        }, '*');
-        
-        retryCount++;
-        if (retryCount < maxRetries) {
-          setTimeout(sendConfigWithRetry, 500);
-        }
+    const handleCustomConfigChange = () => {
+      if (showCustomizeModal && customConfig) {
+        sendConfigToIframe();
       }
     };
 
-    if (showCustomizeModal && iframeRef) {
-      setTimeout(sendConfigWithRetry, 100);
-    }
-  }, [showCustomizeModal, iframeRef]);
+    const debounceTimer = setTimeout(handleCustomConfigChange, 300);
+    return () => clearTimeout(debounceTimer);
+  }, [customConfig]);
 
   useEffect(() => {
     const checkAuth = async () => {

@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Link, useLocation } from "wouter";
+import { TestAuth } from "@/components/test-auth";
 import { 
   Settings, 
   BarChart3, 
@@ -123,6 +124,9 @@ export default function Dashboard() {
       <QuoteKitHeader />
       
       <div className="container mx-auto px-4 py-8">
+        {/* Test Auth Component - Remove after testing */}
+        <TestAuth />
+        
         {/* Welcome Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -131,7 +135,7 @@ export default function Dashboard() {
           className="mb-8"
         >
           <h1 className="text-3xl font-bold text-white mb-2">
-            Welcome back, {user.fullName?.split(' ')[0] || 'there'}!
+            Welcome back, {user?.fullName?.split(' ')[0] || 'there'}!
           </h1>
           <p className="text-gray-400">
             Manage your quote calculators and track your business growth

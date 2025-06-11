@@ -7,7 +7,8 @@ import {
   getCalculatorTemplates, 
   getCalculatorTemplate,
   deleteUserCalculator,
-  getUserAnalytics
+  getUserAnalytics,
+  getUserQuotes
 } from '../shared/supabase';
 
 const router = Router();
@@ -167,6 +168,18 @@ router.get('/analytics/:userId', async (req, res) => {
   } catch (error) {
     console.error('Error fetching analytics:', error);
     res.status(500).json({ error: 'Failed to fetch analytics' });
+  }
+});
+
+// Get user quotes/leads
+router.get('/quotes/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const quotes = await getUserQuotes(userId);
+    res.json(quotes);
+  } catch (error) {
+    console.error('Error fetching quotes:', error);
+    res.status(500).json({ error: 'Failed to fetch quotes' });
   }
 });
 

@@ -11,6 +11,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Link, useLocation } from "wouter";
 import { getCurrentUser, getCurrentSession, logout } from "@/lib/supabase";
 import type { CalculatorTemplate, UserCalculator as SupabaseUserCalculator } from "@shared/supabase";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 
 // Helper function to get actual user ID for temp users
 function getActualUserId(userId: string | undefined): string {
@@ -221,10 +222,26 @@ export default function Dashboard() {
     queryKey: ['/api/supabase/templates']
   });
 
-  const { data: analytics = { totalVisits: 0, totalConversions: 0, conversionRate: 0, totalQuotes: 0 } } = useQuery({
+  const { data: analytics = { 
+    totalVisits: 0, 
+    totalConversions: 0, 
+    conversionRate: 0, 
+    totalQuotes: 0,
+    chartData: [],
+    calculatorPerformance: []
+  } } = useQuery({
     queryKey: ['/api/supabase/analytics', currentUser?.id],
     queryFn: async () => {
       const response = await fetch(`/api/supabase/analytics/${getActualUserId(currentUser?.id)}`);
+      return response.json();
+    },
+    enabled: !!currentUser?.id
+  });
+
+  const { data: quotes = [] } = useQuery({
+    queryKey: ['/api/supabase/quotes', currentUser?.id],
+    queryFn: async () => {
+      const response = await fetch(`/api/supabase/quotes/${getActualUserId(currentUser?.id)}`);
       return response.json();
     },
     enabled: !!currentUser?.id

@@ -356,6 +356,18 @@ export async function getUserAnalytics(userId: string): Promise<{
   totalConversions: number;
   conversionRate: number;
   totalQuotes: number;
+  chartData: Array<{
+    date: string;
+    visits: number;
+    conversions: number;
+    quotes: number;
+  }>;
+  calculatorPerformance: Array<{
+    name: string;
+    visits: number;
+    conversions: number;
+    conversionRate: number;
+  }>;
 }> {
   try {
     // Handle UUID conversion for temporary users
@@ -384,6 +396,41 @@ export async function getUserAnalytics(userId: string): Promise<{
       AND l.created_at >= NOW() - INTERVAL '30 days'
     `;
 
+    // Get daily chart data for the last 7 days
+    const chartData = await sql`
+      SELECT 
+        DATE(cv.created_at) as date,
+        COUNT(cv.id) as visits,
+        COUNT(CASE WHEN cv.conversion_completed = true THEN 1 END) as conversions,
+        COUNT(l.id) as quotes
+      FROM calculator_visits cv
+      JOIN user_calculators uc ON cv.user_calculator_id = uc.id
+      LEFT JOIN leads l ON l.user_calculator_id = uc.id AND DATE(l.created_at) = DATE(cv.created_at)
+      WHERE uc.user_id = ${actualUserId}
+      AND cv.created_at >= NOW() - INTERVAL '7 days'
+      GROUP BY DATE(cv.created_at)
+      ORDER BY DATE(cv.created_at)
+    `;
+
+    // Get calculator performance data
+    const calculatorPerformance = await sql`
+      SELECT 
+        ct.name,
+        COUNT(cv.id) as visits,
+        COUNT(CASE WHEN cv.conversion_completed = true THEN 1 END) as conversions,
+        CASE 
+          WHEN COUNT(cv.id) > 0 THEN ROUND((COUNT(CASE WHEN cv.conversion_completed = true THEN 1 END)::decimal / COUNT(cv.id)) * 100)
+          ELSE 0 
+        END as conversion_rate
+      FROM user_calculators uc
+      LEFT JOIN calculator_visits cv ON cv.user_calculator_id = uc.id
+      JOIN calculator_templates ct ON ct.id = uc.template_id
+      WHERE uc.user_id = ${actualUserId}
+      AND (cv.created_at IS NULL OR cv.created_at >= NOW() - INTERVAL '30 days')
+      GROUP BY ct.name, uc.id
+      ORDER BY visits DESC
+    `;
+
     const totalVisits = parseInt(analytics[0]?.total_visits || '0');
     const totalConversions = parseInt(analytics[0]?.total_conversions || '0');
     const totalQuotes = parseInt(quotes[0]?.total_quotes || '0');
@@ -393,7 +440,19 @@ export async function getUserAnalytics(userId: string): Promise<{
       totalVisits,
       totalConversions,
       conversionRate,
-      totalQuotes
+      totalQuotes,
+      chartData: chartData.map((row: any) => ({
+        date: row.date,
+        visits: parseInt(row.visits || '0'),
+        conversions: parseInt(row.conversions || '0'),
+        quotes: parseInt(row.quotes || '0')
+      })),
+      calculatorPerformance: calculatorPerformance.map((row: any) => ({
+        name: row.name,
+        visits: parseInt(row.visits || '0'),
+        conversions: parseInt(row.conversions || '0'),
+        conversionRate: parseInt(row.conversion_rate || '0')
+      }))
     };
   } catch (error) {
     console.error('Error getting user analytics:', error);
@@ -401,7 +460,63 @@ export async function getUserAnalytics(userId: string): Promise<{
       totalVisits: 0,
       totalConversions: 0,
       conversionRate: 0,
-      totalQuotes: 0
+      totalQuotes: 0,
+      chartData: [],
+      calculatorPerformance: []
     };
+  }
+}
+
+export async function getUserQuotes(userId: string): Promise<Array<{
+  id: string;
+  clientName: string;
+  clientEmail: string;
+  clientPhone: string;
+  calculatorName: string;
+  estimatedValue: string;
+  status: string;
+  quoteData: any;
+  createdAt: string;
+}>> {
+  try {
+    // Handle UUID conversion for temporary users
+    let actualUserId = userId;
+    if (userId.startsWith('temp_')) {
+      actualUserId = generateUuidForTempUser(userId);
+    }
+
+    const quotes = await sql`
+      SELECT 
+        l.id,
+        l.name as client_name,
+        l.email as client_email,
+        l.phone as client_phone,
+        ct.name as calculator_name,
+        l.estimated_value,
+        l.status,
+        l.quote_data,
+        l.created_at
+      FROM leads l
+      JOIN user_calculators uc ON l.user_calculator_id = uc.id
+      JOIN calculator_templates ct ON ct.id = uc.template_id
+      WHERE uc.user_id = ${actualUserId}
+      ORDER BY l.created_at DESC
+      LIMIT 100
+    `;
+
+    return quotes.map((quote: any) => ({
+      id: quote.id,
+      clientName: quote.client_name || 'Anonymous',
+      clientEmail: quote.client_email || '',
+      clientPhone: quote.client_phone || '',
+      calculatorName: quote.calculator_name,
+      estimatedValue: quote.estimated_value || '$0',
+      status: quote.status || 'new',
+      quoteData: quote.quote_data,
+      createdAt: quote.created_at
+    }));
+  } catch (error) {
+    console.error('Error getting user quotes:', error);
+    return [];
   }
 }

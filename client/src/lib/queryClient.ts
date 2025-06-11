@@ -29,6 +29,7 @@ export async function apiRequest(
   console.log('Making API request to:', fullUrl);
 
   const res = await fetch(fullUrl, {
+    method: 'GET',
     credentials: "include",
     ...options,
     headers: {

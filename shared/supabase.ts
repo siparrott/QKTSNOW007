@@ -132,29 +132,38 @@ function generateUuidForTempUser(tempUserId: string): string {
 // Clone a calculator template for a user
 export async function cloneCalculator(userId: string, templateId: string): Promise<UserCalculator | null> {
   try {
-    // Map numeric IDs to template slugs for backward compatibility
-    const templateSlugMap: { [key: string]: string } = {
-      '1': 'wedding-photography',
-      '2': 'boudoir-photography', 
-      '3': 'real-estate-photography',
-      '4': 'drone-photography',
-      '5': 'event-videography',
-      '6': 'electrician-services',
-      '7': 'home-renovation',
-      '8': 'plumbing-services'
-    };
-
-    const templateSlug = templateSlugMap[templateId] || templateId;
-
-    // Get the template by slug instead of ID to handle numeric templateIds
-    const templates = await sql`
+    // First try to get template by UUID ID (new format)
+    let templates = await sql`
       SELECT * FROM calculator_templates 
-      WHERE slug = ${templateSlug}
+      WHERE id = ${templateId}
       LIMIT 1
     `;
 
+    // If not found and templateId is numeric, try legacy slug mapping
+    if (!templates.length && /^\d+$/.test(templateId)) {
+      const templateSlugMap: { [key: string]: string } = {
+        '1': 'wedding-photography',
+        '2': 'boudoir-photography', 
+        '3': 'real-estate-photography',
+        '4': 'drone-photography',
+        '5': 'event-videography',
+        '6': 'electrician-services',
+        '7': 'home-renovation',
+        '8': 'plumbing-services'
+      };
+
+      const templateSlug = templateSlugMap[templateId];
+      if (templateSlug) {
+        templates = await sql`
+          SELECT * FROM calculator_templates 
+          WHERE slug = ${templateSlug}
+          LIMIT 1
+        `;
+      }
+    }
+
     if (!templates.length) {
-      console.error('Template not found:', templateSlug);
+      console.error('Template not found:', templateId);
       return null;
     }
 

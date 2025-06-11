@@ -778,7 +778,7 @@ export default function Dashboard() {
                         </div>
                         <p className="text-xs text-gray-300 mb-3">{calculator.description}</p>
                         <Button
-                          onClick={() => cloneCalculatorMutation.mutate({ templateId: calculator.slug })}
+                          onClick={() => cloneCalculatorMutation.mutate({ templateId: calculator.id })}
                           disabled={cloneCalculatorMutation.isPending}
                           className="w-full bg-neon-500 hover:bg-neon-600 text-white text-sm"
                           size="sm"

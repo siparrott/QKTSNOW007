@@ -106,15 +106,29 @@ export async function getCalculatorTemplate(slug: string): Promise<CalculatorTem
 // Clone a calculator template for a user
 export async function cloneCalculator(userId: string, templateId: string): Promise<UserCalculator | null> {
   try {
-    // Get the template
+    // Map numeric IDs to template slugs for backward compatibility
+    const templateSlugMap: { [key: string]: string } = {
+      '1': 'wedding-photography',
+      '2': 'boudoir-photography', 
+      '3': 'real-estate-photography',
+      '4': 'drone-photography',
+      '5': 'event-videography',
+      '6': 'electrician-services',
+      '7': 'home-renovation',
+      '8': 'plumbing-services'
+    };
+
+    const templateSlug = templateSlugMap[templateId] || templateId;
+
+    // Get the template by slug instead of ID to handle numeric templateIds
     const templates = await sql`
       SELECT * FROM calculator_templates 
-      WHERE id = ${templateId}
+      WHERE slug = ${templateSlug}
       LIMIT 1
     `;
 
     if (!templates.length) {
-      console.error('Template not found:', templateId);
+      console.error('Template not found:', templateSlug);
       return null;
     }
 

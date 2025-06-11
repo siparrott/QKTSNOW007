@@ -91,6 +91,91 @@ export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
+  // All available calculators
+  const allCalculators = [
+    { id: 1, name: "Wedding Photography", category: "Photography", icon: <Camera className="h-5 w-5 text-white" />, description: "Custom quote calculator for wedding photography services" },
+    { id: 2, name: "Boudoir Photography", category: "Photography", icon: <Camera className="h-5 w-5 text-white" />, description: "Elegant pricing for intimate photography sessions" },
+    { id: 3, name: "Real Estate Photography", category: "Photography", icon: <Home className="h-5 w-5 text-white" />, description: "Professional property photography quotes" },
+    { id: 4, name: "Drone Photography", category: "Photography", icon: <Plane className="h-5 w-5 text-white" />, description: "Aerial photography and videography services" },
+    { id: 5, name: "Event Videography", category: "Photography", icon: <Video className="h-5 w-5 text-white" />, description: "Professional event recording services" },
+    { id: 6, name: "Electrician Services", category: "Home Services", icon: <Zap className="h-5 w-5 text-white" />, description: "Electrical work and installation quotes" },
+    { id: 7, name: "Home Renovation", category: "Home Services", icon: <Home className="h-5 w-5 text-white" />, description: "Complete home renovation estimates" },
+    { id: 8, name: "Plumbing Services", category: "Home Services", icon: <Wrench className="h-5 w-5 text-white" />, description: "Plumbing repairs and installations" },
+    { id: 9, name: "Landscaping", category: "Home Services", icon: <TreePine className="h-5 w-5 text-white" />, description: "Garden design and maintenance" },
+    { id: 10, name: "Personal Training", category: "Fitness", icon: <Dumbbell className="h-5 w-5 text-white" />, description: "Fitness coaching and training plans" },
+    { id: 11, name: "Nutritionist", category: "Health", icon: <Utensils className="h-5 w-5 text-white" />, description: "Personalized nutrition consultations" },
+    { id: 12, name: "Legal Services", category: "Professional", icon: <Scale className="h-5 w-5 text-white" />, description: "Legal consultation and document preparation" },
+    { id: 13, name: "Web Design", category: "Technology", icon: <Code className="h-5 w-5 text-white" />, description: "Custom website design and development" },
+    { id: 14, name: "Marketing Consulting", category: "Business", icon: <Megaphone className="h-5 w-5 text-white" />, description: "Marketing strategy and campaign planning" },
+    { id: 15, name: "Tutoring Services", category: "Education", icon: <GraduationCap className="h-5 w-5 text-white" />, description: "Private academic tutoring sessions" }
+  ];
+
+  // Categories with counts
+  const categories = [
+    { name: "Photography", count: allCalculators.filter(c => c.category === "Photography").length },
+    { name: "Home Services", count: allCalculators.filter(c => c.category === "Home Services").length },
+    { name: "Health", count: allCalculators.filter(c => c.category === "Health").length },
+    { name: "Fitness", count: allCalculators.filter(c => c.category === "Fitness").length },
+    { name: "Professional", count: allCalculators.filter(c => c.category === "Professional").length },
+    { name: "Technology", count: allCalculators.filter(c => c.category === "Technology").length },
+    { name: "Business", count: allCalculators.filter(c => c.category === "Business").length },
+    { name: "Education", count: allCalculators.filter(c => c.category === "Education").length }
+  ];
+
+  // Filter calculators based on search and category
+  const filteredCalculators = allCalculators.filter(calculator => {
+    const matchesSearch = calculator.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         calculator.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === "All" || calculator.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  // Add calculator mutation
+  const addCalculatorMutation = useMutation({
+    mutationFn: async ({ calculatorId }: { calculatorId: number }) => {
+      return apiRequest(`/api/user-calculators`, {
+        method: 'POST',
+        body: JSON.stringify({ calculatorId })
+      });
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/user-calculators'] });
+      setDemoCalculators(prev => [...prev, data]);
+      toast({
+        title: "Calculator Added",
+        description: "Your new calculator has been added successfully.",
+      });
+      setShowCalculatorModal(false);
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to add calculator. Please try again.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  const handleAddCalculator = (calculator: any) => {
+    const newCalc: UserCalculator = {
+      id: `calc-${Date.now()}`,
+      embedId: `embed-${Date.now()}`,
+      embedUrl: `https://yoursite.com/calculator/embed-${Date.now()}`,
+      adminUrl: `https://yoursite.com/calculator/admin/embed-${Date.now()}`,
+      calculatorId: calculator.id,
+      config: defaultConfig,
+      customBranding: defaultConfig.branding,
+      isActive: true
+    };
+    
+    setDemoCalculators(prev => [...prev, newCalc]);
+    toast({
+      title: "Calculator Added",
+      description: `${calculator.name} has been added to your dashboard.`,
+    });
+    setShowCalculatorModal(false);
+  };
+
   // Demo user data
   const demoUser: User = {
     id: "demo-user",
@@ -194,6 +279,28 @@ export default function Dashboard() {
 
   const resetToDefaults = () => {
     setCustomConfig(defaultConfig);
+  };
+
+  const saveCustomization = () => {
+    if (selectedCalculator) {
+      const updatedCalculator = {
+        ...selectedCalculator,
+        config: customConfig,
+        customBranding: customConfig?.branding,
+        lastUpdated: new Date().toISOString()
+      };
+      
+      setDemoCalculators((prev: UserCalculator[]) => 
+        prev.map(calc => calc.id === selectedCalculator.id ? updatedCalculator : calc)
+      );
+      
+      toast({
+        title: "Configuration Saved",
+        description: "Your calculator customization has been saved successfully.",
+      });
+      
+      setShowCustomizeModal(false);
+    }
   };
 
   return (
@@ -747,7 +854,119 @@ export default function Dashboard() {
                     );
                   })()}
                 </div>
+
+                <div className="mt-6 flex justify-between">
+                  <button 
+                    onClick={resetToDefaults}
+                    className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                  >
+                    Reset to Defaults
+                  </button>
+                  <div className="flex space-x-3">
+                    <button 
+                      onClick={() => setShowCustomizeModal(false)}
+                      className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={saveCustomization}
+                      className="px-6 py-2 bg-neon-500 text-white rounded hover:bg-neon-600 font-semibold"
+                    >
+                      Save Customization
+                    </button>
+                  </div>
+                </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Add Calculator Modal */}
+        {showCalculatorModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-midnight-800 rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-white">Add New Calculator</h2>
+                <button
+                  onClick={() => setShowCalculatorModal(false)}
+                  className="text-gray-400 hover:text-white"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+
+              {/* Search and Filter */}
+              <div className="mb-6 space-y-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search calculators..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 bg-midnight-700 border border-midnight-600 rounded text-white placeholder-gray-400"
+                  />
+                </div>
+                
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => setSelectedCategory("All")}
+                    className={`px-4 py-2 rounded text-sm ${selectedCategory === "All" ? 'bg-neon-500 text-white' : 'bg-midnight-700 text-gray-300'}`}
+                  >
+                    All ({allCalculators.length})
+                  </button>
+                  {categories.map((category) => (
+                    <button
+                      key={category.name}
+                      onClick={() => setSelectedCategory(category.name)}
+                      className={`px-4 py-2 rounded text-sm ${selectedCategory === category.name ? 'bg-neon-500 text-white' : 'bg-midnight-700 text-gray-300'}`}
+                    >
+                      {category.name} ({category.count})
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Calculator Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredCalculators.map((calculator) => (
+                  <div
+                    key={calculator.id}
+                    className="bg-midnight-700 border border-midnight-600 rounded-lg p-4 hover:border-neon-500 transition-colors cursor-pointer"
+                    onClick={() => handleAddCalculator(calculator)}
+                  >
+                    <div className="flex items-center space-x-3 mb-3">
+                      <div className="w-10 h-10 bg-neon-500 rounded-lg flex items-center justify-center">
+                        {calculator.icon}
+                      </div>
+                      <div>
+                        <h3 className="text-white font-semibold text-sm">{calculator.name}</h3>
+                        <p className="text-xs text-gray-400">{calculator.category}</p>
+                      </div>
+                    </div>
+                    <p className="text-gray-300 text-xs mb-3 line-clamp-2">{calculator.description}</p>
+                    <div className="flex justify-between items-center">
+                      <Badge variant="secondary" className="text-xs">{calculator.category}</Badge>
+                      <Plus className="h-4 w-4 text-neon-500" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {filteredCalculators.length === 0 && (
+                <div className="text-center py-8">
+                  <p className="text-gray-400">
+                    No calculators match your search criteria.
+                  </p>
+                  <button
+                    onClick={() => setShowCalculatorModal(false)}
+                    className="mt-4 px-4 py-2 bg-midnight-700 text-white rounded hover:bg-midnight-600"
+                  >
+                    Close
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}

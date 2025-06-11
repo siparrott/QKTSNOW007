@@ -222,6 +222,44 @@ export default function Dashboard() {
             required: true
           }
         ]
+      },
+      6: { // Electrician Services
+        ...defaultConfig,
+        text: {
+          headline: "Get Your Electrician Services Quote",
+          subheading: "Tell us about your project requirements",
+          ctaText: "Get Quote",
+          thankYouMessage: "Thank you for your request!"
+        },
+        questions: [
+          {
+            id: "service-type",
+            label: "What type of electrical work?",
+            type: "dropdown",
+            required: true,
+            options: ["Wiring Installation", "Panel Upgrade", "Outlet Installation", "Lighting Installation", "Electrical Repair", "Safety Inspection"]
+          },
+          {
+            id: "property-type",
+            label: "Property type",
+            type: "dropdown",
+            required: true,
+            options: ["Residential Home", "Commercial Building", "Industrial Facility", "Other"]
+          },
+          {
+            id: "project-scope",
+            label: "Describe your project in detail",
+            type: "text",
+            required: true
+          },
+          {
+            id: "timeline",
+            label: "When do you need this completed?",
+            type: "dropdown",
+            required: true,
+            options: ["ASAP", "Within 1 week", "Within 1 month", "Flexible timing"]
+          }
+        ]
       }
     };
     
@@ -705,6 +743,169 @@ export default function Dashboard() {
                         <option value="wizard">Wizard Flow</option>
                         <option value="accordion">Accordion Style</option>
                       </select>
+                    </div>
+                  </div>
+
+                  {/* Typography & Fonts Section */}
+                  <div className="space-y-4 mt-6">
+                    <h3 className="text-lg font-semibold text-white flex items-center">
+                      <PenTool className="h-5 w-5 mr-2" />
+                      Typography & Fonts
+                    </h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Primary Font</label>
+                        <select
+                          value={customConfig?.typography?.primaryFont || "inter"}
+                          onChange={(e) => setCustomConfig((prev: any) => ({
+                            ...prev,
+                            typography: { ...prev.typography, primaryFont: e.target.value }
+                          }))}
+                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        >
+                          <option value="inter">Inter (Modern)</option>
+                          <option value="roboto">Roboto (Clean)</option>
+                          <option value="poppins">Poppins (Friendly)</option>
+                          <option value="montserrat">Montserrat (Professional)</option>
+                          <option value="playfair">Playfair Display (Elegant)</option>
+                          <option value="source-sans">Source Sans Pro (Corporate)</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Font Weight</label>
+                        <select
+                          value={customConfig?.typography?.fontWeight || "normal"}
+                          onChange={(e) => setCustomConfig((prev: any) => ({
+                            ...prev,
+                            typography: { ...prev.typography, fontWeight: e.target.value }
+                          }))}
+                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        >
+                          <option value="light">Light (300)</option>
+                          <option value="normal">Normal (400)</option>
+                          <option value="medium">Medium (500)</option>
+                          <option value="semibold">Semi Bold (600)</option>
+                          <option value="bold">Bold (700)</option>
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Heading Size</label>
+                        <select
+                          value={customConfig?.typography?.headingSize || "large"}
+                          onChange={(e) => setCustomConfig((prev: any) => ({
+                            ...prev,
+                            typography: { ...prev.typography, headingSize: e.target.value }
+                          }))}
+                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        >
+                          <option value="small">Small</option>
+                          <option value="medium">Medium</option>
+                          <option value="large">Large</option>
+                          <option value="extra-large">Extra Large</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Line Height</label>
+                        <select
+                          value={customConfig?.typography?.lineHeight || "normal"}
+                          onChange={(e) => setCustomConfig((prev: any) => ({
+                            ...prev,
+                            typography: { ...prev.typography, lineHeight: e.target.value }
+                          }))}
+                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        >
+                          <option value="tight">Tight (1.2)</option>
+                          <option value="normal">Normal (1.5)</option>
+                          <option value="relaxed">Relaxed (1.7)</option>
+                          <option value="loose">Loose (2.0)</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Advanced Design Options */}
+                  <div className="space-y-4 mt-6">
+                    <h3 className="text-lg font-semibold text-white flex items-center">
+                      <Settings className="h-5 w-5 mr-2" />
+                      Advanced Design
+                    </h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Border Radius</label>
+                        <select
+                          value={customConfig?.design?.borderRadius || "medium"}
+                          onChange={(e) => setCustomConfig((prev: any) => ({
+                            ...prev,
+                            design: { ...prev.design, borderRadius: e.target.value }
+                          }))}
+                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        >
+                          <option value="none">None (Square)</option>
+                          <option value="small">Small (4px)</option>
+                          <option value="medium">Medium (8px)</option>
+                          <option value="large">Large (16px)</option>
+                          <option value="extra-large">Extra Large (24px)</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Shadow Style</label>
+                        <select
+                          value={customConfig?.design?.shadowStyle || "medium"}
+                          onChange={(e) => setCustomConfig((prev: any) => ({
+                            ...prev,
+                            design: { ...prev.design, shadowStyle: e.target.value }
+                          }))}
+                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        >
+                          <option value="none">No Shadow</option>
+                          <option value="subtle">Subtle</option>
+                          <option value="medium">Medium</option>
+                          <option value="strong">Strong</option>
+                          <option value="dramatic">Dramatic</option>
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Animation Style</label>
+                        <select
+                          value={customConfig?.design?.animationStyle || "smooth"}
+                          onChange={(e) => setCustomConfig((prev: any) => ({
+                            ...prev,
+                            design: { ...prev.design, animationStyle: e.target.value }
+                          }))}
+                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        >
+                          <option value="none">No Animation</option>
+                          <option value="subtle">Subtle</option>
+                          <option value="smooth">Smooth</option>
+                          <option value="dynamic">Dynamic</option>
+                          <option value="playful">Playful</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Button Style</label>
+                        <select
+                          value={customConfig?.design?.buttonStyle || "modern"}
+                          onChange={(e) => setCustomConfig((prev: any) => ({
+                            ...prev,
+                            design: { ...prev.design, buttonStyle: e.target.value }
+                          }))}
+                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                        >
+                          <option value="modern">Modern</option>
+                          <option value="classic">Classic</option>
+                          <option value="minimal">Minimal</option>
+                          <option value="gradient">Gradient</option>
+                          <option value="outlined">Outlined</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </div>

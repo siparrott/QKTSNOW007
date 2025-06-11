@@ -56,6 +56,9 @@ interface WeddingPhotographyCalculatorProps {
   customConfig?: any;
   isPreview?: boolean;
   hideHeader?: boolean;
+  forceDetailedView?: boolean;
+  useComprehensiveCalculator?: boolean;
+  calculatorType?: string;
 }
 
 export default function WeddingPhotographyCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: WeddingPhotographyCalculatorProps = {}) {
@@ -101,6 +104,12 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
     const forceDetailed = urlParams.get('forceDetailedView') === 'true' || 
                          urlParams.get('useComprehensiveCalculator') === 'true' ||
                          urlParams.get('calculatorType') === 'comprehensive-wedding-photography';
+    
+    if (forceDetailed) {
+      console.log('Forcing detailed comprehensive wedding photography calculator view');
+      // Ensure we're showing the multi-step comprehensive calculator
+      setCurrentStep(1);
+    }
     
     // Extract individual configuration parameters
     const config: any = {};

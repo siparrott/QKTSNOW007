@@ -165,6 +165,9 @@ export default function CalculatorPreview({ slug, customConfig, className = "" }
           customConfig={customConfig}
           isPreview={true}
           hideHeader={true}
+          forceDetailedView={customConfig?.forceDetailedView}
+          useComprehensiveCalculator={customConfig?.useComprehensiveCalculator}
+          calculatorType={customConfig?.calculatorType}
         />
       </Suspense>
     </div>

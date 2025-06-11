@@ -12,6 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Calculator, Plus, Settings, Eye, Copy, ExternalLink, BarChart3, Users, TrendingUp, Activity, Calendar, DollarSign, Palette, Type, Layout, Zap, Bell, Smartphone, Monitor, Tablet } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart as RechartsBarChart, Bar } from "recharts";
+import CalculatorPreview from "../components/calculator-preview";
 
 interface User {
   id: string;
@@ -1027,89 +1028,24 @@ export default function Dashboard() {
                   
                   <div className="flex-1 overflow-hidden bg-gray-100 relative">
                     <div 
-                      className="w-full h-full overflow-y-auto p-6"
+                      className="w-full h-full overflow-y-auto"
                       style={{
                         backgroundColor: customConfig.backgroundColor || '#ffffff',
                         color: customConfig.textColor || '#000000',
-                        fontSize: `${customConfig.fontSize || 16}px`,
-                        padding: `${customConfig.padding || 20}px`
+                        fontSize: `${customConfig.fontSize || 16}px`
                       }}
                     >
-                      <div 
-                        className="max-w-md mx-auto bg-white rounded-lg shadow-lg"
-                        style={{
-                          borderRadius: `${customConfig.borderRadius || 8}px`,
-                          borderColor: customConfig.primaryColor || '#10B981',
-                          borderWidth: '2px',
-                          borderStyle: 'solid'
+                      <CalculatorPreview 
+                        slug={selectedCalculator.template_id}
+                        customConfig={{
+                          ...customConfig,
+                          forceDetailedView: true,
+                          useComprehensiveCalculator: true,
+                          calculatorType: `comprehensive-${selectedCalculator.template_id}`,
+                          isPreview: true
                         }}
-                      >
-                        <div className="p-6">
-                          {customConfig.logoUrl && (
-                            <img 
-                              src={customConfig.logoUrl} 
-                              alt="Logo" 
-                              className="h-12 mx-auto mb-4"
-                            />
-                          )}
-                          
-                          <h2 className="text-2xl font-bold text-center mb-2">
-                            {customConfig.title || selectedCalculator.name}
-                          </h2>
-                          
-                          {customConfig.description && (
-                            <p className="text-gray-600 text-center mb-6">
-                              {customConfig.description}
-                            </p>
-                          )}
-                          
-                          {customConfig.businessName && (
-                            <div className="text-center mb-4">
-                              <span className="text-sm text-gray-500">by </span>
-                              <span className="font-medium">{customConfig.businessName}</span>
-                            </div>
-                          )}
-                          
-                          <div className="space-y-4">
-                            <div>
-                              <label className="block text-sm font-medium mb-1">Service Type</label>
-                              <select className="w-full p-2 border rounded">
-                                <option>Select service...</option>
-                                <option>Basic Package</option>
-                                <option>Premium Package</option>
-                              </select>
-                            </div>
-                            
-                            <div>
-                              <label className="block text-sm font-medium mb-1">Project Size</label>
-                              <input 
-                                type="range" 
-                                className="w-full"
-                                style={{ accentColor: customConfig.primaryColor || '#10B981' }}
-                              />
-                            </div>
-                            
-                            {customConfig.showProgress && (
-                              <div className="w-full bg-gray-200 rounded-full h-2">
-                                <div 
-                                  className="h-2 rounded-full" 
-                                  style={{ 
-                                    width: '60%',
-                                    backgroundColor: customConfig.primaryColor || '#10B981'
-                                  }}
-                                ></div>
-                              </div>
-                            )}
-                            
-                            <button 
-                              className="w-full py-3 rounded font-medium text-white"
-                              style={{ backgroundColor: customConfig.primaryColor || '#10B981' }}
-                            >
-                              {customConfig.submitText || 'Get My Quote'}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
+                        className="h-full"
+                      />
                     </div>
                   </div>
                 </div>

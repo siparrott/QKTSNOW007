@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Link, useLocation } from "wouter";
+import { getCurrentUser, getCurrentSession, logout } from "@/lib/supabase";
 import type { CalculatorTemplate, UserCalculator as SupabaseUserCalculator } from "@shared/supabase";
 import { TestAuth } from "@/components/test-auth";
 import { 
@@ -88,8 +89,47 @@ export default function Dashboard() {
   const [location, setLocation] = useLocation();
   const { toast } = useToast();
   
-  // Mock user for demo - replace with actual auth context
-  const user = { id: 'test-user-123' };
+  // Real user authentication
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Check authentication on component mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const { user, error } = await getCurrentUser();
+        const { session } = await getCurrentSession();
+        
+        if (error || !user || !session) {
+          setLocation('/login');
+          return;
+        }
+        
+        setCurrentUser(user);
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        setLocation('/login');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    checkAuth();
+  }, [setLocation]);
+
+  // Show loading spinner while checking authentication
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-midnight-900 flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
+  }
+
+  // Don't render dashboard if no user
+  if (!currentUser) {
+    return null;
+  }
   const [showCustomizeModal, setShowCustomizeModal] = useState(false);
   const [showCalculatorModal, setShowCalculatorModal] = useState(false);
   const [showEmbedModal, setShowEmbedModal] = useState(false);

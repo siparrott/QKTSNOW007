@@ -10,7 +10,7 @@ import { z } from "zod";
 import { Link, useLocation } from "wouter";
 import { QuoteKitHeader } from "@/components/calculator-header";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { signUpWithEmail } from "@/lib/supabase";
 import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
 
 const registerSchema = z.object({
@@ -46,38 +46,23 @@ export default function Register() {
     setIsLoading(true);
     
     try {
-      console.log('Starting registration request...');
-      console.log('Form data:', { fullName: data.fullName, email: data.email });
-      
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fullName: data.fullName,
-          email: data.email,
-          password: data.password,
-        }),
-      });
+      const { user, error } = await signUpWithEmail(data.email, data.password);
 
-      console.log('Response status:', response.status);
-      console.log('Response ok:', response.ok);
+      if (error) {
+        throw new Error(error.message);
+      }
 
-      const result = await response.json();
-      console.log('Response data:', result);
-
-      if (response.ok && result.token) {
-        localStorage.setItem('auth_token', result.token);
-        localStorage.setItem('user', JSON.stringify(result.user));
+      if (user) {
+        // Store user data
+        localStorage.setItem('user', JSON.stringify(user));
         
         toast({
-          title: "Success!",
-          description: "Account created successfully.",
+          title: "Check your email!",
+          description: "We've sent you a confirmation link to complete your registration.",
         });
         
-        setLocation('/dashboard');
-      } else {
-        console.error('Registration failed with result:', result);
-        throw new Error(result.error || 'Registration failed');
+        // Don't redirect immediately - let user confirm email first
+        setLocation('/login');
       }
     } catch (error: any) {
       console.error('Registration error:', error);

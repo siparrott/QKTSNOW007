@@ -77,7 +77,7 @@ export default function Header() {
           {/* CTA Button */}
           <div className="flex items-center space-x-4">
             <Link href="/register">
-              <Button className="hidden lg:block bg-neon-500 hover:bg-neon-600 text-white px-6 py-2 rounded-lg font-medium transition-all duration-300 hover:shadow-glow">
+              <Button className="bg-neon-500 hover:bg-neon-600 text-white px-6 py-2 rounded-lg font-medium transition-all duration-300 hover:shadow-glow">
                 Start Free Trial
               </Button>
             </Link>

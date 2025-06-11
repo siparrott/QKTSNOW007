@@ -18,12 +18,12 @@ const pricingPlans = [
     name: "Free",
     price: "€0",
     period: "forever",
-    description: "Perfect for trying out QuoteKit",
+    description: "Perfect for trying out QuoteKits",
     badge: null,
     features: [
       "1 calculator",
       "Basic customization",
-      "QuoteKit branding",
+      "QuoteKits branding",
       "Email support",
       "Basic analytics",
       "Mobile responsive"

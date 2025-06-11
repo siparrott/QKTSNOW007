@@ -10,11 +10,12 @@ export function QuoteKitHeader() {
           {/* Left Side - Logo */}
           <div className="flex items-center space-x-6">
             <Link href="/">
-              <div className="flex items-center space-x-2 cursor-pointer">
-                <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-                  <span className="text-slate-900 font-bold text-lg">Q</span>
-                </div>
-                <span className="text-white font-bold text-xl">QuoteKit.ai</span>
+              <div className="flex items-center space-x-3 cursor-pointer">
+                <img 
+                  src={logoPath} 
+                  alt="QuoteKits Logo" 
+                  className="h-8 w-auto object-contain"
+                />
               </div>
             </Link>
           </div>

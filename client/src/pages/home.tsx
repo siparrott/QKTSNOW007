@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Header from "@/components/landing/header";
 import Hero from "@/components/landing/hero";
 import HowItWorks from "@/components/landing/how-it-works";
@@ -11,6 +12,19 @@ import { Button } from "@/components/ui/button";
 import { Rocket } from "lucide-react";
 
 export default function Home() {
+  useEffect(() => {
+    document.title = "QuoteKits - AI-Powered Quote Calculators for Service Businesses";
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Transform your service business with embeddable AI-powered quote calculators. Get instant pricing for 58+ niches including photography, home services, and consulting.');
+    } else {
+      const meta = document.createElement('meta');
+      meta.name = 'description';
+      meta.content = 'Transform your service business with embeddable AI-powered quote calculators. Get instant pricing for 58+ niches including photography, home services, and consulting.';
+      document.head.appendChild(meta);
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-midnight-900 text-white overflow-x-hidden">
       <Header />

@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Link, useLocation } from "wouter";
-import type { CalculatorTemplate, UserCalculator } from "@shared/supabase";
+import type { CalculatorTemplate, UserCalculator as SupabaseUserCalculator } from "@shared/supabase";
 import { TestAuth } from "@/components/test-auth";
 import { 
   Settings, 
@@ -87,6 +87,9 @@ interface UserCalculator {
 export default function Dashboard() {
   const [location, setLocation] = useLocation();
   const { toast } = useToast();
+  
+  // Mock user for demo - replace with actual auth context
+  const user = { id: 'test-user-123' };
   const [showCustomizeModal, setShowCustomizeModal] = useState(false);
   const [showCalculatorModal, setShowCalculatorModal] = useState(false);
   const [showEmbedModal, setShowEmbedModal] = useState(false);

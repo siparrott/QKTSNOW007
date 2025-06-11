@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { useState, useEffect } from "react";
 import { getCurrentUser, logout } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
+import logoImage from "@assets/ChatGPT Image Jun 11, 2025, 11_57_41 AM_1749655121133.png";
 
 export function QuoteKitHeader() {
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -52,7 +53,7 @@ export function QuoteKitHeader() {
             <Link href="/">
               <div className="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity">
                 <img 
-                  src="/attached_assets/ChatGPT%20Image%20Jun%2011,%202025,%2011_57_41%20AM_1749655121133.png" 
+                  src={logoImage} 
                   alt="QuoteKits Logo" 
                   className="h-8 w-auto"
                 />

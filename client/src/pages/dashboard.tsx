@@ -1055,6 +1055,338 @@ export default function Dashboard() {
                       </div>
                     </div>
 
+                    {/* Service Packages */}
+                    <div className="border-t border-midnight-600 pt-6 mb-6">
+                      <div className="flex justify-between items-center mb-4">
+                        <h4 className="text-md font-medium text-white">Service Packages</h4>
+                        <button
+                          onClick={() => {
+                            const newPackage = {
+                              id: `package-${Date.now()}`,
+                              label: "New Package",
+                              basePrice: 500,
+                              hours: 4,
+                              icon: "📦",
+                              popular: false
+                            };
+                            setCustomConfig((prev: any) => ({
+                              ...prev,
+                              packages: [...(prev.packages || []), newPackage]
+                            }));
+                          }}
+                          className="px-4 py-2 bg-neon-500 text-white rounded text-sm hover:bg-neon-600 font-medium"
+                        >
+                          + Add Package
+                        </button>
+                      </div>
+                      
+                      <div className="space-y-4 max-h-40 overflow-y-auto">
+                        {(customConfig?.packages || [
+                          { id: "elopement", label: "Elopement / Small Ceremony", basePrice: 950, hours: 4, icon: "💕", popular: false },
+                          { id: "half-day", label: "Half-Day Coverage", basePrice: 1200, hours: 6, icon: "☀️", popular: true },
+                          { id: "full-day", label: "Full-Day Coverage", basePrice: 1800, hours: 10, icon: "💍", popular: true },
+                          { id: "destination", label: "Destination Wedding", basePrice: 2500, hours: 12, icon: "✈️", popular: false }
+                        ]).map((pkg: any, index: number) => (
+                          <div key={pkg.id} className="bg-midnight-700 p-4 rounded border border-midnight-600">
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                              <div>
+                                <label className="block text-xs text-gray-400 mb-1">Package Name</label>
+                                <input
+                                  type="text"
+                                  value={pkg.label}
+                                  onChange={(e) => {
+                                    const updatedPackages = [...(customConfig?.packages || [])];
+                                    updatedPackages[index] = { ...pkg, label: e.target.value };
+                                    setCustomConfig((prev: any) => ({ ...prev, packages: updatedPackages }));
+                                  }}
+                                  className="w-full px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-sm"
+                                  placeholder="Package name..."
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs text-gray-400 mb-1">Base Price (€)</label>
+                                <input
+                                  type="number"
+                                  value={pkg.basePrice}
+                                  onChange={(e) => {
+                                    const updatedPackages = [...(customConfig?.packages || [])];
+                                    updatedPackages[index] = { ...pkg, basePrice: parseInt(e.target.value) };
+                                    setCustomConfig((prev: any) => ({ ...prev, packages: updatedPackages }));
+                                  }}
+                                  className="w-full px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-sm"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs text-gray-400 mb-1">Icon</label>
+                                <input
+                                  type="text"
+                                  value={pkg.icon}
+                                  onChange={(e) => {
+                                    const updatedPackages = [...(customConfig?.packages || [])];
+                                    updatedPackages[index] = { ...pkg, icon: e.target.value };
+                                    setCustomConfig((prev: any) => ({ ...prev, packages: updatedPackages }));
+                                  }}
+                                  className="w-full px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-sm"
+                                  placeholder="📦"
+                                />
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <label className="flex items-center text-xs text-gray-400">
+                                  <input
+                                    type="checkbox"
+                                    checked={pkg.popular}
+                                    onChange={(e) => {
+                                      const updatedPackages = [...(customConfig?.packages || [])];
+                                      updatedPackages[index] = { ...pkg, popular: e.target.checked };
+                                      setCustomConfig((prev: any) => ({ ...prev, packages: updatedPackages }));
+                                    }}
+                                    className="mr-1"
+                                  />
+                                  Popular
+                                </label>
+                                <button
+                                  onClick={() => {
+                                    const updatedPackages = (customConfig?.packages || []).filter((_: any, i: number) => i !== index);
+                                    setCustomConfig((prev: any) => ({ ...prev, packages: updatedPackages }));
+                                  }}
+                                  className="text-red-400 hover:text-red-300 text-xs px-2 py-1 rounded hover:bg-red-900"
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Add-On Services */}
+                    <div className="border-t border-midnight-600 pt-6 mb-6">
+                      <div className="flex justify-between items-center mb-4">
+                        <h4 className="text-md font-medium text-white">Add-On Services</h4>
+                        <button
+                          onClick={() => {
+                            const newAddOn = {
+                              id: `addon-${Date.now()}`,
+                              label: "New Add-On",
+                              price: 100,
+                              popular: false
+                            };
+                            setCustomConfig((prev: any) => ({
+                              ...prev,
+                              addOns: [...(prev.addOns || []), newAddOn]
+                            }));
+                          }}
+                          className="px-4 py-2 bg-neon-500 text-white rounded text-sm hover:bg-neon-600 font-medium"
+                        >
+                          + Add Service
+                        </button>
+                      </div>
+                      
+                      <div className="space-y-4 max-h-40 overflow-y-auto">
+                        {(customConfig?.addOns || [
+                          { id: "engagement", label: "Engagement Session", price: 300, popular: true },
+                          { id: "second-photographer", label: "Second Photographer", price: 250, popular: true },
+                          { id: "drone", label: "Drone Coverage", price: 150, popular: false },
+                          { id: "album", label: "Album & Prints", price: 200, popular: true },
+                          { id: "rehearsal", label: "Rehearsal Dinner Coverage", price: 350, popular: false },
+                          { id: "express", label: "Express Turnaround", price: 175, popular: false }
+                        ]).map((addon: any, index: number) => (
+                          <div key={addon.id} className="bg-midnight-700 p-4 rounded border border-midnight-600">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                              <div>
+                                <label className="block text-xs text-gray-400 mb-1">Service Name</label>
+                                <input
+                                  type="text"
+                                  value={addon.label}
+                                  onChange={(e) => {
+                                    const updatedAddOns = [...(customConfig?.addOns || [])];
+                                    updatedAddOns[index] = { ...addon, label: e.target.value };
+                                    setCustomConfig((prev: any) => ({ ...prev, addOns: updatedAddOns }));
+                                  }}
+                                  className="w-full px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-sm"
+                                  placeholder="Service name..."
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs text-gray-400 mb-1">Price (€)</label>
+                                <input
+                                  type="number"
+                                  value={addon.price}
+                                  onChange={(e) => {
+                                    const updatedAddOns = [...(customConfig?.addOns || [])];
+                                    updatedAddOns[index] = { ...addon, price: parseInt(e.target.value) };
+                                    setCustomConfig((prev: any) => ({ ...prev, addOns: updatedAddOns }));
+                                  }}
+                                  className="w-full px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-sm"
+                                />
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <label className="flex items-center text-xs text-gray-400">
+                                  <input
+                                    type="checkbox"
+                                    checked={addon.popular}
+                                    onChange={(e) => {
+                                      const updatedAddOns = [...(customConfig?.addOns || [])];
+                                      updatedAddOns[index] = { ...addon, popular: e.target.checked };
+                                      setCustomConfig((prev: any) => ({ ...prev, addOns: updatedAddOns }));
+                                    }}
+                                    className="mr-1"
+                                  />
+                                  Popular
+                                </label>
+                                <button
+                                  onClick={() => {
+                                    const updatedAddOns = (customConfig?.addOns || []).filter((_: any, i: number) => i !== index);
+                                    setCustomConfig((prev: any) => ({ ...prev, addOns: updatedAddOns }));
+                                  }}
+                                  className="text-red-400 hover:text-red-300 text-xs px-2 py-1 rounded hover:bg-red-900"
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Service Options */}
+                    <div className="border-t border-midnight-600 pt-6 mb-6">
+                      <h4 className="text-md font-medium text-white mb-4">Service Options</h4>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Hour Options */}
+                        <div>
+                          <div className="flex justify-between items-center mb-3">
+                            <label className="text-sm text-gray-300">Coverage Hours</label>
+                            <button
+                              onClick={() => {
+                                const newHourOption = {
+                                  id: `hour-${Date.now()}`,
+                                  label: "New Option",
+                                  surcharge: 0,
+                                  popular: false
+                                };
+                                setCustomConfig((prev: any) => ({
+                                  ...prev,
+                                  hourOptions: [...(prev.hourOptions || []), newHourOption]
+                                }));
+                              }}
+                              className="px-3 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700"
+                            >
+                              + Add
+                            </button>
+                          </div>
+                          <div className="space-y-2 max-h-32 overflow-y-auto">
+                            {(customConfig?.hourOptions || [
+                              { id: "4", label: "4 Hours", surcharge: 0, popular: false },
+                              { id: "6", label: "6 Hours", surcharge: 300, popular: true },
+                              { id: "8", label: "8 Hours", surcharge: 600, popular: true },
+                              { id: "10+", label: "10+ Hours", surcharge: 900, popular: false }
+                            ]).map((hour: any, index: number) => (
+                              <div key={hour.id} className="flex items-center gap-2 bg-midnight-700 p-2 rounded">
+                                <input
+                                  type="text"
+                                  value={hour.label}
+                                  onChange={(e) => {
+                                    const updated = [...(customConfig?.hourOptions || [])];
+                                    updated[index] = { ...hour, label: e.target.value };
+                                    setCustomConfig((prev: any) => ({ ...prev, hourOptions: updated }));
+                                  }}
+                                  className="flex-1 px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-xs"
+                                />
+                                <input
+                                  type="number"
+                                  value={hour.surcharge}
+                                  onChange={(e) => {
+                                    const updated = [...(customConfig?.hourOptions || [])];
+                                    updated[index] = { ...hour, surcharge: parseInt(e.target.value) };
+                                    setCustomConfig((prev: any) => ({ ...prev, hourOptions: updated }));
+                                  }}
+                                  className="w-16 px-1 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-xs"
+                                  placeholder="€"
+                                />
+                                <button
+                                  onClick={() => {
+                                    const updated = (customConfig?.hourOptions || []).filter((_: any, i: number) => i !== index);
+                                    setCustomConfig((prev: any) => ({ ...prev, hourOptions: updated }));
+                                  }}
+                                  className="text-red-400 hover:text-red-300 text-xs px-1"
+                                >
+                                  ×
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Location Options */}
+                        <div>
+                          <div className="flex justify-between items-center mb-3">
+                            <label className="text-sm text-gray-300">Locations</label>
+                            <button
+                              onClick={() => {
+                                const newLocationOption = {
+                                  id: `location-${Date.now()}`,
+                                  label: "New Location",
+                                  surcharge: 0,
+                                  popular: false
+                                };
+                                setCustomConfig((prev: any) => ({
+                                  ...prev,
+                                  locationOptions: [...(prev.locationOptions || []), newLocationOption]
+                                }));
+                              }}
+                              className="px-3 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700"
+                            >
+                              + Add
+                            </button>
+                          </div>
+                          <div className="space-y-2 max-h-32 overflow-y-auto">
+                            {(customConfig?.locationOptions || [
+                              { id: "1", label: "1 Location", surcharge: 0, popular: false },
+                              { id: "2", label: "2 Locations", surcharge: 150, popular: true },
+                              { id: "3+", label: "3+ Locations", surcharge: 350, popular: false }
+                            ]).map((location: any, index: number) => (
+                              <div key={location.id} className="flex items-center gap-2 bg-midnight-700 p-2 rounded">
+                                <input
+                                  type="text"
+                                  value={location.label}
+                                  onChange={(e) => {
+                                    const updated = [...(customConfig?.locationOptions || [])];
+                                    updated[index] = { ...location, label: e.target.value };
+                                    setCustomConfig((prev: any) => ({ ...prev, locationOptions: updated }));
+                                  }}
+                                  className="flex-1 px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-xs"
+                                />
+                                <input
+                                  type="number"
+                                  value={location.surcharge}
+                                  onChange={(e) => {
+                                    const updated = [...(customConfig?.locationOptions || [])];
+                                    updated[index] = { ...location, surcharge: parseInt(e.target.value) };
+                                    setCustomConfig((prev: any) => ({ ...prev, locationOptions: updated }));
+                                  }}
+                                  className="w-16 px-1 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-xs"
+                                  placeholder="€"
+                                />
+                                <button
+                                  onClick={() => {
+                                    const updated = (customConfig?.locationOptions || []).filter((_: any, i: number) => i !== index);
+                                    setCustomConfig((prev: any) => ({ ...prev, locationOptions: updated }));
+                                  }}
+                                  className="text-red-400 hover:text-red-300 text-xs px-1"
+                                >
+                                  ×
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                     {/* Questions Editor */}
                     <div className="border-t border-midnight-600 pt-6">
                       <div className="flex justify-between items-center mb-4">

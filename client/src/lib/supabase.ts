@@ -10,12 +10,18 @@ export const supabase = createClient(
 export async function signUpWithEmail(email: string, password: string) {
   const { data, error } = await supabase.auth.signUp({ 
     email, 
-    password,
-    options: {
-      emailRedirectTo: `${window.location.origin}/dashboard`
-    }
+    password
   });
-  return { user: data.user, error };
+  
+  // If signup successful but user not confirmed, try to sign in immediately
+  if (data.user && !data.user.email_confirmed_at && !error) {
+    const loginResult = await supabase.auth.signInWithPassword({ email, password });
+    if (loginResult.data.user) {
+      return { user: loginResult.data.user, session: loginResult.data.session, error: null };
+    }
+  }
+  
+  return { user: data.user, session: data.session, error };
 }
 
 export async function loginWithEmail(email: string, password: string) {

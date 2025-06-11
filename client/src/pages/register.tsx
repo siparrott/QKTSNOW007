@@ -10,7 +10,7 @@ import { z } from "zod";
 import { Link, useLocation } from "wouter";
 import { QuoteKitHeader } from "@/components/calculator-header";
 import { useToast } from "@/hooks/use-toast";
-import { signUpWithEmail } from "@/lib/supabase";
+import { signUpWithEmail, loginWithEmail } from "@/lib/supabase";
 import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
 
 const registerSchema = z.object({

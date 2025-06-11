@@ -53,7 +53,13 @@ interface PricingBreakdown {
   breakdown: string[];
 }
 
-export default function HypnotherapistCalculator() {
+interface HypnotherapistCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function HypnotherapistCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: HypnotherapistCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [formData, setFormData] = useState<HypnotherapistFormData>({

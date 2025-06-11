@@ -56,7 +56,13 @@ interface PricingBreakdown {
   breakdown: string[];
 }
 
-export default function PrivateTutorCalculator() {
+interface PrivateTutorCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function PrivateTutorCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: PrivateTutorCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [formData, setFormData] = useState<PrivateTutorFormData>({

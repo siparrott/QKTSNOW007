@@ -52,7 +52,13 @@ interface PricingBreakdown {
   breakdown: string[];
 }
 
-export default function NewbornPhotographyCalculator() {
+interface NewbornPhotographyCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function NewbornPhotographyCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: NewbornPhotographyCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [formData, setFormData] = useState<NewbornFormData>({

@@ -43,8 +43,12 @@ export async function apiRequest(
   const res = await fetch(fullUrl, fetchOptions);
 
   console.log('Response status:', res.status);
+  console.log('Response ok:', res.ok);
+  
   await throwIfResNotOk(res);
-  return await res.json();
+  const data = await res.json();
+  console.log('Response data:', data);
+  return data;
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";

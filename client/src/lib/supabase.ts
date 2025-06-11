@@ -8,21 +8,34 @@ export const supabase = createClient(
 
 // Authentication functions
 export async function signUpWithEmail(email: string, password: string) {
-  // Try to sign up with email confirmation disabled in options
-  const { data: signupData, error: signupError } = await supabase.auth.signUp({ 
-    email, 
-    password,
-    options: {
-      // Set email confirmation to false
-      emailRedirectTo: `${window.location.origin}/dashboard`,
-      data: {
-        email_confirmation: false
+  try {
+    // First attempt: Try signup with email confirmation disabled
+    const { data: signupData, error: signupError } = await supabase.auth.signUp({ 
+      email, 
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/dashboard`,
+        data: {
+          email_confirmation: false
+        }
       }
+    });
+    
+    // If rate limited or email error, try to sign in directly (user might already exist)
+    if (signupError && (
+      signupError.message?.includes('rate limit') || 
+      signupError.message?.includes('email') ||
+      signupError.message?.includes('confirmation')
+    )) {
+      console.log('Signup failed, attempting direct login:', signupError.message);
+      return await loginWithEmail(email, password);
     }
-  });
-  
-  // Return signup result - user should be automatically logged in if email confirmation is disabled
-  return { user: signupData.user, session: signupData.session, error: signupError };
+    
+    return { user: signupData.user, session: signupData.session, error: signupError };
+  } catch (error: any) {
+    console.error('Signup error:', error);
+    return { user: null, session: null, error };
+  }
 }
 
 export async function loginWithEmail(email: string, password: string) {

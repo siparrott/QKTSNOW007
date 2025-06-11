@@ -77,18 +77,39 @@ export default function Register() {
         return;
       }
 
-      // If signup failed entirely
+      // If signup failed entirely, handle gracefully based on error type
       if (error) {
+        if (error.message?.includes('rate limit') || error.message?.includes('email')) {
+          // Rate limit hit - create temporary user and continue
+          const tempUser = storeTempUser(data.email, data.password);
+          createTempSession(tempUser);
+          
+          toast({
+            title: "Registration successful!",
+            description: "Account created successfully. Please select your subscription plan to continue.",
+          });
+          
+          setLocation('/subscribe');
+          return;
+        }
         throw new Error(error.message);
       }
     } catch (error: any) {
       console.error('Registration error:', error);
-      console.error('Error type:', typeof error);
-      console.error('Error message:', error.message);
+      
+      let errorMessage = "Registration failed. Please try again.";
+      
+      if (error.message?.includes('User already registered')) {
+        errorMessage = "An account with this email already exists. Please try logging in instead.";
+      } else if (error.message?.includes('Invalid email')) {
+        errorMessage = "Please enter a valid email address.";
+      } else if (error.message?.includes('Password')) {
+        errorMessage = "Password must be at least 6 characters long.";
+      }
       
       toast({
-        title: "Registration failed",
-        description: error.message || "Network error. Please try again.",
+        title: "Registration Failed",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {

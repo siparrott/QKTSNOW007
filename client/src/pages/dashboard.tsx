@@ -698,7 +698,7 @@ export default function Dashboard() {
                         <div className="flex items-center gap-2">
                           <input
                             type="color"
-                            value={customConfig.branding.primaryColor}
+                            value={customConfig?.branding?.primaryColor || "#38bdf8"}
                             onChange={(e) => setCustomConfig(prev => ({
                               ...prev,
                               branding: { ...prev.branding, primaryColor: e.target.value }
@@ -707,7 +707,7 @@ export default function Dashboard() {
                           />
                           <input
                             type="text"
-                            value={customConfig.branding.primaryColor}
+                            value={customConfig?.branding?.primaryColor || "#38bdf8"}
                             onChange={(e) => setCustomConfig(prev => ({
                               ...prev,
                               branding: { ...prev.branding, primaryColor: e.target.value }
@@ -722,7 +722,7 @@ export default function Dashboard() {
                         <div className="flex items-center gap-2">
                           <input
                             type="color"
-                            value={customConfig.branding.accentColor}
+                            value={customConfig?.branding?.accentColor || "#facc15"}
                             onChange={(e) => setCustomConfig(prev => ({
                               ...prev,
                               branding: { ...prev.branding, accentColor: e.target.value }
@@ -731,7 +731,7 @@ export default function Dashboard() {
                           />
                           <input
                             type="text"
-                            value={customConfig.branding.accentColor}
+                            value={customConfig?.branding?.accentColor || "#facc15"}
                             onChange={(e) => setCustomConfig(prev => ({
                               ...prev,
                               branding: { ...prev.branding, accentColor: e.target.value }
@@ -746,7 +746,7 @@ export default function Dashboard() {
                       <div>
                         <label className="text-sm text-gray-300 block mb-2">Font Family</label>
                         <select
-                          value={customConfig.branding.fontFamily}
+                          value={customConfig?.branding?.fontFamily || "sans-serif"}
                           onChange={(e) => setCustomConfig(prev => ({
                             ...prev,
                             branding: { ...prev.branding, fontFamily: e.target.value }
@@ -763,7 +763,7 @@ export default function Dashboard() {
                       <div>
                         <label className="text-sm text-gray-300 block mb-2">Font Size</label>
                         <select
-                          value={customConfig.branding.fontSize}
+                          value={customConfig?.branding?.fontSize || "medium"}
                           onChange={(e) => setCustomConfig(prev => ({
                             ...prev,
                             branding: { ...prev.branding, fontSize: e.target.value }
@@ -779,14 +779,14 @@ export default function Dashboard() {
 
                     <div>
                       <label className="text-sm text-gray-300 block mb-2">
-                        Rounded Corners: {customConfig.branding.roundedCorners}px
+                        Rounded Corners: {customConfig?.branding?.roundedCorners || 12}px
                       </label>
                       <input
                         type="range"
                         min="0"
                         max="24"
                         step="2"
-                        value={customConfig.branding.roundedCorners}
+                        value={customConfig?.branding?.roundedCorners || 12}
                         onChange={(e) => setCustomConfig(prev => ({
                           ...prev,
                           branding: { ...prev.branding, roundedCorners: parseInt(e.target.value) }
@@ -807,7 +807,7 @@ export default function Dashboard() {
                       <label className="text-sm text-gray-300 block mb-2">Headline</label>
                       <input
                         type="text"
-                        value={customConfig.text.headline}
+                        value={customConfig?.text?.headline || "Get Your Free Estimate"}
                         onChange={(e) => setCustomConfig(prev => ({
                           ...prev,
                           text: { ...prev.text, headline: e.target.value }
@@ -821,7 +821,7 @@ export default function Dashboard() {
                       <label className="text-sm text-gray-300 block mb-2">Subheading</label>
                       <input
                         type="text"
-                        value={customConfig.text.subheading}
+                        value={customConfig?.text?.subheading || "Just answer a few quick questions"}
                         onChange={(e) => setCustomConfig(prev => ({
                           ...prev,
                           text: { ...prev.text, subheading: e.target.value }
@@ -835,7 +835,7 @@ export default function Dashboard() {
                       <label className="text-sm text-gray-300 block mb-2">Button Text</label>
                       <input
                         type="text"
-                        value={customConfig.text.ctaText}
+                        value={customConfig?.text?.ctaText || "Calculate Now"}
                         onChange={(e) => setCustomConfig(prev => ({
                           ...prev,
                           text: { ...prev.text, ctaText: e.target.value }
@@ -849,7 +849,7 @@ export default function Dashboard() {
                       <label className="text-sm text-gray-300 block mb-2">Footer Note</label>
                       <input
                         type="text"
-                        value={customConfig.text.footerNote}
+                        value={customConfig?.text?.footerNote || "*All quotes are subject to confirmation."}
                         onChange={(e) => setCustomConfig(prev => ({
                           ...prev,
                           text: { ...prev.text, footerNote: e.target.value }
@@ -872,7 +872,7 @@ export default function Dashboard() {
                         <span className="text-sm text-gray-300">Email Capture</span>
                         <input
                           type="checkbox"
-                          checked={customConfig.functionality.showEmailCapture}
+                          checked={customConfig?.functionality?.showEmailCapture || true}
                           onChange={(e) => setCustomConfig(prev => ({
                             ...prev,
                             functionality: { ...prev.functionality, showEmailCapture: e.target.checked }
@@ -885,7 +885,7 @@ export default function Dashboard() {
                         <span className="text-sm text-gray-300">Quote Lock Timer</span>
                         <input
                           type="checkbox"
-                          checked={customConfig.functionality.enableQuoteLock}
+                          checked={customConfig?.functionality?.enableQuoteLock || true}
                           onChange={(e) => setCustomConfig(prev => ({
                             ...prev,
                             functionality: { ...prev.functionality, enableQuoteLock: e.target.checked }
@@ -898,7 +898,7 @@ export default function Dashboard() {
                         <span className="text-sm text-gray-300">PDF Download</span>
                         <input
                           type="checkbox"
-                          checked={customConfig.functionality.enablePdfDownload}
+                          checked={customConfig?.functionality?.enablePdfDownload || true}
                           onChange={(e) => setCustomConfig(prev => ({
                             ...prev,
                             functionality: { ...prev.functionality, enablePdfDownload: e.target.checked }

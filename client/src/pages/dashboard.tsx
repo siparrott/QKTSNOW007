@@ -255,6 +255,26 @@ export default function Dashboard() {
     }
   };
 
+  const saveConfiguration = () => {
+    handleSaveCustomization();
+  };
+
+  const sendConfigToIframe = () => {
+    if (iframeRef && customConfig) {
+      iframeRef.contentWindow?.postMessage({
+        type: 'APPLY_CONFIG',
+        config: customConfig
+      }, '*');
+    }
+  };
+
+  const addCalculator = (calc: any) => {
+    addCalculatorMutation.mutate({
+      calculatorId: calc.id,
+      name: calc.name
+    });
+  };
+
   // Send config updates to iframe when customConfig changes
   useEffect(() => {
     if (iframeRef && customConfig && showCustomizeModal) {
@@ -1240,335 +1260,49 @@ export default function Dashboard() {
         )}
 
         {/* Add Calculator Modal */}
-        {showCalculatorModal && ( 
-                              ...prev, 
-                              brandColors: { ...prev.brandColors, accent: e.target.value },
-                              accentColor: e.target.value 
-                            }))}
-                            className="w-12 h-12 rounded border border-midnight-600"
-                          />
-                          <input
-                            type="text"
-                            value={customConfig?.brandColors?.accent || "#f59e0b"}
-                            onChange={(e) => setCustomConfig((prev: any) => ({ 
-                              ...prev, 
-                              brandColors: { ...prev.brandColors, accent: e.target.value },
-                              accentColor: e.target.value 
-                            }))}
-                            className="flex-1 px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Typography */}
-                  <div>
-                    <h3 className="text-lg font-semibold text-white mb-3">Typography</h3>
-                    <div className="space-y-3">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Font Family</label>
-                        <select
-                          value={customConfig?.styling?.fontFamily || "Inter"}
-                          onChange={(e) => setCustomConfig((prev: any) => ({ 
-                            ...prev, 
-                            styling: { ...prev.styling, fontFamily: e.target.value },
-                            fontFamily: e.target.value 
-                          }))}
-                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
-                        >
-                          <option value="Inter">Inter</option>
-                          <option value="Arial">Arial</option>
-                          <option value="Helvetica">Helvetica</option>
-                          <option value="Georgia">Georgia</option>
-                          <option value="Times New Roman">Times New Roman</option>
-                        </select>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Border Radius</label>
-                        <select
-                          value={customConfig?.styling?.borderRadius || "8px"}
-                          onChange={(e) => setCustomConfig((prev: any) => ({ 
-                            ...prev, 
-                            styling: { ...prev.styling, borderRadius: e.target.value },
-                            borderRadius: e.target.value 
-                          }))}
-                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
-                        >
-                          <option value="0px">Sharp (0px)</option>
-                          <option value="4px">Small (4px)</option>
-                          <option value="8px">Medium (8px)</option>
-                          <option value="12px">Large (12px)</option>
-                          <option value="20px">Extra Large (20px)</option>
-                        </select>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Font Size</label>
-                        <select
-                          value={customConfig?.styling?.fontSize || "medium"}
-                          onChange={(e) => setCustomConfig((prev: any) => ({ 
-                            ...prev, 
-                            styling: { ...prev.styling, fontSize: e.target.value },
-                            fontSize: e.target.value 
-                          }))}
-                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
-                        >
-                          <option value="small">Small</option>
-                          <option value="medium">Medium</option>
-                          <option value="large">Large</option>
-                          <option value="xl">Extra Large</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Layout & Spacing */}
-                  <div>
-                    <h3 className="text-lg font-semibold text-white mb-3">Layout & Spacing</h3>
-                    <div className="space-y-3">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Layout Style</label>
-                        <select
-                          value={customConfig?.styling?.layout || "standard"}
-                          onChange={(e) => setCustomConfig((prev: any) => ({ 
-                            ...prev, 
-                            styling: { ...prev.styling, layout: e.target.value },
-                            layout: e.target.value 
-                          }))}
-                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
-                        >
-                          <option value="compact">Compact</option>
-                          <option value="standard">Standard</option>
-                          <option value="spacious">Spacious</option>
-                          <option value="minimal">Minimal</option>
-                        </select>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Card Shadow</label>
-                        <select
-                          value={customConfig?.styling?.shadow || "medium"}
-                          onChange={(e) => setCustomConfig((prev: any) => ({ 
-                            ...prev, 
-                            styling: { ...prev.styling, shadow: e.target.value },
-                            shadow: e.target.value 
-                          }))}
-                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
-                        >
-                          <option value="none">None</option>
-                          <option value="light">Light</option>
-                          <option value="medium">Medium</option>
-                          <option value="heavy">Heavy</option>
-                        </select>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Animation Style</label>
-                        <select
-                          value={customConfig?.styling?.animation || "subtle"}
-                          onChange={(e) => setCustomConfig((prev: any) => ({ 
-                            ...prev, 
-                            styling: { ...prev.styling, animation: e.target.value },
-                            animation: e.target.value 
-                          }))}
-                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
-                        >
-                          <option value="none">No Animation</option>
-                          <option value="subtle">Subtle</option>
-                          <option value="smooth">Smooth</option>
-                          <option value="dynamic">Dynamic</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Branding */}
-                  <div>
-                    <h3 className="text-lg font-semibold text-white mb-3">Company Branding</h3>
-                    <div className="space-y-3">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Company Name</label>
-                        <input
-                          type="text"
-                          value={customConfig?.companyBranding?.companyName || ""}
-                          onChange={(e) => setCustomConfig((prev: any) => ({ 
-                            ...prev, 
-                            companyBranding: { ...prev.companyBranding, companyName: e.target.value },
-                            companyName: e.target.value 
-                          }))}
-                          placeholder="Enter your company name"
-                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white placeholder-gray-400"
-                        />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Logo URL (optional)</label>
-                        <input
-                          type="url"
-                          value={customConfig?.companyBranding?.logoUrl || ""}
-                          onChange={(e) => setCustomConfig((prev: any) => ({ 
-                            ...prev, 
-                            companyBranding: { ...prev.companyBranding, logoUrl: e.target.value },
-                            logoUrl: e.target.value 
-                          }))}
-                          placeholder="https://example.com/logo.png"
-                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white placeholder-gray-400"
-                        />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Contact Information</label>
-                        <textarea
-                          value={customConfig?.companyBranding?.contactInfo || ""}
-                          onChange={(e) => setCustomConfig((prev: any) => ({ 
-                            ...prev, 
-                            companyBranding: { ...prev.companyBranding, contactInfo: e.target.value },
-                            contactInfo: e.target.value 
-                          }))}
-                          placeholder="Phone, email, or website"
-                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white placeholder-gray-400 h-20 resize-none"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Call-to-Action */}
-                  <div>
-                    <h3 className="text-lg font-semibold text-white mb-3">Call-to-Action</h3>
-                    <div className="space-y-3">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Button Text</label>
-                        <input
-                          type="text"
-                          value={customConfig?.callToAction?.buttonText || "Get Quote"}
-                          onChange={(e) => setCustomConfig((prev: any) => ({ 
-                            ...prev, 
-                            callToAction: { ...prev.callToAction, buttonText: e.target.value },
-                            ctaText: e.target.value 
-                          }))}
-                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
-                        />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Success Message</label>
-                        <textarea
-                          value={customConfig?.callToAction?.successMessage || "Thanks! We'll send your quote shortly."}
-                          onChange={(e) => setCustomConfig((prev: any) => ({ 
-                            ...prev, 
-                            callToAction: { ...prev.callToAction, successMessage: e.target.value },
-                            successMessage: e.target.value 
-                          }))}
-                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white h-20 resize-none"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Save Button */}
-                  <Button
-                    onClick={handleSaveCustomization}
-                    disabled={saveCustomizationMutation.isPending}
-                    className="w-full bg-neon-500 hover:bg-neon-600 text-white"
+        {showCalculatorModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-midnight-800 rounded-lg w-full max-w-6xl max-h-[90vh] overflow-y-auto">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-white">Add New Calculator</h2>
+                  <button
+                    onClick={() => setShowCalculatorModal(false)}
+                    className="text-gray-400 hover:text-white"
                   >
-                    {saveCustomizationMutation.isPending ? "Saving..." : "Save Customization"}
-                  </Button>
+                    <X className="h-6 w-6" />
+                  </button>
                 </div>
-              </div>
 
-              {/* Right Panel - Live Preview */}
-              <div className="flex-1 p-6">
-                <h3 className="text-lg font-semibold text-white mb-4">Live Preview</h3>
-                <div className="bg-white rounded-lg h-full overflow-hidden">
-                  <iframe
-                    ref={(iframe) => {
-                      setIframeRef(iframe);
-                      if (iframe && customConfig) {
-                        iframe.onload = () => {
-                          iframe.contentWindow?.postMessage({
-                            type: 'APPLY_CONFIG',
-                            config: customConfig
-                          }, '*');
-                        };
-                      }
-                    }}
-                    src={(() => {
-                      // Extract the base calculator type from the user calculator slug
-                      let baseSlug = selectedCalculator.slug;
-                      
-                      // Remove temp suffixes like -temp_123-1234567890
-                      baseSlug = baseSlug.replace(/-temp_\d+-\d+$/, '');
-                      
-                      // Map database slugs to actual route names
-                      const slugMapping: { [key: string]: string } = {
-                        'electrician-services': 'electrician',
-                        'boudoir-photography': 'boudoir-photography',
-                        'wedding-photography': 'wedding-photography',
-                        'portrait-photography': 'portrait-photography',
-                        'event-videography': 'event-videography',
-                        'home-renovation': 'home-renovation-new',
-                        'drone-photography': 'drone-photography',
-                        'food-photography': 'food-photography',
-                        'real-estate-photography': 'real-estate-photography',
-                        'commercial-photography': 'commercial-photography',
-                        'newborn-photography': 'newborn-photography',
-                        'maternity-photography': 'maternity-photography',
-                        'lifestyle-influencer': 'lifestyle-influencer',
-                        'landscaping': 'landscaping',
-                        'roofing': 'roofing',
-                        'solar-installation': 'solar',
-                        'pest-control': 'pest-control',
-                        'window-door-installation': 'window-door',
-                        'makeup-artist': 'makeup-artist',
-                        'hair-stylist': 'hair-stylist',
-                        'tattoo-artist': 'tattoo-artist',
-                        'massage-therapy': 'massage-therapy',
-                        'personal-training': 'personal-training',
-                        'nutritionist': 'nutritionist',
-                        'life-coach': 'life-coach',
-                        'hypnotherapist': 'hypnotherapist',
-                        'private-tutor': 'private-tutor',
-                        'dog-trainer': 'dog-trainer',
-                        'childcare-services': 'childcare-services',
-                        'private-school': 'private-school',
-                        'car-detailing': 'car-detailing',
-                        'auto-mechanic': 'auto-mechanic',
-                        'mobile-car-wash': 'mobile-car-wash',
-                        'chauffeur-limo': 'chauffeur-limo',
-                        'airport-transfer': 'airport-transfer',
-                        'van-rental': 'van-rental',
-                        'boat-charter': 'boat-charter',
-                        'moving-services': 'moving-services',
-                        'motorcycle-repair': 'motorcycle-repair',
-                        'driving-instructor': 'driving-instructor',
-                        'web-designer': 'web-designer',
-                        'seo-agency': 'seo-agency',
-                        'marketing-consultant': 'marketing-consultant',
-                        'copywriter': 'copywriter',
-                        'video-editor': 'video-editor',
-                        'virtual-assistant': 'virtual-assistant',
-                        'business-coach': 'business-coach',
-                        'legal-advisor': 'legal-advisor',
-                        'tax-preparer': 'tax-preparer',
-                        'translation-services': 'translation-services',
-                        'cleaning-services': 'cleaning-services',
-                        'dentist': 'dentist',
-                        'plastic-surgery': 'plastic-surgery',
-                        'private-medical': 'private-medical',
-                        'interior-design': 'interior-design',
-                        'painting-decorating': 'painting-decorating',
-                        'childcare': 'childcare',
-                        'plumbing-services': 'plumbing'
-                      };
-                      
-                      const actualSlug = slugMapping[baseSlug] || baseSlug;
-                      return `/${actualSlug}-calculator?preview=true`;
-                    })()}
-                    className="w-full h-full border-0"
-                    title="Calculator Preview"
-                  />
+                {/* Calculator Templates Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {filteredCalculators.map((calc) => (
+                    <Card key={calc.id} className="bg-midnight-700 border-midnight-600 hover:border-neon-500 transition-colors cursor-pointer group">
+                      <CardHeader>
+                        <div className="flex items-center space-x-3">
+                          <div className="p-2 bg-neon-500 rounded-lg group-hover:bg-neon-600 transition-colors">
+                            {getCalculatorIcon(calc.category)}
+                          </div>
+                          <div>
+                            <CardTitle className="text-white text-sm">{calc.name}</CardTitle>
+                            <Badge variant="secondary" className="text-xs">
+                              {calc.category}
+                            </Badge>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-400 text-sm mb-4">{calc.description}</p>
+                        <Button
+                          onClick={() => addCalculator(calc)}
+                          className="w-full bg-neon-500 hover:bg-neon-600 text-white"
+                          disabled={addCalculatorMutation.isPending}
+                        >
+                          {addCalculatorMutation.isPending ? 'Adding...' : 'Add Calculator'}
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
               </div>
             </div>

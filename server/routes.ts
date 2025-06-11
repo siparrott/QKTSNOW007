@@ -244,6 +244,88 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Stripe subscription creation
+  app.post("/api/create-subscription", async (req, res) => {
+    try {
+      const { userId, priceId } = req.body;
+      
+      if (!userId || !priceId) {
+        return res.status(400).json({ error: "User ID and price ID are required" });
+      }
+
+      // Get user from storage
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      // Create Stripe customer if not exists
+      let customerId = user.stripeCustomerId;
+      if (!customerId) {
+        const customer = await stripeService.createCustomer({
+          email: user.email,
+          metadata: { userId: user.id }
+        });
+        customerId = customer.id;
+        await storage.updateUser(userId, { stripeCustomerId: customerId });
+      }
+
+      // Create subscription
+      const subscription = await stripeService.createSubscription({
+        customerId,
+        priceId,
+        paymentBehavior: 'default_incomplete'
+      });
+
+      // Update user subscription status
+      await storage.updateUser(userId, {
+        subscriptionStatus: 'pending',
+        stripeSubscriptionId: subscription.id
+      });
+
+      res.json({
+        subscriptionId: subscription.id,
+        clientSecret: subscription.latest_invoice?.payment_intent?.client_secret
+      });
+    } catch (error) {
+      console.error("Subscription creation error:", error);
+      res.status(500).json({ error: "Failed to create subscription" });
+    }
+  });
+
+  // Stripe webhook handler
+  app.post("/api/stripe/webhook", async (req, res) => {
+    try {
+      const event = stripeService.constructEvent(req.body, req.headers['stripe-signature'] as string);
+      
+      switch (event.type) {
+        case 'payment_intent.succeeded':
+          const paymentIntent = event.data.object;
+          // Update user subscription status
+          if (paymentIntent.metadata?.userId) {
+            await storage.updateUser(paymentIntent.metadata.userId, {
+              subscriptionStatus: 'active'
+            });
+          }
+          break;
+          
+        case 'customer.subscription.updated':
+          const subscription = event.data.object;
+          if (subscription.metadata?.userId) {
+            await storage.updateUser(subscription.metadata.userId, {
+              subscriptionStatus: subscription.status
+            });
+          }
+          break;
+      }
+
+      res.json({ received: true });
+    } catch (error) {
+      console.error("Webhook error:", error);
+      res.status(400).json({ error: "Webhook signature verification failed" });
+    }
+  });
+
   // Get all calculators
   app.get("/api/calculators", async (req, res) => {
     try {

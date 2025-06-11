@@ -69,6 +69,7 @@ import Features from "@/pages/features";
 import Pricing from "@/pages/pricing";
 import Login from "@/pages/login";
 import Register from "@/pages/register";
+import Subscribe from "@/pages/subscribe";
 import Dashboard from "@/pages/dashboard";
 
 

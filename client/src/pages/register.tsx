@@ -57,12 +57,12 @@ export default function Register() {
         localStorage.setItem('user', JSON.stringify(user));
         
         toast({
-          title: "Check your email!",
-          description: "We've sent you a confirmation link to complete your registration.",
+          title: "Registration successful!",
+          description: "Please select your subscription plan to continue.",
         });
         
-        // Don't redirect immediately - let user confirm email first
-        setLocation('/login');
+        // Redirect to subscription selection
+        setLocation('/subscribe');
       }
     } catch (error: any) {
       console.error('Registration error:', error);

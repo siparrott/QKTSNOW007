@@ -290,7 +290,7 @@ export default function NewbornPhotographyCalculator({ customConfig: propConfig,
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-25 via-pink-25 to-stone-50">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       <div className="max-w-7xl mx-auto px-4 py-8">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

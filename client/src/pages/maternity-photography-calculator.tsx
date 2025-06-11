@@ -53,7 +53,13 @@ interface PricingBreakdown {
   breakdown: string[];
 }
 
-export default function MaternityPhotographyCalculator() {
+interface MaternityPhotographyCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function MaternityPhotographyCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: MaternityPhotographyCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [formData, setFormData] = useState<MaternityFormData>({

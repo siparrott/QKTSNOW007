@@ -833,7 +833,7 @@ export default function Dashboard() {
               <Calculator className="h-4 w-4 text-neon-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">{userCalculators.length}</div>
+              <div className="text-2xl font-bold text-white">{(userCalculators as UserCalculator[]).length}</div>
               <p className="text-xs text-gray-400">calculators deployed</p>
             </CardContent>
           </Card>
@@ -875,7 +875,7 @@ export default function Dashboard() {
           </div>
 
           <div className="grid gap-4">
-            {userCalculators.map((calc: UserCalculator) => (
+            {(userCalculators as UserCalculator[]).map((calc: UserCalculator) => (
               <Card key={calc.id} className="bg-midnight-800 border-midnight-700">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">

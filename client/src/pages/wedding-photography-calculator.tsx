@@ -62,8 +62,8 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [customConfig, setCustomConfig] = useState<any>(propConfig || null);
-  const [headline, setHeadline] = useState("Get Your Custom Quote");
-  const [description, setDescription] = useState("Fill out the form below to receive your personalized quote.");
+  const [headline, setHeadline] = useState("Wedding Photography Quote Calculator");
+  const [description, setDescription] = useState("Create beautiful memories with professional wedding photography. Get your personalized quote for your special day.");
   const [companyName, setCompanyName] = useState("Your Business");
   const [formData, setFormData] = useState<WeddingFormData>({
     packageType: "",

@@ -18,10 +18,10 @@ import {
   Copy, 
   Eye, 
   Calendar,
+  Calculator,
   CreditCard,
   Users,
   TrendingUp,
-  Calculator,
   Mail,
   Globe,
   Plus,
@@ -190,28 +190,41 @@ export default function Dashboard() {
     return null;
   }
 
-  // All available calculators
-  const allCalculators = [
-    { id: 1, name: "Wedding Photography", category: "Photography", slug: "wedding-photography", icon: <Camera className="h-5 w-5 text-white" />, description: "Custom quote calculator for wedding photography services" },
-    { id: 2, name: "Boudoir Photography", category: "Photography", slug: "boudoir-photography", icon: <Camera className="h-5 w-5 text-white" />, description: "Elegant pricing for intimate photography sessions" },
-    { id: 3, name: "Real Estate Photography", category: "Photography", slug: "real-estate-photography", icon: <Home className="h-5 w-5 text-white" />, description: "Professional property photography quotes" },
-    { id: 4, name: "Drone Photography", category: "Photography", slug: "drone-photography", icon: <Plane className="h-5 w-5 text-white" />, description: "Aerial photography and videography services" },
-    { id: 5, name: "Event Videography", category: "Photography", slug: "event-videography", icon: <Video className="h-5 w-5 text-white" />, description: "Professional event recording services" },
-    { id: 6, name: "Electrician Services", category: "Home Services", slug: "electrician", icon: <Zap className="h-5 w-5 text-white" />, description: "Electrical work and installation quotes" },
-    { id: 7, name: "Home Renovation", category: "Home Services", slug: "home-renovation", icon: <Home className="h-5 w-5 text-white" />, description: "Complete home renovation estimates" },
-    { id: 8, name: "Plumbing Services", category: "Home Services", slug: "plumbing", icon: <Wrench className="h-5 w-5 text-white" />, description: "Plumbing repairs and installations" }
-  ];
+  // Icon mapping for calculator categories
+  const getCalculatorIcon = (slug: string) => {
+    const iconMap: { [key: string]: any } = {
+      'wedding-photography': <Camera className="h-5 w-5 text-white" />,
+      'boudoir-photography': <Camera className="h-5 w-5 text-white" />,
+      'real-estate-photography': <Home className="h-5 w-5 text-white" />,
+      'drone-photography': <Plane className="h-5 w-5 text-white" />,
+      'event-videography': <Video className="h-5 w-5 text-white" />,
+      'electrician-services': <Zap className="h-5 w-5 text-white" />,
+      'home-renovation': <Home className="h-5 w-5 text-white" />,
+      'plumbing-services': <Wrench className="h-5 w-5 text-white" />
+    };
+    return iconMap[slug] || <Calculator className="h-5 w-5 text-white" />;
+  };
+
+  // Transform fetched calculator templates to display format
+  const allCalculators = (calculatorTemplates as CalculatorTemplate[] || []).map((template) => ({
+    id: template.slug, // Use slug as ID for consistency
+    name: template.name,
+    category: template.category || "Professional",
+    slug: template.slug,
+    icon: getCalculatorIcon(template.slug),
+    description: template.description || `Professional ${template.name.toLowerCase()} quote calculator`
+  }));
 
   const categories = [
     { name: "All", count: allCalculators.length },
-    { name: "Photography", count: allCalculators.filter(c => c.category === "Photography").length },
-    { name: "Home Services", count: allCalculators.filter(c => c.category === "Home Services").length },
-    { name: "Health & Wellness", count: allCalculators.filter(c => c.category === "Health & Wellness").length },
-    { name: "Transportation", count: allCalculators.filter(c => c.category === "Transportation").length },
-    { name: "Professional", count: allCalculators.filter(c => c.category === "Professional").length },
-    { name: "Technology", count: allCalculators.filter(c => c.category === "Technology").length },
-    { name: "Business", count: allCalculators.filter(c => c.category === "Business").length },
-    { name: "Education", count: allCalculators.filter(c => c.category === "Education").length }
+    { name: "Photography", count: allCalculators.filter((c: any) => c.category === "Photography").length },
+    { name: "Home Services", count: allCalculators.filter((c: any) => c.category === "Home Services").length },
+    { name: "Health & Wellness", count: allCalculators.filter((c: any) => c.category === "Health & Wellness").length },
+    { name: "Transportation", count: allCalculators.filter((c: any) => c.category === "Transportation").length },
+    { name: "Professional", count: allCalculators.filter((c: any) => c.category === "Professional").length },
+    { name: "Technology", count: allCalculators.filter((c: any) => c.category === "Technology").length },
+    { name: "Business", count: allCalculators.filter((c: any) => c.category === "Business").length },
+    { name: "Education", count: allCalculators.filter((c: any) => c.category === "Education").length }
   ];
 
   const filteredCalculators = allCalculators.filter(calculator => {
@@ -245,7 +258,7 @@ export default function Dashboard() {
   };
 
   const previewCalculator = (calc: UserCalculator) => {
-    const calculatorType = allCalculators.find(c => c.id === calc.calculatorId);
+    const calculatorType = allCalculators.find((c: any) => c.slug === calc.slug);
     
     if (calculatorType?.slug) {
       window.open(`/${calculatorType.slug}`, '_blank');

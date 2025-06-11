@@ -105,16 +105,25 @@ export async function getCalculatorTemplate(slug: string): Promise<CalculatorTem
 
 // Helper function to generate UUID for temporary users
 function generateUuidForTempUser(tempUserId: string): string {
-  // Create a consistent UUID based on the temp user ID
-  const crypto = require('crypto');
-  const hash = crypto.createHash('md5').update(tempUserId).digest('hex');
+  // Create a consistent UUID based on the temp user ID using simple hash
+  let hash = 0;
+  for (let i = 0; i < tempUserId.length; i++) {
+    const char = tempUserId.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  
+  // Convert to positive number and pad with zeros
+  const hashStr = Math.abs(hash).toString(16).padStart(8, '0');
+  const randomSuffix = Math.random().toString(16).substring(2, 10);
+  
   // Format as UUID v4
   return [
-    hash.substring(0, 8),
-    hash.substring(8, 12),
-    '4' + hash.substring(13, 16), // Version 4
-    '8' + hash.substring(17, 20), // Variant bits
-    hash.substring(20, 32)
+    hashStr.substring(0, 8),
+    hashStr.substring(0, 4),
+    '4' + hashStr.substring(1, 4),
+    '8' + randomSuffix.substring(0, 3),
+    randomSuffix + hashStr.substring(4, 8)
   ].join('-');
 }
 

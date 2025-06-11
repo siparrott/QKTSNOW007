@@ -472,8 +472,18 @@ export default function Dashboard() {
                         <Camera className="h-6 w-6 text-white" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-white">Wedding Photography Calculator</h3>
-                        <p className="text-gray-400">Custom quote calculator for wedding photography services</p>
+                        <h3 className="text-lg font-semibold text-white">
+                          {(() => {
+                            const calculator = allCalculators.find(c => c.id === calc.calculatorId);
+                            return calculator ? calculator.name : "Calculator";
+                          })()} Calculator
+                        </h3>
+                        <p className="text-gray-400">
+                          {(() => {
+                            const calculator = allCalculators.find(c => c.id === calc.calculatorId);
+                            return calculator ? calculator.description : "Custom quote calculator";
+                          })()}
+                        </p>
                       </div>
                     </div>
                     

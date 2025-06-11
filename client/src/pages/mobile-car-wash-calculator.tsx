@@ -51,7 +51,13 @@ interface PricingBreakdown {
   breakdown: string[];
 }
 
-export default function MobileCarWashCalculator() {
+interface MobileCarWashCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function MobileCarWashCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: MobileCarWashCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [formData, setFormData] = useState<CarWashFormData>({
@@ -258,7 +264,7 @@ export default function MobileCarWashCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-25 to-sky-100">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       <div className="max-w-7xl mx-auto px-4 py-8">
         
         {/* Calculator Header */}

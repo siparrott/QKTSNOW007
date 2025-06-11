@@ -109,7 +109,13 @@ const contractTypes = [
   { value: 'hourly', label: 'Ongoing Hourly' }
 ];
 
-export default function VirtualAssistantCalculator() {
+interface VirtualAssistantCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function VirtualAssistantCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: VirtualAssistantCalculatorProps = {}) {
   const [step, setStep] = useState(1);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [aiInput, setAiInput] = useState("");
@@ -237,7 +243,7 @@ export default function VirtualAssistantCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-teal-50">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">

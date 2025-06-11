@@ -129,7 +129,13 @@ const urgencyOptions = [
   { value: "emergency", label: "Emergency (Same Day)", multiplier: 1.50, icon: Zap }
 ];
 
-export default function CleaningServicesCalculator() {
+interface CleaningServicesCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function CleaningServicesCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: CleaningServicesCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     cleaningType: "",

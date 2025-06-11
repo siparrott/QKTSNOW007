@@ -80,7 +80,13 @@ const addOnOptions = [
   { value: "action-plans", label: "Personalized Action Plans", cost: 25, description: "Tailored strategies" }
 ];
 
-export default function BusinessCoachCalculator() {
+interface BusinessCoachCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function BusinessCoachCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: BusinessCoachCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     coachingFocus: "",

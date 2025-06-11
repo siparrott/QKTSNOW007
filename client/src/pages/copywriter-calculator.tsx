@@ -55,7 +55,13 @@ interface PricingBreakdown {
   quoteExpiry: Date;
 }
 
-export default function CopywriterCalculator() {
+interface CopywriterCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function CopywriterCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: CopywriterCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [quoteGenerated, setQuoteGenerated] = useState(false);

@@ -839,7 +839,7 @@ export default function Dashboard() {
         {/* Customize Calculator Modal */}
         {showCustomizeModal && selectedCalculator && (
           <Dialog open={showCustomizeModal} onOpenChange={setShowCustomizeModal}>
-            <DialogContent className="bg-midnight-800 border-midnight-700 text-white max-w-7xl max-h-[90vh] overflow-hidden">
+            <DialogContent className="bg-midnight-800 border-midnight-700 text-white max-w-[95vw] max-h-[95vh] overflow-hidden">
               <DialogHeader>
                 <DialogTitle>Customize Calculator</DialogTitle>
                 <DialogDescription className="text-gray-400">
@@ -847,9 +847,9 @@ export default function Dashboard() {
                 </DialogDescription>
               </DialogHeader>
               
-              <div className="flex gap-6 h-[70vh]">
+              <div className="flex gap-6 h-[75vh]">
                 {/* Left Panel - Customization Options */}
-                <div className="flex-1 overflow-y-auto pr-4 space-y-6">
+                <div className="w-1/2 overflow-y-auto pr-4 space-y-6">
                 {/* Branding Section */}
                 <div className="space-y-4">
                   <h3 className="text-lg font-medium text-white">Branding</h3>

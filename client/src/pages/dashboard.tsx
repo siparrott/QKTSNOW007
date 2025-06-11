@@ -117,6 +117,7 @@ export default function Dashboard() {
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoUrl, setLogoUrl] = useState("");
   const [logoSize, setLogoSize] = useState(100);
+  const [savingConfig, setSavingConfig] = useState(false);
 
   // Logo upload handler
   const handleLogoUpload = async (file: File) => {
@@ -241,6 +242,34 @@ export default function Dashboard() {
       toast({
         title: "Error",
         description: "Failed to save customization. Please try again.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  const addCalculatorMutation = useMutation({
+    mutationFn: async ({ calculatorId, name }: { calculatorId: number, name: string }) => {
+      return apiRequest('/api/supabase/clone-calculator', {
+        method: 'POST',
+        body: JSON.stringify({ 
+          calculatorId,
+          name,
+          userId: currentUser?.id
+        })
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/supabase/user-calculators'] });
+      toast({
+        title: "Calculator Added",
+        description: "Your new calculator has been added successfully.",
+      });
+      setShowCalculatorModal(false);
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to add calculator. Please try again.",
         variant: "destructive",
       });
     }

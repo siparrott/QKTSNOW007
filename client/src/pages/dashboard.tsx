@@ -515,11 +515,11 @@ export default function Dashboard() {
                         </div>
                       </div>
 
-                      {/* Styling Options */}
+                      {/* Advanced Styling Options */}
                       <div>
                         <h3 className="text-white font-medium mb-4 flex items-center">
                           <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
-                          Styling
+                          Advanced Styling
                         </h3>
                         <div className="space-y-4">
                           <div>
@@ -535,11 +535,14 @@ export default function Dashboard() {
                               }))}
                               className="w-full mt-1 bg-midnight-900 border border-midnight-600 text-white rounded-md px-3 py-2"
                             >
-                              <option value="Inter">Inter</option>
-                              <option value="Arial">Arial</option>
-                              <option value="Helvetica">Helvetica</option>
-                              <option value="Georgia">Georgia</option>
-                              <option value="Times New Roman">Times New Roman</option>
+                              <option value="Inter">Inter (Modern)</option>
+                              <option value="Arial">Arial (Clean)</option>
+                              <option value="Helvetica">Helvetica (Professional)</option>
+                              <option value="Georgia">Georgia (Elegant)</option>
+                              <option value="Times New Roman">Times New Roman (Classic)</option>
+                              <option value="Roboto">Roboto (Google)</option>
+                              <option value="Open Sans">Open Sans (Friendly)</option>
+                              <option value="Lato">Lato (Humanist)</option>
                             </select>
                           </div>
                           <div>
@@ -555,20 +558,150 @@ export default function Dashboard() {
                               }))}
                               className="w-full mt-1 bg-midnight-900 border border-midnight-600 text-white rounded-md px-3 py-2"
                             >
-                              <option value="0">None</option>
-                              <option value="0.25rem">Small</option>
-                              <option value="0.5rem">Medium</option>
-                              <option value="1rem">Large</option>
+                              <option value="0">Sharp (0px)</option>
+                              <option value="0.125rem">Minimal (2px)</option>
+                              <option value="0.25rem">Small (4px)</option>
+                              <option value="0.5rem">Medium (8px)</option>
+                              <option value="0.75rem">Large (12px)</option>
+                              <option value="1rem">Extra Large (16px)</option>
+                              <option value="1.5rem">Rounded (24px)</option>
+                            </select>
+                          </div>
+                          <div>
+                            <Label className="text-gray-300 text-sm">Background Style</Label>
+                            <select
+                              value={customConfig?.styling?.backgroundStyle || "solid"}
+                              onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                styling: {
+                                  ...prev?.styling,
+                                  backgroundStyle: e.target.value
+                                }
+                              }))}
+                              className="w-full mt-1 bg-midnight-900 border border-midnight-600 text-white rounded-md px-3 py-2"
+                            >
+                              <option value="solid">Solid Color</option>
+                              <option value="gradient">Gradient</option>
+                              <option value="subtle-pattern">Subtle Pattern</option>
+                              <option value="minimal">Minimal White</option>
+                            </select>
+                          </div>
+                          <div>
+                            <Label className="text-gray-300 text-sm">Button Style</Label>
+                            <select
+                              value={customConfig?.styling?.buttonStyle || "modern"}
+                              onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                styling: {
+                                  ...prev?.styling,
+                                  buttonStyle: e.target.value
+                                }
+                              }))}
+                              className="w-full mt-1 bg-midnight-900 border border-midnight-600 text-white rounded-md px-3 py-2"
+                            >
+                              <option value="modern">Modern Filled</option>
+                              <option value="outline">Outline Style</option>
+                              <option value="gradient">Gradient Fill</option>
+                              <option value="minimal">Minimal</option>
+                              <option value="rounded">Fully Rounded</option>
+                            </select>
+                          </div>
+                          <div>
+                            <Label className="text-gray-300 text-sm">Shadow Intensity</Label>
+                            <select
+                              value={customConfig?.styling?.shadowIntensity || "medium"}
+                              onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                styling: {
+                                  ...prev?.styling,
+                                  shadowIntensity: e.target.value
+                                }
+                              }))}
+                              className="w-full mt-1 bg-midnight-900 border border-midnight-600 text-white rounded-md px-3 py-2"
+                            >
+                              <option value="none">No Shadow</option>
+                              <option value="light">Light Shadow</option>
+                              <option value="medium">Medium Shadow</option>
+                              <option value="strong">Strong Shadow</option>
+                              <option value="dramatic">Dramatic Shadow</option>
                             </select>
                           </div>
                         </div>
                       </div>
 
-                      {/* Features */}
+                      {/* Layout & Spacing */}
+                      <div>
+                        <h3 className="text-white font-medium mb-4 flex items-center">
+                          <div className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></div>
+                          Layout & Spacing
+                        </h3>
+                        <div className="space-y-4">
+                          <div>
+                            <Label className="text-gray-300 text-sm">Container Width</Label>
+                            <select
+                              value={customConfig?.layout?.containerWidth || "standard"}
+                              onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                layout: {
+                                  ...prev?.layout,
+                                  containerWidth: e.target.value
+                                }
+                              }))}
+                              className="w-full mt-1 bg-midnight-900 border border-midnight-600 text-white rounded-md px-3 py-2"
+                            >
+                              <option value="narrow">Narrow (600px)</option>
+                              <option value="standard">Standard (800px)</option>
+                              <option value="wide">Wide (1000px)</option>
+                              <option value="full">Full Width</option>
+                            </select>
+                          </div>
+                          <div>
+                            <Label className="text-gray-300 text-sm">Form Layout</Label>
+                            <select
+                              value={customConfig?.layout?.formLayout || "single-column"}
+                              onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                layout: {
+                                  ...prev?.layout,
+                                  formLayout: e.target.value
+                                }
+                              }))}
+                              className="w-full mt-1 bg-midnight-900 border border-midnight-600 text-white rounded-md px-3 py-2"
+                            >
+                              <option value="single-column">Single Column</option>
+                              <option value="two-column">Two Column</option>
+                              <option value="compact">Compact</option>
+                              <option value="spacious">Spacious</option>
+                            </select>
+                          </div>
+                          <div>
+                            <Label className="text-gray-300 text-sm">Step Indicator Style</Label>
+                            <select
+                              value={customConfig?.layout?.stepIndicator || "progress-bar"}
+                              onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                layout: {
+                                  ...prev?.layout,
+                                  stepIndicator: e.target.value
+                                }
+                              }))}
+                              className="w-full mt-1 bg-midnight-900 border border-midnight-600 text-white rounded-md px-3 py-2"
+                            >
+                              <option value="progress-bar">Progress Bar</option>
+                              <option value="numbered-steps">Numbered Steps</option>
+                              <option value="dots">Dot Indicators</option>
+                              <option value="minimal">Minimal</option>
+                              <option value="hidden">Hidden</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Advanced Features */}
                       <div>
                         <h3 className="text-white font-medium mb-4 flex items-center">
                           <div className="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
-                          Features
+                          Advanced Features
                         </h3>
                         <div className="space-y-4">
                           <div className="flex items-center justify-between">
@@ -619,6 +752,207 @@ export default function Dashboard() {
                               }))}
                             />
                           </div>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <Label className="text-gray-300 text-sm">Real-time Updates</Label>
+                              <p className="text-xs text-gray-500">Update pricing as user types</p>
+                            </div>
+                            <Switch
+                              checked={customConfig?.features?.realTimeUpdates || true}
+                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                features: {
+                                  ...prev?.features,
+                                  realTimeUpdates: checked
+                                }
+                              }))}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <Label className="text-gray-300 text-sm">Progress Saving</Label>
+                              <p className="text-xs text-gray-500">Save form progress automatically</p>
+                            </div>
+                            <Switch
+                              checked={customConfig?.features?.progressSaving || true}
+                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                features: {
+                                  ...prev?.features,
+                                  progressSaving: checked
+                                }
+                              }))}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <Label className="text-gray-300 text-sm">Social Sharing</Label>
+                              <p className="text-xs text-gray-500">Allow sharing quotes on social media</p>
+                            </div>
+                            <Switch
+                              checked={customConfig?.features?.socialSharing || false}
+                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                features: {
+                                  ...prev?.features,
+                                  socialSharing: checked
+                                }
+                              }))}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Form Behavior */}
+                      <div>
+                        <h3 className="text-white font-medium mb-4 flex items-center">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                          Form Behavior
+                        </h3>
+                        <div className="space-y-4">
+                          <div>
+                            <Label className="text-gray-300 text-sm">Validation Style</Label>
+                            <select
+                              value={customConfig?.formBehavior?.validationStyle || "on-submit"}
+                              onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                formBehavior: {
+                                  ...prev?.formBehavior,
+                                  validationStyle: e.target.value
+                                }
+                              }))}
+                              className="w-full mt-1 bg-midnight-900 border border-midnight-600 text-white rounded-md px-3 py-2"
+                            >
+                              <option value="on-submit">Validate on Submit</option>
+                              <option value="on-blur">Validate on Field Exit</option>
+                              <option value="on-change">Validate on Type</option>
+                              <option value="disabled">No Validation</option>
+                            </select>
+                          </div>
+                          <div>
+                            <Label className="text-gray-300 text-sm">Required Field Style</Label>
+                            <select
+                              value={customConfig?.formBehavior?.requiredStyle || "asterisk"}
+                              onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                formBehavior: {
+                                  ...prev?.formBehavior,
+                                  requiredStyle: e.target.value
+                                }
+                              }))}
+                              className="w-full mt-1 bg-midnight-900 border border-midnight-600 text-white rounded-md px-3 py-2"
+                            >
+                              <option value="asterisk">Asterisk (*)</option>
+                              <option value="required-text">(Required)</option>
+                              <option value="red-border">Red Border</option>
+                              <option value="none">No Indicator</option>
+                            </select>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <Label className="text-gray-300 text-sm">Auto-advance Steps</Label>
+                              <p className="text-xs text-gray-500">Move to next step when current is complete</p>
+                            </div>
+                            <Switch
+                              checked={customConfig?.formBehavior?.autoAdvance || false}
+                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                formBehavior: {
+                                  ...prev?.formBehavior,
+                                  autoAdvance: checked
+                                }
+                              }))}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <Label className="text-gray-300 text-sm">Show Field Tooltips</Label>
+                              <p className="text-xs text-gray-500">Display helpful tips on form fields</p>
+                            </div>
+                            <Switch
+                              checked={customConfig?.formBehavior?.showTooltips || true}
+                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                formBehavior: {
+                                  ...prev?.formBehavior,
+                                  showTooltips: checked
+                                }
+                              }))}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Notifications & Analytics */}
+                      <div>
+                        <h3 className="text-white font-medium mb-4 flex items-center">
+                          <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
+                          Notifications & Analytics
+                        </h3>
+                        <div className="space-y-4">
+                          <div>
+                            <Label className="text-gray-300 text-sm">Email Notification Recipients</Label>
+                            <Input
+                              placeholder="admin@yourcompany.com, sales@yourcompany.com"
+                              value={customConfig?.notifications?.emailRecipients || ""}
+                              onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                notifications: {
+                                  ...prev?.notifications,
+                                  emailRecipients: e.target.value
+                                }
+                              }))}
+                              className="bg-midnight-900 border-midnight-600 text-white mt-1"
+                            />
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <Label className="text-gray-300 text-sm">Instant Notifications</Label>
+                              <p className="text-xs text-gray-500">Send immediate email when quote is submitted</p>
+                            </div>
+                            <Switch
+                              checked={customConfig?.notifications?.instantNotifications || true}
+                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                notifications: {
+                                  ...prev?.notifications,
+                                  instantNotifications: checked
+                                }
+                              }))}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <Label className="text-gray-300 text-sm">Analytics Tracking</Label>
+                              <p className="text-xs text-gray-500">Track form completion and conversion rates</p>
+                            </div>
+                            <Switch
+                              checked={customConfig?.analytics?.tracking || true}
+                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                analytics: {
+                                  ...prev?.analytics,
+                                  tracking: checked
+                                }
+                              }))}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <Label className="text-gray-300 text-sm">Show Powered By</Label>
+                              <p className="text-xs text-gray-500">Display "Powered by QuoteKits" footer</p>
+                            </div>
+                            <Switch
+                              checked={customConfig?.branding?.showPoweredBy !== false}
+                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                branding: {
+                                  ...prev?.branding,
+                                  showPoweredBy: checked
+                                }
+                              }))}
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -626,19 +960,22 @@ export default function Dashboard() {
 
                   {/* Right Panel - Live Preview */}
                   <div className="w-1/2 flex flex-col">
-                    <div className="p-4 border-b border-midnight-700 bg-midnight-900">
+                    <div className="p-4 border-b border-midnight-700 bg-midnight-900 flex-shrink-0">
                       <h3 className="text-lg font-medium text-white flex items-center">
                         <Eye className="h-5 w-5 mr-2 text-neon-400" />
                         Live Preview
                       </h3>
+                      <p className="text-xs text-gray-400 mt-1">Scroll to view the full calculator</p>
                     </div>
-                    <div className="flex-1 overflow-hidden bg-white">
-                      <div className="h-full overflow-y-auto">
-                        <CalculatorPreview 
-                          slug={selectedCalculator.slug} 
-                          customConfig={customConfig}
-                          className="min-h-full"
-                        />
+                    <div className="flex-1 bg-gray-100 relative">
+                      <div className="absolute inset-0 overflow-y-auto">
+                        <div className="min-h-full">
+                          <CalculatorPreview 
+                            slug={selectedCalculator.slug} 
+                            customConfig={customConfig}
+                            className="w-full"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>

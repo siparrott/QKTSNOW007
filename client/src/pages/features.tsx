@@ -194,7 +194,7 @@ export default function Features() {
   ];
 
   return (
-    <div className="min-h-screen bg-midnight-900">
+    <div className="min-h-screen" style={{backgroundColor: '#060517'}}>
       <Header />
       
       <div className="relative overflow-hidden">

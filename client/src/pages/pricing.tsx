@@ -97,7 +97,7 @@ const pricingPlans = [
 
 export default function Pricing() {
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen" style={{backgroundColor: '#060517'}}>
       <Header />
       
       <div className="relative overflow-hidden">

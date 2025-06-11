@@ -97,7 +97,7 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-midnight-900">
+    <div className="min-h-screen" style={{backgroundColor: '#060517'}}>
       <Header />
       
       <div className="container mx-auto px-4 py-16">

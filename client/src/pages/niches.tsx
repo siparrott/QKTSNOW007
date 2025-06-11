@@ -156,7 +156,7 @@ export default function NichesPage() {
   const totalCount = allNiches.length;
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen" style={{backgroundColor: '#060517'}}>
       <Header />
       <div className="container mx-auto px-4 py-8">
         {/* Header */}

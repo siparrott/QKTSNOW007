@@ -1214,9 +1214,9 @@ export default function Dashboard() {
                   {customizationTab === 'services' && (
                     <>
                       <div>
-                        <h3 className="text-lg font-semibold text-white mb-3">Calculator Configuration</h3>
+                        <h3 className="text-lg font-semibold text-white mb-3">Services Configuration</h3>
                         
-                        {customConfig?.customizationFields?.services && customConfig.customizationFields.services.length > 0 ? (
+                        {customConfig?.customizationFields?.services?.length > 0 ? (
                           <div className="space-y-6">
                             {/* Service Type Configuration */}
                             {customConfig.customizationFields.services.map((field: any) => (
@@ -1362,9 +1362,78 @@ export default function Dashboard() {
                             </div>
                           </div>
                         ) : (
-                          <div className="bg-midnight-900 p-6 rounded-lg text-center">
-                            <p className="text-gray-400">No specific configuration available for this calculator type.</p>
-                            <p className="text-gray-500 text-sm mt-2">Please use the Content and Branding tabs for customization.</p>
+                          <div className="bg-midnight-900 p-4 rounded-lg">
+                            <h4 className="text-md font-medium text-white mb-3">Translation Service Options</h4>
+                            <p className="text-gray-400 text-sm mb-4">Customize the translation services offered by your calculator</p>
+                            
+                            <div className="space-y-3">
+                              {[
+                                { id: 'translation', label: 'Document Translation', price: 0.12, description: 'Professional document translation services' },
+                                { id: 'proofreading', label: 'Proofreading', price: 0.06, description: 'Review and correct existing translations' },
+                                { id: 'transcription', label: 'Transcription', price: 0.08, description: 'Audio/video to text conversion' },
+                                { id: 'subtitling', label: 'Subtitling', price: 0.15, description: 'Video subtitle creation' },
+                                { id: 'certified', label: 'Certified Translation', price: 0.18, description: 'Official certified document translation' }
+                              ].map((service) => (
+                                <div key={service.id} className="border border-midnight-600 p-3 rounded">
+                                  <div className="grid grid-cols-2 gap-3">
+                                    <div>
+                                      <label className="block text-xs text-gray-400 mb-1">Service Name</label>
+                                      <input
+                                        type="text"
+                                        value={customConfig?.translationServices?.[service.id]?.label || service.label}
+                                        onChange={(e) => setCustomConfig((prev: any) => ({
+                                          ...prev,
+                                          translationServices: {
+                                            ...prev.translationServices,
+                                            [service.id]: { 
+                                              ...prev.translationServices?.[service.id], 
+                                              label: e.target.value 
+                                            }
+                                          }
+                                        }))}
+                                        className="w-full px-2 py-1 bg-midnight-700 border border-midnight-600 rounded text-white text-sm"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-xs text-gray-400 mb-1">Price per Word</label>
+                                      <input
+                                        type="number"
+                                        step="0.01"
+                                        value={customConfig?.translationServices?.[service.id]?.price || service.price}
+                                        onChange={(e) => setCustomConfig((prev: any) => ({
+                                          ...prev,
+                                          translationServices: {
+                                            ...prev.translationServices,
+                                            [service.id]: { 
+                                              ...prev.translationServices?.[service.id], 
+                                              price: parseFloat(e.target.value) || 0
+                                            }
+                                          }
+                                        }))}
+                                        className="w-full px-2 py-1 bg-midnight-700 border border-midnight-600 rounded text-white text-sm"
+                                      />
+                                    </div>
+                                  </div>
+                                  <div className="mt-2">
+                                    <label className="block text-xs text-gray-400 mb-1">Description</label>
+                                    <textarea
+                                      value={customConfig?.translationServices?.[service.id]?.description || service.description}
+                                      onChange={(e) => setCustomConfig((prev: any) => ({
+                                        ...prev,
+                                        translationServices: {
+                                          ...prev.translationServices,
+                                          [service.id]: { 
+                                            ...prev.translationServices?.[service.id], 
+                                            description: e.target.value 
+                                          }
+                                        }
+                                      }))}
+                                      className="w-full px-2 py-1 bg-midnight-700 border border-midnight-600 rounded text-white text-sm h-12 resize-none"
+                                    />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         )}
                       </div>

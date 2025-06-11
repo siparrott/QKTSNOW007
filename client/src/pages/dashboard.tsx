@@ -327,6 +327,39 @@ export default function Dashboard() {
 
   const currentPlan = { name: "Free", price: 0 };
 
+  // Default configuration for customization
+  const defaultConfig = {
+    primaryColor: "#10b981",
+    secondaryColor: "#1f2937",
+    accentColor: "#f59e0b",
+    fontFamily: "Inter",
+    borderRadius: "8px",
+    companyName: "",
+    logoUrl: "",
+    contactInfo: "",
+    ctaText: "Get Quote",
+    successMessage: "Thanks! We'll send your quote shortly.",
+    brandColors: {
+      primary: "#10b981",
+      secondary: "#1f2937",
+      accent: "#f59e0b"
+    },
+    companyBranding: {
+      companyName: "",
+      logoUrl: "",
+      contactInfo: ""
+    },
+    callToAction: {
+      buttonText: "Get Quote",
+      successMessage: "Thanks! We'll send your quote shortly."
+    },
+    styling: {
+      fontFamily: "Inter",
+      borderRadius: "8px",
+      colorScheme: "modern"
+    }
+  };
+
   const handleLogout = async () => {
     try {
       await logout();
@@ -344,7 +377,20 @@ export default function Dashboard() {
 
   const customizeCalculator = (calc: UserCalculator) => {
     setSelectedCalculator(calc);
-    setCustomConfig(calc.config || defaultConfig);
+    // Merge existing config with default values to ensure all properties exist
+    const mergedConfig = {
+      ...defaultConfig,
+      ...(calc.config || {}),
+      brandColors: {
+        ...defaultConfig.brandColors,
+        ...(calc.config?.brandColors || {})
+      },
+      companyBranding: {
+        ...defaultConfig.companyBranding,
+        ...(calc.config?.companyBranding || {})
+      }
+    };
+    setCustomConfig(mergedConfig);
     setShowCustomizeModal(true);
   };
 
@@ -676,14 +722,22 @@ export default function Dashboard() {
                         <div className="flex items-center space-x-3">
                           <input
                             type="color"
-                            value={customConfig.primaryColor || "#10b981"}
-                            onChange={(e) => setCustomConfig(prev => ({ ...prev, primaryColor: e.target.value }))}
+                            value={customConfig?.brandColors?.primary || "#10b981"}
+                            onChange={(e) => setCustomConfig((prev: any) => ({ 
+                              ...prev, 
+                              brandColors: { ...prev.brandColors, primary: e.target.value },
+                              primaryColor: e.target.value 
+                            }))}
                             className="w-12 h-12 rounded border border-midnight-600"
                           />
                           <input
                             type="text"
-                            value={customConfig.primaryColor || "#10b981"}
-                            onChange={(e) => setCustomConfig(prev => ({ ...prev, primaryColor: e.target.value }))}
+                            value={customConfig?.brandColors?.primary || "#10b981"}
+                            onChange={(e) => setCustomConfig((prev: any) => ({ 
+                              ...prev, 
+                              brandColors: { ...prev.brandColors, primary: e.target.value },
+                              primaryColor: e.target.value 
+                            }))}
                             className="flex-1 px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
                           />
                         </div>
@@ -694,14 +748,22 @@ export default function Dashboard() {
                         <div className="flex items-center space-x-3">
                           <input
                             type="color"
-                            value={customConfig.secondaryColor || "#1f2937"}
-                            onChange={(e) => setCustomConfig(prev => ({ ...prev, secondaryColor: e.target.value }))}
+                            value={customConfig?.brandColors?.secondary || "#1f2937"}
+                            onChange={(e) => setCustomConfig((prev: any) => ({ 
+                              ...prev, 
+                              brandColors: { ...prev.brandColors, secondary: e.target.value },
+                              secondaryColor: e.target.value 
+                            }))}
                             className="w-12 h-12 rounded border border-midnight-600"
                           />
                           <input
                             type="text"
-                            value={customConfig.secondaryColor || "#1f2937"}
-                            onChange={(e) => setCustomConfig(prev => ({ ...prev, secondaryColor: e.target.value }))}
+                            value={customConfig?.brandColors?.secondary || "#1f2937"}
+                            onChange={(e) => setCustomConfig((prev: any) => ({ 
+                              ...prev, 
+                              brandColors: { ...prev.brandColors, secondary: e.target.value },
+                              secondaryColor: e.target.value 
+                            }))}
                             className="flex-1 px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
                           />
                         </div>
@@ -716,8 +778,12 @@ export default function Dashboard() {
                       <div>
                         <label className="block text-sm font-medium text-gray-300 mb-2">Font Family</label>
                         <select
-                          value={customConfig.fontFamily || "Inter"}
-                          onChange={(e) => setCustomConfig(prev => ({ ...prev, fontFamily: e.target.value }))}
+                          value={customConfig?.styling?.fontFamily || "Inter"}
+                          onChange={(e) => setCustomConfig((prev: any) => ({ 
+                            ...prev, 
+                            styling: { ...prev.styling, fontFamily: e.target.value },
+                            fontFamily: e.target.value 
+                          }))}
                           className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
                         >
                           <option value="Inter">Inter</option>
@@ -731,8 +797,12 @@ export default function Dashboard() {
                       <div>
                         <label className="block text-sm font-medium text-gray-300 mb-2">Border Radius</label>
                         <select
-                          value={customConfig.borderRadius || "8px"}
-                          onChange={(e) => setCustomConfig(prev => ({ ...prev, borderRadius: e.target.value }))}
+                          value={customConfig?.styling?.borderRadius || "8px"}
+                          onChange={(e) => setCustomConfig((prev: any) => ({ 
+                            ...prev, 
+                            styling: { ...prev.styling, borderRadius: e.target.value },
+                            borderRadius: e.target.value 
+                          }))}
                           className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
                         >
                           <option value="0px">Sharp (0px)</option>
@@ -753,8 +823,12 @@ export default function Dashboard() {
                         <label className="block text-sm font-medium text-gray-300 mb-2">Company Name</label>
                         <input
                           type="text"
-                          value={customConfig.companyName || ""}
-                          onChange={(e) => setCustomConfig(prev => ({ ...prev, companyName: e.target.value }))}
+                          value={customConfig?.companyBranding?.companyName || ""}
+                          onChange={(e) => setCustomConfig((prev: any) => ({ 
+                            ...prev, 
+                            companyBranding: { ...prev.companyBranding, companyName: e.target.value },
+                            companyName: e.target.value 
+                          }))}
                           placeholder="Enter your company name"
                           className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white placeholder-gray-400"
                         />

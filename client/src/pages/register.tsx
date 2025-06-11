@@ -54,18 +54,27 @@ export default function Register() {
         }),
       });
       
-      if (response.token) {
+      console.log('Full response received:', response);
+      
+      if (response && response.token) {
         localStorage.setItem('auth_token', response.token);
         localStorage.setItem('user', JSON.stringify(response.user));
+        
+        console.log('Token stored, redirecting to dashboard...');
         
         toast({
           title: "Account created successfully!",
           description: "Welcome to QuoteKit. Let's set up your first calculator.",
         });
         
-        setLocation('/dashboard');
+        // Force redirect
+        window.location.href = '/dashboard';
+      } else {
+        console.error('No token in response:', response);
+        throw new Error('Registration succeeded but no token received');
       }
     } catch (error: any) {
+      console.error('Registration failed:', error);
       toast({
         title: "Registration failed",
         description: error.message || "Please try again with different details.",

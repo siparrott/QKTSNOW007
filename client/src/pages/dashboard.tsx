@@ -286,9 +286,10 @@ export default function Dashboard() {
                         <h3 className="text-white font-medium">{calc.name}</h3>
                         <p className="text-gray-400 text-sm">Created {new Date(calc.created_at).toLocaleDateString()}</p>
                         <div className="flex items-center space-x-4 mt-1">
-                          <span className="text-xs text-neon-400">45 views this month</span>
-                          <span className="text-xs text-green-400">12 conversions</span>
-                          <span className="text-xs text-blue-400">26.7% rate</span>
+                          <span className="text-xs text-gray-500">Status: {calc.is_active ? 'Active' : 'Inactive'}</span>
+                          {calc.is_active && (
+                            <span className="text-xs text-neon-400">Ready for embedding</span>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -400,38 +401,51 @@ export default function Dashboard() {
               <div className="space-y-4">
                 <div className="grid grid-cols-3 gap-4">
                   <div className="bg-midnight-900 p-3 rounded-lg text-center">
-                    <div className="text-lg font-bold text-neon-400">72.5%</div>
-                    <div className="text-xs text-gray-400">Conversion</div>
-                    <div className="text-xs text-green-400">↑ 8.2%</div>
+                    <div className="text-lg font-bold text-neon-400">
+                      {userCalculators.length > 0 ? `${((userCalculators.filter(c => c.is_active).length / userCalculators.length) * 100).toFixed(1)}%` : '0%'}
+                    </div>
+                    <div className="text-xs text-gray-400">Active Rate</div>
+                    <div className="text-xs text-gray-500">Calculator activity</div>
                   </div>
                   <div className="bg-midnight-900 p-3 rounded-lg text-center">
-                    <div className="text-lg font-bold text-blue-400">4.2min</div>
-                    <div className="text-xs text-gray-400">Avg Time</div>
-                    <div className="text-xs text-red-400">↓ 12s</div>
+                    <div className="text-lg font-bold text-blue-400">{userCalculators.length}</div>
+                    <div className="text-xs text-gray-400">Total Calcs</div>
+                    <div className="text-xs text-gray-500">Your calculators</div>
                   </div>
                   <div className="bg-midnight-900 p-3 rounded-lg text-center">
-                    <div className="text-lg font-bold text-purple-400">€2,450</div>
-                    <div className="text-xs text-gray-400">Avg Quote</div>
-                    <div className="text-xs text-green-400">↑ €150</div>
+                    <div className="text-lg font-bold text-purple-400">{user.quotesUsedThisMonth}</div>
+                    <div className="text-xs text-gray-400">Quotes Used</div>
+                    <div className="text-xs text-gray-500">This month</div>
                   </div>
                 </div>
                 
-                {/* Monthly Performance Chart */}
+                {/* Calculator Usage Chart */}
                 <div className="bg-midnight-900 p-4 rounded-lg">
-                  <div className="text-sm text-gray-400 mb-3">Monthly Performance Trend</div>
-                  <div className="h-32 flex items-end justify-between space-x-1">
-                    {[65, 72, 68, 78, 82, 75, 88, 85, 90, 87, 95, 92].map((height, index) => (
-                      <div key={index} className="flex flex-col items-center space-y-1">
-                        <div
-                          className="w-6 bg-gradient-to-t from-neon-500 to-neon-400 rounded-sm opacity-80 hover:opacity-100 transition-opacity"
-                          style={{ height: `${height}%` }}
-                        />
-                        <div className="text-xs text-gray-500 rotate-45 origin-center">
-                          {['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'][index]}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  <div className="text-sm text-gray-400 mb-3">Calculator Usage Distribution</div>
+                  {userCalculators.length > 0 ? (
+                    <div className="h-32 flex items-end justify-center space-x-2">
+                      {userCalculators.slice(0, 8).map((calc, index) => {
+                        const height = calc.is_active ? 70 + (index * 5) : 30;
+                        return (
+                          <div key={calc.id} className="flex flex-col items-center space-y-1">
+                            <div
+                              className={`w-8 bg-gradient-to-t rounded-sm opacity-80 hover:opacity-100 transition-opacity ${
+                                calc.is_active ? 'from-neon-500 to-neon-400' : 'from-gray-600 to-gray-500'
+                              }`}
+                              style={{ height: `${height}%` }}
+                            />
+                            <div className="text-xs text-gray-500 text-center w-12 truncate">
+                              {calc.name.split(' ')[0]}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="h-32 flex items-center justify-center text-gray-500 text-sm">
+                      No calculators to display
+                    </div>
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -450,30 +464,43 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {[
-                  { name: "Wedding Photography", conversions: 284, rate: "85.2%", value: "€45K", color: "bg-neon-500" },
-                  { name: "Home Renovation", conversions: 167, rate: "78.4%", value: "€125K", color: "bg-blue-500" },
-                  { name: "Pest Control", conversions: 142, rate: "72.1%", value: "€8.5K", color: "bg-purple-500" },
-                  { name: "Electrician Services", conversions: 98, rate: "69.8%", value: "€18K", color: "bg-orange-500" },
-                  { name: "Plumbing Services", conversions: 76, rate: "64.3%", value: "€12K", color: "bg-red-500" }
-                ].map((calc, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-midnight-900 rounded-lg hover:bg-midnight-700 transition-colors">
-                    <div className="flex items-center space-x-3">
-                      <div className="flex items-center space-x-2">
-                        <div className={`w-3 h-3 rounded-full ${calc.color}`} />
-                        <span className="text-xs text-gray-500">#{index + 1}</span>
-                      </div>
-                      <div>
-                        <div className="text-white text-sm font-medium">{calc.name}</div>
-                        <div className="text-gray-400 text-xs">{calc.conversions} conversions • {calc.value} total</div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-neon-400 font-medium text-sm">{calc.rate}</div>
-                      <div className="text-gray-500 text-xs">conversion</div>
-                    </div>
+                {userCalculators.length > 0 ? (
+                  userCalculators
+                    .sort((a, b) => Number(b.is_active) - Number(a.is_active))
+                    .slice(0, 5)
+                    .map((calc, index) => {
+                      const colors = ["bg-neon-500", "bg-blue-500", "bg-purple-500", "bg-orange-500", "bg-red-500"];
+                      return (
+                        <div key={calc.id} className="flex items-center justify-between p-3 bg-midnight-900 rounded-lg hover:bg-midnight-700 transition-colors">
+                          <div className="flex items-center space-x-3">
+                            <div className="flex items-center space-x-2">
+                              <div className={`w-3 h-3 rounded-full ${colors[index % colors.length]}`} />
+                              <span className="text-xs text-gray-500">#{index + 1}</span>
+                            </div>
+                            <div>
+                              <div className="text-white text-sm font-medium">{calc.name}</div>
+                              <div className="text-gray-400 text-xs">
+                                Created {new Date(calc.created_at).toLocaleDateString()} • 
+                                {calc.is_active ? ' Active' : ' Inactive'}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-neon-400 font-medium text-sm">
+                              {calc.is_active ? 'Live' : 'Draft'}
+                            </div>
+                            <div className="text-gray-500 text-xs">status</div>
+                          </div>
+                        </div>
+                      );
+                    })
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <Calculator className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                    <p className="text-sm">No calculators created yet</p>
+                    <p className="text-xs">Add your first calculator to see performance data</p>
                   </div>
-                ))}
+                )}
               </div>
             </CardContent>
           </Card>
@@ -504,99 +531,21 @@ export default function Dashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-midnight-600">
-                  {[
-                    { 
-                      client: "Sarah Johnson", 
-                      email: "sarah.johnson@email.com", 
-                      phone: "+44 7700 900123",
-                      service: "Wedding Photography", 
-                      value: "€2,850", 
-                      status: "Pending Response", 
-                      date: "2 hours ago", 
-                      badge: "bg-yellow-500",
-                      details: "June 2024 wedding, 8-hour coverage"
-                    },
-                    { 
-                      client: "Mike Chen", 
-                      email: "mike.chen@constructors.com", 
-                      phone: "+44 7700 900456",
-                      service: "Home Renovation", 
-                      value: "€15,400", 
-                      status: "Contacted", 
-                      date: "5 hours ago", 
-                      badge: "bg-blue-500",
-                      details: "Kitchen remodel, 3-week project"
-                    },
-                    { 
-                      client: "Emily Davis", 
-                      email: "emily.davis@home.co.uk", 
-                      phone: "+44 7700 900789",
-                      service: "Pest Control", 
-                      value: "€280", 
-                      status: "Converted", 
-                      date: "1 day ago", 
-                      badge: "bg-green-500",
-                      details: "Quarterly service package"
-                    },
-                    { 
-                      client: "Robert Wilson", 
-                      email: "r.wilson@properties.com", 
-                      phone: "+44 7700 900321",
-                      service: "Electrician", 
-                      value: "€750", 
-                      status: "Follow-up Needed", 
-                      date: "1 day ago", 
-                      badge: "bg-orange-500",
-                      details: "Rewiring project, urgent"
-                    },
-                    { 
-                      client: "Lisa Thompson", 
-                      email: "lisa.t@business.co.uk", 
-                      phone: "+44 7700 900654",
-                      service: "Plumbing", 
-                      value: "€420", 
-                      status: "Declined", 
-                      date: "2 days ago", 
-                      badge: "bg-red-500",
-                      details: "Bathroom installation"
-                    }
-                  ].map((quote, index) => (
-                    <tr key={index} className="hover:bg-midnight-700 transition-colors">
-                      <td className="py-4">
-                        <div>
-                          <div className="text-white text-sm font-medium">{quote.client}</div>
-                          <div className="text-gray-400 text-xs">{quote.email}</div>
-                          <div className="text-gray-400 text-xs">{quote.phone}</div>
-                        </div>
-                      </td>
-                      <td className="py-4">
-                        <div className="text-gray-300 text-sm font-medium">{quote.service}</div>
-                        <div className="text-gray-400 text-xs">{quote.details}</div>
-                      </td>
-                      <td className="py-4">
-                        <div className="text-neon-400 font-bold text-lg">{quote.value}</div>
-                      </td>
-                      <td className="py-4">
-                        <Badge className={`${quote.badge} text-white border-0`}>
-                          {quote.status}
-                        </Badge>
-                      </td>
-                      <td className="py-4 text-gray-400 text-sm">{quote.date}</td>
-                      <td className="py-4">
-                        <div className="flex space-x-2">
-                          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
-                            <Mail className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
-                            <Phone className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                  <tr>
+                    <td colSpan={6} className="py-12">
+                      <div className="text-center text-gray-500">
+                        <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                        <h3 className="text-lg font-medium text-gray-400 mb-2">No quote requests yet</h3>
+                        <p className="text-sm">Quote submissions will appear here when clients use your calculators</p>
+                        <p className="text-xs mt-2">
+                          {userCalculators.length > 0 
+                            ? "Share your calculator embed codes to start receiving quotes"
+                            : "Create your first calculator to start collecting quote requests"
+                          }
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>

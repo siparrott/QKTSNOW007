@@ -44,14 +44,11 @@ export default function Register() {
 
   const onSubmit = async (data: RegisterForm) => {
     setIsLoading(true);
+    
     try {
-      // Direct fetch approach to bypass CORS issues
       const response = await fetch('/api/auth/register', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           fullName: data.fullName,
           email: data.email,
@@ -59,14 +56,9 @@ export default function Register() {
         }),
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'Registration failed');
-      }
-
       const result = await response.json();
-      
-      if (result && result.token) {
+
+      if (response.ok && result.token) {
         localStorage.setItem('auth_token', result.token);
         localStorage.setItem('user', JSON.stringify(result.user));
         
@@ -75,18 +67,14 @@ export default function Register() {
           description: "Welcome to QuoteKit. Let's set up your first calculator.",
         });
         
-        // Use wouter navigation for proper routing
-        setTimeout(() => {
-          setLocation('/dashboard');
-        }, 100);
+        setLocation('/dashboard');
       } else {
-        throw new Error('Registration succeeded but no token received');
+        throw new Error(result.error || 'Registration failed');
       }
     } catch (error: any) {
-      console.error('Registration failed:', error);
       toast({
         title: "Registration failed",
-        description: error.message || "Please try again with different details.",
+        description: error.message || "Please check your details and try again.",
         variant: "destructive",
       });
     } finally {

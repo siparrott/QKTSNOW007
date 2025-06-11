@@ -82,13 +82,20 @@ const defaultConfig = {
 interface UserCalculator {
   id: string;
   name: string;
-  description: string;
-  embedUrl: string;
-  adminUrl: string;
-  calculatorId: number;
+  slug: string;
+  embed_url: string;
+  admin_url: string;
+  calculator_id: number;
   config: any;
-  customBranding: any;
-  isActive: boolean;
+  custom_branding: any;
+  is_active: boolean;
+  template_id: string;
+  layout_json: any;
+  logic_json: any;
+  style_json: any;
+  prompt_md: string;
+  created_at: string;
+  last_updated: string;
 }
 
 export default function Dashboard() {
@@ -140,7 +147,10 @@ export default function Dashboard() {
 
   const { data: userCalculators = [], isLoading: isLoadingCalculators } = useQuery<UserCalculator[]>({
     queryKey: ['/api/supabase/user-calculators', currentUser?.id],
-    queryFn: () => apiRequest('GET', `/api/supabase/user-calculators/${getActualUserId(currentUser?.id)}`),
+    queryFn: async () => {
+      const response = await fetch(`/api/supabase/user-calculators/${getActualUserId(currentUser?.id)}`);
+      return response.json();
+    },
     enabled: !!currentUser?.id
   });
 
@@ -150,16 +160,14 @@ export default function Dashboard() {
 
   const cloneCalculatorMutation = useMutation({
     mutationFn: async ({ templateId }: { templateId: string }) => {
-      return apiRequest(`/api/supabase/clone-calculator`, {
-        method: 'POST',
-        body: JSON.stringify({ 
-          userId: currentUser?.id, 
-          templateId 
-        })
+      return apiRequest('POST', '/api/supabase/clone-calculator', { 
+        userId: currentUser?.id, 
+        templateId 
       });
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/supabase/user-calculators', currentUser?.id] });
+      // Invalidate both the original user ID and the converted UUID
+      queryClient.invalidateQueries({ queryKey: ['/api/supabase/user-calculators'] });
       toast({
         title: "Calculator Cloned",
         description: "Your new calculator has been created successfully.",

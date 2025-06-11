@@ -590,6 +590,113 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* Calculator Selection Modal */}
+      {showCalculatorModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-midnight-800 rounded-2xl border border-midnight-700 w-full max-w-6xl max-h-[90vh] overflow-hidden">
+            {/* Modal Header */}
+            <div className="border-b border-midnight-700 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-bold text-white">Add Calculator</h2>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowCalculatorModal(false)}
+                  className="text-gray-400 hover:text-white"
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+              
+              {/* Search and Filter */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <input
+                    type="text"
+                    placeholder="Search calculators..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 bg-midnight-700 border border-midnight-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-500"
+                  />
+                </div>
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="px-4 py-2 bg-midnight-700 border border-midnight-600 rounded-lg text-white focus:outline-none focus:border-neon-500"
+                >
+                  {categories.map(category => (
+                    <option key={category} value={category}>{category}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Calculator Grid */}
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredCalculators.map(calculator => {
+                  const IconComponent = calculator.icon;
+                  return (
+                    <motion.div
+                      key={calculator.id}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="bg-midnight-700 rounded-xl border border-midnight-600 p-4 cursor-pointer hover:border-neon-500/50 transition-all"
+                      onClick={() => handleAddCalculator(calculator)}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-green-400 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <IconComponent className="h-5 w-5 text-black" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-white text-sm mb-1 truncate">
+                            {calculator.name}
+                          </h3>
+                          <p className="text-xs text-gray-400 mb-2">
+                            {calculator.category}
+                          </p>
+                          <Button
+                            size="sm"
+                            className="bg-neon-500 hover:bg-neon-600 text-black text-xs h-6 px-2"
+                            disabled={addCalculatorMutation.isPending}
+                          >
+                            {addCalculatorMutation.isPending ? "Adding..." : "Add"}
+                          </Button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+              
+              {filteredCalculators.length === 0 && (
+                <div className="text-center py-12">
+                  <Calculator className="h-12 w-12 text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-400">No calculators found matching your search.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="border-t border-midnight-700 p-6">
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-gray-400">
+                  {filteredCalculators.length} of {allCalculators.length} calculators
+                </p>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowCalculatorModal(false)}
+                  className="border-midnight-600 text-gray-300 hover:bg-midnight-600"
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

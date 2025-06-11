@@ -837,17 +837,23 @@ export default function Dashboard() {
                     }}
                     src={(() => {
                       // Extract the base calculator type from the user calculator slug
-                      // Remove temp IDs and timestamps to get the base calculator name
                       let baseSlug = selectedCalculator.slug;
                       
                       // Remove temp suffixes like -temp_123-1234567890
                       baseSlug = baseSlug.replace(/-temp_\d+-\d+$/, '');
                       
-                      // Find the matching calculator template
-                      const template = allCalculators.find((calc: any) => calc.slug === baseSlug);
-                      const targetSlug = template ? template.slug : baseSlug;
+                      // Map database slugs to actual route names
+                      const slugMapping: { [key: string]: string } = {
+                        'electrician-services': 'electrician',
+                        'boudoir-photography': 'boudoir-photography',
+                        'wedding-photography': 'wedding-photography',
+                        'portrait-photography': 'portrait-photography',
+                        'event-videography': 'event-videography',
+                        'home-renovation': 'home-renovation-new'
+                      };
                       
-                      return `/${targetSlug}-calculator?preview=true`;
+                      const actualSlug = slugMapping[baseSlug] || baseSlug;
+                      return `/${actualSlug}-calculator?preview=true`;
                     })()}
                     className="w-full h-full border-0"
                     title="Calculator Preview"

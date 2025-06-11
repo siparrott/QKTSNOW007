@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -48,6 +48,35 @@ interface PricingBreakdown {
 export default function ElectricianCalculator() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
+  const [customConfig, setCustomConfig] = useState<any>(null);
+
+  // Listen for configuration updates from parent dashboard
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === 'APPLY_CONFIG') {
+        setCustomConfig(event.data.config);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
+  // Dynamic styling based on custom configuration
+  const getStyles = () => {
+    if (!customConfig) return {};
+    
+    return {
+      '--primary-color': customConfig.brandColors?.primary || '#f59e0b',
+      '--secondary-color': customConfig.brandColors?.secondary || '#3b82f6',
+      '--accent-color': customConfig.brandColors?.accent || '#10b981',
+    } as React.CSSProperties;
+  };
+
+  const getCompanyName = () => {
+    return customConfig?.companyBranding?.companyName || 'Electrician Services';
+  };
+
   const [formData, setFormData] = useState<ElectricianFormData>({
     serviceType: "",
     propertyType: "",
@@ -279,13 +308,13 @@ export default function ElectricianCalculator() {
   ];
 
   return (
-    <div className="min-h-screen&">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-amber-50" style={getStyles()}>
       <QuoteKitHeader />
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-display text-gray-800 mb-2">
-            Electrical Services Quote Calculator
+            {getCompanyName()} Quote Calculator
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto font-body">
             Get an instant quote for your electrical project. Professional service, transparent pricing.
@@ -605,7 +634,13 @@ export default function ElectricianCalculator() {
                     <Button
                       onClick={() => setIsQuoteLocked(true)}
                       disabled={!formData.contactInfo.email}
-                      className="bg-green-500 hover:bg-green-600 text-white px-8"
+                      className="text-white px-8"
+                      style={{
+                        backgroundColor: customConfig?.brandColors?.primary || '#10b981',
+                        '&:hover': {
+                          backgroundColor: customConfig?.brandColors?.secondary || '#059669'
+                        }
+                      } as React.CSSProperties}
                     >
                       Get Quote
                     </Button>

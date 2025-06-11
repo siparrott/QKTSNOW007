@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Camera, Dumbbell, Home, Calendar, Scale, Car, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import quoteKitsLogo from "@assets/ChatGPT Image Jun 11, 2025, 11_57_41 AM_1749649530025.png";
+import worksWithEverythingImage from "@assets/ChatGPT Image Jun 11, 2025, 04_37_02 PM_1749652635835.png";
 
 export default function NichesGrid() {
   const niches = [
@@ -83,17 +83,11 @@ export default function NichesGrid() {
           viewport={{ once: true }}
         >
           <div className="mb-8">
-            <h3 className="text-2xl md:text-3xl font-bold text-neon-400 mb-6">
-              🚀 After: From Ghosted to Booked
-            </h3>
-            <p className="text-xl text-gray-300 mb-8">
-              With QuoteKit.ai, your site delivers exactly what they want
-            </p>
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-4xl mx-auto">
               <img 
-                src={quoteKitsLogo}
-                alt="QuoteKits - AI-powered quote calculators"
-                className="w-full h-auto"
+                src={worksWithEverythingImage}
+                alt="Works With Everything - WordPress, Wix, Web, and more integrations"
+                className="w-full h-auto rounded-lg"
               />
             </div>
           </div>

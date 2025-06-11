@@ -1,9 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
+import postgres from 'postgres';
 
-// Initialize Supabase client
+// For server-side operations, use direct PostgreSQL connection
+const sql = postgres(process.env.DATABASE_URL!);
+
+// Initialize Supabase client for browser operations
 export const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_ANON_KEY!
+  process.env.SUPABASE_URL || 'https://placeholder.supabase.co',
+  process.env.SUPABASE_ANON_KEY || 'placeholder'
 );
 
 // Database types for calculator templates
@@ -42,47 +46,42 @@ export interface UserCalculator {
 export async function cloneCalculator(userId: string, templateId: string): Promise<UserCalculator | null> {
   try {
     // Get the template
-    const { data: template, error: templateError } = await supabase
-      .from('calculator_templates')
-      .select('*')
-      .eq('id', templateId)
-      .single();
+    const templates = await sql`
+      SELECT * FROM calculator_templates 
+      WHERE id = ${templateId}
+      LIMIT 1
+    `;
 
-    if (templateError || !template) {
-      console.error('Error fetching template:', templateError);
+    if (!templates.length) {
+      console.error('Template not found:', templateId);
       return null;
     }
+
+    const template = templates[0];
 
     // Generate unique slug for user calculator
     const uniqueSlug = `${template.slug}-${userId.slice(0, 8)}-${Date.now()}`;
     const embedUrl = `${process.env.REPL_URL || 'https://localhost:5000'}/embed/${uniqueSlug}`;
 
     // Create user calculator clone
-    const { data: userCalculator, error: cloneError } = await supabase
-      .from('user_calculators')
-      .insert({
-        user_id: userId,
-        template_id: template.id,
-        slug: uniqueSlug,
-        name: template.name,
-        layout_json: template.layout_json,
-        logic_json: template.logic_json,
-        style_json: template.style_json,
-        prompt_md: template.prompt_md,
-        is_active: true,
-        embed_url: embedUrl,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      })
-      .select()
-      .single();
+    const userCalculators = await sql`
+      INSERT INTO user_calculators (
+        user_id, template_id, slug, name, layout_json, logic_json, 
+        style_json, prompt_md, is_active, embed_url
+      ) VALUES (
+        ${userId}, ${template.id}, ${uniqueSlug}, ${template.name}, 
+        ${template.layout_json}, ${template.logic_json}, 
+        ${template.style_json}, ${template.prompt_md}, 
+        true, ${embedUrl}
+      ) RETURNING *
+    `;
 
-    if (cloneError) {
-      console.error('Error cloning calculator:', cloneError);
+    if (!userCalculators.length) {
+      console.error('Error cloning calculator');
       return null;
     }
 
-    return userCalculator;
+    return userCalculators[0] as UserCalculator;
   } catch (error) {
     console.error('Error in cloneCalculator:', error);
     return null;
@@ -92,20 +91,14 @@ export async function cloneCalculator(userId: string, templateId: string): Promi
 // Get user's calculators
 export async function getUserCalculators(userId: string): Promise<UserCalculator[]> {
   try {
-    const { data, error } = await supabase
-      .from('user_calculators')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching user calculators:', error);
-      return [];
-    }
-
-    return data || [];
+    const data = await sql`
+      SELECT * FROM user_calculators 
+      WHERE user_id = ${userId}
+      ORDER BY created_at DESC
+    `;
+    return data as UserCalculator[];
   } catch (error) {
-    console.error('Error in getUserCalculators:', error);
+    console.error('Error fetching user calculators:', error);
     return [];
   }
 }

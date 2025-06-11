@@ -3,6 +3,7 @@ import { Camera, Dumbbell, Home, Calendar, Scale, Car, ArrowRight } from "lucide
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import worksWithEverythingImage from "@assets/ChatGPT Image Jun 11, 2025, 04_37_02 PM_1749652635835.png";
+import quoteKitsLogo from "@assets/ChatGPT Image Jun 11, 2025, 11_57_41 AM_1749652762359.png";
 
 export default function NichesGrid() {
   const niches = [
@@ -83,6 +84,16 @@ export default function NichesGrid() {
           viewport={{ once: true }}
         >
           <div className="mb-8">
+            {/* QuoteKits Logo */}
+            <div className="max-w-lg mx-auto mb-8">
+              <img 
+                src={quoteKitsLogo}
+                alt="QuoteKits - AI-powered quote calculators"
+                className="w-full h-auto"
+              />
+            </div>
+            
+            {/* Works With Everything Integration Image */}
             <div className="max-w-4xl mx-auto">
               <img 
                 src={worksWithEverythingImage}

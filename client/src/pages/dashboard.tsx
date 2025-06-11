@@ -50,7 +50,8 @@ import {
   Dumbbell,
   Target,
   Building,
-  Crown
+  Crown,
+  DollarSign
 } from "lucide-react";
 
 interface User {
@@ -1358,10 +1359,49 @@ export default function Dashboard() {
                     Cancel
                   </Button>
                   <Button
+                    onClick={() => {
+                      // Create duplicate calculator instance
+                      if (selectedCalculator) {
+                        const duplicatedConfig = {
+                          ...customConfig,
+                          instanceId: `calc-${Date.now()}-copy`,
+                          text: {
+                            ...customConfig.text,
+                            headline: `${customConfig.text.headline} (Copy)`
+                          }
+                        };
+                        
+                        const newCalculator = {
+                          id: duplicatedConfig.instanceId,
+                          embedId: `qk-${duplicatedConfig.calculatorId}-${duplicatedConfig.instanceId}`,
+                          embedUrl: `https://quotekit.ai/embed/${duplicatedConfig.instanceId}`,
+                          adminUrl: `https://quotekit.ai/admin/${duplicatedConfig.instanceId}`,
+                          calculatorId: selectedCalculator.calculatorId,
+                          config: duplicatedConfig,
+                          customBranding: duplicatedConfig.branding,
+                          isActive: true
+                        };
+                        
+                        setDemoCalculators(prev => [...prev, newCalculator]);
+                        
+                        toast({
+                          title: "Calculator Duplicated!",
+                          description: "A new personalized instance has been created.",
+                        });
+                      }
+                    }}
+                    variant="outline"
+                    className="border-neon-500 text-neon-500 hover:bg-neon-500/20 mr-2"
+                  >
+                    <Copy className="h-4 w-4 mr-2" />
+                    Duplicate Instance
+                  </Button>
+                  <Button
                     onClick={saveCustomization}
                     className="bg-neon-500 hover:bg-neon-600 text-black"
                   >
-                    Save Changes
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Instance
                   </Button>
                 </div>
               </div>

@@ -13,6 +13,9 @@ export const users = pgTable("users", {
   quotesLimit: integer("quotes_limit").default(5), // based on plan
   subscriptionStartDate: timestamp("subscription_start_date"),
   lastQuoteReset: timestamp("last_quote_reset").defaultNow(),
+  twoFactorEnabled: boolean("two_factor_enabled").default(false),
+  twoFactorSecret: text("two_factor_secret"),
+  backupCodes: jsonb("backup_codes"), // array of one-time backup codes
   createdAt: timestamp("created_at").defaultNow(),
 });
 

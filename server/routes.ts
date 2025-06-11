@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { authService } from "./auth";
 import { stripeService } from "./stripe";
 import { emailService } from "./email";
+import { TwoFactorAuth } from "./two-factor";
 import { processCarWashRequest, processChauffeurRequest, processAirportTransferRequest, processVanRentalRequest, processBoatCharterRequest, processMovingServicesRequest, processMotorcycleRepairRequest, processDrivingInstructorRequest, processWebDesignerRequest, processMarketingConsultantRequest, processSEOAgencyRequest, processVideoEditorRequest, processCopywriterRequest, processLegalAdvisorRequest, processTaxPreparerRequest, processTranslationServicesRequest, processCleaningServicesRequest, processPrivateSchoolRequest } from "./ai";
 import { processDentistRequest } from "./dental-ai";
 import { processChildcareRequest } from "./childcare-ai";

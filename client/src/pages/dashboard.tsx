@@ -86,6 +86,14 @@ export default function Dashboard() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [userCalculators, setUserCalculators] = useState<UserCalculator[]>([]);
   const [customConfig, setCustomConfig] = useState<any>({});
+  const [previewKey, setPreviewKey] = useState(0);
+
+  // Force preview refresh when config changes
+  useEffect(() => {
+    if (customConfig && Object.keys(customConfig).length > 0) {
+      setPreviewKey(prev => prev + 1);
+    }
+  }, [customConfig]);
 
   // Available calculator templates - matching the actual files we have
   const allCalculators = [
@@ -1145,12 +1153,12 @@ export default function Dashboard() {
                       <p className="text-xs text-gray-400 mt-1">Scroll to view the full calculator</p>
                     </div>
                     <div className="flex-1 bg-gray-100 relative">
-                      <div className="absolute inset-0 overflow-y-auto">
-                        <div className="min-h-full">
+                      <div className="absolute inset-0 overflow-y-auto overflow-x-hidden">
+                        <div className="min-h-full p-4">
                           <CalculatorPreview 
                             slug={selectedCalculator.slug} 
                             customConfig={customConfig}
-                            className="w-full"
+                            className="w-full h-auto"
                           />
                         </div>
                       </div>

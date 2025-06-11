@@ -69,6 +69,8 @@ interface CalculatorPreviewProps {
 }
 
 export default function CalculatorPreview({ slug, customConfig, className = "" }: CalculatorPreviewProps) {
+  console.log('Applying config to', slug, 'calculator:', customConfig);
+  
   const CalculatorComponent = calculatorComponents[slug];
 
   if (!CalculatorComponent) {
@@ -82,8 +84,20 @@ export default function CalculatorPreview({ slug, customConfig, className = "" }
     );
   }
 
+  // Apply custom styling from config
+  const previewStyles = {
+    fontFamily: customConfig?.styling?.fontFamily || 'Inter',
+    borderRadius: customConfig?.styling?.borderRadius || '0.5rem',
+    '--primary-color': customConfig?.brandColors?.primary || '#06D6A0',
+    '--secondary-color': customConfig?.brandColors?.secondary || '#2563eb',
+    '--accent-color': customConfig?.brandColors?.accent || '#f59e0b',
+  } as React.CSSProperties;
+
   return (
-    <div className={`bg-white rounded-lg border border-gray-200 overflow-hidden ${className}`}>
+    <div 
+      className={`bg-white rounded-lg border border-gray-200 overflow-hidden ${className}`}
+      style={previewStyles}
+    >
       <Suspense fallback={
         <div className="p-6 text-center">
           <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-2" />

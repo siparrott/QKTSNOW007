@@ -389,13 +389,16 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
             />
           )}
           <h1 className="text-4xl font-serif text-stone-800 mb-2">
-            {customConfig?.companyBranding?.companyName ? 
+            {customConfig?.textCustomization?.headline || 
+             (customConfig?.companyBranding?.companyName ? 
               `${customConfig.companyBranding.companyName} - Wedding Photography` : 
-              "Wedding Photography Quote Calculator"
+              "Wedding Photography Quote Calculator")
             }
           </h1>
           <p className="text-stone-600 max-w-2xl mx-auto font-light">
-            Create beautiful memories with professional wedding photography. Get your personalized quote for your special day.
+            {customConfig?.textCustomization?.description || 
+             "Create beautiful memories with professional wedding photography. Get your personalized quote for your special day."
+            }
           </p>
         </div>
 

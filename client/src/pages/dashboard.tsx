@@ -839,7 +839,7 @@ export default function Dashboard() {
         {/* Customize Calculator Modal */}
         {showCustomizeModal && selectedCalculator && (
           <Dialog open={showCustomizeModal} onOpenChange={setShowCustomizeModal}>
-            <DialogContent className="bg-midnight-800 border-midnight-700 text-white max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="bg-midnight-800 border-midnight-700 text-white max-w-7xl max-h-[90vh] overflow-hidden">
               <DialogHeader>
                 <DialogTitle>Customize Calculator</DialogTitle>
                 <DialogDescription className="text-gray-400">
@@ -847,7 +847,9 @@ export default function Dashboard() {
                 </DialogDescription>
               </DialogHeader>
               
-              <div className="space-y-6">
+              <div className="flex gap-6 h-[70vh]">
+                {/* Left Panel - Customization Options */}
+                <div className="flex-1 overflow-y-auto pr-4 space-y-6">
                 {/* Branding Section */}
                 <div className="space-y-4">
                   <h3 className="text-lg font-medium text-white">Branding</h3>
@@ -1126,11 +1128,14 @@ export default function Dashboard() {
                     />
                   </div>
                 </div>
+                </div>
 
-                {/* Live Preview */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-white">Live Preview</h3>
-                  <div className="bg-white border rounded-lg p-6 min-h-[400px]">
+                {/* Right Panel - Live Preview */}
+                <div className="w-1/2 overflow-y-auto pl-4">
+                  <div className="sticky top-0 bg-midnight-800 pb-4 mb-4 border-b border-midnight-700">
+                    <h3 className="text-lg font-medium text-white">Live Preview</h3>
+                  </div>
+                  <div className="bg-white border rounded-lg p-6 min-h-[500px]">
                     {/* Calculator Header */}
                     <div className="text-center mb-6">
                       <h2 className="text-2xl font-bold mb-2" style={{ color: customConfig?.primaryColor || "#06D6A0" }}>

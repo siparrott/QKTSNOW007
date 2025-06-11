@@ -11,6 +11,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Link, useLocation } from "wouter";
 import { getCurrentUser, getCurrentSession, logout } from "@/lib/supabase";
 import type { CalculatorTemplate, UserCalculator as SupabaseUserCalculator } from "@shared/supabase";
+import { getCalculatorConfig, generateCustomizationFields } from "@/lib/calculator-config-parser";
 import { 
   Settings, 
   BarChart3, 
@@ -484,7 +485,12 @@ export default function Dashboard() {
 
   const customizeCalculator = (calc: UserCalculator) => {
     setSelectedCalculator(calc);
-    // Merge existing config with default values to ensure all properties exist
+    
+    // Get the calculator's specific configuration
+    const calculatorConfig = getCalculatorConfig(calc.slug);
+    const customizationFields = calculatorConfig ? generateCustomizationFields(calculatorConfig) : null;
+    
+    // Merge existing config with default values and calculator-specific fields
     const mergedConfig = {
       ...defaultConfig,
       ...(calc.config || {}),
@@ -497,6 +503,20 @@ export default function Dashboard() {
         ...(calc.config?.companyBranding || {})
       }
     };
+
+    // Add calculator-specific configuration
+    if (customizationFields) {
+      mergedConfig.calculatorConfig = calculatorConfig;
+      mergedConfig.customizationFields = customizationFields;
+      
+      // Initialize field values from calculator configuration
+      customizationFields.fields.forEach(field => {
+        if (field.defaultValue !== undefined && !mergedConfig[field.id]) {
+          mergedConfig[field.id] = field.defaultValue;
+        }
+      });
+    }
+
     setCustomConfig(mergedConfig);
     setShowCustomizeModal(true);
   };
@@ -1173,6 +1193,167 @@ export default function Dashboard() {
 
                   {/* Services Tab */}
                   {customizationTab === 'services' && (
+                    <>
+                      <div>
+                        <h3 className="text-lg font-semibold text-white mb-3">Calculator Configuration</h3>
+                        
+                        {customConfig?.customizationFields ? (
+                          <div className="space-y-6">
+                            {/* Service Type Configuration */}
+                            {customConfig.customizationFields.services.map((field: any) => (
+                              <div key={field.id} className="bg-midnight-900 p-4 rounded-lg">
+                                <h4 className="text-md font-medium text-white mb-3">{field.label}</h4>
+                                <p className="text-gray-400 text-sm mb-4">{field.description}</p>
+                                
+                                <div className="space-y-3">
+                                  {field.options?.map((option: any, index: number) => (
+                                    <div key={option.value} className="border border-midnight-600 p-3 rounded">
+                                      <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                          <label className="block text-xs text-gray-400 mb-1">Option Label</label>
+                                          <input
+                                            type="text"
+                                            value={customConfig?.fieldOverrides?.[field.id]?.[option.value]?.label || option.label}
+                                            onChange={(e) => setCustomConfig((prev: any) => ({
+                                              ...prev,
+                                              fieldOverrides: {
+                                                ...prev.fieldOverrides,
+                                                [field.id]: {
+                                                  ...prev.fieldOverrides?.[field.id],
+                                                  [option.value]: { 
+                                                    ...prev.fieldOverrides?.[field.id]?.[option.value], 
+                                                    label: e.target.value 
+                                                  }
+                                                }
+                                              }
+                                            }))}
+                                            className="w-full px-2 py-1 bg-midnight-700 border border-midnight-600 rounded text-white text-sm"
+                                          />
+                                        </div>
+                                        <div>
+                                          <label className="block text-xs text-gray-400 mb-1">
+                                            {option.price ? 'Price Per Unit' : option.percentage ? 'Percentage' : option.multiplier ? 'Multiplier' : 'Value'}
+                                          </label>
+                                          <input
+                                            type="number"
+                                            step="0.01"
+                                            value={customConfig?.fieldOverrides?.[field.id]?.[option.value]?.price || 
+                                                   customConfig?.fieldOverrides?.[field.id]?.[option.value]?.percentage || 
+                                                   customConfig?.fieldOverrides?.[field.id]?.[option.value]?.multiplier || 
+                                                   option.price || option.percentage || option.multiplier || 0}
+                                            onChange={(e) => {
+                                              const valueKey = option.price ? 'price' : option.percentage ? 'percentage' : 'multiplier';
+                                              setCustomConfig((prev: any) => ({
+                                                ...prev,
+                                                fieldOverrides: {
+                                                  ...prev.fieldOverrides,
+                                                  [field.id]: {
+                                                    ...prev.fieldOverrides?.[field.id],
+                                                    [option.value]: { 
+                                                      ...prev.fieldOverrides?.[field.id]?.[option.value], 
+                                                      [valueKey]: parseFloat(e.target.value) || 0
+                                                    }
+                                                  }
+                                                }
+                                              }));
+                                            }}
+                                            className="w-full px-2 py-1 bg-midnight-700 border border-midnight-600 rounded text-white text-sm"
+                                          />
+                                        </div>
+                                      </div>
+                                      {option.description && (
+                                        <div className="mt-2">
+                                          <label className="block text-xs text-gray-400 mb-1">Description</label>
+                                          <textarea
+                                            value={customConfig?.fieldOverrides?.[field.id]?.[option.value]?.description || option.description}
+                                            onChange={(e) => setCustomConfig((prev: any) => ({
+                                              ...prev,
+                                              fieldOverrides: {
+                                                ...prev.fieldOverrides,
+                                                [field.id]: {
+                                                  ...prev.fieldOverrides?.[field.id],
+                                                  [option.value]: { 
+                                                    ...prev.fieldOverrides?.[field.id]?.[option.value], 
+                                                    description: e.target.value 
+                                                  }
+                                                }
+                                              }
+                                            }))}
+                                            className="w-full px-2 py-1 bg-midnight-700 border border-midnight-600 rounded text-white text-sm h-16 resize-none"
+                                          />
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            ))}
+                            
+                            {/* All Calculator Fields Configuration */}
+                            <div className="bg-midnight-900 p-4 rounded-lg">
+                              <h4 className="text-md font-medium text-white mb-3">All Calculator Fields</h4>
+                              <div className="space-y-4">
+                                {customConfig.customizationFields.fields.map((field: any) => (
+                                  <div key={field.id} className="border border-midnight-600 p-3 rounded">
+                                    <div className="grid grid-cols-2 gap-3 mb-2">
+                                      <div>
+                                        <label className="block text-xs text-gray-400 mb-1">Field Label</label>
+                                        <input
+                                          type="text"
+                                          value={customConfig?.fieldLabels?.[field.id] || field.label}
+                                          onChange={(e) => setCustomConfig((prev: any) => ({
+                                            ...prev,
+                                            fieldLabels: {
+                                              ...prev.fieldLabels,
+                                              [field.id]: e.target.value
+                                            }
+                                          }))}
+                                          className="w-full px-2 py-1 bg-midnight-700 border border-midnight-600 rounded text-white text-sm"
+                                        />
+                                      </div>
+                                      <div>
+                                        <label className="block text-xs text-gray-400 mb-1">Field Type</label>
+                                        <input
+                                          type="text"
+                                          value={field.type}
+                                          disabled
+                                          className="w-full px-2 py-1 bg-midnight-800 border border-midnight-600 rounded text-gray-500 text-sm"
+                                        />
+                                      </div>
+                                    </div>
+                                    {field.description && (
+                                      <div>
+                                        <label className="block text-xs text-gray-400 mb-1">Field Description</label>
+                                        <textarea
+                                          value={customConfig?.fieldDescriptions?.[field.id] || field.description}
+                                          onChange={(e) => setCustomConfig((prev: any) => ({
+                                            ...prev,
+                                            fieldDescriptions: {
+                                              ...prev.fieldDescriptions,
+                                              [field.id]: e.target.value
+                                            }
+                                          }))}
+                                          className="w-full px-2 py-1 bg-midnight-700 border border-midnight-600 rounded text-white text-sm h-12 resize-none"
+                                        />
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="bg-midnight-900 p-6 rounded-lg text-center">
+                            <p className="text-gray-400">No specific configuration available for this calculator type.</p>
+                            <p className="text-gray-500 text-sm mt-2">Please use the Content and Branding tabs for customization.</p>
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
+
+                  {/* Legacy Services (for fallback) */}
+                  {customizationTab === 'legacy-services' && (
                     <>
                       <div>
                         <h3 className="text-lg font-semibold text-white mb-3">Service Configuration</h3>

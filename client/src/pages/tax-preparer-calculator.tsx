@@ -82,7 +82,13 @@ const addOnOptions = [
   { value: "rush-filing", label: "Rush Filing (48hr)", cost: 75, description: "Expedited tax preparation", icon: Zap }
 ];
 
-export default function TaxPreparerCalculator() {
+interface TaxPreparerCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function TaxPreparerCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: TaxPreparerCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     filingType: "",
@@ -563,7 +569,7 @@ export default function TaxPreparerCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">

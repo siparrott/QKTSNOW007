@@ -83,7 +83,13 @@ const addOnOptions = [
   { value: "in-person", label: "In-person Meeting", cost: 120, description: "Face-to-face consultation" }
 ];
 
-export default function LegalAdvisorCalculator() {
+interface LegalAdvisorCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function LegalAdvisorCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: LegalAdvisorCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     serviceType: "",
@@ -459,7 +465,7 @@ export default function LegalAdvisorCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">

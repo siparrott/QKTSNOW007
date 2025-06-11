@@ -117,7 +117,13 @@ const paymentPlanOptions = [
   { value: "monthly", label: "Monthly", fee: 0.05, icon: Calendar, description: "Monthly payment plan" }
 ];
 
-export default function PrivateSchoolCalculator() {
+interface PrivateSchoolCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function PrivateSchoolCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: PrivateSchoolCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     gradeLevel: "",
@@ -658,7 +664,7 @@ export default function PrivateSchoolCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">

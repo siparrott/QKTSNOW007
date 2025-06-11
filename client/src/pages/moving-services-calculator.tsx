@@ -57,7 +57,13 @@ interface PricingBreakdown {
   estimatedHours: number;
 }
 
-export default function MovingServicesCalculator() {
+interface MovingServicesCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function MovingServicesCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: MovingServicesCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [quoteGenerated, setQuoteGenerated] = useState(false);

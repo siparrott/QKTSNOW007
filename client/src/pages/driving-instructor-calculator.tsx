@@ -56,7 +56,13 @@ interface PricingBreakdown {
   quoteExpiry: Date;
 }
 
-export default function DrivingInstructorCalculator() {
+interface DrivingInstructorCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function DrivingInstructorCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: DrivingInstructorCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [quoteGenerated, setQuoteGenerated] = useState(false);

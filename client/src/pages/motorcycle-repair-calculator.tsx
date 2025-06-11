@@ -53,7 +53,13 @@ interface PricingBreakdown {
   quoteExpiry: Date;
 }
 
-export default function MotorcycleRepairCalculator() {
+interface MotorcycleRepairCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function MotorcycleRepairCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: MotorcycleRepairCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [quoteGenerated, setQuoteGenerated] = useState(false);
@@ -327,7 +333,7 @@ export default function MotorcycleRepairCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       
       <div className="container mx-auto px-4 py-8">
         {/* Hero Section */}

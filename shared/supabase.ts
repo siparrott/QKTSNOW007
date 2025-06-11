@@ -6,9 +6,41 @@ const sql = postgres(process.env.DATABASE_URL!);
 
 // Initialize Supabase client for browser operations
 export const supabase = createClient(
-  process.env.SUPABASE_URL || 'https://placeholder.supabase.co',
-  process.env.SUPABASE_ANON_KEY || 'placeholder'
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_ANON_KEY!
 );
+
+// Authentication functions
+export async function signUpWithEmail(email: string, password: string) {
+  const { data, error } = await supabase.auth.signUp({ 
+    email, 
+    password,
+    options: {
+      emailRedirectTo: `${window.location.origin}/dashboard`
+    }
+  });
+  return { user: data.user, error };
+}
+
+export async function loginWithEmail(email: string, password: string) {
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  return { user: data.user, session: data.session, error };
+}
+
+export async function logout() {
+  const { error } = await supabase.auth.signOut();
+  return { error };
+}
+
+export async function getCurrentUser() {
+  const { data: { user }, error } = await supabase.auth.getUser();
+  return { user, error };
+}
+
+export async function getCurrentSession() {
+  const { data: { session }, error } = await supabase.auth.getSession();
+  return { session, error };
+}
 
 // Database types for calculator templates
 export interface CalculatorTemplate {

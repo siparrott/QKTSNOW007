@@ -10,7 +10,7 @@ import { z } from "zod";
 import { Link, useLocation } from "wouter";
 import { QuoteKitHeader } from "@/components/calculator-header";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { loginWithEmail } from "@/lib/supabase";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 
 const loginSchema = z.object({
@@ -37,14 +37,15 @@ export default function Login() {
   const onSubmit = async (data: LoginForm) => {
     setIsLoading(true);
     try {
-      const response = await apiRequest('/api/auth/login', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
+      const { user, session, error } = await loginWithEmail(data.email, data.password);
 
-      if (response.token) {
-        localStorage.setItem('auth_token', response.token);
-        localStorage.setItem('user', JSON.stringify(response.user));
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      if (user && session) {
+        localStorage.setItem('supabase_session', JSON.stringify(session));
+        localStorage.setItem('user', JSON.stringify(user));
         
         toast({
           title: "Welcome back!",

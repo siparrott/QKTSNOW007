@@ -113,6 +113,37 @@ export default function Dashboard() {
   const [iframeRef, setIframeRef] = useState<HTMLIFrameElement | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [customizationTab, setCustomizationTab] = useState("branding");
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoUrl, setLogoUrl] = useState("");
+  const [logoSize, setLogoSize] = useState(100);
+
+  // Logo upload handler
+  const handleLogoUpload = async (file: File) => {
+    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+      toast({
+        title: "File too large",
+        description: "Please select an image under 5MB",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const logoDataUrl = e.target?.result as string;
+      setLogoUrl(logoDataUrl);
+      setCustomConfig((prev: any) => ({
+        ...prev,
+        companyBranding: { 
+          ...prev.companyBranding, 
+          logoUrl: logoDataUrl,
+          logoSize: logoSize 
+        }
+      }));
+    };
+    reader.readAsDataURL(file);
+  };
 
   // ALL HOOKS AT TOP LEVEL BEFORE ANY CONDITIONAL LOGIC
   // Helper function to generate UUID for temporary users (matching backend logic)
@@ -726,9 +757,9 @@ export default function Dashboard() {
         {/* Customize Calculator Modal */}
         {showCustomizeModal && selectedCalculator && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-midnight-800 rounded-lg w-full max-w-6xl h-[90vh] flex">
+            <div className="bg-midnight-800 rounded-lg w-full max-w-7xl h-[95vh] flex">
               {/* Left Panel - Customization Options */}
-              <div className="w-1/3 border-r border-midnight-600 p-6 overflow-y-auto">
+              <div className="w-2/5 border-r border-midnight-600 p-6 overflow-y-auto">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-white">Customize Calculator</h2>
                   <button
@@ -739,70 +770,477 @@ export default function Dashboard() {
                   </button>
                 </div>
 
+                {/* Customization Tabs */}
+                <div className="flex space-x-1 mb-6 bg-midnight-900 p-1 rounded-lg">
+                  {[
+                    { id: 'branding', label: 'Branding', icon: Palette },
+                    { id: 'pricing', label: 'Pricing', icon: CreditCard },
+                    { id: 'content', label: 'Content', icon: Edit },
+                    { id: 'services', label: 'Services', icon: Settings }
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setCustomizationTab(tab.id)}
+                      className={`flex-1 flex items-center justify-center px-3 py-2 rounded text-sm font-medium transition-colors ${
+                        customizationTab === tab.id
+                          ? 'bg-neon-500 text-white'
+                          : 'text-gray-400 hover:text-white hover:bg-midnight-700'
+                      }`}
+                    >
+                      <tab.icon className="h-4 w-4 mr-1" />
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+
                 <div className="space-y-6">
-                  {/* Brand Colors */}
-                  <div>
-                    <h3 className="text-lg font-semibold text-white mb-3">Brand Colors</h3>
-                    <div className="space-y-3">
+                  {/* Branding Tab */}
+                  {customizationTab === 'branding' && (
+                    <>
+                      {/* Logo Upload */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Primary Color</label>
-                        <div className="flex items-center space-x-3">
-                          <input
-                            type="color"
-                            value={customConfig?.brandColors?.primary || "#10b981"}
-                            onChange={(e) => setCustomConfig((prev: any) => ({ 
-                              ...prev, 
-                              brandColors: { ...prev.brandColors, primary: e.target.value },
-                              primaryColor: e.target.value 
-                            }))}
-                            className="w-12 h-12 rounded border border-midnight-600"
-                          />
-                          <input
-                            type="text"
-                            value={customConfig?.brandColors?.primary || "#10b981"}
-                            onChange={(e) => setCustomConfig((prev: any) => ({ 
-                              ...prev, 
-                              brandColors: { ...prev.brandColors, primary: e.target.value },
-                              primaryColor: e.target.value 
-                            }))}
-                            className="flex-1 px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
-                          />
+                        <h3 className="text-lg font-semibold text-white mb-3">Logo & Branding</h3>
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">Company Logo</label>
+                            <div className="flex items-center space-x-4">
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    setLogoFile(file);
+                                    handleLogoUpload(file);
+                                  }
+                                }}
+                                className="hidden"
+                                id="logo-upload"
+                              />
+                              <label
+                                htmlFor="logo-upload"
+                                className="px-4 py-2 bg-neon-500 hover:bg-neon-600 text-white rounded cursor-pointer flex items-center"
+                              >
+                                <Camera className="h-4 w-4 mr-2" />
+                                Upload Logo
+                              </label>
+                              {logoUrl && (
+                                <div className="flex items-center space-x-2">
+                                  <img 
+                                    src={logoUrl} 
+                                    alt="Logo preview" 
+                                    className="h-12 w-12 object-contain border border-midnight-600 rounded"
+                                    style={{ width: `${logoSize}px`, height: 'auto' }}
+                                  />
+                                  <Button
+                                    onClick={() => {
+                                      setLogoUrl("");
+                                      setCustomConfig((prev: any) => ({
+                                        ...prev,
+                                        companyBranding: { ...prev.companyBranding, logoUrl: "" }
+                                      }));
+                                    }}
+                                    variant="outline"
+                                    size="sm"
+                                    className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                                  >
+                                    Remove
+                                  </Button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          
+                          {logoUrl && (
+                            <div>
+                              <label className="block text-sm font-medium text-gray-300 mb-2">Logo Size (px)</label>
+                              <input
+                                type="range"
+                                min="50"
+                                max="300"
+                                value={logoSize}
+                                onChange={(e) => {
+                                  const size = parseInt(e.target.value);
+                                  setLogoSize(size);
+                                  setCustomConfig((prev: any) => ({
+                                    ...prev,
+                                    companyBranding: { ...prev.companyBranding, logoSize: size }
+                                  }));
+                                }}
+                                className="w-full"
+                              />
+                              <div className="text-xs text-gray-400 mt-1">{logoSize}px</div>
+                            </div>
+                          )}
                         </div>
                       </div>
-                      
+
+                      {/* Brand Colors */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Secondary Color</label>
-                        <div className="flex items-center space-x-3">
-                          <input
-                            type="color"
-                            value={customConfig?.brandColors?.secondary || "#1f2937"}
-                            onChange={(e) => setCustomConfig((prev: any) => ({ 
-                              ...prev, 
-                              brandColors: { ...prev.brandColors, secondary: e.target.value },
-                              secondaryColor: e.target.value 
-                            }))}
-                            className="w-12 h-12 rounded border border-midnight-600"
-                          />
-                          <input
-                            type="text"
-                            value={customConfig?.brandColors?.secondary || "#1f2937"}
-                            onChange={(e) => setCustomConfig((prev: any) => ({ 
-                              ...prev, 
-                              brandColors: { ...prev.brandColors, secondary: e.target.value },
-                              secondaryColor: e.target.value 
-                            }))}
-                            className="flex-1 px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
-                          />
+                        <h3 className="text-lg font-semibold text-white mb-3">Brand Colors</h3>
+                        <div className="space-y-3">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">Primary Color</label>
+                            <div className="flex items-center space-x-3">
+                              <input
+                                type="color"
+                                value={customConfig?.brandColors?.primary || "#10b981"}
+                                onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                  ...prev, 
+                                  brandColors: { ...prev.brandColors, primary: e.target.value },
+                                  primaryColor: e.target.value 
+                                }))}
+                                className="w-12 h-12 rounded border border-midnight-600"
+                              />
+                              <input
+                                type="text"
+                                value={customConfig?.brandColors?.primary || "#10b981"}
+                                onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                  ...prev, 
+                                  brandColors: { ...prev.brandColors, primary: e.target.value },
+                                  primaryColor: e.target.value 
+                                }))}
+                                className="flex-1 px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">Secondary Color</label>
+                            <div className="flex items-center space-x-3">
+                              <input
+                                type="color"
+                                value={customConfig?.brandColors?.secondary || "#1f2937"}
+                                onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                  ...prev, 
+                                  brandColors: { ...prev.brandColors, secondary: e.target.value },
+                                  secondaryColor: e.target.value 
+                                }))}
+                                className="w-12 h-12 rounded border border-midnight-600"
+                              />
+                              <input
+                                type="text"
+                                value={customConfig?.brandColors?.secondary || "#1f2937"}
+                                onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                  ...prev, 
+                                  brandColors: { ...prev.brandColors, secondary: e.target.value },
+                                  secondaryColor: e.target.value 
+                                }))}
+                                className="flex-1 px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">Accent Color</label>
+                            <div className="flex items-center space-x-3">
+                              <input
+                                type="color"
+                                value={customConfig?.brandColors?.accent || "#f59e0b"}
+                                onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                  ...prev, 
+                                  brandColors: { ...prev.brandColors, accent: e.target.value },
+                                  accentColor: e.target.value 
+                                }))}
+                                className="w-12 h-12 rounded border border-midnight-600"
+                              />
+                              <input
+                                type="text"
+                                value={customConfig?.brandColors?.accent || "#f59e0b"}
+                                onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                  ...prev, 
+                                  brandColors: { ...prev.brandColors, accent: e.target.value },
+                                  accentColor: e.target.value 
+                                }))}
+                                className="flex-1 px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                              />
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      
+
+                      {/* Company Information */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Accent Color</label>
-                        <div className="flex items-center space-x-3">
-                          <input
-                            type="color"
-                            value={customConfig?.brandColors?.accent || "#f59e0b"}
-                            onChange={(e) => setCustomConfig((prev: any) => ({ 
+                        <h3 className="text-lg font-semibold text-white mb-3">Company Information</h3>
+                        <div className="space-y-3">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">Company Name</label>
+                            <input
+                              type="text"
+                              value={customConfig?.companyBranding?.companyName || ""}
+                              onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                companyBranding: { ...prev.companyBranding, companyName: e.target.value },
+                                companyName: e.target.value 
+                              }))}
+                              placeholder="Enter your company name"
+                              className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white placeholder-gray-400"
+                            />
+                          </div>
+                          
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">Contact Information</label>
+                            <textarea
+                              value={customConfig?.companyBranding?.contactInfo || ""}
+                              onChange={(e) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                companyBranding: { ...prev.companyBranding, contactInfo: e.target.value },
+                                contactInfo: e.target.value 
+                              }))}
+                              placeholder="Phone, email, or website"
+                              className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white placeholder-gray-400 h-20 resize-none"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Pricing Tab */}
+                  {customizationTab === 'pricing' && (
+                    <>
+                      <div>
+                        <h3 className="text-lg font-semibold text-white mb-3">Base Pricing Configuration</h3>
+                        <div className="space-y-4">
+                          <div className="bg-midnight-900 p-4 rounded-lg">
+                            <h4 className="text-md font-medium text-white mb-3">Service Pricing</h4>
+                            <div className="space-y-3">
+                              {[
+                                { id: 'basic', label: 'Basic Service', defaultPrice: 50 },
+                                { id: 'standard', label: 'Standard Service', defaultPrice: 100 },
+                                { id: 'premium', label: 'Premium Service', defaultPrice: 200 },
+                                { id: 'enterprise', label: 'Enterprise Service', defaultPrice: 500 }
+                              ].map((service) => (
+                                <div key={service.id} className="flex items-center space-x-3">
+                                  <label className="w-32 text-sm text-gray-300">{service.label}</label>
+                                  <span className="text-gray-400">$</span>
+                                  <input
+                                    type="number"
+                                    value={customConfig?.pricing?.[service.id] || service.defaultPrice}
+                                    onChange={(e) => setCustomConfig((prev: any) => ({
+                                      ...prev,
+                                      pricing: { ...prev.pricing, [service.id]: parseInt(e.target.value) || 0 }
+                                    }))}
+                                    className="flex-1 px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                                    min="0"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="bg-midnight-900 p-4 rounded-lg">
+                            <h4 className="text-md font-medium text-white mb-3">Add-on Pricing</h4>
+                            <div className="space-y-3">
+                              {[
+                                { id: 'rush', label: 'Rush Delivery', defaultPrice: 25 },
+                                { id: 'consultation', label: 'Initial Consultation', defaultPrice: 75 },
+                                { id: 'followup', label: 'Follow-up Support', defaultPrice: 40 },
+                                { id: 'warranty', label: 'Extended Warranty', defaultPrice: 60 }
+                              ].map((addon) => (
+                                <div key={addon.id} className="flex items-center space-x-3">
+                                  <label className="w-32 text-sm text-gray-300">{addon.label}</label>
+                                  <span className="text-gray-400">$</span>
+                                  <input
+                                    type="number"
+                                    value={customConfig?.addons?.[addon.id] || addon.defaultPrice}
+                                    onChange={(e) => setCustomConfig((prev: any) => ({
+                                      ...prev,
+                                      addons: { ...prev.addons, [addon.id]: parseInt(e.target.value) || 0 }
+                                    }))}
+                                    className="flex-1 px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                                    min="0"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Content Tab */}
+                  {customizationTab === 'content' && (
+                    <>
+                      <div>
+                        <h3 className="text-lg font-semibold text-white mb-3">Content Customization</h3>
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">Calculator Title</label>
+                            <input
+                              type="text"
+                              value={customConfig?.content?.title || "Quote Calculator"}
+                              onChange={(e) => setCustomConfig((prev: any) => ({
+                                ...prev,
+                                content: { ...prev.content, title: e.target.value }
+                              }))}
+                              className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">Welcome Message</label>
+                            <textarea
+                              value={customConfig?.content?.welcomeMessage || "Get an instant quote for your project"}
+                              onChange={(e) => setCustomConfig((prev: any) => ({
+                                ...prev,
+                                content: { ...prev.content, welcomeMessage: e.target.value }
+                              }))}
+                              className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white h-20 resize-none"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">Call-to-Action Button Text</label>
+                            <input
+                              type="text"
+                              value={customConfig?.callToAction?.buttonText || "Get Quote"}
+                              onChange={(e) => setCustomConfig((prev: any) => ({
+                                ...prev,
+                                callToAction: { ...prev.callToAction, buttonText: e.target.value },
+                                ctaText: e.target.value
+                              }))}
+                              className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">Success Message</label>
+                            <textarea
+                              value={customConfig?.callToAction?.successMessage || "Thanks! We'll send your quote shortly."}
+                              onChange={(e) => setCustomConfig((prev: any) => ({
+                                ...prev,
+                                callToAction: { ...prev.callToAction, successMessage: e.target.value },
+                                successMessage: e.target.value
+                              }))}
+                              className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white h-20 resize-none"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Services Tab */}
+                  {customizationTab === 'services' && (
+                    <>
+                      <div>
+                        <h3 className="text-lg font-semibold text-white mb-3">Service Configuration</h3>
+                        <div className="space-y-4">
+                          <div className="bg-midnight-900 p-4 rounded-lg">
+                            <h4 className="text-md font-medium text-white mb-3">Available Services</h4>
+                            <div className="space-y-3">
+                              {[
+                                { id: 'service1', defaultName: 'Basic Package', category: 'Standard' },
+                                { id: 'service2', defaultName: 'Professional Package', category: 'Premium' },
+                                { id: 'service3', defaultName: 'Enterprise Package', category: 'Enterprise' },
+                                { id: 'service4', defaultName: 'Custom Solution', category: 'Custom' }
+                              ].map((service, index) => (
+                                <div key={service.id} className="border border-midnight-600 p-3 rounded">
+                                  <div className="grid grid-cols-2 gap-3">
+                                    <div>
+                                      <label className="block text-xs text-gray-400 mb-1">Service Name</label>
+                                      <input
+                                        type="text"
+                                        value={customConfig?.services?.[service.id]?.name || service.defaultName}
+                                        onChange={(e) => setCustomConfig((prev: any) => ({
+                                          ...prev,
+                                          services: {
+                                            ...prev.services,
+                                            [service.id]: { ...prev.services?.[service.id], name: e.target.value }
+                                          }
+                                        }))}
+                                        className="w-full px-2 py-1 bg-midnight-700 border border-midnight-600 rounded text-white text-sm"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-xs text-gray-400 mb-1">Category</label>
+                                      <input
+                                        type="text"
+                                        value={customConfig?.services?.[service.id]?.category || service.category}
+                                        onChange={(e) => setCustomConfig((prev: any) => ({
+                                          ...prev,
+                                          services: {
+                                            ...prev.services,
+                                            [service.id]: { ...prev.services?.[service.id], category: e.target.value }
+                                          }
+                                        }))}
+                                        className="w-full px-2 py-1 bg-midnight-700 border border-midnight-600 rounded text-white text-sm"
+                                      />
+                                    </div>
+                                  </div>
+                                  <div className="mt-2">
+                                    <label className="block text-xs text-gray-400 mb-1">Description</label>
+                                    <textarea
+                                      value={customConfig?.services?.[service.id]?.description || `${service.defaultName} with comprehensive features`}
+                                      onChange={(e) => setCustomConfig((prev: any) => ({
+                                        ...prev,
+                                        services: {
+                                          ...prev.services,
+                                          [service.id]: { ...prev.services?.[service.id], description: e.target.value }
+                                        }
+                                      }))}
+                                      className="w-full px-2 py-1 bg-midnight-700 border border-midnight-600 rounded text-white text-sm h-16 resize-none"
+                                    />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* Save Configuration Button */}
+                <div className="mt-6 pt-6 border-t border-midnight-600">
+                  <Button
+                    onClick={saveConfiguration}
+                    className="w-full bg-neon-500 hover:bg-neon-600 text-white"
+                    disabled={savingConfig}
+                  >
+                    {savingConfig ? 'Saving...' : 'Save Configuration'}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Right Panel - Live Preview */}
+              <div className="flex-1 p-6">
+                <div className="h-full">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-semibold text-white">Live Preview</h3>
+                    <Button
+                      onClick={() => {
+                        if (iframeRef) {
+                          sendConfigToIframe();
+                        }
+                      }}
+                      variant="outline"
+                      size="sm"
+                      className="border-neon-500 text-neon-500 hover:bg-neon-500 hover:text-white"
+                    >
+                      Refresh Preview
+                    </Button>
+                  </div>
+                  
+                  <div className="h-[calc(100%-4rem)] bg-midnight-900 rounded-lg overflow-hidden">
+                    <iframe
+                      ref={setIframeRef}
+                      src={selectedCalculator?.embed_url || `/${selectedCalculator?.slug || 'plastic-surgery-calculator'}`}
+                      className="w-full h-full border-0"
+                      title="Calculator Preview"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Add Calculator Modal */}
+        {showCalculatorModal && ( 
                               ...prev, 
                               brandColors: { ...prev.brandColors, accent: e.target.value },
                               accentColor: e.target.value 

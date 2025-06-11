@@ -94,21 +94,21 @@ export default function Dashboard() {
 
   // All available calculators
   const allCalculators = [
-    { id: 1, name: "Wedding Photography", category: "Photography", icon: <Camera className="h-5 w-5 text-white" />, description: "Custom quote calculator for wedding photography services" },
-    { id: 2, name: "Boudoir Photography", category: "Photography", icon: <Camera className="h-5 w-5 text-white" />, description: "Elegant pricing for intimate photography sessions" },
-    { id: 3, name: "Real Estate Photography", category: "Photography", icon: <Home className="h-5 w-5 text-white" />, description: "Professional property photography quotes" },
-    { id: 4, name: "Drone Photography", category: "Photography", icon: <Plane className="h-5 w-5 text-white" />, description: "Aerial photography and videography services" },
-    { id: 5, name: "Event Videography", category: "Photography", icon: <Video className="h-5 w-5 text-white" />, description: "Professional event recording services" },
-    { id: 6, name: "Electrician Services", category: "Home Services", icon: <Zap className="h-5 w-5 text-white" />, description: "Electrical work and installation quotes" },
-    { id: 7, name: "Home Renovation", category: "Home Services", icon: <Home className="h-5 w-5 text-white" />, description: "Complete home renovation estimates" },
-    { id: 8, name: "Plumbing Services", category: "Home Services", icon: <Wrench className="h-5 w-5 text-white" />, description: "Plumbing repairs and installations" },
-    { id: 9, name: "Landscaping", category: "Home Services", icon: <TreePine className="h-5 w-5 text-white" />, description: "Garden design and maintenance" },
-    { id: 10, name: "Personal Training", category: "Fitness", icon: <Dumbbell className="h-5 w-5 text-white" />, description: "Fitness coaching and training plans" },
-    { id: 11, name: "Nutritionist", category: "Health", icon: <Utensils className="h-5 w-5 text-white" />, description: "Personalized nutrition consultations" },
-    { id: 12, name: "Legal Services", category: "Professional", icon: <Scale className="h-5 w-5 text-white" />, description: "Legal consultation and document preparation" },
-    { id: 13, name: "Web Design", category: "Technology", icon: <Code className="h-5 w-5 text-white" />, description: "Custom website design and development" },
-    { id: 14, name: "Marketing Consulting", category: "Business", icon: <Megaphone className="h-5 w-5 text-white" />, description: "Marketing strategy and campaign planning" },
-    { id: 15, name: "Tutoring Services", category: "Education", icon: <GraduationCap className="h-5 w-5 text-white" />, description: "Private academic tutoring sessions" }
+    { id: 1, name: "Wedding Photography", category: "Photography", slug: "wedding-photography", icon: <Camera className="h-5 w-5 text-white" />, description: "Custom quote calculator for wedding photography services" },
+    { id: 2, name: "Boudoir Photography", category: "Photography", slug: "boudoir-photography", icon: <Camera className="h-5 w-5 text-white" />, description: "Elegant pricing for intimate photography sessions" },
+    { id: 3, name: "Real Estate Photography", category: "Photography", slug: "real-estate-photography", icon: <Home className="h-5 w-5 text-white" />, description: "Professional property photography quotes" },
+    { id: 4, name: "Drone Photography", category: "Photography", slug: "drone-photography", icon: <Plane className="h-5 w-5 text-white" />, description: "Aerial photography and videography services" },
+    { id: 5, name: "Event Videography", category: "Photography", slug: "event-videography", icon: <Video className="h-5 w-5 text-white" />, description: "Professional event recording services" },
+    { id: 6, name: "Electrician Services", category: "Home Services", slug: "electrician", icon: <Zap className="h-5 w-5 text-white" />, description: "Electrical work and installation quotes" },
+    { id: 7, name: "Home Renovation", category: "Home Services", slug: "home-renovation", icon: <Home className="h-5 w-5 text-white" />, description: "Complete home renovation estimates" },
+    { id: 8, name: "Plumbing Services", category: "Home Services", slug: "plumbing", icon: <Wrench className="h-5 w-5 text-white" />, description: "Plumbing repairs and installations" },
+    { id: 9, name: "Landscaping", category: "Home Services", slug: "landscaping", icon: <TreePine className="h-5 w-5 text-white" />, description: "Garden design and maintenance" },
+    { id: 10, name: "Personal Training", category: "Fitness", slug: "personal-training", icon: <Dumbbell className="h-5 w-5 text-white" />, description: "Fitness coaching and training plans" },
+    { id: 11, name: "Nutritionist", category: "Health", slug: "nutritionist", icon: <Utensils className="h-5 w-5 text-white" />, description: "Personalized nutrition consultations" },
+    { id: 12, name: "Legal Services", category: "Professional", slug: "legal-advisor", icon: <Scale className="h-5 w-5 text-white" />, description: "Legal consultation and document preparation" },
+    { id: 13, name: "Web Design", category: "Technology", slug: "web-designer", icon: <Code className="h-5 w-5 text-white" />, description: "Custom website design and development" },
+    { id: 14, name: "Marketing Consulting", category: "Business", slug: "marketing-consultant", icon: <Megaphone className="h-5 w-5 text-white" />, description: "Marketing strategy and campaign planning" },
+    { id: 15, name: "Tutoring Services", category: "Education", slug: "private-tutor", icon: <GraduationCap className="h-5 w-5 text-white" />, description: "Private academic tutoring sessions" }
   ];
 
   // Categories with counts
@@ -418,11 +418,33 @@ export default function Dashboard() {
       layout: "stepped"
     },
     text: {
-      headline: "Get Your Wedding Quote",
-      subheading: "Tell us about your special day", 
-      ctaText: "See My Price",
+      headline: "Get Your Quote",
+      subheading: "Tell us about your project", 
+      ctaText: "Get My Quote",
       thankYouMessage: "Thank you for your request!"
     },
+    packages: [
+      { id: "basic", label: "Basic Package", basePrice: 500, hours: 4, icon: "📦", popular: false },
+      { id: "standard", label: "Standard Package", basePrice: 800, hours: 6, icon: "⭐", popular: true },
+      { id: "premium", label: "Premium Package", basePrice: 1200, hours: 8, icon: "💎", popular: false }
+    ],
+    addOns: [
+      { id: "addon1", label: "Additional Service", price: 100, popular: false },
+      { id: "addon2", label: "Premium Add-on", price: 200, popular: true }
+    ],
+    hourOptions: [
+      { id: "4", label: "4 Hours", surcharge: 0, popular: false },
+      { id: "6", label: "6 Hours", surcharge: 200, popular: true },
+      { id: "8", label: "8 Hours", surcharge: 400, popular: false }
+    ],
+    locationOptions: [
+      { id: "1", label: "1 Location", surcharge: 0, popular: true },
+      { id: "2", label: "2 Locations", surcharge: 150, popular: false }
+    ],
+    deliveryOptions: [
+      { id: "digital", label: "Digital Delivery", price: 0, popular: true },
+      { id: "physical", label: "Physical Package", price: 100, popular: false }
+    ],
     questions: [
       {
         id: "project-type",
@@ -631,7 +653,16 @@ export default function Dashboard() {
   };
 
   const previewCalculator = (calc: UserCalculator) => {
-    window.open(calc.embedUrl, '_blank');
+    // Get the calculator type to determine the correct route
+    const calculatorType = allCalculators.find(c => c.id === calc.calculatorId);
+    
+    if (calculatorType?.slug) {
+      // Open the actual calculator page instead of embed URL
+      window.open(`/${calculatorType.slug}`, '_blank');
+    } else {
+      // Fallback to embed URL if slug not found
+      window.open(calc.embedUrl, '_blank');
+    }
   };
 
   const resetToDefaults = () => {

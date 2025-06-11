@@ -50,8 +50,13 @@ export function QuoteKitHeader() {
           {/* Left Side - Logo */}
           <div className="flex items-center space-x-6">
             <Link href="/">
-              <div className="text-white text-lg font-semibold cursor-pointer hover:text-neon-500 transition-colors">
-                QuoteKits
+              <div className="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity">
+                <img 
+                  src="/attached_assets/ChatGPT%20Image%20Jun%2011,%202025,%2011_57_41%20AM_1749655121133.png" 
+                  alt="QuoteKits Logo" 
+                  className="h-8 w-auto"
+                />
+                <span className="text-white text-lg font-semibold">QuoteKits</span>
               </div>
             </Link>
           </div>

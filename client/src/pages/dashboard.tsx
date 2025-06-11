@@ -115,61 +115,17 @@ export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  // Mock analytics data
+  // Analytics data - shows real data when available, otherwise empty states
   const analytics = {
-    totalVisits: 1247,
-    totalQuotes: 89,
-    conversionRate: 7.1,
-    chartData: [
-      { date: 'Dec 5', visits: 120, conversions: 8, quotes: 6 },
-      { date: 'Dec 6', visits: 98, conversions: 12, quotes: 9 },
-      { date: 'Dec 7', visits: 145, conversions: 15, quotes: 11 },
-      { date: 'Dec 8', visits: 167, conversions: 18, quotes: 14 },
-      { date: 'Dec 9', visits: 203, conversions: 22, quotes: 18 },
-      { date: 'Dec 10', visits: 189, conversions: 19, quotes: 15 },
-      { date: 'Dec 11', visits: 225, conversions: 25, quotes: 20 }
-    ],
-    calculatorPerformance: [
-      { name: 'Home Renovation', visits: 245, conversions: 18, conversionRate: 7.3 },
-      { name: 'Electrician Services', visits: 189, conversions: 12, conversionRate: 6.3 },
-      { name: 'Photography', visits: 167, conversions: 15, conversionRate: 9.0 },
-      { name: 'Pest Control', visits: 134, conversions: 8, conversionRate: 6.0 }
-    ]
+    totalVisits: 0,
+    totalQuotes: 0,
+    conversionRate: 0,
+    chartData: [],
+    calculatorPerformance: []
   };
 
-  // Mock quotes data
-  const quotes = [
-    {
-      id: '1',
-      clientName: 'Sarah Johnson',
-      clientEmail: 'sarah@email.com',
-      clientPhone: '+1 (555) 123-4567',
-      calculatorName: 'Home Renovation',
-      estimatedValue: '$12,500',
-      status: 'new',
-      createdAt: '2024-12-11T10:30:00Z'
-    },
-    {
-      id: '2',
-      clientName: 'Mike Chen',
-      clientEmail: 'mike.chen@company.com',
-      clientPhone: '+1 (555) 987-6543',
-      calculatorName: 'Electrician Services',
-      estimatedValue: '$3,200',
-      status: 'contacted',
-      createdAt: '2024-12-10T14:15:00Z'
-    },
-    {
-      id: '3',
-      clientName: 'Emma Wilson',
-      clientEmail: 'emma.w@email.com',
-      clientPhone: null,
-      calculatorName: 'Photography',
-      estimatedValue: '$2,800',
-      status: 'new',
-      createdAt: '2024-12-09T09:45:00Z'
-    }
-  ];
+  // Quotes data - empty for new users
+  const quotes: any[] = [];
 
   // Query for user calculators
   const { data: userCalculators = [], isLoading: isLoadingCalculators } = useQuery({
@@ -392,37 +348,47 @@ export default function Dashboard() {
                 <CardTitle className="text-white">Detailed Performance Metrics</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left">
-                    <thead>
-                      <tr className="border-b border-midnight-600">
-                        <th className="pb-3 text-gray-300 font-medium">Calculator</th>
-                        <th className="pb-3 text-gray-300 font-medium">Visits</th>
-                        <th className="pb-3 text-gray-300 font-medium">Conversions</th>
-                        <th className="pb-3 text-gray-300 font-medium">Conversion Rate</th>
-                        <th className="pb-3 text-gray-300 font-medium">Performance</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {analytics.calculatorPerformance.map((calc, index) => (
-                        <tr key={index} className="border-b border-midnight-700">
-                          <td className="py-3 text-white">{calc.name}</td>
-                          <td className="py-3 text-gray-300">{calc.visits}</td>
-                          <td className="py-3 text-gray-300">{calc.conversions}</td>
-                          <td className="py-3 text-gray-300">{calc.conversionRate}%</td>
-                          <td className="py-3">
-                            <div className="flex items-center space-x-2">
-                              <Progress value={calc.conversionRate} className="w-20 h-2" />
-                              <span className={`text-xs ${calc.conversionRate > 50 ? 'text-green-400' : calc.conversionRate > 25 ? 'text-yellow-400' : 'text-red-400'}`}>
-                                {calc.conversionRate > 50 ? 'Excellent' : calc.conversionRate > 25 ? 'Good' : 'Needs Improvement'}
-                              </span>
-                            </div>
-                          </td>
+                {analytics.calculatorPerformance.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                      <thead>
+                        <tr className="border-b border-midnight-600">
+                          <th className="pb-3 text-gray-300 font-medium">Calculator</th>
+                          <th className="pb-3 text-gray-300 font-medium">Visits</th>
+                          <th className="pb-3 text-gray-300 font-medium">Conversions</th>
+                          <th className="pb-3 text-gray-300 font-medium">Conversion Rate</th>
+                          <th className="pb-3 text-gray-300 font-medium">Performance</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody>
+                        {analytics.calculatorPerformance.map((calc, index) => (
+                          <tr key={index} className="border-b border-midnight-700">
+                            <td className="py-3 text-white">{calc.name}</td>
+                            <td className="py-3 text-gray-300">{calc.visits}</td>
+                            <td className="py-3 text-gray-300">{calc.conversions}</td>
+                            <td className="py-3 text-gray-300">{calc.conversionRate}%</td>
+                            <td className="py-3">
+                              <div className="flex items-center space-x-2">
+                                <Progress value={calc.conversionRate} className="w-20 h-2" />
+                                <span className={`text-xs ${calc.conversionRate > 50 ? 'text-green-400' : calc.conversionRate > 25 ? 'text-yellow-400' : 'text-red-400'}`}>
+                                  {calc.conversionRate > 50 ? 'Excellent' : calc.conversionRate > 25 ? 'Good' : 'Needs Improvement'}
+                                </span>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <BarChart3 className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-300 mb-2">No Analytics Data</h3>
+                    <p className="text-gray-500">
+                      Analytics will appear here once you have active calculators with visitor data.
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -445,72 +411,88 @@ export default function Dashboard() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left">
-                    <thead>
-                      <tr className="border-b border-midnight-600">
-                        <th className="pb-3 text-gray-300 font-medium">Client</th>
-                        <th className="pb-3 text-gray-300 font-medium">Contact</th>
-                        <th className="pb-3 text-gray-300 font-medium">Calculator</th>
-                        <th className="pb-3 text-gray-300 font-medium">Quote Value</th>
-                        <th className="pb-3 text-gray-300 font-medium">Status</th>
-                        <th className="pb-3 text-gray-300 font-medium">Date</th>
-                        <th className="pb-3 text-gray-300 font-medium">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {quotes.map((quote) => (
-                        <tr key={quote.id} className="border-b border-midnight-700">
-                          <td className="py-3">
-                            <div>
-                              <div className="text-white font-medium">{quote.clientName}</div>
-                              <div className="text-gray-400 text-sm">{quote.clientEmail}</div>
-                            </div>
-                          </td>
-                          <td className="py-3">
-                            <div className="space-y-1">
-                              {quote.clientEmail && (
-                                <div className="flex items-center space-x-1 text-gray-300 text-sm">
-                                  <Mail className="h-3 w-3" />
-                                  <span>{quote.clientEmail}</span>
-                                </div>
-                              )}
-                              {quote.clientPhone && (
-                                <div className="flex items-center space-x-1 text-gray-300 text-sm">
-                                  <Phone className="h-3 w-3" />
-                                  <span>{quote.clientPhone}</span>
-                                </div>
-                              )}
-                            </div>
-                          </td>
-                          <td className="py-3 text-gray-300">{quote.calculatorName}</td>
-                          <td className="py-3 text-white font-medium">{quote.estimatedValue}</td>
-                          <td className="py-3">
-                            <Badge variant={quote.status === 'new' ? 'default' : quote.status === 'contacted' ? 'secondary' : 'outline'}>
-                              {quote.status}
-                            </Badge>
-                          </td>
-                          <td className="py-3 text-gray-300">
-                            {new Date(quote.createdAt).toLocaleDateString()}
-                          </td>
-                          <td className="py-3">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => {
-                                setSelectedQuote(quote);
-                                setShowQuoteModal(true);
-                              }}
-                              className="border-midnight-600 text-gray-300 hover:text-white"
-                            >
-                              View Details
-                            </Button>
-                          </td>
+                {quotes.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                      <thead>
+                        <tr className="border-b border-midnight-600">
+                          <th className="pb-3 text-gray-300 font-medium">Client</th>
+                          <th className="pb-3 text-gray-300 font-medium">Contact</th>
+                          <th className="pb-3 text-gray-300 font-medium">Calculator</th>
+                          <th className="pb-3 text-gray-300 font-medium">Quote Value</th>
+                          <th className="pb-3 text-gray-300 font-medium">Status</th>
+                          <th className="pb-3 text-gray-300 font-medium">Date</th>
+                          <th className="pb-3 text-gray-300 font-medium">Actions</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody>
+                        {quotes.map((quote) => (
+                          <tr key={quote.id} className="border-b border-midnight-700">
+                            <td className="py-3">
+                              <div>
+                                <div className="text-white font-medium">{quote.clientName}</div>
+                                <div className="text-gray-400 text-sm">{quote.clientEmail}</div>
+                              </div>
+                            </td>
+                            <td className="py-3">
+                              <div className="space-y-1">
+                                {quote.clientEmail && (
+                                  <div className="flex items-center space-x-1 text-gray-300 text-sm">
+                                    <Mail className="h-3 w-3" />
+                                    <span>{quote.clientEmail}</span>
+                                  </div>
+                                )}
+                                {quote.clientPhone && (
+                                  <div className="flex items-center space-x-1 text-gray-300 text-sm">
+                                    <Phone className="h-3 w-3" />
+                                    <span>{quote.clientPhone}</span>
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+                            <td className="py-3 text-gray-300">{quote.calculatorName}</td>
+                            <td className="py-3 text-white font-medium">{quote.estimatedValue}</td>
+                            <td className="py-3">
+                              <Badge variant={quote.status === 'new' ? 'default' : quote.status === 'contacted' ? 'secondary' : 'outline'}>
+                                {quote.status}
+                              </Badge>
+                            </td>
+                            <td className="py-3 text-gray-300">
+                              {new Date(quote.createdAt).toLocaleDateString()}
+                            </td>
+                            <td className="py-3">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedQuote(quote);
+                                  setShowQuoteModal(true);
+                                }}
+                                className="border-midnight-600 text-gray-300 hover:text-white"
+                              >
+                                View Details
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <Mail className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-300 mb-2">No Client Quotes Yet</h3>
+                    <p className="text-gray-500 mb-4">
+                      Client quotes will appear here when visitors use your calculators to generate estimates.
+                    </p>
+                    <Button 
+                      onClick={() => setActiveTab("calculators")}
+                      className="bg-neon-500 hover:bg-neon-600"
+                    >
+                      Create Your First Calculator
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -530,65 +512,82 @@ export default function Dashboard() {
               </Button>
             </div>
 
-            <div className="grid gap-4">
-              {userCalculators.map((calc: UserCalculator) => (
-                <Card key={calc.id} className="bg-midnight-800 border-midnight-700">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className="w-12 h-12 bg-neon-500 rounded-lg flex items-center justify-center">
-                          <Calculator className="h-6 w-6 text-white" />
+            {Array.isArray(userCalculators) && userCalculators.length > 0 ? (
+              <div className="grid gap-4">
+                {userCalculators.map((calc: UserCalculator) => (
+                  <Card key={calc.id} className="bg-midnight-800 border-midnight-700">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <div className="w-12 h-12 bg-neon-500 rounded-lg flex items-center justify-center">
+                            <Calculator className="h-6 w-6 text-white" />
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-semibold text-white">
+                              {calc.name || "Calculator"}
+                            </h3>
+                            <p className="text-gray-400">
+                              Custom quote calculator
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <h3 className="text-lg font-semibold text-white">
-                            {calc.name || "Calculator"}
-                          </h3>
-                          <p className="text-gray-400">
-                            Custom quote calculator
-                          </p>
+                        
+                        <div className="flex items-center space-x-2">
+                          <Badge variant={calc.is_active ? "default" : "secondary"}>
+                            {calc.is_active ? "Active" : "Inactive"}
+                          </Badge>
+                          
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => previewCalculator(calc)}
+                            className="border-midnight-600 text-gray-300 hover:text-white"
+                          >
+                            <Eye className="h-4 w-4 mr-1" />
+                            Preview
+                          </Button>
+                          
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => customizeCalculator(calc)}
+                            className="border-midnight-600 text-gray-300 hover:text-white"
+                          >
+                            <Edit className="h-4 w-4 mr-1" />
+                            Customize
+                          </Button>
+                          
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => showEmbedCode(calc)}
+                            className="border-midnight-600 text-gray-300 hover:text-white"
+                          >
+                            <Code className="h-4 w-4 mr-1" />
+                            Embed
+                          </Button>
                         </div>
                       </div>
-                      
-                      <div className="flex items-center space-x-2">
-                        <Badge variant={calc.is_active ? "default" : "secondary"}>
-                          {calc.is_active ? "Active" : "Inactive"}
-                        </Badge>
-                        
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => previewCalculator(calc)}
-                          className="border-midnight-600 text-gray-300 hover:text-white"
-                        >
-                          <Eye className="h-4 w-4 mr-1" />
-                          Preview
-                        </Button>
-                        
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => customizeCalculator(calc)}
-                          className="border-midnight-600 text-gray-300 hover:text-white"
-                        >
-                          <Edit className="h-4 w-4 mr-1" />
-                          Customize
-                        </Button>
-                        
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => showEmbedCode(calc)}
-                          className="border-midnight-600 text-gray-300 hover:text-white"
-                        >
-                          <Code className="h-4 w-4 mr-1" />
-                          Embed
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <Calculator className="h-16 w-16 text-gray-500 mx-auto mb-4" />
+                <h3 className="text-xl font-medium text-gray-300 mb-2">No Calculators Yet</h3>
+                <p className="text-gray-500 mb-6 max-w-md mx-auto">
+                  Create your first AI-powered quote calculator to start generating leads and automating your pricing process.
+                </p>
+                <Button
+                  onClick={() => setShowCalculatorModal(true)}
+                  className="bg-neon-500 hover:bg-neon-600 text-white"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Your First Calculator
+                </Button>
+              </div>
+            )}
           </div>
         )}
 

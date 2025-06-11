@@ -171,16 +171,16 @@ export async function cloneCalculator(userId: string, templateId: string): Promi
     const adminUrl = `${process.env.REPL_URL || 'https://localhost:5000'}/admin/${uniqueSlug}`;
     const embedId = `embed_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
-    // Generate calculator_id based on template mapping
+    // Generate calculator_id based on template mapping (only using valid IDs 1-3)
     const calculatorIdMap: { [key: string]: number } = {
       'wedding-photography': 1,
       'boudoir-photography': 2,
       'real-estate-photography': 3,
-      'drone-photography': 4,
-      'event-videography': 5,
-      'electrician-services': 6,
-      'home-renovation': 7,
-      'plumbing-services': 8
+      'drone-photography': 1,
+      'event-videography': 2,
+      'electrician-services': 3,
+      'home-renovation': 2,
+      'plumbing-services': 3
     };
     const calculatorId = calculatorIdMap[template.slug] || 1;
 

@@ -48,34 +48,56 @@ interface UserCalculator {
 export default function Dashboard() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const [user, setUser] = useState<User | null>(null);
+  
+
+  // Demo data for preview - bypassing auth temporarily
+  const [user] = useState<User>({
+    id: "demo-123",
+    email: "demo@quotekit.ai", 
+    fullName: "Demo User",
+    subscriptionStatus: "pro",
+    quotesUsedThisMonth: 47,
+    quotesLimit: 500
+  });
+
+  const demoCalculators: UserCalculator[] = [
+    {
+      id: "calc-1",
+      embedId: "qk-wedding-photo",
+      embedUrl: "https://quotekit.ai/embed/qk-wedding-photo",
+      adminUrl: "https://quotekit.ai/admin/qk-wedding-photo", 
+      calculatorId: 1,
+      config: { primaryColor: "#10b981" },
+      customBranding: { companyName: "Elite Photography" },
+      isActive: true
+    },
+    {
+      id: "calc-2",
+      embedId: "qk-home-reno", 
+      embedUrl: "https://quotekit.ai/embed/qk-home-reno",
+      adminUrl: "https://quotekit.ai/admin/qk-home-reno",
+      calculatorId: 2,
+      config: { primaryColor: "#3b82f6" },
+      customBranding: { companyName: "Premier Renovations" },
+      isActive: true
+    }
+  ];
 
   useEffect(() => {
-    const token = localStorage.getItem('auth_token');
-    const userData = localStorage.getItem('user');
-    
-    if (!token || !userData) {
-      setLocation('/login');
-      return;
-    }
+    // Demo mode for dashboard preview
+    console.log('Dashboard loaded in demo mode');
+  }, []);
 
-    try {
-      setUser(JSON.parse(userData));
-    } catch (error) {
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('user');
-      setLocation('/login');
-    }
-  }, [setLocation]);
-
-  const { data: userCalculators, isLoading: calculatorsLoading } = useQuery({
-    queryKey: ['/api/user-calculators'],
-    enabled: !!user,
-  });
-
-  const { data: subscriptionPlans } = useQuery({
-    queryKey: ['/api/subscription/plans'],
-  });
+  // Use demo data for preview
+  const userCalculators = demoCalculators;
+  const calculatorsLoading = false;
+  
+  const subscriptionPlans = {
+    free: { name: "Free", quotesLimit: 5, price: 0 },
+    pro: { name: "Pro", quotesLimit: 500, price: 5 },
+    business: { name: "Business", quotesLimit: 2000, price: 35 },
+    enterprise: { name: "Enterprise", quotesLimit: 10000, price: 95 }
+  };
 
   const copyEmbedCode = (embedUrl: string) => {
     const embedCode = `<iframe src="${embedUrl}" width="100%" height="600px" frameborder="0"></iframe>`;

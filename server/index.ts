@@ -4,28 +4,9 @@ import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 
-// CORS middleware
+// CORS middleware - allow all origins in development for Replit environment
 app.use((req, res, next) => {
-  const origin = typeof req.headers.origin === 'string' ? req.headers.origin : undefined;
-  const allowedOrigins = [
-    'http://localhost:5000', 
-    'http://127.0.0.1:5000',
-    /https:\/\/.*\.replit\.dev$/,
-    /https:\/\/.*\.replit\.app$/,
-    /https:\/\/replit\.com$/
-  ];
-  
-  const isOriginAllowed = origin && (
-    allowedOrigins.some(allowed => 
-      typeof allowed === 'string' ? allowed === origin : allowed.test(origin)
-    )
-  );
-  
-  if (isOriginAllowed) {
-    res.header('Access-Control-Allow-Origin', origin);
-  } else {
-    res.header('Access-Control-Allow-Origin', '*');
-  }
+  res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   res.header('Access-Control-Allow-Credentials', 'true');
@@ -71,6 +52,12 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Add a debug middleware to log all requests
+  app.use((req, res, next) => {
+    console.log(`${req.method} ${req.path}`);
+    next();
+  });
+
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

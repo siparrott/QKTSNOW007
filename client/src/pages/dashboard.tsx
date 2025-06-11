@@ -193,24 +193,7 @@ export default function Dashboard() {
     loadUser();
   }, []);
 
-  // Handle logout
-  const handleLogout = async () => {
-    try {
-      await logout();
-      setLocation('/');
-      toast({
-        title: "Logged out successfully",
-        description: "You have been logged out of your account.",
-      });
-    } catch (error) {
-      console.error('Logout error:', error);
-      toast({
-        title: "Logout failed",
-        description: "There was an error logging out. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
+
 
   // Calculator functions
   const customizeCalculator = (calc: UserCalculator) => {
@@ -241,19 +224,10 @@ export default function Dashboard() {
       <QuoteKitHeader />
       
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* User Header with Logout */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
-            <p className="text-gray-400">Welcome back, {currentUser?.email}</p>
-          </div>
-          <Button
-            onClick={handleLogout}
-            variant="outline"
-            className="border-midnight-600 text-gray-300 hover:text-white"
-          >
-            Logout
-          </Button>
+        {/* User Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
+          <p className="text-gray-400">Welcome back, {currentUser?.email}</p>
         </div>
 
         {/* Navigation Tabs */}

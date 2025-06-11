@@ -348,8 +348,8 @@ export default function Dashboard() {
               <BarChart3 className="h-4 w-4 text-neon-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">1,234</div>
-              <p className="text-xs text-gray-500">+18% from last month</p>
+              <div className="text-2xl font-bold text-white">0</div>
+              <p className="text-xs text-gray-500">No submissions yet</p>
             </CardContent>
           </Card>
 
@@ -359,8 +359,8 @@ export default function Dashboard() {
               <TrendingUp className="h-4 w-4 text-neon-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">32.4%</div>
-              <p className="text-xs text-gray-500">+2.1% from last month</p>
+              <div className="text-2xl font-bold text-white">--</div>
+              <p className="text-xs text-gray-500">No data available</p>
             </CardContent>
           </Card>
 

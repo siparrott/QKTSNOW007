@@ -152,22 +152,26 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
         font-family: inherit !important;
       }
       
-      /* Primary color applications */
-      .wedding-calculator .border-rose-300 {
+      /* Primary color applications with higher specificity */
+      .wedding-calculator .border-rose-300,
+      .wedding-calculator *[class*="border-rose"] {
         border-color: var(--custom-primary) !important;
       }
       
-      .wedding-calculator .bg-rose-50 {
+      .wedding-calculator .bg-rose-50,
+      .wedding-calculator *[class*="bg-rose-5"] {
         background-color: ${primaryColor}15 !important;
       }
       
       .wedding-calculator .text-rose-800,
       .wedding-calculator .text-rose-600,
-      .wedding-calculator .text-rose-500 {
+      .wedding-calculator .text-rose-500,
+      .wedding-calculator *[class*="text-rose"] {
         color: var(--custom-primary) !important;
       }
       
-      .wedding-calculator .bg-rose-400 {
+      .wedding-calculator .bg-rose-400,
+      .wedding-calculator *[class*="bg-rose-4"] {
         background-color: var(--custom-primary) !important;
         color: white !important;
       }
@@ -184,15 +188,31 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
         background-color: ${primaryColor}08 !important;
       }
       
-      /* Button styling */
-      .wedding-calculator button:not(.outline) {
+      /* Button styling with maximum specificity */
+      .wedding-calculator button,
+      .wedding-calculator .button,
+      .wedding-calculator [role="button"] {
         background-color: var(--custom-primary) !important;
         border-color: var(--custom-primary) !important;
         color: white !important;
       }
       
-      .wedding-calculator button:not(.outline):hover {
+      .wedding-calculator button:hover,
+      .wedding-calculator .button:hover,
+      .wedding-calculator [role="button"]:hover {
         background-color: ${primaryColor}dd !important;
+        opacity: 0.9 !important;
+      }
+      
+      /* Card selection states */
+      .wedding-calculator .border-2.border-rose-300 {
+        border-color: var(--custom-primary) !important;
+        box-shadow: 0 0 0 1px ${primaryColor}40 !important;
+      }
+      
+      /* Popular badges */
+      .wedding-calculator .bg-rose-400.text-white {
+        background-color: var(--custom-primary) !important;
       }
       
       /* Badge styling */

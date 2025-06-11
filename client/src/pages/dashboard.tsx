@@ -126,7 +126,6 @@ export default function Dashboard() {
   // ALL STATE DECLARATIONS AT TOP LEVEL
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [showCustomizeModal, setShowCustomizeModal] = useState(false);
   const [showCalculatorModal, setShowCalculatorModal] = useState(false);
   const [showEmbedModal, setShowEmbedModal] = useState(false);
   const [selectedCalculator, setSelectedCalculator] = useState<any>(null);
@@ -149,6 +148,10 @@ export default function Dashboard() {
   const [logoUrl, setLogoUrl] = useState("");
   const [logoSize, setLogoSize] = useState(100);
   const [savingConfig, setSavingConfig] = useState(false);
+  const [activeTab, setActiveTab] = useState("overview");
+  const [selectedQuote, setSelectedQuote] = useState<any>(null);
+  const [showQuoteModal, setShowQuoteModal] = useState(false);
+  const [showCustomizeModal, setShowCustomizeModal] = useState(false);
 
   // Logo upload handler
   const handleLogoUpload = async (file: File) => {

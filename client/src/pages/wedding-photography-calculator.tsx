@@ -73,33 +73,51 @@ export default function WeddingPhotographyCalculator() {
     },
   });
 
-  // Handle URL parameters for preview mode
+  // Handle URL parameters and postMessage for preview mode
   useEffect(() => {
+    // Handle URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const configParam = urlParams.get('config');
     if (configParam) {
       try {
         const config = JSON.parse(decodeURIComponent(configParam));
-        setCustomConfig(config);
-        
-        // Apply custom styling
-        if (config.brandColors?.primaryColor) {
-          document.documentElement.style.setProperty('--primary', config.brandColors.primaryColor);
-        }
-        if (config.brandColors?.secondaryColor) {
-          document.documentElement.style.setProperty('--secondary', config.brandColors.secondaryColor);
-        }
-        if (config.typography?.fontFamily) {
-          document.documentElement.style.setProperty('--font-family', config.typography.fontFamily);
-        }
-        if (config.companyBranding?.companyName) {
-          document.title = `${config.companyBranding.companyName} - Wedding Photography Quote`;
-        }
+        applyCustomConfig(config);
       } catch (error) {
         console.error('Failed to parse config:', error);
       }
     }
+
+    // Listen for postMessage from parent dashboard
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === 'APPLY_CONFIG') {
+        applyCustomConfig(event.data.config);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
   }, []);
+
+  const applyCustomConfig = (config: any) => {
+    setCustomConfig(config);
+    
+    // Apply custom styling
+    if (config.brandColors?.primaryColor) {
+      document.documentElement.style.setProperty('--primary', config.brandColors.primaryColor);
+      document.documentElement.style.setProperty('--rose-400', config.brandColors.primaryColor);
+      document.documentElement.style.setProperty('--rose-300', config.brandColors.primaryColor);
+    }
+    if (config.brandColors?.secondaryColor) {
+      document.documentElement.style.setProperty('--secondary', config.brandColors.secondaryColor);
+    }
+    if (config.typography?.fontFamily) {
+      document.documentElement.style.setProperty('--font-family', config.typography.fontFamily);
+      document.body.style.fontFamily = config.typography.fontFamily;
+    }
+    if (config.companyBranding?.companyName) {
+      document.title = `${config.companyBranding.companyName} - Wedding Photography Quote`;
+    }
+  };
 
   const packageTypes = [
     { id: "elopement", label: "Elopement / Small Ceremony", basePrice: 950, hours: 4, icon: "💕", popular: false },

@@ -110,6 +110,7 @@ export default function Dashboard() {
   const [showEmbedModal, setShowEmbedModal] = useState(false);
   const [selectedCalculator, setSelectedCalculator] = useState<any>(null);
   const [customConfig, setCustomConfig] = useState<any>(null);
+  const [iframeRef, setIframeRef] = useState<HTMLIFrameElement | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
@@ -222,6 +223,16 @@ export default function Dashboard() {
       });
     }
   };
+
+  // Send config updates to iframe when customConfig changes
+  useEffect(() => {
+    if (iframeRef && customConfig && showCustomizeModal) {
+      iframeRef.contentWindow?.postMessage({
+        type: 'APPLY_CONFIG',
+        config: customConfig
+      }, '*');
+    }
+  }, [customConfig, iframeRef, showCustomizeModal]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -813,10 +824,19 @@ export default function Dashboard() {
                 <h3 className="text-lg font-semibold text-white mb-4">Live Preview</h3>
                 <div className="bg-white rounded-lg h-full overflow-hidden">
                   <iframe
-                    src={`${selectedCalculator.embed_url}?preview=true&config=${encodeURIComponent(JSON.stringify(customConfig))}`}
+                    ref={(iframe) => {
+                      if (iframe && customConfig) {
+                        iframe.onload = () => {
+                          iframe.contentWindow?.postMessage({
+                            type: 'APPLY_CONFIG',
+                            config: customConfig
+                          }, '*');
+                        };
+                      }
+                    }}
+                    src={selectedCalculator.embed_url}
                     className="w-full h-full border-0"
                     title="Calculator Preview"
-                    key={JSON.stringify(customConfig)} // Force reload when config changes
                   />
                 </div>
               </div>

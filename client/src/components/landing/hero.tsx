@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Rocket, Play, CheckCircle, Clock, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
+import heroImage from "@assets/ChatGPT Image Jun 11, 2025, 03_34_10 PM_1749649063120.png";
 
 export default function Hero() {
   const scrollToSection = (sectionId: string) => {
@@ -126,12 +127,26 @@ export default function Hero() {
             </div>
           </motion.div>
 
+          {/* Hero Image */}
+          <motion.div
+            className="mb-12"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+          >
+            <img 
+              src={heroImage} 
+              alt="No Calls. No Emails. Just Bookings - AI Calculator showing instant quotes"
+              className="w-full max-w-4xl mx-auto rounded-lg shadow-2xl"
+            />
+          </motion.div>
+
           {/* Trust Indicators */}
           <motion.div
             className="flex flex-col sm:flex-row items-center justify-center gap-8 text-gray-400"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
+            transition={{ duration: 0.8, delay: 1.0 }}
           >
             <div className="flex items-center gap-2">
               <CheckCircle className="text-neon-400 h-5 w-5" />

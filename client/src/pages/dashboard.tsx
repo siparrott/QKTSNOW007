@@ -178,9 +178,9 @@ export default function Dashboard() {
   });
 
   // Fetch user calculators from Supabase
-  const { data: userCalculators = [], isLoading: isLoadingCalculators } = useQuery({
-    queryKey: ['/api/supabase/user-calculators', user?.id],
-    enabled: !!user?.id
+  const { data: userCalculators = [], isLoading: isLoadingCalculators } = useQuery<UserCalculator[]>({
+    queryKey: ['/api/supabase/user-calculators', currentUser?.id],
+    enabled: !!currentUser?.id
   });
 
   // Fetch calculator templates from Supabase
@@ -194,13 +194,13 @@ export default function Dashboard() {
       return apiRequest(`/api/supabase/clone-calculator`, {
         method: 'POST',
         body: JSON.stringify({ 
-          userId: user?.id, 
+          userId: currentUser?.id, 
           templateId 
         })
       });
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/supabase/user-calculators', user?.id] });
+      queryClient.invalidateQueries({ queryKey: ['/api/supabase/user-calculators', currentUser?.id] });
       toast({
         title: "Calculator Cloned",
         description: "Your new calculator has been created successfully.",
@@ -774,17 +774,40 @@ export default function Dashboard() {
     }
   };
 
+  // Logout handler
+  const handleLogout = async () => {
+    try {
+      await logout();
+      localStorage.removeItem('user');
+      localStorage.removeItem('supabase_session');
+      setLocation('/');
+      toast({
+        title: "Logged out successfully",
+        description: "You have been signed out of your account.",
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-midnight-900">
       <QuoteKitHeader />
       
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <TestAuth />
-        
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
-          <p className="text-gray-400">Manage your calculators and track performance</p>
+        {/* User Header with Logout */}
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
+            <p className="text-gray-400">Welcome back, {currentUser?.email}</p>
+          </div>
+          <Button
+            onClick={handleLogout}
+            variant="outline"
+            className="border-midnight-600 text-gray-300 hover:text-white"
+          >
+            Logout
+          </Button>
         </div>
 
         {/* Stats Cards */}
@@ -795,10 +818,10 @@ export default function Dashboard() {
               <BarChart3 className="h-4 w-4 text-neon-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">{demoUser.quotesUsedThisMonth}</div>
-              <p className="text-xs text-gray-400">of {demoUser.quotesLimit} this month</p>
+              <div className="text-2xl font-bold text-white">0</div>
+              <p className="text-xs text-gray-400">of 100 this month</p>
               <Progress 
-                value={(demoUser.quotesUsedThisMonth / demoUser.quotesLimit) * 100} 
+                value={0} 
                 className="mt-2" 
               />
             </CardContent>
@@ -810,7 +833,7 @@ export default function Dashboard() {
               <Calculator className="h-4 w-4 text-neon-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">{demoCalculators.length}</div>
+              <div className="text-2xl font-bold text-white">{userCalculators.length}</div>
               <p className="text-xs text-gray-400">calculators deployed</p>
             </CardContent>
           </Card>
@@ -852,7 +875,7 @@ export default function Dashboard() {
           </div>
 
           <div className="grid gap-4">
-            {demoCalculators.map((calc: UserCalculator) => (
+            {userCalculators.map((calc: UserCalculator) => (
               <Card key={calc.id} className="bg-midnight-800 border-midnight-700">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">

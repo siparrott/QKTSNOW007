@@ -11,6 +11,25 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Link, useLocation } from "wouter";
 import { getCurrentUser, getCurrentSession, logout } from "@/lib/supabase";
 import type { CalculatorTemplate, UserCalculator as SupabaseUserCalculator } from "@shared/supabase";
+
+// Helper function to get actual user ID for temp users
+function getActualUserId(userId: string | undefined): string {
+  if (!userId) return '';
+  
+  if (userId.startsWith('temp_')) {
+    // Generate consistent UUID for temp users
+    const hash = userId.replace('temp_', '');
+    return [
+      hash.substring(0, 8),
+      hash.substring(8, 12),
+      hash.substring(12, 16), 
+      hash.substring(16, 20),
+      hash.substring(20, 32)
+    ].join('-');
+  }
+  
+  return userId;
+}
 import { getCalculatorConfig, generateCustomizationFields } from "@/lib/calculator-config-parser";
 import { 
   Settings, 
@@ -200,6 +219,15 @@ export default function Dashboard() {
 
   const { data: calculatorTemplates = [], isLoading: isLoadingTemplates } = useQuery({
     queryKey: ['/api/supabase/templates']
+  });
+
+  const { data: analytics = { totalVisits: 0, totalConversions: 0, conversionRate: 0, totalQuotes: 0 } } = useQuery({
+    queryKey: ['/api/supabase/analytics', currentUser?.id],
+    queryFn: async () => {
+      const response = await fetch(`/api/supabase/analytics/${getActualUserId(currentUser?.id)}`);
+      return response.json();
+    },
+    enabled: !!currentUser?.id
   });
 
   const cloneCalculatorMutation = useMutation({
@@ -629,7 +657,7 @@ export default function Dashboard() {
               <TrendingUp className="h-4 w-4 text-neon-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">87%</div>
+              <div className="text-2xl font-bold text-white">{analytics.conversionRate}%</div>
               <p className="text-xs text-gray-400">visitors to quotes</p>
             </CardContent>
           </Card>

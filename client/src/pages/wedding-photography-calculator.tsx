@@ -52,10 +52,16 @@ interface PricingBreakdown {
   breakdown: string[];
 }
 
-export default function WeddingPhotographyCalculator() {
+interface WeddingPhotographyCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function WeddingPhotographyCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: WeddingPhotographyCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
-  const [customConfig, setCustomConfig] = useState<any>(null);
+  const [customConfig, setCustomConfig] = useState<any>(propConfig || null);
   const [formData, setFormData] = useState<WeddingFormData>({
     packageType: "",
     hours: "",
@@ -73,8 +79,18 @@ export default function WeddingPhotographyCalculator() {
     },
   });
 
+  // Initialize with prop config
+  useEffect(() => {
+    if (propConfig) {
+      setCustomConfig(propConfig);
+      applyCustomConfig(propConfig);
+    }
+  }, [propConfig]);
+
   // Handle URL parameters and postMessage for preview mode
   useEffect(() => {
+    if (isPreview) return; // Skip URL params and message listener in preview mode
+    
     // Handle URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const configParam = urlParams.get('config');
@@ -354,7 +370,7 @@ export default function WeddingPhotographyCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-rose-25 to-amber-25">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">

@@ -1885,7 +1885,17 @@ export default function Dashboard() {
                           {/* Service Packages Preview */}
                           {customConfig?.packages && customConfig.packages.length > 0 && (
                             <div className="mb-8">
-                              <h2 className={`text-xl font-bold mb-6 ${theme === 'minimal' ? 'text-gray-800' : 'text-white'}`}>
+                              <h2 
+                                className={`text-xl font-bold mb-6 ${theme === 'minimal' ? 'text-gray-800' : 'text-white'}`}
+                                style={{
+                                  fontFamily: customConfig?.typography?.primaryFont === 'roboto' ? 'Roboto, sans-serif' :
+                                             customConfig?.typography?.primaryFont === 'poppins' ? 'Poppins, sans-serif' :
+                                             customConfig?.typography?.primaryFont === 'montserrat' ? 'Montserrat, sans-serif' :
+                                             customConfig?.typography?.primaryFont === 'playfair' ? 'Playfair Display, serif' :
+                                             customConfig?.typography?.primaryFont === 'source-sans' ? 'Source Sans Pro, sans-serif' :
+                                             'Inter, sans-serif'
+                                }}
+                              >
                                 Choose your package
                               </h2>
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1900,7 +1910,17 @@ export default function Dashboard() {
                                       <div className="flex items-center gap-3">
                                         <span className="text-2xl">{pkg.icon}</span>
                                         <div>
-                                          <h3 className={`font-bold ${theme === 'minimal' ? 'text-gray-800' : 'text-white'}`}>
+                                          <h3 
+                                          className={`font-bold ${theme === 'minimal' ? 'text-gray-800' : 'text-white'}`}
+                                          style={{
+                                            fontFamily: customConfig?.typography?.primaryFont === 'roboto' ? 'Roboto, sans-serif' :
+                                                       customConfig?.typography?.primaryFont === 'poppins' ? 'Poppins, sans-serif' :
+                                                       customConfig?.typography?.primaryFont === 'montserrat' ? 'Montserrat, sans-serif' :
+                                                       customConfig?.typography?.primaryFont === 'playfair' ? 'Playfair Display, serif' :
+                                                       customConfig?.typography?.primaryFont === 'source-sans' ? 'Source Sans Pro, sans-serif' :
+                                                       'Inter, sans-serif'
+                                          }}
+                                        >
                                             {pkg.label}
                                           </h3>
                                           {pkg.popular && (
@@ -1911,10 +1931,30 @@ export default function Dashboard() {
                                         </div>
                                       </div>
                                     </div>
-                                    <div className={`text-2xl font-bold mb-2 ${theme === 'minimal' ? 'text-gray-900' : 'text-white'}`}>
+                                    <div 
+                                      className={`text-2xl font-bold mb-2 ${theme === 'minimal' ? 'text-gray-900' : 'text-white'}`}
+                                      style={{
+                                        fontFamily: customConfig?.typography?.primaryFont === 'roboto' ? 'Roboto, sans-serif' :
+                                                   customConfig?.typography?.primaryFont === 'poppins' ? 'Poppins, sans-serif' :
+                                                   customConfig?.typography?.primaryFont === 'montserrat' ? 'Montserrat, sans-serif' :
+                                                   customConfig?.typography?.primaryFont === 'playfair' ? 'Playfair Display, serif' :
+                                                   customConfig?.typography?.primaryFont === 'source-sans' ? 'Source Sans Pro, sans-serif' :
+                                                   'Inter, sans-serif'
+                                      }}
+                                    >
                                       €{pkg.basePrice}
                                     </div>
-                                    <div className={`text-sm ${theme === 'minimal' ? 'text-gray-600' : 'text-white/70'}`}>
+                                    <div 
+                                      className={`text-sm ${theme === 'minimal' ? 'text-gray-600' : 'text-white/70'}`}
+                                      style={{
+                                        fontFamily: customConfig?.typography?.primaryFont === 'roboto' ? 'Roboto, sans-serif' :
+                                                   customConfig?.typography?.primaryFont === 'poppins' ? 'Poppins, sans-serif' :
+                                                   customConfig?.typography?.primaryFont === 'montserrat' ? 'Montserrat, sans-serif' :
+                                                   customConfig?.typography?.primaryFont === 'playfair' ? 'Playfair Display, serif' :
+                                                   customConfig?.typography?.primaryFont === 'source-sans' ? 'Source Sans Pro, sans-serif' :
+                                                   'Inter, sans-serif'
+                                      }}
+                                    >
                                       {pkg.hours} hours included
                                     </div>
                                   </div>
@@ -1926,7 +1966,17 @@ export default function Dashboard() {
                           {/* Add-On Services Preview */}
                           {customConfig?.addOns && customConfig.addOns.length > 0 && (
                             <div className="mb-8">
-                              <h2 className={`text-xl font-bold mb-6 ${theme === 'minimal' ? 'text-gray-800' : 'text-white'}`}>
+                              <h2 
+                                className={`text-xl font-bold mb-6 ${theme === 'minimal' ? 'text-gray-800' : 'text-white'}`}
+                                style={{
+                                  fontFamily: customConfig?.typography?.primaryFont === 'roboto' ? 'Roboto, sans-serif' :
+                                             customConfig?.typography?.primaryFont === 'poppins' ? 'Poppins, sans-serif' :
+                                             customConfig?.typography?.primaryFont === 'montserrat' ? 'Montserrat, sans-serif' :
+                                             customConfig?.typography?.primaryFont === 'playfair' ? 'Playfair Display, serif' :
+                                             customConfig?.typography?.primaryFont === 'source-sans' ? 'Source Sans Pro, sans-serif' :
+                                             'Inter, sans-serif'
+                                }}
+                              >
                                 Add-On Services
                               </h2>
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -1940,10 +1990,30 @@ export default function Dashboard() {
                                   >
                                     <div className="flex items-center justify-between">
                                       <div>
-                                        <div className={`font-medium ${theme === 'minimal' ? 'text-gray-800' : 'text-white'}`}>
+                                        <div 
+                                          className={`font-medium ${theme === 'minimal' ? 'text-gray-800' : 'text-white'}`}
+                                          style={{
+                                            fontFamily: customConfig?.typography?.primaryFont === 'roboto' ? 'Roboto, sans-serif' :
+                                                       customConfig?.typography?.primaryFont === 'poppins' ? 'Poppins, sans-serif' :
+                                                       customConfig?.typography?.primaryFont === 'montserrat' ? 'Montserrat, sans-serif' :
+                                                       customConfig?.typography?.primaryFont === 'playfair' ? 'Playfair Display, serif' :
+                                                       customConfig?.typography?.primaryFont === 'source-sans' ? 'Source Sans Pro, sans-serif' :
+                                                       'Inter, sans-serif'
+                                          }}
+                                        >
                                           {addon.label}
                                         </div>
-                                        <div className={`text-sm ${theme === 'minimal' ? 'text-gray-600' : 'text-white/70'}`}>
+                                        <div 
+                                          className={`text-sm ${theme === 'minimal' ? 'text-gray-600' : 'text-white/70'}`}
+                                          style={{
+                                            fontFamily: customConfig?.typography?.primaryFont === 'roboto' ? 'Roboto, sans-serif' :
+                                                       customConfig?.typography?.primaryFont === 'poppins' ? 'Poppins, sans-serif' :
+                                                       customConfig?.typography?.primaryFont === 'montserrat' ? 'Montserrat, sans-serif' :
+                                                       customConfig?.typography?.primaryFont === 'playfair' ? 'Playfair Display, serif' :
+                                                       customConfig?.typography?.primaryFont === 'source-sans' ? 'Source Sans Pro, sans-serif' :
+                                                       'Inter, sans-serif'
+                                          }}
+                                        >
                                           €{addon.price}
                                         </div>
                                       </div>

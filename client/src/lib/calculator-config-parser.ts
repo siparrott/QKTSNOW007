@@ -386,10 +386,23 @@ export function getCalculatorConfig(slug: string): CalculatorConfig | null {
 
 // Function to generate customization fields from calculator config
 export function generateCustomizationFields(config: CalculatorConfig) {
+  // Get all service-related fields for customization
+  const serviceFields = config.fields.filter(field => 
+    field.type === 'select' && (
+      field.id === 'serviceType' || 
+      field.options?.some(opt => opt.price || opt.multiplier)
+    )
+  );
+
+  // Get additional fields with options for customization
+  const customizableFields = config.fields.filter(field => 
+    field.type === 'select' || field.type === 'multi-select'
+  );
+
+
+
   return {
-    services: config.fields.filter(field => 
-      field.type === 'select' && (field.id === 'serviceType' || field.options?.some(opt => opt.price))
-    ),
+    services: serviceFields.length > 0 ? serviceFields : customizableFields.slice(0, 3), // Fallback to first 3 select fields
     pricing: {
       baseRates: config.pricing.baseRates || {},
       multipliers: config.pricing.multipliers || {},

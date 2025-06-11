@@ -1216,7 +1216,7 @@ export default function Dashboard() {
                       <div>
                         <h3 className="text-lg font-semibold text-white mb-3">Calculator Configuration</h3>
                         
-                        {customConfig?.customizationFields ? (
+                        {customConfig?.customizationFields?.services && customConfig.customizationFields.services.length > 0 ? (
                           <div className="space-y-6">
                             {/* Service Type Configuration */}
                             {customConfig.customizationFields.services.map((field: any) => (

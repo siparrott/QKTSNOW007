@@ -8,20 +8,21 @@ export const supabase = createClient(
 
 // Authentication functions
 export async function signUpWithEmail(email: string, password: string) {
-  const { data, error } = await supabase.auth.signUp({ 
+  // Try to sign up with email confirmation disabled in options
+  const { data: signupData, error: signupError } = await supabase.auth.signUp({ 
     email, 
-    password
+    password,
+    options: {
+      // Set email confirmation to false
+      emailRedirectTo: `${window.location.origin}/dashboard`,
+      data: {
+        email_confirmation: false
+      }
+    }
   });
   
-  // If signup successful but user not confirmed, try to sign in immediately
-  if (data.user && !data.user.email_confirmed_at && !error) {
-    const loginResult = await supabase.auth.signInWithPassword({ email, password });
-    if (loginResult.data.user) {
-      return { user: loginResult.data.user, session: loginResult.data.session, error: null };
-    }
-  }
-  
-  return { user: data.user, session: data.session, error };
+  // Return signup result - user should be automatically logged in if email confirmation is disabled
+  return { user: signupData.user, session: signupData.session, error: signupError };
 }
 
 export async function loginWithEmail(email: string, password: string) {

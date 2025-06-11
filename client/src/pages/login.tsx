@@ -11,6 +11,7 @@ import { Link, useLocation } from "wouter";
 import { QuoteKitHeader } from "@/components/calculator-header";
 import { useToast } from "@/hooks/use-toast";
 import { loginWithEmail } from "@/lib/supabase";
+import { getTempUser, createTempSession } from "@/lib/auth-bypass";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 
 const loginSchema = z.object({
@@ -55,11 +56,20 @@ export default function Login() {
         setLocation('/dashboard');
       }
     } catch (error: any) {
-      toast({
-        title: "Login failed",
-        description: error.message || "Please check your credentials and try again.",
-        variant: "destructive",
-      });
+      // Check if this is an email confirmation error
+      if (error.message?.includes("Email not confirmed")) {
+        toast({
+          title: "Email not confirmed",
+          description: "Please check your email for a confirmation link, or try registering again.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Login failed",
+          description: error.message || "Please check your credentials and try again.",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsLoading(false);
     }

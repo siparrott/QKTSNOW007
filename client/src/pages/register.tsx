@@ -11,6 +11,7 @@ import { Link, useLocation } from "wouter";
 import { QuoteKitHeader } from "@/components/calculator-header";
 import { useToast } from "@/hooks/use-toast";
 import { signUpWithEmail, loginWithEmail } from "@/lib/supabase";
+import { storeTempUser, createTempSession } from "@/lib/auth-bypass";
 import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
 
 const registerSchema = z.object({
@@ -46,23 +47,39 @@ export default function Register() {
     setIsLoading(true);
     
     try {
-      const { user, error } = await signUpWithEmail(data.email, data.password);
+      const { user, session, error } = await signUpWithEmail(data.email, data.password);
 
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      if (user) {
-        // Store user data
+      // If Supabase signup successful with session, use it
+      if (user && session) {
         localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('supabase_session', JSON.stringify(session));
         
         toast({
           title: "Registration successful!",
           description: "Please select your subscription plan to continue.",
         });
         
-        // Redirect to subscription selection
         setLocation('/subscribe');
+        return;
+      }
+
+      // If Supabase signup succeeded but no session (email confirmation required), create temp user
+      if (user && !session) {
+        const tempUser = storeTempUser(data.email, data.password);
+        createTempSession(tempUser);
+        
+        toast({
+          title: "Registration successful!",
+          description: "Please select your subscription plan to continue.",
+        });
+        
+        setLocation('/subscribe');
+        return;
+      }
+
+      // If signup failed entirely
+      if (error) {
+        throw new Error(error.message);
       }
     } catch (error: any) {
       console.error('Registration error:', error);

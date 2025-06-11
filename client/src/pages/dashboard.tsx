@@ -612,72 +612,76 @@ export default function Dashboard() {
                     <div>
                       <label className="text-sm text-gray-300 block mb-2">Logo Upload</label>
                       <div className="space-y-3">
-                        {customConfig?.branding?.logoUrl ? (
-                          <div className="space-y-3">
-                            <div className="flex items-center space-x-3">
-                              <img 
-                                src={customConfig.branding.logoUrl} 
-                                alt="Logo" 
-                                className="object-contain bg-white rounded border"
-                                style={{ 
-                                  height: `${customConfig?.branding?.logoSize || 48}px`,
-                                  width: 'auto',
-                                  maxWidth: '120px'
-                                }}
-                              />
-                              <button
-                                onClick={() => setCustomConfig(prev => ({
+                        {/* Logo Upload Input */}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onload = (event) => {
+                                setCustomConfig(prev => ({
                                   ...prev,
-                                  branding: { ...prev.branding, logoUrl: "" }
-                                }))}
-                                className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
-                              >
-                                Remove
-                              </button>
-                            </div>
-                            
-                            <div>
-                              <label className="text-xs text-gray-400 block mb-2">
-                                Logo Size: {customConfig?.branding?.logoSize || 48}px
-                              </label>
-                              <input
-                                type="range"
-                                min="24"
-                                max="120"
-                                step="4"
-                                value={customConfig?.branding?.logoSize || 48}
-                                onChange={(e) => setCustomConfig(prev => ({
-                                  ...prev,
-                                  branding: { ...prev.branding, logoSize: parseInt(e.target.value) }
-                                }))}
-                                className="w-full accent-neon-500"
-                              />
-                              <div className="flex justify-between text-xs text-gray-500 mt-1">
-                                <span>Small</span>
-                                <span>Large</span>
-                              </div>
-                            </div>
+                                  branding: { ...prev.branding, logoUrl: event.target?.result as string }
+                                }));
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                          className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white text-sm"
+                        />
+                        
+                        {/* Logo Preview */}
+                        {customConfig?.branding?.logoUrl && (
+                          <div className="flex items-center space-x-3">
+                            <img 
+                              src={customConfig.branding.logoUrl} 
+                              alt="Logo Preview" 
+                              className="object-contain bg-white rounded border"
+                              style={{ 
+                                height: `${customConfig?.branding?.logoSize || 48}px`,
+                                width: 'auto',
+                                maxWidth: '120px'
+                              }}
+                            />
+                            <button
+                              onClick={() => setCustomConfig(prev => ({
+                                ...prev,
+                                branding: { ...prev.branding, logoUrl: "" }
+                              }))}
+                              className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
+                            >
+                              Remove Logo
+                            </button>
                           </div>
-                        ) : (
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) {
-                                const reader = new FileReader();
-                                reader.onload = (event) => {
-                                  setCustomConfig(prev => ({
-                                    ...prev,
-                                    branding: { ...prev.branding, logoUrl: event.target?.result as string }
-                                  }));
-                                };
-                                reader.readAsDataURL(file);
-                              }
-                            }}
-                            className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white text-sm"
-                          />
                         )}
+                        
+                        {/* Logo Size Slider - Always Visible */}
+                        <div>
+                          <label className="text-xs text-gray-400 block mb-2">
+                            Logo Size: {customConfig?.branding?.logoSize || 48}px
+                          </label>
+                          <input
+                            type="range"
+                            min="24"
+                            max="120"
+                            step="4"
+                            value={customConfig?.branding?.logoSize || 48}
+                            onChange={(e) => setCustomConfig(prev => ({
+                              ...prev,
+                              branding: { ...prev.branding, logoSize: parseInt(e.target.value) }
+                            }))}
+                            className="w-full accent-neon-500"
+                          />
+                          <div className="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>24px</span>
+                            <span>120px</span>
+                          </div>
+                          {!customConfig?.branding?.logoUrl && (
+                            <p className="text-xs text-gray-500 mt-1">Upload a logo to see size preview</p>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1230,85 +1234,126 @@ export default function Dashboard() {
                       </button>
                     </div>
                     
-                    {(customConfig?.questions || []).map((question: any, index: number) => (
-                      <div key={question.id} className="bg-midnight-700 p-4 rounded border border-midnight-600">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-                          <div>
-                            <label className="block text-xs text-gray-400 mb-1">Question Text</label>
-                            <input
-                              type="text"
-                              value={question.label}
-                              onChange={(e) => {
-                                const updatedQuestions = [...(customConfig?.questions || [])];
-                                updatedQuestions[index] = { ...question, label: e.target.value };
-                                setCustomConfig((prev: any) => ({ ...prev, questions: updatedQuestions }));
-                              }}
-                              className="w-full px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-sm"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-xs text-gray-400 mb-1">Type</label>
-                            <select
-                              value={question.type}
-                              onChange={(e) => {
-                                const updatedQuestions = [...(customConfig?.questions || [])];
-                                updatedQuestions[index] = { ...question, type: e.target.value };
-                                setCustomConfig((prev: any) => ({ ...prev, questions: updatedQuestions }));
-                              }}
-                              className="w-full px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-sm"
-                            >
-                              <option value="text">Text</option>
-                              <option value="number">Number</option>
-                              <option value="date">Date</option>
-                              <option value="dropdown">Dropdown</option>
-                              <option value="checkbox">Checkbox</option>
-                            </select>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <label className="flex items-center text-xs text-gray-400">
+                    <div className="max-h-96 overflow-y-auto space-y-3 pr-2">
+                      {(customConfig?.questions || []).map((question: any, index: number) => (
+                        <div key={question.id} className="bg-midnight-700 p-4 rounded border border-midnight-600">
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+                            <div>
+                              <label className="block text-xs text-gray-400 mb-1">Question Text</label>
                               <input
-                                type="checkbox"
-                                checked={question.required}
+                                type="text"
+                                value={question.label}
                                 onChange={(e) => {
                                   const updatedQuestions = [...(customConfig?.questions || [])];
-                                  updatedQuestions[index] = { ...question, required: e.target.checked };
+                                  updatedQuestions[index] = { ...question, label: e.target.value };
                                   setCustomConfig((prev: any) => ({ ...prev, questions: updatedQuestions }));
                                 }}
-                                className="mr-1"
+                                className="w-full px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-sm"
+                                placeholder="Enter question text..."
                               />
-                              Required
-                            </label>
-                            <button
-                              onClick={() => {
-                                const updatedQuestions = (customConfig?.questions || []).filter((_: any, i: number) => i !== index);
-                                setCustomConfig((prev: any) => ({ ...prev, questions: updatedQuestions }));
-                              }}
-                              className="text-red-400 hover:text-red-300 text-xs"
-                            >
-                              Remove
-                            </button>
+                            </div>
+                            <div>
+                              <label className="block text-xs text-gray-400 mb-1">Type</label>
+                              <select
+                                value={question.type}
+                                onChange={(e) => {
+                                  const updatedQuestions = [...(customConfig?.questions || [])];
+                                  updatedQuestions[index] = { ...question, type: e.target.value };
+                                  setCustomConfig((prev: any) => ({ ...prev, questions: updatedQuestions }));
+                                }}
+                                className="w-full px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-sm"
+                              >
+                                <option value="text">Text</option>
+                                <option value="number">Number</option>
+                                <option value="date">Date</option>
+                                <option value="dropdown">Dropdown</option>
+                                <option value="checkbox">Checkbox</option>
+                              </select>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <label className="flex items-center text-xs text-gray-400">
+                                <input
+                                  type="checkbox"
+                                  checked={question.required}
+                                  onChange={(e) => {
+                                    const updatedQuestions = [...(customConfig?.questions || [])];
+                                    updatedQuestions[index] = { ...question, required: e.target.checked };
+                                    setCustomConfig((prev: any) => ({ ...prev, questions: updatedQuestions }));
+                                  }}
+                                  className="mr-1"
+                                />
+                                Required
+                              </label>
+                              <button
+                                onClick={() => {
+                                  const updatedQuestions = (customConfig?.questions || []).filter((_: any, i: number) => i !== index);
+                                  setCustomConfig((prev: any) => ({ ...prev, questions: updatedQuestions }));
+                                }}
+                                className="text-red-400 hover:text-red-300 text-xs px-2 py-1 rounded hover:bg-red-900"
+                              >
+                                Remove
+                              </button>
+                            </div>
                           </div>
+                          
+                          {question.type === 'dropdown' && (
+                            <div>
+                              <label className="block text-xs text-gray-400 mb-1">Options (comma separated)</label>
+                              <input
+                                type="text"
+                                value={(question.options || []).join(', ')}
+                                onChange={(e) => {
+                                  const options = e.target.value.split(',').map((opt: string) => opt.trim()).filter(Boolean);
+                                  const updatedQuestions = [...(customConfig?.questions || [])];
+                                  updatedQuestions[index] = { ...question, options };
+                                  setCustomConfig((prev: any) => ({ ...prev, questions: updatedQuestions }));
+                                }}
+                                placeholder="Option 1, Option 2, Option 3"
+                                className="w-full px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-sm"
+                              />
+                            </div>
+                          )}
+                          
+                          {question.type === 'number' && (
+                            <div className="grid grid-cols-2 gap-3 mt-3">
+                              <div>
+                                <label className="block text-xs text-gray-400 mb-1">Min Value</label>
+                                <input
+                                  type="number"
+                                  value={question.min || 0}
+                                  onChange={(e) => {
+                                    const updatedQuestions = [...(customConfig?.questions || [])];
+                                    updatedQuestions[index] = { ...question, min: parseInt(e.target.value) };
+                                    setCustomConfig((prev: any) => ({ ...prev, questions: updatedQuestions }));
+                                  }}
+                                  className="w-full px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-sm"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs text-gray-400 mb-1">Max Value</label>
+                                <input
+                                  type="number"
+                                  value={question.max || 1000}
+                                  onChange={(e) => {
+                                    const updatedQuestions = [...(customConfig?.questions || [])];
+                                    updatedQuestions[index] = { ...question, max: parseInt(e.target.value) };
+                                    setCustomConfig((prev: any) => ({ ...prev, questions: updatedQuestions }));
+                                  }}
+                                  className="w-full px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-sm"
+                                />
+                              </div>
+                            </div>
+                          )}
                         </div>
-                        
-                        {question.type === 'dropdown' && (
-                          <div>
-                            <label className="block text-xs text-gray-400 mb-1">Options (comma separated)</label>
-                            <input
-                              type="text"
-                              value={(question.options || []).join(', ')}
-                              onChange={(e) => {
-                                const options = e.target.value.split(',').map((opt: string) => opt.trim()).filter(Boolean);
-                                const updatedQuestions = [...(customConfig?.questions || [])];
-                                updatedQuestions[index] = { ...question, options };
-                                setCustomConfig((prev: any) => ({ ...prev, questions: updatedQuestions }));
-                              }}
-                              placeholder="Option 1, Option 2, Option 3"
-                              className="w-full px-2 py-1 bg-midnight-800 border border-midnight-500 rounded text-white text-sm"
-                            />
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                      ))}
+                      
+                      {(!customConfig?.questions || customConfig.questions.length === 0) && (
+                        <div className="text-center py-8 text-gray-400 border-2 border-dashed border-midnight-600 rounded-lg">
+                          <p className="mb-2">No questions added yet</p>
+                          <p className="text-sm">Click "Add Question" to create your first question</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 

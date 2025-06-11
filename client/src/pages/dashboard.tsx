@@ -850,7 +850,7 @@ export default function Dashboard() {
                         onClick={() => showEmbedCode(calc)}
                         className="border-midnight-600 text-gray-300 hover:text-white"
                       >
-                        <Code className="h-4 w-4 mr-1" />
+                        <Code2 className="h-4 w-4 mr-1" />
                         Embed
                       </Button>
                     </div>
@@ -2498,6 +2498,77 @@ export default function Dashboard() {
                   </button>
                 </div>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* Embed Code Modal */}
+        {showEmbedModal && selectedCalculator && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-midnight-800 rounded-lg w-full max-w-2xl p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-white">Embed Calculator</h2>
+                <button
+                  onClick={() => setShowEmbedModal(false)}
+                  className="text-gray-400 hover:text-white"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-2">Calculator Details</h3>
+                  <div className="bg-midnight-700 p-4 rounded">
+                    <p className="text-gray-300">
+                      <strong>Calculator:</strong> {allCalculators.find(c => c.id === selectedCalculator.calculatorId)?.name || "Unknown"}
+                    </p>
+                    <p className="text-gray-300">
+                      <strong>Embed ID:</strong> {selectedCalculator.embedId}
+                    </p>
+                    <p className="text-gray-300">
+                      <strong>Status:</strong> <span className={selectedCalculator.isActive ? "text-green-400" : "text-red-400"}>
+                        {selectedCalculator.isActive ? "Active" : "Inactive"}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-2">Embed Code</h3>
+                  <div className="bg-midnight-700 p-4 rounded border">
+                    <code className="text-green-400 text-sm break-all">
+                      {`<iframe src="${selectedCalculator.embedUrl}" width="100%" height="600" frameborder="0" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"></iframe>`}
+                    </code>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-2">Preview URL</h3>
+                  <div className="bg-midnight-700 p-4 rounded border">
+                    <p className="text-cyan-400 text-sm break-all">{selectedCalculator.embedUrl}</p>
+                  </div>
+                </div>
+
+                <div className="flex justify-between">
+                  <Button
+                    onClick={() => copyEmbedCode(selectedCalculator)}
+                    className="bg-neon-500 hover:bg-neon-600 text-white"
+                  >
+                    <Copy className="h-4 w-4 mr-2" />
+                    Copy Embed Code
+                  </Button>
+                  
+                  <Button
+                    onClick={() => window.open(selectedCalculator.embedUrl, '_blank')}
+                    variant="outline"
+                    className="border-midnight-600 text-gray-300 hover:text-white"
+                  >
+                    <ExternalLink className="h-4 w-4 mr-2" />
+                    Open Preview
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         )}

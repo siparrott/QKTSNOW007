@@ -113,12 +113,44 @@ export default function Dashboard() {
   });
 
   const addCalculator = (template: CalculatorTemplate) => {
+    // Map template IDs to actual calculator routes for embed URLs
+    const calculatorRoutes: { [key: string]: string } = {
+      'wedding-photography': '/wedding-photography-calculator',
+      'home-renovation': '/home-renovation-calculator-new',
+      'legal-services': '/legal-advisor-calculator',
+      'pest-control': '/pest-control-calculator',
+      'portrait-photography': '/portrait-photography-calculator',
+      'roofing-services': '/roofing-calculator',
+      'electrician': '/electrician-calculator',
+      'drone-photography': '/drone-photography-calculator',
+      'event-videography': '/event-videography-calculator',
+      'real-estate-photography': '/real-estate-photography-calculator',
+      'commercial-photography': '/commercial-photography-calculator',
+      'food-photography': '/food-photography-calculator',
+      'landscaping': '/landscaping-calculator',
+      'solar': '/solar-calculator',
+      'window-door': '/window-door-calculator',
+      'makeup-artist': '/makeup-artist-calculator',
+      'hair-stylist': '/hair-stylist-calculator',
+      'cleaning-services': '/cleaning-services-calculator',
+      'virtual-assistant': '/virtual-assistant-calculator',
+      'business-coach': '/business-coach-calculator',
+      'tax-preparer': '/tax-preparer-calculator',
+      'translation-services': '/translation-services-calculator',
+      'dentist': '/dentist-calculator',
+      'childcare': '/childcare-calculator',
+      'plastic-surgery': '/plastic-surgery-calculator',
+      'private-medical': '/private-medical-calculator'
+    };
+
+    const calculatorRoute = calculatorRoutes[template.template_id] || `/calculator/${template.template_id}`;
+    
     const newCalculator: UserCalculator = {
       id: `calc_${Date.now()}`,
       name: template.name,
       slug: `${template.slug}-${Date.now()}`,
-      embed_url: `https://quotekit.ai/embed/${template.slug}-${Date.now()}`,
-      admin_url: `https://quotekit.ai/admin/${template.slug}-${Date.now()}`,
+      embed_url: `${window.location.origin}${calculatorRoute}`,
+      admin_url: `${window.location.origin}/dashboard`,
       calculator_id: parseInt(template.id),
       config: {},
       custom_branding: {},
@@ -148,7 +180,38 @@ export default function Dashboard() {
   };
 
   const previewCalculator = (calc: UserCalculator) => {
-    window.open(`/calculator/${calc.template_id}`, '_blank');
+    // Map template IDs to actual calculator routes
+    const calculatorRoutes: { [key: string]: string } = {
+      'wedding-photography': '/wedding-photography-calculator',
+      'home-renovation': '/home-renovation-calculator-new',
+      'legal-services': '/legal-advisor-calculator',
+      'pest-control': '/pest-control-calculator',
+      'portrait-photography': '/portrait-photography-calculator',
+      'roofing-services': '/roofing-calculator',
+      'electrician': '/electrician-calculator',
+      'drone-photography': '/drone-photography-calculator',
+      'event-videography': '/event-videography-calculator',
+      'real-estate-photography': '/real-estate-photography-calculator',
+      'commercial-photography': '/commercial-photography-calculator',
+      'food-photography': '/food-photography-calculator',
+      'landscaping': '/landscaping-calculator',
+      'solar': '/solar-calculator',
+      'window-door': '/window-door-calculator',
+      'makeup-artist': '/makeup-artist-calculator',
+      'hair-stylist': '/hair-stylist-calculator',
+      'cleaning-services': '/cleaning-services-calculator',
+      'virtual-assistant': '/virtual-assistant-calculator',
+      'business-coach': '/business-coach-calculator',
+      'tax-preparer': '/tax-preparer-calculator',
+      'translation-services': '/translation-services-calculator',
+      'dentist': '/dentist-calculator',
+      'childcare': '/childcare-calculator',
+      'plastic-surgery': '/plastic-surgery-calculator',
+      'private-medical': '/private-medical-calculator'
+    };
+    
+    const route = calculatorRoutes[calc.template_id] || `/calculator/${calc.template_id}`;
+    window.open(route, '_blank');
   };
 
   const showEmbedCode = (calc: UserCalculator) => {
@@ -987,12 +1050,12 @@ export default function Dashboard() {
                   </label>
                   <div className="flex items-center space-x-2">
                     <code className="flex-1 px-3 py-2 bg-midnight-900 border border-midnight-600 rounded text-sm text-gray-300 font-mono">
-                      {`https://quotekit.ai/calc/${selectedCalculator.slug}`}
+                      {selectedCalculator.embed_url}
                     </code>
                     <Button
                       size="sm"
                       onClick={() => {
-                        navigator.clipboard.writeText(`https://quotekit.ai/calc/${selectedCalculator.slug}`);
+                        navigator.clipboard.writeText(selectedCalculator.embed_url);
                         toast({
                           title: "Copied!",
                           description: "Direct link copied to clipboard.",
@@ -1013,7 +1076,7 @@ export default function Dashboard() {
                   <div className="flex items-start space-x-2">
                     <code className="flex-1 px-3 py-2 bg-midnight-900 border border-midnight-600 rounded text-sm text-gray-300 font-mono whitespace-pre-wrap">
 {`<iframe 
-  src="https://quotekit.ai/calc/${selectedCalculator.slug}" 
+  src="${selectedCalculator.embed_url}" 
   width="100%" 
   height="600" 
   frameborder="0">
@@ -1022,7 +1085,7 @@ export default function Dashboard() {
                     <Button
                       size="sm"
                       onClick={() => {
-                        const embedCode = `<iframe src="https://quotekit.ai/calc/${selectedCalculator.slug}" width="100%" height="600" frameborder="0"></iframe>`;
+                        const embedCode = `<iframe src="${selectedCalculator.embed_url}" width="100%" height="600" frameborder="0"></iframe>`;
                         navigator.clipboard.writeText(embedCode);
                         toast({
                           title: "Copied!",

@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Camera, Dumbbell, Home, Calendar, Scale, Car, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import quoteKitsLogo from "@assets/ChatGPT Image Jun 11, 2025, 11_57_41 AM_1749649530025.png";
 
 export default function NichesGrid() {
   const niches = [
@@ -75,24 +76,24 @@ export default function NichesGrid() {
       <div className="container mx-auto px-4 lg:px-8">
         {/* Before/After Image Section */}
         <motion.div
-          className="text-center mb-20"
+          className="text-center mb-12"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
         >
-          <div className="mb-12">
+          <div className="mb-8">
             <h3 className="text-2xl md:text-3xl font-bold text-neon-400 mb-6">
               🚀 After: From Ghosted to Booked
             </h3>
             <p className="text-xl text-gray-300 mb-8">
               With QuoteKit.ai, your site delivers exactly what they want
             </p>
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-2xl mx-auto">
               <img 
-                src="/attached_assets/ChatGPT Image Jun 10, 2025, 03_15_40 PM_1749564453328.png"
-                alt="Business owner overwhelmed with quote requests, showing the transformation from manual quote handling to automated solution"
-                className="w-full h-auto rounded-2xl shadow-2xl border border-neon-500/20"
+                src={quoteKitsLogo}
+                alt="QuoteKits - AI-powered quote calculators"
+                className="w-full h-auto"
               />
             </div>
           </div>

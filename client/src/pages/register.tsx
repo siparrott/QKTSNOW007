@@ -46,6 +46,9 @@ export default function Register() {
     setIsLoading(true);
     
     try {
+      console.log('Starting registration request...');
+      console.log('Form data:', { fullName: data.fullName, email: data.email });
+      
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -56,25 +59,34 @@ export default function Register() {
         }),
       });
 
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
+
       const result = await response.json();
+      console.log('Response data:', result);
 
       if (response.ok && result.token) {
         localStorage.setItem('auth_token', result.token);
         localStorage.setItem('user', JSON.stringify(result.user));
         
         toast({
-          title: "Account created successfully!",
-          description: "Welcome to QuoteKit. Let's set up your first calculator.",
+          title: "Success!",
+          description: "Account created successfully.",
         });
         
         setLocation('/dashboard');
       } else {
+        console.error('Registration failed with result:', result);
         throw new Error(result.error || 'Registration failed');
       }
     } catch (error: any) {
+      console.error('Registration error:', error);
+      console.error('Error type:', typeof error);
+      console.error('Error message:', error.message);
+      
       toast({
         title: "Registration failed",
-        description: error.message || "Please check your details and try again.",
+        description: error.message || "Network error. Please try again.",
         variant: "destructive",
       });
     } finally {

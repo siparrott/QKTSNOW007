@@ -252,6 +252,82 @@ export default function Dashboard() {
           </Button>
         </div>
 
+        {/* Your Calculators */}
+        <Card className="bg-midnight-800 border-midnight-700 mb-8">
+          <CardHeader>
+            <CardTitle className="text-white">Your Calculators</CardTitle>
+            <CardDescription className="text-gray-400">
+              Manage and customize your quote calculators
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {userCalculators.length === 0 ? (
+              <div className="text-center py-12">
+                <Calculator className="h-12 w-12 text-gray-600 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-400 mb-2">No calculators yet</h3>
+                <p className="text-gray-500 mb-4">Add your first calculator to get started</p>
+                <Button 
+                  onClick={() => setShowCalculatorModal(true)}
+                  className="bg-neon-500 hover:bg-neon-600 text-black"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Calculator
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {userCalculators.map((calc) => (
+                  <div key={calc.id} className="flex items-center justify-between p-4 bg-midnight-900 rounded-lg border border-midnight-600">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-10 h-10 bg-neon-500/20 rounded-lg flex items-center justify-center">
+                        <Calculator className="h-5 w-5 text-neon-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-white font-medium">{calc.name}</h3>
+                        <p className="text-gray-400 text-sm">Created {new Date(calc.created_at).toLocaleDateString()}</p>
+                        <div className="flex items-center space-x-4 mt-1">
+                          <span className="text-xs text-neon-400">45 views this month</span>
+                          <span className="text-xs text-green-400">12 conversions</span>
+                          <span className="text-xs text-blue-400">26.7% rate</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Badge variant={calc.is_active ? "default" : "secondary"}>
+                        {calc.is_active ? "Active" : "Inactive"}
+                      </Badge>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => previewCalculator(calc)}
+                        className="text-gray-400 hover:text-white"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => customizeCalculator(calc)}
+                        className="text-gray-400 hover:text-white"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => showEmbedCode(calc)}
+                        className="text-gray-400 hover:text-white"
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card className="bg-midnight-800 border-midnight-700">
@@ -527,76 +603,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Calculator List */}
-        <Card className="bg-midnight-800 border-midnight-700">
-          <CardHeader>
-            <CardTitle className="text-white">Your Calculators</CardTitle>
-            <CardDescription className="text-gray-400">
-              Manage and customize your quote calculators
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {userCalculators.length === 0 ? (
-              <div className="text-center py-12">
-                <Calculator className="h-12 w-12 text-gray-600 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-400 mb-2">No calculators yet</h3>
-                <p className="text-gray-500 mb-4">Add your first calculator to get started</p>
-                <Button 
-                  onClick={() => setShowCalculatorModal(true)}
-                  className="bg-neon-500 hover:bg-neon-600 text-black"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Calculator
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {userCalculators.map((calc) => (
-                  <div key={calc.id} className="flex items-center justify-between p-4 bg-midnight-900 rounded-lg border border-midnight-600">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-10 h-10 bg-neon-500/20 rounded-lg flex items-center justify-center">
-                        <Calculator className="h-5 w-5 text-neon-400" />
-                      </div>
-                      <div>
-                        <h3 className="text-white font-medium">{calc.name}</h3>
-                        <p className="text-gray-400 text-sm">Created {new Date(calc.created_at).toLocaleDateString()}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Badge variant={calc.is_active ? "default" : "secondary"}>
-                        {calc.is_active ? "Active" : "Inactive"}
-                      </Badge>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => previewCalculator(calc)}
-                        className="text-gray-400 hover:text-white"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => customizeCalculator(calc)}
-                        className="text-gray-400 hover:text-white"
-                      >
-                        <Settings className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => showEmbedCode(calc)}
-                        className="text-gray-400 hover:text-white"
-                      >
-                        <Copy className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+
 
         {/* Customization Modal */}
         {showCustomizeModal && selectedCalculator && (

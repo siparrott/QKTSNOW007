@@ -165,6 +165,8 @@ export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [customConfig, setCustomConfig] = useState<any>({});
+
+
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const { toast } = useToast();
 
@@ -739,14 +741,44 @@ export default function Dashboard() {
                           />
                         </div>
                         <div>
-                          <Label className="text-gray-300">Logo URL</Label>
-                          <Input
-                            value={customConfig.logoUrl || ''}
-                            onChange={(e) => setCustomConfig({...customConfig, logoUrl: e.target.value})}
-                            placeholder="https://yoursite.com/logo.png"
-                            className="bg-midnight-900 border-midnight-600 text-white"
-                          />
+                          <Label className="text-gray-300">Logo Upload</Label>
+                          <div className="space-y-2">
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  const reader = new FileReader();
+                                  reader.onload = (event) => {
+                                    setCustomConfig({...customConfig, logoUrl: event.target?.result as string});
+                                  };
+                                  reader.readAsDataURL(file);
+                                }
+                              }}
+                              className="bg-midnight-900 border-midnight-600 text-white file:bg-neon-500 file:text-black file:border-0 file:px-4 file:py-2 file:rounded"
+                            />
+                            <Input
+                              value={customConfig.logoUrl || ''}
+                              onChange={(e) => setCustomConfig({...customConfig, logoUrl: e.target.value})}
+                              placeholder="Or paste image URL"
+                              className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                            />
+                          </div>
                         </div>
+                        {customConfig.logoUrl && (
+                          <div>
+                            <Label className="text-gray-300">Logo Size: {customConfig.logoSize || 60}px</Label>
+                            <Slider
+                              value={[customConfig.logoSize || 60]}
+                              onValueChange={(value) => setCustomConfig({...customConfig, logoSize: value[0]})}
+                              max={200}
+                              min={20}
+                              step={5}
+                              className="mt-2"
+                            />
+                          </div>
+                        )}
                         <div>
                           <Label className="text-gray-300">Primary Color</Label>
                           <Input
@@ -759,39 +791,290 @@ export default function Dashboard() {
                       </div>
                     </div>
 
-                    {/* Calculator Text */}
+                    {/* Comprehensive Text Customization */}
                     <div>
                       <h3 className="text-white font-medium mb-4 flex items-center">
                         <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
                         <Type className="h-4 w-4 mr-2" />
-                        Calculator Text
+                        Text Customization
                       </h3>
-                      <div className="space-y-4">
-                        <div>
-                          <Label className="text-gray-300">Calculator Title</Label>
-                          <Input
-                            value={customConfig.title || selectedCalculator.name}
-                            onChange={(e) => setCustomConfig({...customConfig, title: e.target.value})}
-                            className="bg-midnight-900 border-midnight-600 text-white"
-                          />
+                      <div className="space-y-6">
+                        
+                        {/* Headers Section */}
+                        <div className="border border-midnight-600 rounded-lg p-4">
+                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Headers & Titles</h4>
+                          <div className="space-y-3">
+                            <div>
+                              <Label className="text-gray-300 text-xs">Main Title</Label>
+                              <Input
+                                value={customConfig.mainTitle || ''}
+                                onChange={(e) => setCustomConfig({...customConfig, mainTitle: e.target.value})}
+                                placeholder={selectedCalculator.name}
+                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-gray-300 text-xs">Subtitle</Label>
+                              <Input
+                                value={customConfig.subtitle || ''}
+                                onChange={(e) => setCustomConfig({...customConfig, subtitle: e.target.value})}
+                                placeholder="Get your personalized quote"
+                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-gray-300 text-xs">Description</Label>
+                              <Textarea
+                                value={customConfig.description || ''}
+                                onChange={(e) => setCustomConfig({...customConfig, description: e.target.value})}
+                                placeholder="Brief description of your service"
+                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                                rows={2}
+                              />
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <Label className="text-gray-300">Description</Label>
-                          <Textarea
-                            value={customConfig.description || ''}
-                            onChange={(e) => setCustomConfig({...customConfig, description: e.target.value})}
-                            placeholder="Brief description of your service"
-                            className="bg-midnight-900 border-midnight-600 text-white"
-                            rows={3}
-                          />
+
+                        {/* Button Text Section */}
+                        <div className="border border-midnight-600 rounded-lg p-4">
+                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Button Text</h4>
+                          <div className="space-y-3">
+                            <div>
+                              <Label className="text-gray-300 text-xs">Submit Button</Label>
+                              <Input
+                                value={customConfig.submitButtonText || ''}
+                                onChange={(e) => setCustomConfig({...customConfig, submitButtonText: e.target.value})}
+                                placeholder="Get My Quote"
+                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-gray-300 text-xs">Next Step Button</Label>
+                              <Input
+                                value={customConfig.nextStepButton || ''}
+                                onChange={(e) => setCustomConfig({...customConfig, nextStepButton: e.target.value})}
+                                placeholder="Continue"
+                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-gray-300 text-xs">Back Button</Label>
+                              <Input
+                                value={customConfig.backStepButton || ''}
+                                onChange={(e) => setCustomConfig({...customConfig, backStepButton: e.target.value})}
+                                placeholder="Back"
+                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                              />
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <Label className="text-gray-300">Submit Button Text</Label>
-                          <Input
-                            value={customConfig.submitText || 'Get My Quote'}
-                            onChange={(e) => setCustomConfig({...customConfig, submitText: e.target.value})}
-                            className="bg-midnight-900 border-midnight-600 text-white"
-                          />
+
+                        {/* Form Fields Section */}
+                        <div className="border border-midnight-600 rounded-lg p-4">
+                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Form Field Labels</h4>
+                          <div className="space-y-3">
+                            <div>
+                              <Label className="text-gray-300 text-xs">Name Field Label</Label>
+                              <Input
+                                value={customConfig.nameLabel || ''}
+                                onChange={(e) => setCustomConfig({...customConfig, nameLabel: e.target.value})}
+                                placeholder="Your Name"
+                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-gray-300 text-xs">Email Field Label</Label>
+                              <Input
+                                value={customConfig.emailLabel || ''}
+                                onChange={(e) => setCustomConfig({...customConfig, emailLabel: e.target.value})}
+                                placeholder="Email Address"
+                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-gray-300 text-xs">Phone Field Label</Label>
+                              <Input
+                                value={customConfig.phoneLabel || ''}
+                                onChange={(e) => setCustomConfig({...customConfig, phoneLabel: e.target.value})}
+                                placeholder="Phone Number"
+                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Calculator-Specific Fields */}
+                        {selectedCalculator.template_id === 'wedding-photography' && (
+                          <>
+                            <div className="border border-midnight-600 rounded-lg p-4">
+                              <h4 className="text-neon-400 font-medium mb-3 text-sm">Package Selection</h4>
+                              <div className="space-y-3">
+                                <div>
+                                  <Label className="text-gray-300 text-xs">Package Section Title</Label>
+                                  <Input
+                                    value={customConfig.packageSectionTitle || ''}
+                                    onChange={(e) => setCustomConfig({...customConfig, packageSectionTitle: e.target.value})}
+                                    placeholder="Choose your wedding photography package"
+                                    className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                                  />
+                                </div>
+                                <div>
+                                  <Label className="text-gray-300 text-xs">Elopement Package Name</Label>
+                                  <Input
+                                    value={customConfig.elopementPackage || ''}
+                                    onChange={(e) => setCustomConfig({...customConfig, elopementPackage: e.target.value})}
+                                    placeholder="Elopement"
+                                    className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                                  />
+                                </div>
+                                <div>
+                                  <Label className="text-gray-300 text-xs">Half-Day Package Name</Label>
+                                  <Input
+                                    value={customConfig.halfDayPackage || ''}
+                                    onChange={(e) => setCustomConfig({...customConfig, halfDayPackage: e.target.value})}
+                                    placeholder="Half-Day Coverage"
+                                    className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                                  />
+                                </div>
+                                <div>
+                                  <Label className="text-gray-300 text-xs">Full-Day Package Name</Label>
+                                  <Input
+                                    value={customConfig.fullDayPackage || ''}
+                                    onChange={(e) => setCustomConfig({...customConfig, fullDayPackage: e.target.value})}
+                                    placeholder="Full-Day Coverage"
+                                    className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                                  />
+                                </div>
+                                <div>
+                                  <Label className="text-gray-300 text-xs">Destination Package Name</Label>
+                                  <Input
+                                    value={customConfig.destinationPackage || ''}
+                                    onChange={(e) => setCustomConfig({...customConfig, destinationPackage: e.target.value})}
+                                    placeholder="Destination Wedding"
+                                    className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="border border-midnight-600 rounded-lg p-4">
+                              <h4 className="text-neon-400 font-medium mb-3 text-sm">Location Options</h4>
+                              <div className="space-y-3">
+                                <div>
+                                  <Label className="text-gray-300 text-xs">Location Section Title</Label>
+                                  <Input
+                                    value={customConfig.locationSectionTitle || ''}
+                                    onChange={(e) => setCustomConfig({...customConfig, locationSectionTitle: e.target.value})}
+                                    placeholder="How many locations?"
+                                    className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                                  />
+                                </div>
+                                <div>
+                                  <Label className="text-gray-300 text-xs">Single Location Text</Label>
+                                  <Input
+                                    value={customConfig.singleLocation || ''}
+                                    onChange={(e) => setCustomConfig({...customConfig, singleLocation: e.target.value})}
+                                    placeholder="1 Location"
+                                    className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                                  />
+                                </div>
+                                <div>
+                                  <Label className="text-gray-300 text-xs">Two Locations Text</Label>
+                                  <Input
+                                    value={customConfig.twoLocations || ''}
+                                    onChange={(e) => setCustomConfig({...customConfig, twoLocations: e.target.value})}
+                                    placeholder="2 Locations"
+                                    className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                                  />
+                                </div>
+                                <div>
+                                  <Label className="text-gray-300 text-xs">Multiple Locations Text</Label>
+                                  <Input
+                                    value={customConfig.multipleLocations || ''}
+                                    onChange={(e) => setCustomConfig({...customConfig, multipleLocations: e.target.value})}
+                                    placeholder="3+ Locations"
+                                    className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="border border-midnight-600 rounded-lg p-4">
+                              <h4 className="text-neon-400 font-medium mb-3 text-sm">Add-on Services</h4>
+                              <div className="space-y-3">
+                                <div>
+                                  <Label className="text-gray-300 text-xs">Add-ons Section Title</Label>
+                                  <Input
+                                    value={customConfig.addonSectionTitle || ''}
+                                    onChange={(e) => setCustomConfig({...customConfig, addonSectionTitle: e.target.value})}
+                                    placeholder="Additional Services"
+                                    className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                                  />
+                                </div>
+                                <div>
+                                  <Label className="text-gray-300 text-xs">Engagement Session Text</Label>
+                                  <Input
+                                    value={customConfig.engagementSession || ''}
+                                    onChange={(e) => setCustomConfig({...customConfig, engagementSession: e.target.value})}
+                                    placeholder="Engagement Session"
+                                    className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                                  />
+                                </div>
+                                <div>
+                                  <Label className="text-gray-300 text-xs">Second Photographer Text</Label>
+                                  <Input
+                                    value={customConfig.secondPhotographer || ''}
+                                    onChange={(e) => setCustomConfig({...customConfig, secondPhotographer: e.target.value})}
+                                    placeholder="Second Photographer"
+                                    className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                                  />
+                                </div>
+                                <div>
+                                  <Label className="text-gray-300 text-xs">Drone Photography Text</Label>
+                                  <Input
+                                    value={customConfig.dronePhotography || ''}
+                                    onChange={(e) => setCustomConfig({...customConfig, dronePhotography: e.target.value})}
+                                    placeholder="Drone Photography"
+                                    className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                                  />
+                                </div>
+                                <div>
+                                  <Label className="text-gray-300 text-xs">Wedding Album Text</Label>
+                                  <Input
+                                    value={customConfig.weddingAlbum || ''}
+                                    onChange={(e) => setCustomConfig({...customConfig, weddingAlbum: e.target.value})}
+                                    placeholder="Wedding Album"
+                                    className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </>
+                        )}
+
+                        {/* Footer Section */}
+                        <div className="border border-midnight-600 rounded-lg p-4">
+                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Footer & Privacy</h4>
+                          <div className="space-y-3">
+                            <div>
+                              <Label className="text-gray-300 text-xs">Footer Text</Label>
+                              <Input
+                                value={customConfig.footerText || ''}
+                                onChange={(e) => setCustomConfig({...customConfig, footerText: e.target.value})}
+                                placeholder="Powered by YourBusiness"
+                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-gray-300 text-xs">Privacy Text</Label>
+                              <Input
+                                value={customConfig.privacyText || ''}
+                                onChange={(e) => setCustomConfig({...customConfig, privacyText: e.target.value})}
+                                placeholder="Your information is secure"
+                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                              />
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>

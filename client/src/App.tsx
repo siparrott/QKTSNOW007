@@ -141,6 +141,7 @@ function Router() {
       <Route path="/pricing" component={Pricing} />
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
+      <Route path="/subscribe" component={Subscribe} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/niches/:niche" component={NotFound} />
       <Route component={NotFound} />

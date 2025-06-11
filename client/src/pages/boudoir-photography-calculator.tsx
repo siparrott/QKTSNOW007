@@ -77,9 +77,19 @@ interface BoudoirPhotographyCalculatorProps {
   customConfig?: any;
   isPreview?: boolean;
   hideHeader?: boolean;
+  forceDetailedView?: boolean;
+  useComprehensiveCalculator?: boolean;
+  calculatorType?: string;
 }
 
-export default function BoudoirPhotographyCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: BoudoirPhotographyCalculatorProps = {}) {
+export default function BoudoirPhotographyCalculator({ 
+  customConfig: propConfig, 
+  isPreview = false, 
+  hideHeader = false,
+  forceDetailedView = false,
+  useComprehensiveCalculator = false,
+  calculatorType
+}: BoudoirPhotographyCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<BoudoirFormData>({
     sessionType: "",
@@ -102,17 +112,125 @@ export default function BoudoirPhotographyCalculator({ customConfig: propConfig,
 
   const totalSteps = 4;
 
+  // Initialize with prop config and watch for changes
+  useEffect(() => {
+    if (propConfig) {
+      setCustomConfig(propConfig);
+      applyCustomConfig(propConfig);
+    }
+  }, [propConfig]);
+
   // Listen for configuration updates from parent dashboard
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data.type === 'APPLY_CONFIG') {
         setCustomConfig(event.data.config);
+        applyCustomConfig(event.data.config);
       }
     };
 
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
   }, []);
+
+  const applyCustomConfig = (config: any) => {
+    console.log('Applying config to boudoir calculator:', config);
+    setCustomConfig(config);
+    
+    // Create dynamic CSS styles
+    const styleId = 'boudoir-calculator-custom-styles';
+    let existingStyle = document.getElementById(styleId);
+    if (existingStyle) {
+      existingStyle.remove();
+    }
+    
+    const style = document.createElement('style');
+    style.id = styleId;
+    
+    // Handle both flat and nested config formats
+    const primaryColor = config.brandColors?.primary || config.primaryColor || '#ec4899';
+    const secondaryColor = config.brandColors?.secondary || config.secondaryColor || '#2563eb';
+    const accentColor = config.brandColors?.accent || config.accentColor || '#f59e0b';
+    const fontFamily = config.styling?.fontFamily || config.fontFamily || 'Inter';
+    const borderRadius = config.styling?.borderRadius || config.borderRadius || '0.5rem';
+    
+    let css = `
+      :root {
+        --custom-primary: ${primaryColor};
+        --custom-secondary: ${secondaryColor};
+        --custom-accent: ${accentColor};
+        --custom-font: ${fontFamily};
+        --custom-radius: ${borderRadius};
+      }
+      
+      .boudoir-calculator {
+        font-family: var(--custom-font) !important;
+      }
+      
+      .boudoir-calculator .bg-pink-500 {
+        background-color: var(--custom-primary) !important;
+      }
+      
+      .boudoir-calculator .bg-pink-400 {
+        background-color: var(--custom-primary) !important;
+      }
+      
+      .boudoir-calculator .text-pink-500 {
+        color: var(--custom-primary) !important;
+      }
+      
+      .boudoir-calculator .border-pink-300 {
+        border-color: var(--custom-primary) !important;
+      }
+      
+      .boudoir-calculator button:not([class*="outline"]) {
+        background-color: var(--custom-primary) !important;
+        border-color: var(--custom-primary) !important;
+      }
+    `;
+    
+    style.textContent = css;
+    document.head.appendChild(style);
+    
+    // Apply styles to existing elements
+    setTimeout(() => {
+      const calculator = document.querySelector('.boudoir-calculator');
+      if (calculator) {
+        const specificElements = [
+          '.bg-pink-500',
+          '.bg-pink-400', 
+          '.text-pink-500',
+          '.border-pink-300',
+          'button'
+        ];
+        
+        specificElements.forEach(selector => {
+          const elements = calculator.querySelectorAll(selector);
+          elements.forEach(el => {
+            const htmlEl = el as HTMLElement;
+            if (selector.includes('bg-')) {
+              htmlEl.style.setProperty('background-color', primaryColor, 'important');
+            } else if (selector.includes('text-')) {
+              htmlEl.style.setProperty('color', primaryColor, 'important');
+            } else if (selector.includes('border-')) {
+              htmlEl.style.setProperty('border-color', primaryColor, 'important');
+            } else if (selector === 'button') {
+              htmlEl.style.setProperty('background-color', primaryColor, 'important');
+              htmlEl.style.setProperty('border-color', primaryColor, 'important');
+            }
+          });
+        });
+        
+        // Force browser repaint
+        const htmlCalc = calculator as HTMLElement;
+        htmlCalc.style.transform = 'translateZ(0)';
+        htmlCalc.offsetHeight; // Trigger reflow
+        htmlCalc.style.transform = '';
+      }
+      
+      setFormData(prev => ({...prev}));
+    }, 50);
+  };
 
   const calculatePricing = (): PricingBreakdown => {
     let total = pricingConfig.basePrice;
@@ -438,14 +556,14 @@ This quote is valid for 48 hours.
                       <div className="grid grid-cols-2 gap-4">
                         <OptionCard
                           icon={<Star className="w-8 h-8" />}
-                          title="Classic"
+                          title={customConfig?.standardSession || "Classic"}
                           subtitle="Timeless elegance"
                           isSelected={formData.sessionType === "classic"}
                           onClick={() => setFormData(prev => ({ ...prev, sessionType: "classic" }))}
                         />
                         <OptionCard
                           icon={<Heart className="w-8 h-8" />}
-                          title="Lingerie"
+                          title={customConfig?.deluxeSession || "Lingerie"}
                           subtitle="Intimate beauty"
                           price="+€25"
                           isSelected={formData.sessionType === "lingerie"}
@@ -453,7 +571,7 @@ This quote is valid for 48 hours.
                         />
                         <OptionCard
                           icon={<Star className="w-8 h-8" />}
-                          title="Nude"
+                          title={customConfig?.couplesSession || "Nude"}
                           subtitle="Artistic celebration"
                           price="+€50"
                           isSelected={formData.sessionType === "nude"}
@@ -461,7 +579,7 @@ This quote is valid for 48 hours.
                         />
                         <OptionCard
                           icon={<Crown className="w-8 h-8" />}
-                          title="Glamour"
+                          title={customConfig?.outdoorSession || "Glamour"}
                           subtitle="High-fashion drama"
                           price="+€35"
                           isSelected={formData.sessionType === "glamour"}

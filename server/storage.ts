@@ -48,6 +48,11 @@ export interface IStorage {
   // Leads
   getLeadsByUserCalculator(userCalculatorId: string): Promise<Lead[]>;
   createLead(lead: InsertLead): Promise<Lead>;
+  
+  // Two-Factor Authentication
+  enableTwoFactor(userId: string, secret: string, backupCodes: string[]): Promise<User>;
+  disableTwoFactor(userId: string): Promise<User>;
+  updateUserBackupCodes(userId: string, backupCodes: string[]): Promise<User>;
 }
 
 export class MemStorage implements IStorage {
@@ -1197,6 +1202,9 @@ export class MemStorage implements IStorage {
       quotesLimit: 5,
       subscriptionStartDate: null,
       lastQuoteReset: new Date(),
+      twoFactorEnabled: false,
+      twoFactorSecret: null,
+      backupCodes: null,
       createdAt: new Date(),
     };
     this.users.set(user.id, user);
@@ -1397,6 +1405,54 @@ export class MemStorage implements IStorage {
     const updated = { ...userCalculator, ...data, lastUpdated: new Date() };
     this.userCalculators.set(id, updated);
     return updated;
+  }
+
+  // Two-Factor Authentication methods
+  async enableTwoFactor(userId: string, secret: string, backupCodes: string[]): Promise<User> {
+    const user = this.users.get(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    const updated = { 
+      ...user, 
+      twoFactorEnabled: true,
+      twoFactorSecret: secret,
+      backupCodes: backupCodes
+    };
+    this.users.set(userId, updated);
+    return updated;
+  }
+
+  async disableTwoFactor(userId: string): Promise<User> {
+    const user = this.users.get(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    const updated = { 
+      ...user, 
+      twoFactorEnabled: false,
+      twoFactorSecret: null,
+      backupCodes: null
+    };
+    this.users.set(userId, updated);
+    return updated;
+  }
+
+  async updateUserBackupCodes(userId: string, backupCodes: string[]): Promise<User> {
+    const user = this.users.get(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    const updated = { 
+      ...user, 
+      backupCodes: backupCodes
+    };
+    this.users.set(userId, updated);
+    return updated;
+  }
+
+  async getUserById(userId: string): Promise<User | undefined> {
+    return this.users.get(userId);
   }
 }
 

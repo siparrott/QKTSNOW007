@@ -71,6 +71,8 @@ import Login from "@/pages/login";
 import Register from "@/pages/register";
 import Subscribe from "@/pages/subscribe";
 import Dashboard from "@/pages/dashboard";
+import TwoFactorSetup from "@/pages/two-factor-setup";
+import TwoFactorVerify from "@/pages/two-factor-verify";
 
 
 function Router() {
@@ -201,6 +203,8 @@ function Router() {
       <Route path="/register" component={Register} />
       <Route path="/subscribe" component={Subscribe} />
       <Route path="/dashboard" component={Dashboard} />
+      <Route path="/two-factor-setup" component={TwoFactorSetup} />
+      <Route path="/two-factor-verify" component={TwoFactorVerify} />
       <Route path="/niches/:niche" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

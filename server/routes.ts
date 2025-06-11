@@ -1047,6 +1047,137 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Health check
+  // Two-Factor Authentication endpoints
+  app.post("/api/two-factor/setup", requireAuth, async (req, res) => {
+    try {
+      const user = (req as any).user;
+      
+      if (user.twoFactorEnabled) {
+        return res.status(400).json({ error: "2FA is already enabled" });
+      }
+
+      const setupData = await TwoFactorAuth.setupTwoFactor(user.email);
+      
+      res.json(setupData);
+    } catch (error) {
+      console.error("2FA setup error:", error);
+      res.status(500).json({ error: "Failed to setup 2FA" });
+    }
+  });
+
+  app.post("/api/two-factor/verify-setup", requireAuth, async (req, res) => {
+    try {
+      const user = (req as any).user;
+      const { token, secret } = req.body;
+
+      if (!token || !secret) {
+        return res.status(400).json({ error: "Token and secret are required" });
+      }
+
+      const isValid = TwoFactorAuth.verifyToken(secret, token);
+      if (!isValid) {
+        return res.status(400).json({ error: "Invalid verification code" });
+      }
+
+      const backupCodes = TwoFactorAuth.generateBackupCodes(8);
+      await storage.enableTwoFactor(user.id, secret, backupCodes);
+
+      res.json({ 
+        success: true,
+        backupCodes,
+        message: "2FA has been enabled successfully" 
+      });
+    } catch (error) {
+      console.error("2FA verification error:", error);
+      res.status(500).json({ error: "Failed to verify 2FA setup" });
+    }
+  });
+
+  app.post("/api/two-factor/verify", async (req, res) => {
+    try {
+      const { token, isBackupCode } = req.body;
+      
+      const userId = req.session?.pendingUserId;
+      if (!userId) {
+        return res.status(400).json({ error: "No pending authentication session" });
+      }
+
+      const user = await storage.getUserById(userId);
+      if (!user || !user.twoFactorEnabled) {
+        return res.status(400).json({ error: "2FA not enabled for this user" });
+      }
+
+      let isValid = false;
+      let usedBackupCode = false;
+      let remainingBackupCodes = 0;
+
+      if (isBackupCode) {
+        const backupResult = TwoFactorAuth.verifyBackupCode(
+          user.backupCodes as string[], 
+          token
+        );
+        isValid = backupResult.isValid;
+        usedBackupCode = true;
+        remainingBackupCodes = backupResult.remainingCodes.length;
+
+        if (isValid) {
+          await storage.updateUserBackupCodes(user.id, backupResult.remainingCodes);
+        }
+      } else {
+        isValid = TwoFactorAuth.verifyToken(user.twoFactorSecret!, token);
+      }
+
+      if (!isValid) {
+        return res.status(400).json({ error: "Invalid verification code" });
+      }
+
+      const authToken = await authService.generateToken(user);
+      delete req.session?.pendingUserId;
+
+      res.json({
+        success: true,
+        token: authToken,
+        user: {
+          id: user.id,
+          email: user.email,
+          fullName: user.fullName,
+          subscriptionStatus: user.subscriptionStatus
+        },
+        usedBackupCode,
+        remainingBackupCodes
+      });
+    } catch (error) {
+      console.error("2FA verification error:", error);
+      res.status(500).json({ error: "Failed to verify 2FA code" });
+    }
+  });
+
+  app.post("/api/two-factor/disable", requireAuth, async (req, res) => {
+    try {
+      const user = (req as any).user;
+      const { password } = req.body;
+
+      if (!password) {
+        return res.status(400).json({ error: "Password confirmation required" });
+      }
+
+      const isValidPassword = await authService.verifyPassword(password, user.passwordHash);
+      if (!isValidPassword) {
+        return res.status(400).json({ error: "Invalid password" });
+      }
+
+      await storage.disableTwoFactor(user.id);
+
+      res.json({ 
+        success: true,
+        message: "2FA has been disabled successfully" 
+      });
+    } catch (error) {
+      console.error("2FA disable error:", error);
+      res.status(500).json({ error: "Failed to disable 2FA" });
+    }
+  });
+
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok", timestamp: new Date().toISOString() });
   });

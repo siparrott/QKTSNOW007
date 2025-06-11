@@ -311,3 +311,97 @@ export async function deleteUserCalculator(id: string, userId: string): Promise<
     return false;
   }
 }
+
+// Analytics functions
+export async function trackCalculatorVisit(data: {
+  userCalculatorId: string;
+  visitorId: string;
+  ipAddress?: string;
+  userAgent?: string;
+  referrer?: string;
+}): Promise<string | null> {
+  try {
+    const visits = await sql`
+      INSERT INTO calculator_visits (
+        user_calculator_id, visitor_id, ip_address, user_agent, referrer
+      ) VALUES (
+        ${data.userCalculatorId}, ${data.visitorId}, ${data.ipAddress || null}, 
+        ${data.userAgent || null}, ${data.referrer || null}
+      ) RETURNING id
+    `;
+    
+    return visits[0]?.id || null;
+  } catch (error) {
+    console.error('Error tracking calculator visit:', error);
+    return null;
+  }
+}
+
+export async function markConversion(visitId: string): Promise<boolean> {
+  try {
+    await sql`
+      UPDATE calculator_visits 
+      SET conversion_completed = true 
+      WHERE id = ${visitId}
+    `;
+    return true;
+  } catch (error) {
+    console.error('Error marking conversion:', error);
+    return false;
+  }
+}
+
+export async function getUserAnalytics(userId: string): Promise<{
+  totalVisits: number;
+  totalConversions: number;
+  conversionRate: number;
+  totalQuotes: number;
+}> {
+  try {
+    // Handle UUID conversion for temporary users
+    let actualUserId = userId;
+    if (userId.startsWith('temp_')) {
+      actualUserId = generateUuidForTempUser(userId);
+    }
+
+    // Get visits and conversions for user's calculators
+    const analytics = await sql`
+      SELECT 
+        COUNT(cv.id) as total_visits,
+        COUNT(CASE WHEN cv.conversion_completed = true THEN 1 END) as total_conversions
+      FROM calculator_visits cv
+      JOIN user_calculators uc ON cv.user_calculator_id = uc.id
+      WHERE uc.user_id = ${actualUserId}
+      AND cv.created_at >= NOW() - INTERVAL '30 days'
+    `;
+
+    // Get total quotes (leads) for user's calculators
+    const quotes = await sql`
+      SELECT COUNT(l.id) as total_quotes
+      FROM leads l
+      JOIN user_calculators uc ON l.user_calculator_id = uc.id
+      WHERE uc.user_id = ${actualUserId}
+      AND l.created_at >= NOW() - INTERVAL '30 days'
+    `;
+
+    const totalVisits = parseInt(analytics[0]?.total_visits || '0');
+    const totalConversions = parseInt(analytics[0]?.total_conversions || '0');
+    const totalQuotes = parseInt(quotes[0]?.total_quotes || '0');
+    const conversionRate = totalVisits > 0 ? Math.round((totalConversions / totalVisits) * 100) : 0;
+
+    return {
+      totalVisits,
+      totalConversions,
+      conversionRate,
+      totalQuotes
+    };
+  } catch (error) {
+    console.error('Error getting user analytics:', error);
+    return {
+      totalVisits: 0,
+      totalConversions: 0,
+      conversionRate: 0,
+      totalQuotes: 0
+    };
+  }
+}

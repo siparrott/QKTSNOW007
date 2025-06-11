@@ -74,6 +74,18 @@ export const sessions = pgTable("sessions", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const calculatorVisits = pgTable("calculator_visits", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userCalculatorId: uuid("user_calculator_id").references(() => userCalculators.id, { onDelete: "cascade" }).notNull(),
+  visitorId: text("visitor_id"), // anonymous tracking ID
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  referrer: text("referrer"),
+  conversionCompleted: boolean("conversion_completed").default(false),
+  sessionDuration: integer("session_duration"), // in seconds
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   email: true,
@@ -133,6 +145,16 @@ export const insertSessionSchema = createInsertSchema(sessions).pick({
   expiresAt: true,
 });
 
+export const insertCalculatorVisitSchema = createInsertSchema(calculatorVisits).pick({
+  userCalculatorId: true,
+  visitorId: true,
+  ipAddress: true,
+  userAgent: true,
+  referrer: true,
+  conversionCompleted: true,
+  sessionDuration: true,
+});
+
 // Select schemas
 export const selectUserSchema = createSelectSchema(users);
 export const selectCalculatorSchema = createSelectSchema(calculators);
@@ -140,12 +162,14 @@ export const selectUserCalculatorSchema = createSelectSchema(userCalculators);
 export const selectLeadSchema = createSelectSchema(leads);
 export const selectSubscriptionSchema = createSelectSchema(subscriptions);
 export const selectSessionSchema = createSelectSchema(sessions);
+export const selectCalculatorVisitSchema = createSelectSchema(calculatorVisits);
 
 // Type exports
 export type User = typeof users.$inferSelect;
 export type Calculator = typeof calculators.$inferSelect;
 export type UserCalculator = typeof userCalculators.$inferSelect;
 export type Lead = typeof leads.$inferSelect;
+export type CalculatorVisit = typeof calculatorVisits.$inferSelect;
 export type Subscription = typeof subscriptions.$inferSelect;
 export type Session = typeof sessions.$inferSelect;
 

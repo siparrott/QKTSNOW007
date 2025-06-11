@@ -6,7 +6,8 @@ import {
   updateUserCalculator, 
   getCalculatorTemplates, 
   getCalculatorTemplate,
-  deleteUserCalculator 
+  deleteUserCalculator,
+  getUserAnalytics
 } from '../shared/supabase';
 
 const router = Router();
@@ -154,6 +155,18 @@ router.delete('/user-calculators/:id', async (req, res) => {
   } catch (error) {
     console.error('Error deleting calculator:', error);
     res.status(500).json({ error: 'Failed to delete calculator' });
+  }
+});
+
+// Get user analytics
+router.get('/analytics/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const analytics = await getUserAnalytics(userId);
+    res.json(analytics);
+  } catch (error) {
+    console.error('Error fetching analytics:', error);
+    res.status(500).json({ error: 'Failed to fetch analytics' });
   }
 });
 

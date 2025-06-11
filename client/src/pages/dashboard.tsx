@@ -51,7 +51,9 @@ import {
   Target,
   Building,
   Crown,
-  DollarSign
+  DollarSign,
+  Save,
+  RotateCcw
 } from "lucide-react";
 
 interface User {

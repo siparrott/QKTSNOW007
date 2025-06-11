@@ -243,9 +243,24 @@ export default function BoudoirPhotographyCalculator() {
     }
   };
 
+  // Dynamic styling based on custom configuration
+  const getStyles = () => {
+    if (!customConfig) return {};
+    
+    return {
+      '--primary-color': customConfig.brandColors?.primary || '#ec4899',
+      '--secondary-color': customConfig.brandColors?.secondary || '#8b5cf6',
+      '--accent-color': customConfig.brandColors?.accent || '#f97316',
+    } as React.CSSProperties;
+  };
+
+  const getCompanyName = () => {
+    return customConfig?.companyBranding?.companyName || 'Boudoir Photography';
+  };
+
   const downloadQuotePDF = () => {
     const quoteText = `
-Boudoir Photography Quote
+${getCompanyName()} Quote
 Client: ${formData.contactInfo.name}
 Email: ${formData.contactInfo.email}
 
@@ -344,7 +359,7 @@ This quote is valid for 48 hours.
   );
 
   return (
-    <div className="min-h-screen&">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50" style={getStyles()}>
       <QuoteKitHeader />
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-pink-100">
@@ -361,7 +376,7 @@ This quote is valid for 48 hours.
                 <Camera className="text-white h-6 w-6" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-800 font-serif">Boudoir Photography Calculator</h1>
+                <h1 className="text-2xl font-bold text-gray-800 font-serif">{getCompanyName()} Calculator</h1>
                 <p className="text-pink-600">Create your perfect session</p>
               </div>
             </div>

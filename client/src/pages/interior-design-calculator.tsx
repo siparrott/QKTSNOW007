@@ -50,7 +50,13 @@ interface PricingBreakdown {
   breakdown: string[];
 }
 
-export default function InteriorDesignCalculator() {
+interface InteriorDesignCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function InteriorDesignCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: InteriorDesignCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [formData, setFormData] = useState<InteriorDesignFormData>({
@@ -270,7 +276,7 @@ export default function InteriorDesignCalculator() {
 
   return (
     <div className="min-h-screen&">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">

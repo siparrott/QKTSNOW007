@@ -49,7 +49,13 @@ interface PricingBreakdown {
   breakdown: string[];
 }
 
-export default function PortraitPhotographyCalculator() {
+interface PortraitPhotographyCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function PortraitPhotographyCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: PortraitPhotographyCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [formData, setFormData] = useState<PortraitFormData>({
@@ -293,7 +299,7 @@ export default function PortraitPhotographyCalculator() {
 
   return (
     <div className="min-h-screen&">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">

@@ -12,7 +12,7 @@ export default function Footer() {
               <img 
                 src={logoPath} 
                 alt="QuoteKits Logo" 
-                className="h-12 w-auto object-contain"
+                className="h-10 w-auto object-contain"
               />
             </div>
             <p className="text-gray-400 mb-6 leading-relaxed">

@@ -14,7 +14,7 @@ export function QuoteKitHeader() {
                 <img 
                   src={logoPath} 
                   alt="QuoteKits Logo" 
-                  className="h-16 w-auto object-contain"
+                  className="h-13 w-auto object-contain"
                 />
               </div>
             </Link>

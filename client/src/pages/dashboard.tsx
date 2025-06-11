@@ -985,6 +985,38 @@ export default function Dashboard() {
                               }))}
                             />
                           </div>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <Label className="text-gray-300 text-sm">AI Field Enhancement</Label>
+                              <p className="text-xs text-gray-500">Auto-fill fields using AI analysis</p>
+                            </div>
+                            <Switch
+                              checked={customConfig?.features?.aiFieldMutation || true}
+                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                features: {
+                                  ...prev?.features,
+                                  aiFieldMutation: checked
+                                }
+                              }))}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <Label className="text-gray-300 text-sm">Smart Suggestions</Label>
+                              <p className="text-xs text-gray-500">Provide intelligent recommendations</p>
+                            </div>
+                            <Switch
+                              checked={customConfig?.features?.smartSuggestions || true}
+                              onCheckedChange={(checked) => setCustomConfig((prev: any) => ({ 
+                                ...prev, 
+                                features: {
+                                  ...prev?.features,
+                                  smartSuggestions: checked
+                                }
+                              }))}
+                            />
+                          </div>
                         </div>
                       </div>
 
@@ -1156,6 +1188,7 @@ export default function Dashboard() {
                       <div className="absolute inset-0 overflow-y-auto overflow-x-hidden">
                         <div className="min-h-full p-4">
                           <CalculatorPreview 
+                            key={previewKey}
                             slug={selectedCalculator.slug} 
                             customConfig={customConfig}
                             className="w-full h-auto"
@@ -1316,17 +1349,118 @@ export default function Dashboard() {
                 </DialogDescription>
               </DialogHeader>
               
-              <div className="space-y-4">
+              <div className="space-y-6">
+                {/* Embed Options */}
+                <div className="grid grid-cols-3 gap-2 p-1 bg-midnight-900 rounded-lg">
+                  <button className="px-3 py-2 bg-neon-500 text-black rounded text-sm font-medium">
+                    iFrame
+                  </button>
+                  <button className="px-3 py-2 text-gray-400 hover:text-white rounded text-sm">
+                    JavaScript
+                  </button>
+                  <button className="px-3 py-2 text-gray-400 hover:text-white rounded text-sm">
+                    Widget
+                  </button>
+                </div>
+
+                {/* iFrame Embed Code */}
                 <div>
-                  <Label className="text-gray-300">HTML Embed Code</Label>
+                  <Label className="text-gray-300">Standard iFrame Embed</Label>
                   <div className="mt-2 p-3 bg-midnight-900 border border-midnight-600 rounded-lg">
                     <code className="text-sm text-gray-300 break-all">
-                      {`<iframe src="${window.location.origin}/calculator/${selectedCalculator.slug}" width="100%" height="600" frameborder="0"></iframe>`}
+                      {`<iframe src="${window.location.origin}/calculator/${selectedCalculator.slug}${selectedCalculator.config ? '?config=' + encodeURIComponent(JSON.stringify(selectedCalculator.config)) : ''}" width="100%" height="700" frameborder="0" style="border-radius: 8px;"></iframe>`}
+                    </code>
+                  </div>
+                </div>
+
+                {/* JavaScript API Embed */}
+                <div>
+                  <Label className="text-gray-300">JavaScript API (Advanced)</Label>
+                  <div className="mt-2 p-3 bg-midnight-900 border border-midnight-600 rounded-lg">
+                    <code className="text-xs text-gray-300 whitespace-pre-wrap">
+{`<div id="quotekit-calculator"></div>
+<script>
+(function() {
+  var script = document.createElement('script');
+  script.src = '${window.location.origin}/embed.js';
+  script.onload = function() {
+    QuoteKit.render('${selectedCalculator.slug}', {
+      container: '#quotekit-calculator',
+      config: ${JSON.stringify(selectedCalculator.config || {}, null, 2)},
+      onQuoteGenerated: function(quote) {
+        console.log('Quote generated:', quote);
+      }
+    });
+  };
+  document.head.appendChild(script);
+})();
+</script>`}
+                    </code>
+                  </div>
+                </div>
+
+                {/* WordPress Shortcode */}
+                <div>
+                  <Label className="text-gray-300">WordPress Shortcode</Label>
+                  <div className="mt-2 p-3 bg-midnight-900 border border-midnight-600 rounded-lg">
+                    <code className="text-sm text-gray-300">
+                      {`[quotekit calculator="${selectedCalculator.slug}" height="700"]`}
+                    </code>
+                  </div>
+                </div>
+
+                {/* Direct Link */}
+                <div>
+                  <Label className="text-gray-300">Direct Link</Label>
+                  <div className="mt-2 p-3 bg-midnight-900 border border-midnight-600 rounded-lg">
+                    <code className="text-sm text-gray-300 break-all">
+                      {`${window.location.origin}/calculator/${selectedCalculator.slug}`}
                     </code>
                   </div>
                 </div>
                 
-                <div className="flex justify-between">
+                {/* Copy Actions */}
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      const iframeCode = `<iframe src="${window.location.origin}/calculator/${selectedCalculator.slug}${selectedCalculator.config ? '?config=' + encodeURIComponent(JSON.stringify(selectedCalculator.config)) : ''}" width="100%" height="700" frameborder="0" style="border-radius: 8px;"></iframe>`;
+                      navigator.clipboard.writeText(iframeCode);
+                      toast({ title: "iFrame code copied!", description: "Standard embed code copied to clipboard." });
+                    }}
+                    className="bg-neon-500 hover:bg-neon-600 text-black"
+                  >
+                    <Copy className="h-3 w-3 mr-1" />
+                    Copy iFrame
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      const jsCode = `<div id="quotekit-calculator"></div>\n<script>\n(function() {\n  var script = document.createElement('script');\n  script.src = '${window.location.origin}/embed.js';\n  script.onload = function() {\n    QuoteKit.render('${selectedCalculator.slug}', {\n      container: '#quotekit-calculator',\n      config: ${JSON.stringify(selectedCalculator.config || {}, null, 2)},\n      onQuoteGenerated: function(quote) {\n        console.log('Quote generated:', quote);\n      }\n    });\n  };\n  document.head.appendChild(script);\n})();\n</script>`;
+                      navigator.clipboard.writeText(jsCode);
+                      toast({ title: "JavaScript API copied!", description: "Advanced embed code copied to clipboard." });
+                    }}
+                    className="border-midnight-600 text-gray-300"
+                  >
+                    <Copy className="h-3 w-3 mr-1" />
+                    Copy JS API
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${window.location.origin}/calculator/${selectedCalculator.slug}`);
+                      toast({ title: "Direct link copied!", description: "Calculator URL copied to clipboard." });
+                    }}
+                    className="border-midnight-600 text-gray-300"
+                  >
+                    <Copy className="h-3 w-3 mr-1" />
+                    Copy Link
+                  </Button>
+                </div>
+
+                <div className="flex justify-between pt-4 border-t border-midnight-700">
                   <Button
                     variant="outline"
                     onClick={() => setShowEmbedModal(false)}
@@ -1334,19 +1468,26 @@ export default function Dashboard() {
                   >
                     Close
                   </Button>
-                  <Button
-                    onClick={() => {
-                      navigator.clipboard.writeText(`<iframe src="${window.location.origin}/calculator/${selectedCalculator.slug}" width="100%" height="600" frameborder="0"></iframe>`);
-                      toast({
-                        title: "Copied!",
-                        description: "Embed code copied to clipboard.",
-                      });
-                    }}
-                    className="bg-neon-500 hover:bg-neon-600 text-black"
-                  >
-                    <Copy className="h-4 w-4 mr-2" />
-                    Copy Code
-                  </Button>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => window.open(`/calculator/${selectedCalculator.slug}`, '_blank')}
+                      className="border-midnight-600 text-gray-300"
+                    >
+                      <ExternalLink className="h-4 w-4 mr-2" />
+                      Test Live
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        navigator.clipboard.writeText(`<iframe src="${window.location.origin}/calculator/${selectedCalculator.slug}${selectedCalculator.config ? '?config=' + encodeURIComponent(JSON.stringify(selectedCalculator.config)) : ''}" width="100%" height="700" frameborder="0" style="border-radius: 8px;"></iframe>`);
+                        toast({ title: "Primary embed code copied!", description: "Ready to paste into your website." });
+                      }}
+                      className="bg-neon-500 hover:bg-neon-600 text-black"
+                    >
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copy Primary Code
+                    </Button>
+                  </div>
                 </div>
               </div>
             </DialogContent>

@@ -81,7 +81,7 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
 
   // Initialize with prop config and watch for changes
   useEffect(() => {
-    if (propConfig) {
+    if (propConfig && JSON.stringify(propConfig) !== JSON.stringify(customConfig)) {
       setCustomConfig(propConfig);
       applyCustomConfig(propConfig);
     }

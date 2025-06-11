@@ -66,6 +66,7 @@ export default function Register() {
         setLocation('/dashboard');
       }
     } catch (error: any) {
+      console.error('Registration error:', error);
       toast({
         title: "Registration failed",
         description: error.message || "Please try again with different details.",

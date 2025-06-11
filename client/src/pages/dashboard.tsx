@@ -50,10 +50,19 @@ export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    } else {
+    const token = localStorage.getItem('auth_token');
+    const userData = localStorage.getItem('user');
+    
+    if (!token || !userData) {
+      setLocation('/login');
+      return;
+    }
+
+    try {
+      setUser(JSON.parse(userData));
+    } catch (error) {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user');
       setLocation('/login');
     }
   }, [setLocation]);

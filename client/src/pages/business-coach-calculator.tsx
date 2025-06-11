@@ -465,7 +465,7 @@ export default function BusinessCoachCalculator({ customConfig: propConfig, isPr
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">

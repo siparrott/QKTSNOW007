@@ -353,7 +353,7 @@ export default function CopywriterCalculator({ customConfig: propConfig, isPrevi
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-slate-50 to-blue-50">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       
       <div className="container mx-auto px-4 py-8">
         {/* Hero Section */}

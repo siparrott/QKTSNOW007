@@ -838,8 +838,12 @@ export default function Dashboard() {
                         <label className="block text-sm font-medium text-gray-300 mb-2">Logo URL (optional)</label>
                         <input
                           type="url"
-                          value={customConfig.logoUrl || ""}
-                          onChange={(e) => setCustomConfig(prev => ({ ...prev, logoUrl: e.target.value }))}
+                          value={customConfig?.companyBranding?.logoUrl || ""}
+                          onChange={(e) => setCustomConfig((prev: any) => ({ 
+                            ...prev, 
+                            companyBranding: { ...prev.companyBranding, logoUrl: e.target.value },
+                            logoUrl: e.target.value 
+                          }))}
                           placeholder="https://example.com/logo.png"
                           className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white placeholder-gray-400"
                         />
@@ -848,8 +852,12 @@ export default function Dashboard() {
                       <div>
                         <label className="block text-sm font-medium text-gray-300 mb-2">Contact Information</label>
                         <textarea
-                          value={customConfig.contactInfo || ""}
-                          onChange={(e) => setCustomConfig(prev => ({ ...prev, contactInfo: e.target.value }))}
+                          value={customConfig?.companyBranding?.contactInfo || ""}
+                          onChange={(e) => setCustomConfig((prev: any) => ({ 
+                            ...prev, 
+                            companyBranding: { ...prev.companyBranding, contactInfo: e.target.value },
+                            contactInfo: e.target.value 
+                          }))}
                           placeholder="Phone, email, or website"
                           className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white placeholder-gray-400 h-20 resize-none"
                         />
@@ -865,8 +873,12 @@ export default function Dashboard() {
                         <label className="block text-sm font-medium text-gray-300 mb-2">Button Text</label>
                         <input
                           type="text"
-                          value={customConfig.ctaText || "Get Quote"}
-                          onChange={(e) => setCustomConfig(prev => ({ ...prev, ctaText: e.target.value }))}
+                          value={customConfig?.callToAction?.buttonText || "Get Quote"}
+                          onChange={(e) => setCustomConfig((prev: any) => ({ 
+                            ...prev, 
+                            callToAction: { ...prev.callToAction, buttonText: e.target.value },
+                            ctaText: e.target.value 
+                          }))}
                           className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white"
                         />
                       </div>
@@ -874,8 +886,12 @@ export default function Dashboard() {
                       <div>
                         <label className="block text-sm font-medium text-gray-300 mb-2">Success Message</label>
                         <textarea
-                          value={customConfig.successMessage || "Thanks! We'll send your quote shortly."}
-                          onChange={(e) => setCustomConfig(prev => ({ ...prev, successMessage: e.target.value }))}
+                          value={customConfig?.callToAction?.successMessage || "Thanks! We'll send your quote shortly."}
+                          onChange={(e) => setCustomConfig((prev: any) => ({ 
+                            ...prev, 
+                            callToAction: { ...prev.callToAction, successMessage: e.target.value },
+                            successMessage: e.target.value 
+                          }))}
                           className="w-full px-3 py-2 bg-midnight-700 border border-midnight-600 rounded text-white h-20 resize-none"
                         />
                       </div>

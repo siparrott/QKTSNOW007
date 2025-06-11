@@ -465,7 +465,168 @@ export default function Dashboard() {
 
   const customizeCalculator = (calc: UserCalculator) => {
     setSelectedCalculator(calc);
-    setCustomConfig(calc.config || defaultConfig);
+    
+    // Load the actual calculator configuration from the original calculator
+    const calculatorType = allCalculators.find(c => c.id === calc.calculatorId);
+    
+    // Set configuration based on the specific calculator type to preserve exact designs
+    let calculatorConfig = { ...defaultConfig };
+    
+    if (calculatorType?.slug === 'wedding-photography') {
+      calculatorConfig = {
+        ...defaultConfig,
+        text: {
+          headline: "Wedding Photography Quote Calculator",
+          subheading: "Create beautiful memories with professional wedding photography. Get your personalized quote for your special day.",
+          ctaText: "Check My Date",
+          thankYouMessage: "Thank you for your request!"
+        },
+        packages: [
+          { id: "elopement", label: "Elopement / Small Ceremony", basePrice: 950, hours: 4, icon: "💕", popular: false },
+          { id: "half-day", label: "Half-Day Coverage", basePrice: 1200, hours: 6, icon: "☀️", popular: true },
+          { id: "full-day", label: "Full-Day Coverage", basePrice: 1800, hours: 10, icon: "💍", popular: true },
+          { id: "destination", label: "Destination Wedding", basePrice: 2500, hours: 12, icon: "✈️", popular: false }
+        ],
+        addOns: [
+          { id: "engagement", label: "Engagement Session", price: 300, popular: true },
+          { id: "second-photographer", label: "Second Photographer", price: 250, popular: true },
+          { id: "drone", label: "Drone Coverage", price: 150, popular: false },
+          { id: "album", label: "Album & Prints", price: 200, popular: true },
+          { id: "rehearsal", label: "Rehearsal Dinner Coverage", price: 350, popular: false },
+          { id: "express", label: "Express Turnaround", price: 175, popular: false }
+        ],
+        hourOptions: [
+          { id: "4", label: "4 Hours", surcharge: 0, popular: false },
+          { id: "6", label: "6 Hours", surcharge: 300, popular: true },
+          { id: "8", label: "8 Hours", surcharge: 600, popular: true },
+          { id: "10+", label: "10+ Hours", surcharge: 900, popular: false }
+        ],
+        locationOptions: [
+          { id: "1", label: "1 Location", surcharge: 0, popular: false },
+          { id: "2", label: "2 Locations", surcharge: 150, popular: true },
+          { id: "3+", label: "3+ Locations", surcharge: 350, popular: false }
+        ],
+        deliveryOptions: [
+          { id: "gallery", label: "Online Gallery Only", price: 0, popular: false },
+          { id: "usb-album", label: "USB + Album", price: 250, popular: true },
+          { id: "video-highlights", label: "Video Highlights Add-On", price: 400, popular: true }
+        ],
+        questions: [
+          {
+            id: "wedding-date",
+            label: "Wedding Date (Optional)",
+            type: "date",
+            required: false
+          },
+          {
+            id: "wedding-location",
+            label: "Wedding Location (Optional)",
+            type: "text",
+            required: false
+          },
+          {
+            id: "promo-code",
+            label: "Promo Code (Optional)",
+            type: "text",
+            required: false
+          }
+        ]
+      };
+    } else if (calculatorType?.slug === 'home-renovation') {
+      calculatorConfig = {
+        ...defaultConfig,
+        text: {
+          headline: "Get Your Home Renovation Quote",
+          subheading: "Transform your space with professional renovation services",
+          ctaText: "Get My Quote",
+          thankYouMessage: "Thank you for your renovation request!"
+        },
+        packages: [
+          { id: "kitchen", label: "Kitchen Renovation", basePrice: 15000, hours: 40, icon: "🍽️", popular: true },
+          { id: "bathroom", label: "Bathroom Renovation", basePrice: 8000, hours: 25, icon: "🛁", popular: true },
+          { id: "basement", label: "Basement Finishing", basePrice: 12000, hours: 35, icon: "🏠", popular: false },
+          { id: "addition", label: "Room Addition", basePrice: 25000, hours: 60, icon: "🏗️", popular: false },
+          { id: "full-home", label: "Full Home Renovation", basePrice: 45000, hours: 120, icon: "🏘️", popular: false }
+        ],
+        questions: [
+          {
+            id: "renovation-type",
+            label: "What type of renovation project?",
+            type: "dropdown",
+            required: true,
+            options: ["Kitchen Remodel", "Bathroom Remodel", "Basement Finishing", "Room Addition", "Full Home Renovation"]
+          },
+          {
+            id: "project-size",
+            label: "Project size",
+            type: "dropdown",
+            required: true,
+            options: ["Small (under 200 sq ft)", "Medium (200-500 sq ft)", "Large (500-1000 sq ft)", "Extra Large (1000+ sq ft)"]
+          },
+          {
+            id: "budget-range",
+            label: "Budget range",
+            type: "dropdown",
+            required: true,
+            options: ["$10,000 - $25,000", "$25,000 - $50,000", "$50,000 - $100,000", "$100,000+"]
+          },
+          {
+            id: "timeline",
+            label: "When do you want to start?",
+            type: "dropdown",
+            required: true,
+            options: ["ASAP", "Within 1 month", "Within 3 months", "Within 6 months", "Just planning"]
+          }
+        ]
+      };
+    } else if (calculatorType?.slug === 'boudoir-photography') {
+      calculatorConfig = {
+        ...defaultConfig,
+        text: {
+          headline: "Boudoir Photography Quote",
+          subheading: "Celebrate your beauty with an intimate boudoir session",
+          ctaText: "Book My Session",
+          thankYouMessage: "Thank you for your booking request!"
+        },
+        packages: [
+          { id: "classic", label: "Classic Boudoir Session", basePrice: 450, hours: 2, icon: "💄", popular: true },
+          { id: "luxury", label: "Luxury Boudoir Experience", basePrice: 750, hours: 3, icon: "👑", popular: true },
+          { id: "couples", label: "Couples Boudoir Session", basePrice: 650, hours: 2.5, icon: "💕", popular: false },
+          { id: "maternity", label: "Maternity Boudoir", basePrice: 550, hours: 2, icon: "🤱", popular: false }
+        ],
+        addOns: [
+          { id: "hair-makeup", label: "Professional Hair & Makeup", price: 150, popular: true },
+          { id: "wardrobe", label: "Wardrobe Styling", price: 75, popular: true },
+          { id: "album", label: "Luxury Photo Album", price: 200, popular: false },
+          { id: "prints", label: "Fine Art Prints", price: 100, popular: false }
+        ],
+        questions: [
+          {
+            id: "session-type",
+            label: "What type of session interests you?",
+            type: "dropdown",
+            required: true,
+            options: ["Classic Boudoir", "Luxury Experience", "Couples Session", "Maternity Boudoir", "Not sure yet"]
+          },
+          {
+            id: "experience-level",
+            label: "Is this your first boudoir session?",
+            type: "dropdown",
+            required: true,
+            options: ["Yes, first time", "No, I've done this before"]
+          },
+          {
+            id: "session-goals",
+            label: "What are your goals for this session?",
+            type: "dropdown",
+            required: false,
+            options: ["Gift for partner", "Personal empowerment", "Celebrate milestone", "Just for fun", "Other"]
+          }
+        ]
+      };
+    }
+    
+    setCustomConfig(calc.config || calculatorConfig);
     setShowCustomizeModal(true);
   };
 

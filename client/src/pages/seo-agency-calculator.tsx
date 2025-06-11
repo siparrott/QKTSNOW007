@@ -59,7 +59,13 @@ interface PricingBreakdown {
   quoteExpiry: Date;
 }
 
-export default function SEOAgencyCalculator() {
+interface SEOAgencyCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function SEOAgencyCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: SEOAgencyCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [quoteGenerated, setQuoteGenerated] = useState(false);
@@ -326,7 +332,7 @@ export default function SEOAgencyCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-green-50/30 to-blue-50/30">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       
       <div className="container mx-auto px-4 py-8">
         {/* Hero Section */}

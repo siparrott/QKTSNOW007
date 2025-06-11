@@ -49,7 +49,13 @@ interface PricingBreakdown {
   pricePerUnit: number;
 }
 
-export default function WindowDoorCalculator() {
+interface WindowDoorCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function WindowDoorCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: WindowDoorCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [formData, setFormData] = useState<WindowDoorFormData>({
@@ -260,7 +266,7 @@ export default function WindowDoorCalculator() {
 
   return (
     <div className="min-h-screen&">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">

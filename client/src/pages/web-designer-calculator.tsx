@@ -56,7 +56,13 @@ interface PricingBreakdown {
   quoteExpiry: Date;
 }
 
-export default function WebDesignerCalculator() {
+interface WebDesignerCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function WebDesignerCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: WebDesignerCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [quoteGenerated, setQuoteGenerated] = useState(false);
@@ -340,7 +346,7 @@ export default function WebDesignerCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       
       <div className="container mx-auto px-4 py-8">
         {/* Hero Section */}

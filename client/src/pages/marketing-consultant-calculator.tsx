@@ -55,7 +55,13 @@ interface PricingBreakdown {
   quoteExpiry: Date;
 }
 
-export default function MarketingConsultantCalculator() {
+interface MarketingConsultantCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function MarketingConsultantCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: MarketingConsultantCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [quoteGenerated, setQuoteGenerated] = useState(false);
@@ -317,7 +323,7 @@ export default function MarketingConsultantCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       
       <div className="container mx-auto px-4 py-8">
         {/* Hero Section */}

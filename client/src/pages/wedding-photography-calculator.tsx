@@ -128,13 +128,20 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
     const style = document.createElement('style');
     style.id = styleId;
     
+    // Handle both flat and nested config formats
+    const primaryColor = config.brandColors?.primary || config.primaryColor || '#06D6A0';
+    const secondaryColor = config.brandColors?.secondary || config.secondaryColor || '#2563eb';
+    const accentColor = config.brandColors?.accent || config.accentColor || '#f59e0b';
+    const fontFamily = config.styling?.fontFamily || config.fontFamily || 'Inter';
+    const borderRadius = config.styling?.borderRadius || config.borderRadius || '0.5rem';
+    
     let css = `
       :root {
-        --custom-primary: ${config.brandColors?.primary || '#06D6A0'};
-        --custom-secondary: ${config.brandColors?.secondary || '#2563eb'};
-        --custom-accent: ${config.brandColors?.accent || '#f59e0b'};
-        --custom-font: ${config.styling?.fontFamily || 'Inter'};
-        --custom-radius: ${config.styling?.borderRadius || '0.5rem'};
+        --custom-primary: ${primaryColor};
+        --custom-secondary: ${secondaryColor};
+        --custom-accent: ${accentColor};
+        --custom-font: ${fontFamily};
+        --custom-radius: ${borderRadius};
       }
       
       .wedding-calculator {
@@ -151,7 +158,7 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
       }
       
       .wedding-calculator .bg-rose-50 {
-        background-color: ${config.brandColors?.primary ? `${config.brandColors.primary}15` : 'rgb(255 241 242)'} !important;
+        background-color: ${primaryColor}15 !important;
       }
       
       .wedding-calculator .text-rose-800,
@@ -166,15 +173,15 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
       }
       
       .wedding-calculator .border-rose-200 {
-        border-color: ${config.brandColors?.primary ? `${config.brandColors.primary}40` : 'rgb(254 205 211)'} !important;
+        border-color: ${primaryColor}40 !important;
       }
       
       .wedding-calculator .border-rose-200:hover {
-        border-color: ${config.brandColors?.primary ? `${config.brandColors.primary}60` : 'rgb(251 113 133)'} !important;
+        border-color: ${primaryColor}60 !important;
       }
       
       .wedding-calculator .hover\\:bg-rose-25:hover {
-        background-color: ${config.brandColors?.primary ? `${config.brandColors.primary}08` : 'rgb(255 251 252)'} !important;
+        background-color: ${primaryColor}08 !important;
       }
       
       /* Button styling */
@@ -185,7 +192,7 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
       }
       
       .wedding-calculator button:not(.outline):hover {
-        background-color: ${config.brandColors?.primary ? `${config.brandColors.primary}dd` : '#059669'} !important;
+        background-color: ${primaryColor}dd !important;
       }
       
       /* Badge styling */
@@ -208,7 +215,7 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
       
       /* Shadow and selection states */
       .wedding-calculator .shadow-lg {
-        box-shadow: 0 10px 15px -3px ${config.brandColors?.primary ? `${config.brandColors.primary}20` : 'rgb(0 0 0 / 0.1)'}, 0 4px 6px -2px ${config.brandColors?.primary ? `${config.brandColors.primary}10` : 'rgb(0 0 0 / 0.05)'} !important;
+        box-shadow: 0 10px 15px -3px ${primaryColor}20, 0 4px 6px -2px ${primaryColor}10 !important;
       }
     `;
     
@@ -443,14 +450,14 @@ export default function WeddingPhotographyCalculator({ customConfig: propConfig,
             />
           )}
           <h1 className="text-4xl font-serif text-stone-800 mb-2">
-            {customConfig?.textCustomization?.headline || 
-             (customConfig?.companyBranding?.companyName ? 
-              `${customConfig.companyBranding.companyName} - Wedding Photography` : 
+            {customConfig?.textCustomization?.headline || customConfig?.headline || 
+             (customConfig?.companyBranding?.companyName || customConfig?.companyName ? 
+              `${customConfig?.companyBranding?.companyName || customConfig?.companyName} - Wedding Photography` : 
               "Wedding Photography Quote Calculator")
             }
           </h1>
           <p className="text-stone-600 max-w-2xl mx-auto font-light">
-            {customConfig?.textCustomization?.description || 
+            {customConfig?.textCustomization?.description || customConfig?.description || 
              "Create beautiful memories with professional wedding photography. Get your personalized quote for your special day."
             }
           </p>

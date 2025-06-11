@@ -49,7 +49,13 @@ interface PricingBreakdown {
   estimatedKW: number;
 }
 
-export default function SolarCalculator() {
+interface SolarCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function SolarCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: SolarCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [formData, setFormData] = useState<SolarFormData>({
@@ -303,7 +309,7 @@ export default function SolarCalculator() {
 
   return (
     <div className="min-h-screen&">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">

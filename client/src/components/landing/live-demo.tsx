@@ -36,7 +36,7 @@ const demoCalculators = [
 
 export default function LiveDemo() {
   return (
-    <section className="py-20 lg:py-32 bg-midnight-800/50">
+    <section className="py-12 lg:py-16 bg-midnight-800/50">
       <div className="container mx-auto px-4 lg:px-8">
         <motion.div
           className="text-center mb-16"

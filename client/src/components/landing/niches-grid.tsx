@@ -72,7 +72,7 @@ export default function NichesGrid() {
   };
 
   return (
-    <section id="niches" className="py-20 lg:py-32">
+    <section id="niches" className="py-12 lg:py-16">
       <div className="container mx-auto px-4 lg:px-8">
         {/* Before/After Image Section */}
         <motion.div

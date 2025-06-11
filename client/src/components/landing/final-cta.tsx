@@ -15,7 +15,7 @@ export default function FinalCTA() {
   };
 
   return (
-    <section className="py-20 lg:py-32 bg-gradient-to-br from-midnight-900 via-midnight-800 to-midnight-900">
+    <section className="py-12 lg:py-16 bg-gradient-to-br from-midnight-900 via-midnight-800 to-midnight-900">
       <div className="container mx-auto px-4 lg:px-8">
         <motion.div
           className="max-w-4xl mx-auto text-center"

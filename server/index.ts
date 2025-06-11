@@ -7,9 +7,21 @@ const app = express();
 // CORS middleware
 app.use((req, res, next) => {
   const origin = typeof req.headers.origin === 'string' ? req.headers.origin : undefined;
-  const allowedOrigins = ['http://localhost:5000', 'http://127.0.0.1:5000'];
+  const allowedOrigins = [
+    'http://localhost:5000', 
+    'http://127.0.0.1:5000',
+    /https:\/\/.*\.replit\.dev$/,
+    /https:\/\/.*\.replit\.app$/,
+    /https:\/\/replit\.com$/
+  ];
   
-  if (origin && allowedOrigins.includes(origin)) {
+  const isOriginAllowed = origin && (
+    allowedOrigins.some(allowed => 
+      typeof allowed === 'string' ? allowed === origin : allowed.test(origin)
+    )
+  );
+  
+  if (isOriginAllowed) {
     res.header('Access-Control-Allow-Origin', origin);
   } else {
     res.header('Access-Control-Allow-Origin', '*');

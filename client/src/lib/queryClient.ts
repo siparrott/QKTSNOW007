@@ -22,9 +22,8 @@ export async function apiRequest(
     defaultHeaders['Authorization'] = `Bearer ${token}`;
   }
 
-  // Ensure we're making requests to the correct base URL
-  const baseUrl = window.location.origin;
-  const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
+  // Handle Replit environment - use relative URLs for same-origin requests
+  const fullUrl = url.startsWith('http') ? url : url;
 
   const fetchOptions = {
     method: 'GET',

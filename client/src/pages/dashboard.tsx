@@ -160,9 +160,12 @@ export default function Dashboard() {
 
   const cloneCalculatorMutation = useMutation({
     mutationFn: async ({ templateId }: { templateId: string }) => {
-      return apiRequest('POST', '/api/supabase/clone-calculator', { 
-        userId: currentUser?.id, 
-        templateId 
+      return apiRequest('/api/supabase/clone-calculator', {
+        method: 'POST',
+        body: JSON.stringify({ 
+          userId: currentUser?.id, 
+          templateId 
+        })
       });
     },
     onSuccess: (data) => {
@@ -303,7 +306,7 @@ export default function Dashboard() {
     if (calculatorType?.slug) {
       window.open(`/${calculatorType.slug}`, '_blank');
     } else {
-      window.open(calc.embedUrl, '_blank');
+      window.open(calc.embed_url, '_blank');
     }
   };
 
@@ -313,7 +316,7 @@ export default function Dashboard() {
   };
 
   const copyEmbedCode = async (calc: UserCalculator) => {
-    const embedCode = `<iframe src="${calc.embedUrl}" width="100%" height="600" frameborder="0" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"></iframe>`;
+    const embedCode = `<iframe src="${calc.embed_url}" width="100%" height="600" frameborder="0" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"></iframe>`;
     
     try {
       await navigator.clipboard.writeText(embedCode);
@@ -436,8 +439,8 @@ export default function Dashboard() {
                     </div>
                     
                     <div className="flex items-center space-x-2">
-                      <Badge variant={calc.isActive ? "default" : "secondary"}>
-                        {calc.isActive ? "Active" : "Inactive"}
+                      <Badge variant={calc.is_active ? "default" : "secondary"}>
+                        {calc.is_active ? "Active" : "Inactive"}
                       </Badge>
                       
                       <Button

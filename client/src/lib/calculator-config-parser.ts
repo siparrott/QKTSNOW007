@@ -188,9 +188,188 @@ export const translationServicesConfig: CalculatorConfig = {
   }
 };
 
+// Plastic Surgery Calculator Configuration
+export const plasticSurgeryConfig: CalculatorConfig = {
+  id: 'plastic-surgery',
+  name: 'Plastic Surgery',
+  fields: [
+    {
+      id: 'procedure',
+      type: 'select',
+      label: 'Procedure Type',
+      description: 'Select the surgical procedure you are interested in',
+      options: [
+        { value: 'rhinoplasty', label: 'Rhinoplasty (Nose Job)', price: 4500 },
+        { value: 'breast-augmentation', label: 'Breast Augmentation', price: 5800 },
+        { value: 'liposuction', label: 'Liposuction', price: 3000 },
+        { value: 'facelift', label: 'Facelift', price: 7500 },
+        { value: 'tummy-tuck', label: 'Tummy Tuck (Abdominoplasty)', price: 6200 },
+        { value: 'eyelid-surgery', label: 'Eyelid Surgery (Blepharoplasty)', price: 3800 }
+      ],
+      validation: { required: true }
+    },
+    {
+      id: 'anesthesiaType',
+      type: 'select',
+      label: 'Anesthesia Type',
+      description: 'Select the type of anesthesia required',
+      options: [
+        { value: 'local', label: 'Local Anesthesia', price: 250 },
+        { value: 'general', label: 'General Anesthesia', price: 600 }
+      ],
+      validation: { required: true }
+    },
+    {
+      id: 'additionalTreatments',
+      type: 'multi-select',
+      label: 'Additional Treatments',
+      description: 'Optional add-on treatments and services',
+      options: [
+        { value: 'fat-transfer', label: 'Fat Transfer Enhancement', price: 1200 },
+        { value: 'injectables', label: 'Injectables (Botox/Fillers)', price: 300 },
+        { value: 'aftercare-package', label: 'Post-Op Aftercare Package', price: 450 },
+        { value: 'compression-garments', label: 'Compression Garments', price: 180 }
+      ]
+    },
+    {
+      id: 'hospitalStay',
+      type: 'select',
+      label: 'Hospital Stay',
+      description: 'Duration of required hospital stay',
+      options: [
+        { value: 'none', label: 'Outpatient (No Stay)', price: 0 },
+        { value: '1-night', label: '1 Night Stay', price: 400 },
+        { value: '2-nights', label: '2 Nights Stay', price: 800 }
+      ],
+      validation: { required: true }
+    },
+    {
+      id: 'promoCode',
+      type: 'input',
+      label: 'Promo Code',
+      description: 'Enter promotional code for discounts'
+    }
+  ],
+  steps: [
+    { id: 'procedure', title: 'Procedure Selection', fields: ['procedure'] },
+    { id: 'anesthesia', title: 'Anesthesia', fields: ['anesthesiaType'] },
+    { id: 'additional', title: 'Additional Treatments', fields: ['additionalTreatments'] },
+    { id: 'hospital', title: 'Hospital Stay', fields: ['hospitalStay'] },
+    { id: 'promo', title: 'Promo Code', fields: ['promoCode'] }
+  ],
+  pricing: {
+    baseRates: {
+      'rhinoplasty': 4500,
+      'breast-augmentation': 5800,
+      'liposuction': 3000,
+      'facelift': 7500,
+      'tummy-tuck': 6200,
+      'eyelid-surgery': 3800
+    },
+    addOns: {
+      'local': { cost: 250 },
+      'general': { cost: 600 },
+      'fat-transfer': { cost: 1200 },
+      'injectables': { cost: 300 },
+      'aftercare-package': { cost: 450 },
+      'compression-garments': { cost: 180 },
+      'none': { cost: 0 },
+      '1-night': { cost: 400 },
+      '2-nights': { cost: 800 }
+    }
+  }
+};
+
+// Plumbing Calculator Configuration
+export const plumbingConfig: CalculatorConfig = {
+  id: 'plumbing',
+  name: 'Plumbing Services',
+  fields: [
+    {
+      id: 'serviceType',
+      type: 'select',
+      label: 'Service Type',
+      description: 'Select the type of plumbing service needed',
+      options: [
+        { value: 'emergency-repair', label: 'Emergency Repair', price: 150, multiplier: 1.5 },
+        { value: 'leak-repair', label: 'Leak Repair', price: 120 },
+        { value: 'drain-cleaning', label: 'Drain Cleaning', price: 100 },
+        { value: 'installation', label: 'New Installation', price: 200 },
+        { value: 'maintenance', label: 'Routine Maintenance', price: 80 }
+      ],
+      validation: { required: true }
+    },
+    {
+      id: 'complexity',
+      type: 'select',
+      label: 'Job Complexity',
+      description: 'How complex is the plumbing work?',
+      options: [
+        { value: 'simple', label: 'Simple Fix', multiplier: 1.0 },
+        { value: 'moderate', label: 'Moderate Complexity', multiplier: 1.3 },
+        { value: 'complex', label: 'Complex Installation', multiplier: 1.6 }
+      ],
+      validation: { required: true }
+    },
+    {
+      id: 'urgency',
+      type: 'select',
+      label: 'Urgency Level',
+      description: 'When do you need this completed?',
+      options: [
+        { value: 'standard', label: 'Standard (3-5 days)', multiplier: 1.0 },
+        { value: 'priority', label: 'Priority (24-48 hours)', multiplier: 1.25 },
+        { value: 'emergency', label: 'Emergency (Same day)', multiplier: 1.5 }
+      ],
+      validation: { required: true }
+    },
+    {
+      id: 'additionalServices',
+      type: 'multi-select',
+      label: 'Additional Services',
+      description: 'Optional additional services',
+      options: [
+        { value: 'inspection', label: 'Full System Inspection', price: 75 },
+        { value: 'warranty', label: 'Extended Warranty', percentage: 15 },
+        { value: 'cleanup', label: 'Post-Work Cleanup', price: 50 }
+      ]
+    }
+  ],
+  steps: [
+    { id: 'service', title: 'Service Type', fields: ['serviceType'] },
+    { id: 'complexity', title: 'Complexity', fields: ['complexity'] },
+    { id: 'timing', title: 'Urgency', fields: ['urgency'] },
+    { id: 'extras', title: 'Additional Services', fields: ['additionalServices'] }
+  ],
+  pricing: {
+    baseRates: {
+      'emergency-repair': 150,
+      'leak-repair': 120,
+      'drain-cleaning': 100,
+      'installation': 200,
+      'maintenance': 80
+    },
+    multipliers: {
+      'simple': 1.0,
+      'moderate': 1.3,
+      'complex': 1.6,
+      'standard': 1.0,
+      'priority': 1.25,
+      'emergency': 1.5
+    },
+    addOns: {
+      'inspection': { cost: 75 },
+      'warranty': { percentage: 15 },
+      'cleanup': { cost: 50 }
+    }
+  }
+};
+
 // Calculator configurations registry
 export const calculatorConfigs: Record<string, CalculatorConfig> = {
   'translation-services': translationServicesConfig,
+  'plastic-surgery': plasticSurgeryConfig,
+  'plumbing': plumbingConfig,
   // Add more calculator configs here as needed
 };
 

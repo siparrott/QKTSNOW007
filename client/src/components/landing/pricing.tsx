@@ -46,7 +46,46 @@ export default function Pricing() {
       
       if (data.url) {
         console.log("Redirecting to Stripe checkout:", data.url);
-        window.location.href = data.url;
+        
+        // Try multiple redirect methods for better compatibility
+        let redirectSuccess = false;
+        
+        try {
+          // Method 1: Direct assignment
+          window.location.href = data.url;
+          redirectSuccess = true;
+        } catch (e) {
+          console.log("Method 1 failed, trying method 2");
+          try {
+            // Method 2: Window.open in new tab
+            const stripeWindow = window.open(data.url, '_blank', 'noopener,noreferrer');
+            if (stripeWindow) {
+              redirectSuccess = true;
+            } else {
+              throw new Error("Popup blocked");
+            }
+          } catch (e2) {
+            console.log("Method 2 failed, trying method 3");
+            // Method 3: Create a temporary link and click it
+            const link = document.createElement('a');
+            link.href = data.url;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            redirectSuccess = true;
+          }
+        }
+        
+        // If all methods fail, show user a direct link
+        if (!redirectSuccess) {
+          toast({
+            title: "Payment Ready",
+            description: `Click here to complete your payment: ${data.url}`,
+            variant: "default",
+          });
+        }
       } else {
         throw new Error("No checkout URL received from server");
       }

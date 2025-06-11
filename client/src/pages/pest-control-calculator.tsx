@@ -47,7 +47,13 @@ interface PricingBreakdown {
   breakdown: string[];
 }
 
-export default function PestControlCalculator() {
+interface PestControlCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function PestControlCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: PestControlCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [formData, setFormData] = useState<PestControlFormData>({
@@ -276,7 +282,7 @@ export default function PestControlCalculator() {
 
   return (
     <div className="min-h-screen&">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">

@@ -102,7 +102,13 @@ const extrasOptions = [
   { id: "permits", label: "Permit Assistance", price: 350 }
 ];
 
-export default function HomeRenovationCalculator() {
+interface HomeRenovationCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function HomeRenovationCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: HomeRenovationCalculatorProps = {}) {
   const { toast } = useToast();
   const [formData, setFormData] = useState<RenovationFormData>({
     projectType: "",
@@ -298,7 +304,7 @@ export default function HomeRenovationCalculator() {
 
   return (
     <div className="min-h-screen&">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center mb-8">

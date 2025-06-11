@@ -47,7 +47,13 @@ interface PricingBreakdown {
   breakdown: string[];
 }
 
-export default function LandscapingCalculator() {
+interface LandscapingCalculatorProps {
+  customConfig?: any;
+  isPreview?: boolean;
+  hideHeader?: boolean;
+}
+
+export default function LandscapingCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: LandscapingCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [formData, setFormData] = useState<LandscapingFormData>({
@@ -284,7 +290,7 @@ export default function LandscapingCalculator() {
 
   return (
     <div className="min-h-screen&">
-      <QuoteKitHeader />
+      {!hideHeader && <QuoteKitHeader />}
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">

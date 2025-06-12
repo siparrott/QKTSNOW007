@@ -56,7 +56,7 @@ const mockUser: User = {
   email: "user@example.com",
   fullName: "John Doe",
   subscriptionStatus: "Pro",
-  quotesUsedThisMonth: 245,
+  quotesUsedThisMonth: 0,
   quotesLimit: 1000
 };
 
@@ -484,7 +484,7 @@ export default function Dashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Conversion Rate</p>
-                  <p className="text-2xl font-bold text-white">68%</p>
+                  <p className="text-2xl font-bold text-white">0%</p>
                 </div>
                 <TrendingUp className="h-8 w-8 text-neon-400" />
               </div>
@@ -496,7 +496,7 @@ export default function Dashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Revenue Generated</p>
-                  <p className="text-2xl font-bold text-white">$23,450</p>
+                  <p className="text-2xl font-bold text-white">$0</p>
                 </div>
                 <DollarSign className="h-8 w-8 text-neon-400" />
               </div>

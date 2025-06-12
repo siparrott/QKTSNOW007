@@ -139,21 +139,15 @@ const calculatorTemplates: CalculatorTemplate[] = [
 ];
 
 const performanceData = [
-  { name: 'Jan', quotes: 65, conversions: 45 },
-  { name: 'Feb', quotes: 78, conversions: 52 },
-  { name: 'Mar', quotes: 90, conversions: 61 },
-  { name: 'Apr', quotes: 85, conversions: 58 },
-  { name: 'May', quotes: 105, conversions: 72 },
-  { name: 'Jun', quotes: 120, conversions: 84 }
+  { name: 'Jan', quotes: 0, conversions: 0 },
+  { name: 'Feb', quotes: 0, conversions: 0 },
+  { name: 'Mar', quotes: 0, conversions: 0 },
+  { name: 'Apr', quotes: 0, conversions: 0 },
+  { name: 'May', quotes: 0, conversions: 0 },
+  { name: 'Jun', quotes: 0, conversions: 0 }
 ];
 
-const clientData = [
-  { id: 1, name: "Sarah Johnson", email: "sarah@email.com", project: "Wedding Photography", quote: "$2,500", status: "Accepted", date: "2024-06-10" },
-  { id: 2, name: "Michael Chen", email: "mike@email.com", project: "Home Renovation", quote: "$15,000", status: "Pending", date: "2024-06-09" },
-  { id: 3, name: "Emily Davis", email: "emily@email.com", project: "Legal Consultation", quote: "$350", status: "Accepted", date: "2024-06-08" },
-  { id: 4, name: "Robert Wilson", email: "robert@email.com", project: "Pest Control", quote: "$180", status: "Declined", date: "2024-06-07" },
-  { id: 5, name: "Lisa Anderson", email: "lisa@email.com", project: "Portrait Session", quote: "$450", status: "Accepted", date: "2024-06-06" }
-];
+const clientData: Array<{id: number, name: string, email: string, project: string, quote: string, status: string, date: string}> = [];
 
 export default function Dashboard() {
   const [user] = useState<User>(mockUser);
@@ -614,31 +608,10 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex items-center space-x-3 p-3 bg-midnight-900 rounded">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="text-sm text-white">New quote generated</p>
-                    <p className="text-xs text-gray-400">Wedding Photography - $2,500</p>
-                  </div>
-                  <span className="text-xs text-gray-500">2 min ago</span>
-                </div>
-                
-                <div className="flex items-center space-x-3 p-3 bg-midnight-900 rounded">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="text-sm text-white">Calculator customized</p>
-                    <p className="text-xs text-gray-400">Home Renovation Calculator</p>
-                  </div>
-                  <span className="text-xs text-gray-500">1 hour ago</span>
-                </div>
-                
-                <div className="flex items-center space-x-3 p-3 bg-midnight-900 rounded">
-                  <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="text-sm text-white">Quote accepted</p>
-                    <p className="text-xs text-gray-400">Legal Services - $350</p>
-                  </div>
-                  <span className="text-xs text-gray-500">3 hours ago</span>
+                <div className="text-center text-gray-400 py-8">
+                  <Activity className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">No recent activity</p>
+                  <p className="text-xs">Activity will appear here as you use your calculators</p>
                 </div>
               </div>
             </CardContent>

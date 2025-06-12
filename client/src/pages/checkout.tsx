@@ -39,8 +39,15 @@ export default function Checkout() {
         
         if (data.url) {
           setCheckoutUrl(data.url);
-          // Try to redirect immediately
-          window.location.href = data.url;
+          console.log('Checkout URL created:', data.url);
+          
+          // Try multiple redirect approaches for Replit environment
+          try {
+            // First try: direct redirect
+            window.location.href = data.url;
+          } catch (redirectError) {
+            console.log('Direct redirect failed, will show manual options');
+          }
         } else {
           throw new Error('No checkout URL received');
         }
@@ -109,37 +116,56 @@ export default function Checkout() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-midnight-900 via-midnight-800 to-blue-900 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-midnight-800 border-midnight-600 text-white">
-        <CardHeader>
-          <CardTitle className="text-neon-400">Complete Your Payment</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-gray-300">
-            Click the button below to complete your subscription payment securely with Stripe.
+      <Card className="w-full max-w-lg bg-midnight-800 border-midnight-600 text-white">
+        <CardHeader className="text-center">
+          <CardTitle className="text-neon-400 text-xl">Complete Your Payment</CardTitle>
+          <p className="text-gray-300 mt-2">
+            Your secure Stripe checkout is ready. Click below to complete your subscription.
           </p>
+        </CardHeader>
+        <CardContent className="space-y-6">
           
           <div className="space-y-3">
             <Button
               onClick={() => window.open(checkoutUrl, '_blank', 'noopener,noreferrer')}
-              className="w-full bg-neon-500 hover:bg-neon-600 text-black font-medium"
+              className="w-full bg-neon-500 hover:bg-neon-600 text-black font-semibold text-lg py-4"
+              size="lg"
             >
-              <ExternalLink className="w-4 h-4 mr-2" />
-              Open Stripe Checkout
+              <ExternalLink className="w-5 h-5 mr-2" />
+              Continue to Stripe Payment
             </Button>
             
-            <Button
-              onClick={copyToClipboard}
-              variant="outline"
-              className="w-full border-gray-600 text-gray-300 hover:bg-gray-800"
-            >
-              <Copy className="w-4 h-4 mr-2" />
-              Copy Checkout Link
-            </Button>
+            <div className="text-center text-sm text-gray-400">
+              Secure payment processing by Stripe
+            </div>
+          </div>
+
+          <div className="border-t border-midnight-600 pt-4">
+            <p className="text-sm text-gray-400 mb-3">Alternative options:</p>
+            
+            <div className="space-y-2">
+              <Button
+                onClick={copyToClipboard}
+                variant="outline"
+                className="w-full border-gray-600 text-gray-300 hover:bg-gray-800"
+              >
+                <Copy className="w-4 h-4 mr-2" />
+                Copy Checkout Link
+              </Button>
+              
+              <Button
+                onClick={() => window.location.href = checkoutUrl}
+                variant="outline"
+                className="w-full border-gray-600 text-gray-300 hover:bg-gray-800"
+              >
+                Try Direct Redirect
+              </Button>
+            </div>
           </div>
 
           <div className="text-xs text-gray-400 p-3 bg-midnight-700 rounded border border-midnight-600">
             <strong>Checkout URL:</strong>
-            <div className="mt-1 break-all">{checkoutUrl}</div>
+            <div className="mt-1 break-all font-mono text-xs">{checkoutUrl}</div>
           </div>
 
           <Button 
@@ -147,7 +173,7 @@ export default function Checkout() {
             variant="ghost"
             className="w-full text-gray-400 hover:text-white"
           >
-            Return to Dashboard
+            Skip for now - Go to Dashboard
           </Button>
         </CardContent>
       </Card>

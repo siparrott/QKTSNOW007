@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
-import { Calculator, Plus, Settings, Eye, Copy, ExternalLink, BarChart3, Users, TrendingUp, Activity, Calendar, DollarSign, Palette, Type, Layout, Zap, Bell, Smartphone, Monitor, Tablet } from "lucide-react";
+import { Calculator, Plus, Settings, Eye, Copy, ExternalLink, BarChart3, Users, TrendingUp, Activity, Calendar, DollarSign, Palette, Type, Layout, Zap, Bell, Smartphone, Monitor, Tablet, Trash2 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart as RechartsBarChart, Bar } from "recharts";
 import CalculatorPreview from "../components/calculator-preview";
 
@@ -257,6 +257,28 @@ export default function Dashboard() {
       title: "Subscription Upgraded!",
       description: `Welcome to ${tier.name}! You now have access to ${tier.calculators} calculators and ${tier.quotes} quotes per month.`,
     });
+  };
+
+  const deleteCalculator = (calculatorId: string) => {
+    if (confirm('Are you sure you want to delete this calculator? This action cannot be undone.')) {
+      const userSession = localStorage.getItem('user_session');
+      const userCalculatorKey = `userCalculators_${userSession}`;
+      
+      const updated = userCalculators.filter(calc => calc.id !== calculatorId);
+      setUserCalculators(updated);
+      localStorage.setItem(userCalculatorKey, JSON.stringify(updated));
+      
+      // Update user calculator count
+      setUser(prev => ({
+        ...prev,
+        calculatorsUsed: updated.length
+      }));
+      
+      toast({
+        title: "Calculator Deleted",
+        description: "Calculator has been removed from your dashboard.",
+      });
+    }
   };
 
   const addCalculator = async (template: CalculatorTemplate) => {
@@ -719,6 +741,14 @@ export default function Dashboard() {
                           className="border-midnight-600 text-gray-300 hover:bg-midnight-800"
                         >
                           <ExternalLink className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => deleteCalculator(calc.id)}
+                          className="border-red-600 text-red-400 hover:bg-red-600/10 hover:border-red-500"
+                        >
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </CardContent>

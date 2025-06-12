@@ -37,6 +37,9 @@ export default function Register() {
   const urlParams = new URLSearchParams(window.location.search);
   const selectedPlan = urlParams.get('plan');
   const selectedPrice = urlParams.get('price');
+  
+  // Debug logging
+  console.log('Registration page loaded with plan:', selectedPlan, 'price:', selectedPrice);
 
   const form = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
@@ -168,13 +171,19 @@ export default function Register() {
       // Fallback: create temporary user if no response
       const tempUser = storeTempUser(data.email, data.password);
       createTempSession(tempUser);
+      localStorage.setItem('new_account_created', 'true');
       
       toast({
         title: "Welcome to QuoteKit!",
-        description: "Your account has been created. Let's set up your subscription.",
+        description: selectedPlan ? "Redirecting to checkout..." : "Your account has been created.",
       });
       
-      setLocation('/subscribe');
+      // If a paid plan was selected, redirect to checkout
+      if (selectedPlan && selectedPlan !== 'free') {
+        await redirectToCheckout(selectedPlan, selectedPrice || '5');
+      } else {
+        setLocation('/dashboard');
+      }
       
     } catch (error: any) {
       console.error('Registration error:', error);
@@ -182,13 +191,19 @@ export default function Register() {
       // For any Supabase-related errors (rate limits, email issues), create temporary account
       const tempUser = storeTempUser(data.email, data.password);
       createTempSession(tempUser);
+      localStorage.setItem('new_account_created', 'true');
       
       toast({
         title: "Welcome to QuoteKit!",
-        description: "Your account has been created. Let's set up your subscription.",
+        description: selectedPlan ? "Redirecting to checkout..." : "Your account has been created.",
       });
       
-      setLocation('/subscribe');
+      // If a paid plan was selected, redirect to checkout
+      if (selectedPlan && selectedPlan !== 'free') {
+        await redirectToCheckout(selectedPlan, selectedPrice || '5');
+      } else {
+        setLocation('/dashboard');
+      }
     } finally {
       setIsLoading(false);
     }

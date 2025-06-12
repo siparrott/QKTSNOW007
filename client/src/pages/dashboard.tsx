@@ -191,6 +191,8 @@ export default function Dashboard() {
   const [showCustomizeModal, setShowCustomizeModal] = useState(false);
   const [showEmbedModal, setShowEmbedModal] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [checkoutUrl, setCheckoutUrl] = useState("");
   const [selectedCalculator, setSelectedCalculator] = useState<UserCalculator | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -2082,6 +2084,38 @@ export default function Dashboard() {
               
               <div className="text-center text-sm text-gray-400 pt-4 border-t border-midnight-600">
                 Need help choosing? <span className="text-neon-400 cursor-pointer hover:underline">Contact our sales team</span>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+
+        {/* Checkout Modal for blocked popups */}
+        {showCheckoutModal && (
+          <Dialog open={showCheckoutModal} onOpenChange={setShowCheckoutModal}>
+            <DialogContent className="bg-midnight-800 text-white border-midnight-600 max-w-md">
+              <DialogHeader>
+                <DialogTitle className="text-neon-400">Complete Your Payment</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <p className="text-gray-300">
+                  Your browser blocked the popup. Click the button below to open the secure Stripe checkout page:
+                </p>
+                <Button
+                  className="w-full bg-neon-500 hover:bg-neon-600 text-black font-medium"
+                  onClick={() => window.open(checkoutUrl, '_blank', 'noopener,noreferrer')}
+                >
+                  Open Stripe Checkout
+                </Button>
+                <div className="text-xs text-gray-400 text-center">
+                  Or copy this link: 
+                  <input 
+                    type="text" 
+                    value={checkoutUrl} 
+                    readOnly 
+                    className="w-full mt-2 p-2 bg-midnight-700 border border-midnight-600 rounded text-xs"
+                    onClick={(e) => e.currentTarget.select()}
+                  />
+                </div>
               </div>
             </DialogContent>
           </Dialog>

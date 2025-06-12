@@ -78,8 +78,8 @@ export const stripeService = {
     return stripe.webhooks.constructEvent(payload, signature, webhookSecret);
   },
 
-  // Create checkout session (alternative approach)
-  async createCheckoutSession(params: {
+  // Create subscription checkout session
+  async createSubscriptionCheckout(params: {
     customerId?: string;
     priceId: string;
     successUrl: string;
@@ -100,5 +100,75 @@ export const stripeService = {
       cancel_url: params.cancelUrl,
       metadata: params.metadata || {},
     });
+  },
+
+  // Retrieve checkout session
+  async retrieveSession(sessionId: string) {
+    return await stripe.checkout.sessions.retrieve(sessionId);
+  },
+
+  // Create one-time payment checkout session
+  async createCheckoutSession(params: {
+    customerId?: string;
+    priceId: string;
+    successUrl: string;
+    cancelUrl: string;
+    metadata?: Record<string, string>;
+  }) {
+    return await stripe.checkout.sessions.create({
+      customer: params.customerId,
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price: params.priceId,
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: params.successUrl,
+      cancel_url: params.cancelUrl,
+      metadata: params.metadata || {},
+    });
+  },
+
+  // Create customer portal session
+  async createCustomerPortalSession(params: {
+    customerId: string;
+    returnUrl: string;
+  }) {
+    return await stripe.billingPortal.sessions.create({
+      customer: params.customerId,
+      return_url: params.returnUrl,
+    });
+  },
+
+  // Handle successful subscription (placeholder for business logic)
+  async handleSuccessfulSubscription(sessionId: string) {
+    const session = await this.retrieveSession(sessionId);
+    // Add business logic here to update user subscription status
+    return session;
+  },
+
+  // Handle webhook events
+  async handleWebhook(event: Stripe.Event) {
+    switch (event.type) {
+      case 'customer.subscription.created':
+        // Handle new subscription
+        break;
+      case 'customer.subscription.updated':
+        // Handle subscription changes
+        break;
+      case 'customer.subscription.deleted':
+        // Handle subscription cancellation
+        break;
+      case 'invoice.payment_succeeded':
+        // Handle successful payment
+        break;
+      case 'invoice.payment_failed':
+        // Handle failed payment
+        break;
+      default:
+        console.log(`Unhandled event type ${event.type}`);
+    }
   },
 };

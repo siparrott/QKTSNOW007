@@ -309,24 +309,55 @@ export default function Dashboard() {
     return { canAdd: true };
   };
 
-  const upgradeSubscription = (newTier: keyof typeof SUBSCRIPTION_TIERS) => {
-    const userSession = localStorage.getItem('user_session');
-    const subscriptionKey = `subscription_${userSession}`;
-    localStorage.setItem(subscriptionKey, JSON.stringify(newTier));
-    
+  const upgradeSubscription = async (newTier: keyof typeof SUBSCRIPTION_TIERS) => {
     const tier = SUBSCRIPTION_TIERS[newTier];
-    setUser(prev => ({
-      ...prev,
-      subscriptionStatus: newTier,
-      calculatorLimit: tier.calculators,
-      quotesLimit: tier.quotes
-    }));
     
+    // For free tier (downgrade), no payment needed
+    if (newTier === 'free') {
+      const userSession = localStorage.getItem('user_session');
+      const subscriptionKey = `subscription_${userSession}`;
+      localStorage.setItem(subscriptionKey, JSON.stringify(newTier));
+      
+      setUser(prev => ({
+        ...prev,
+        subscriptionStatus: newTier,
+        calculatorLimit: tier.calculators,
+        quotesLimit: tier.quotes
+      }));
+      
+      setShowUpgradeModal(false);
+      toast({
+        title: "Subscription Updated",
+        description: `You're now on the ${tier.name} plan.`,
+      });
+      return;
+    }
+
+    // For paid tiers, redirect to subscription page with Stripe integration
     setShowUpgradeModal(false);
+    
+    // Store selected tier for subscription page
+    localStorage.setItem('selected_tier', newTier);
+    
     toast({
-      title: "Subscription Upgraded!",
-      description: `Welcome to ${tier.name}! You now have access to ${tier.calculators} calculators and ${tier.quotes} quotes per month.`,
+      title: "Redirecting to Payment",
+      description: `Proceeding to secure checkout for ${tier.name} subscription.`,
     });
+    
+    // Redirect to subscription page which will handle Stripe payment
+    setTimeout(() => {
+      window.location.href = `/subscribe?tier=${newTier}&price=${tier.price}`;
+    }, 1000);
+  };
+
+  // Map tiers to Stripe price IDs (these would be configured in Stripe Dashboard)
+  const getPriceIdForTier = (tier: string) => {
+    const priceIds = {
+      'pro': 'price_pro_monthly_5eur',
+      'business': 'price_business_monthly_35eur', 
+      'enterprise': 'price_enterprise_monthly_99eur'
+    };
+    return priceIds[tier as keyof typeof priceIds];
   };
 
   const deleteCalculator = (calculatorId: string) => {
@@ -2000,7 +2031,7 @@ export default function Dashboard() {
                           {tier === user.subscriptionStatus ? 'Current Plan' : 
                            tier === 'free' ? 'Downgrade' : 
                            tier === 'enterprise' ? 'Contact Sales' : 
-                           'Upgrade Now'}
+                           `Pay €${details.price}/month`}
                         </Button>
                       </div>
                     </CardContent>

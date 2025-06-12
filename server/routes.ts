@@ -488,6 +488,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create Stripe subscription checkout session
+  app.post("/api/create-subscription-checkout", async (req, res) => {
+    try {
+      const { tier, priceId } = req.body;
+      
+      if (!tier || !priceId) {
+        return res.status(400).json({ error: "Tier and price ID are required" });
+      }
+
+      // Create Stripe checkout session for subscription
+      const session = await stripeService.createSubscriptionCheckout({
+        priceId,
+        successUrl: `${req.protocol}://${req.get('host')}/dashboard?payment=success&tier=${tier}`,
+        cancelUrl: `${req.protocol}://${req.get('host')}/dashboard?payment=cancelled`,
+        metadata: {
+          tier,
+          userId: req.body.userId || 'anonymous'
+        }
+      });
+
+      res.json({ url: session.url });
+    } catch (error) {
+      console.error('Stripe checkout error:', error);
+      res.status(500).json({ error: "Failed to create checkout session" });
+    }
+  });
+
+  // Handle successful subscription payment
+  app.get("/api/subscription-success", async (req, res) => {
+    try {
+      const { session_id, tier } = req.query;
+      
+      if (!session_id || !tier) {
+        return res.status(400).json({ error: "Session ID and tier are required" });
+      }
+
+      // Verify the session with Stripe
+      const session = await stripeService.retrieveSession(session_id as string);
+      
+      if (session.payment_status === 'paid') {
+        // Update user subscription in database/storage
+        // For now, return success to update client-side
+        res.json({ 
+          success: true, 
+          tier,
+          subscriptionId: session.subscription 
+        });
+      } else {
+        res.status(400).json({ error: "Payment not completed" });
+      }
+    } catch (error) {
+      console.error('Subscription verification error:', error);
+      res.status(500).json({ error: "Failed to verify subscription" });
+    }
+  });
+
   // AI processing for car wash calculator
   app.post("/api/ai/process-car-wash", async (req, res) => {
     try {

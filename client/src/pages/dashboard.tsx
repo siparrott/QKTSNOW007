@@ -333,21 +333,49 @@ export default function Dashboard() {
       return;
     }
 
-    // For paid tiers, redirect to subscription page with Stripe integration
-    setShowUpgradeModal(false);
-    
-    // Store selected tier for subscription page
-    localStorage.setItem('selected_tier', newTier);
-    
-    toast({
-      title: "Redirecting to Payment",
-      description: `Proceeding to secure checkout for ${tier.name} subscription.`,
-    });
-    
-    // Redirect to subscription page which will handle Stripe payment
-    setTimeout(() => {
-      window.location.href = `/subscribe?tier=${newTier}&price=${tier.price}`;
-    }, 1000);
+    // For paid tiers, create Stripe checkout session
+    try {
+      setShowUpgradeModal(false);
+      
+      toast({
+        title: "Creating checkout session...",
+        description: "Redirecting to secure payment.",
+      });
+
+      const response = await fetch('/api/create-subscription-checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tier: newTier,
+          priceId: getPriceIdForTier(newTier),
+          userId: user.id || `session_${localStorage.getItem('user_session')}`
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const { url } = await response.json();
+      
+      if (url) {
+        // Redirect to Stripe checkout
+        window.location.href = url;
+      } else {
+        throw new Error('No checkout URL received');
+      }
+      
+    } catch (error) {
+      console.error('Checkout error:', error);
+      toast({
+        title: "Payment Setup Failed",
+        description: `Unable to start checkout: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        variant: "destructive"
+      });
+      setShowUpgradeModal(true); // Reopen modal on error
+    }
   };
 
   // Map tiers to Stripe price IDs (these would be configured in Stripe Dashboard)

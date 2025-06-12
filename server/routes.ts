@@ -18,6 +18,72 @@ import {
   registerUserSchema,
   loginUserSchema
 } from "@shared/schema";
+import Stripe from 'stripe';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2025-05-28.basil',
+});
+
+// Helper function to create or get Stripe price IDs
+async function createOrGetPriceId(tier: string): Promise<string> {
+  const tierConfig = {
+    pro: { name: 'QuoteKit Pro', price: 500, description: '5 calculators, 25 quotes/month' },
+    business: { name: 'QuoteKit Business', price: 3500, description: '10 calculators, 50 quotes/month' },
+    enterprise: { name: 'QuoteKit Enterprise', price: 9900, description: 'Unlimited calculators, unlimited quotes' }
+  };
+
+  const config = tierConfig[tier as keyof typeof tierConfig];
+  if (!config) {
+    throw new Error(`Invalid tier: ${tier}`);
+  }
+
+  try {
+    // Check if product already exists
+    const products = await stripe.products.list({
+      limit: 10,
+    });
+
+    let product = products.data.find(p => p.name === config.name);
+
+    if (!product) {
+      // Create product
+      product = await stripe.products.create({
+        name: config.name,
+        description: config.description,
+        type: 'service',
+      });
+    }
+
+    // Check if price already exists for this product
+    const prices = await stripe.prices.list({
+      product: product.id,
+      limit: 10,
+    });
+
+    let price = prices.data.find(p => 
+      p.unit_amount === config.price && 
+      p.currency === 'eur' && 
+      p.recurring?.interval === 'month'
+    );
+
+    if (!price) {
+      // Create price
+      price = await stripe.prices.create({
+        product: product.id,
+        unit_amount: config.price,
+        currency: 'eur',
+        recurring: {
+          interval: 'month',
+        },
+      });
+    }
+
+    return price.id;
+  } catch (error) {
+    console.error('Error creating/getting Stripe price:', error);
+    throw error;
+  }
+}
 
 // Auth middleware
 async function requireAuth(req: Request, res: Response, next: NextFunction) {
@@ -491,27 +557,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create Stripe subscription checkout session
   app.post("/api/create-subscription-checkout", async (req, res) => {
     try {
-      const { tier, priceId } = req.body;
+      const { tier, priceId, userId } = req.body;
       
-      if (!tier || !priceId) {
-        return res.status(400).json({ error: "Tier and price ID are required" });
+      if (!tier) {
+        return res.status(400).json({ error: "Tier is required" });
       }
 
+      // Create products and prices if they don't exist
+      const actualPriceId = await createOrGetPriceId(tier);
+      
       // Create Stripe checkout session for subscription
       const session = await stripeService.createSubscriptionCheckout({
-        priceId,
+        priceId: actualPriceId,
         successUrl: `${req.protocol}://${req.get('host')}/dashboard?payment=success&tier=${tier}`,
         cancelUrl: `${req.protocol}://${req.get('host')}/dashboard?payment=cancelled`,
         metadata: {
           tier,
-          userId: req.body.userId || 'anonymous'
+          userId: userId || 'anonymous'
         }
       });
 
       res.json({ url: session.url });
     } catch (error) {
       console.error('Stripe checkout error:', error);
-      res.status(500).json({ error: "Failed to create checkout session" });
+      res.status(500).json({ error: `Failed to create checkout session: ${error instanceof Error ? error.message : 'Unknown error'}` });
     }
   });
 

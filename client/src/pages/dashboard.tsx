@@ -13,6 +13,7 @@ import { Slider } from "@/components/ui/slider";
 import { Calculator, Plus, Settings, Eye, Copy, ExternalLink, BarChart3, Users, TrendingUp, Activity, Calendar, DollarSign, Palette, Type, Layout, Zap, Bell, Smartphone, Monitor, Tablet, Trash2 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart as RechartsBarChart, Bar } from "recharts";
 import CalculatorPreview from "../components/calculator-preview";
+import { getQuoteStats, incrementQuoteUsage, canGenerateQuote, resetQuoteUsage } from "@/lib/quote-tracker";
 
 interface User {
   id: string;
@@ -82,16 +83,16 @@ const getUserSubscriptionData = () => {
 };
 
 const mockUser: User = (() => {
-  const { subscription, quotesUsed, tier } = getUserSubscriptionData();
+  const quoteStats = getQuoteStats();
   return {
     id: "1",
     email: "user@example.com",
     fullName: "John Doe",
-    subscriptionStatus: subscription,
-    quotesUsedThisMonth: quotesUsed,
-    quotesLimit: tier.quotes,
+    subscriptionStatus: quoteStats.subscription,
+    quotesUsedThisMonth: quoteStats.used,
+    quotesLimit: quoteStats.limit,
     calculatorsUsed: 0,
-    calculatorLimit: tier.calculators
+    calculatorLimit: SUBSCRIPTION_TIERS[quoteStats.subscription].calculators
   };
 })();
 
@@ -200,6 +201,25 @@ export default function Dashboard() {
 
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const { toast } = useToast();
+
+  // Listen for quote usage updates
+  useEffect(() => {
+    const handleQuoteUsageUpdate = (event: CustomEvent) => {
+      const quoteStats = getQuoteStats();
+      setUser(prev => ({
+        ...prev,
+        quotesUsedThisMonth: quoteStats.used,
+        quotesLimit: quoteStats.limit,
+        subscriptionStatus: quoteStats.subscription
+      }));
+    };
+
+    window.addEventListener('quoteUsageUpdated', handleQuoteUsageUpdate as EventListener);
+    
+    return () => {
+      window.removeEventListener('quoteUsageUpdated', handleQuoteUsageUpdate as EventListener);
+    };
+  }, []);
 
   // Get current user email for session isolation
   const getCurrentUserEmail = () => {
@@ -425,13 +445,48 @@ export default function Dashboard() {
     }
   };
 
+  // Test quote generation to see usage tracking in action
+  const testQuoteGeneration = () => {
+    const quoteCheck = canGenerateQuote();
+    
+    if (!quoteCheck.allowed) {
+      toast({
+        title: "Quote Limit Reached",
+        description: `You've used all ${quoteCheck.limit} quotes for this month. Upgrade your plan to continue.`,
+        variant: "destructive"
+      });
+      setShowUpgradeModal(true);
+      return;
+    }
+    
+    // Simulate quote generation
+    incrementQuoteUsage();
+    
+    toast({
+      title: "Quote Generated",
+      description: `Quote generated successfully! ${quoteCheck.remaining - 1} quotes remaining this month.`,
+    });
+  };
+
+  // Reset quote usage for testing
+  const resetQuoteUsage = () => {
+    if (confirm('Reset quote usage for this month? This is for testing purposes only.')) {
+      resetQuoteUsage();
+      
+      toast({
+        title: "Quote Usage Reset",
+        description: "Monthly quote usage has been reset to 0.",
+      });
+    }
+  };
+
   // Force clean user session - for testing new user experience
   const resetUserSession = () => {
     if (confirm('This will clear all your data and simulate a new user account. Continue?')) {
       // Clear all user-specific data
       const keys = Object.keys(localStorage);
       keys.forEach(key => {
-        if (key.startsWith('userCalculators_') || key.startsWith('subscription_') || key === 'user_session') {
+        if (key.startsWith('userCalculators_') || key.startsWith('subscription_') || key.startsWith('quote_usage_') || key === 'user_session') {
           localStorage.removeItem(key);
         }
       });
@@ -442,11 +497,12 @@ export default function Dashboard() {
       
       // Reset state
       setUserCalculators([]);
+      const freshQuoteStats = getQuoteStats();
       setUser(prev => ({
         ...prev,
         subscriptionStatus: 'free',
-        quotesUsedThisMonth: 0,
-        quotesLimit: SUBSCRIPTION_TIERS.free.quotes,
+        quotesUsedThisMonth: freshQuoteStats.used,
+        quotesLimit: freshQuoteStats.limit,
         calculatorsUsed: 0,
         calculatorLimit: SUBSCRIPTION_TIERS.free.calculators
       }));

@@ -358,11 +358,13 @@ export default function Dashboard() {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      const { url } = await response.json();
+      const data = await response.json();
+      console.log('Checkout response:', data);
       
-      if (url) {
+      if (data.url) {
         // Redirect to Stripe checkout
-        window.location.href = url;
+        console.log('Redirecting to:', data.url);
+        window.location.href = data.url;
       } else {
         throw new Error('No checkout URL received');
       }

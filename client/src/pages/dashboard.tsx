@@ -165,9 +165,21 @@ export default function Dashboard() {
   const { toast } = useToast();
 
   useEffect(() => {
-    const saved = localStorage.getItem('userCalculators');
+    // Generate unique user session if not exists
+    let userSession = localStorage.getItem('user_session');
+    if (!userSession) {
+      userSession = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('user_session', userSession);
+    }
+
+    // Load user-specific calculators
+    const userCalculatorKey = `userCalculators_${userSession}`;
+    const saved = localStorage.getItem(userCalculatorKey);
     if (saved) {
       setUserCalculators(JSON.parse(saved));
+    } else {
+      // New user gets empty calculator list
+      setUserCalculators([]);
     }
   }, []);
 
@@ -178,7 +190,7 @@ export default function Dashboard() {
     return matchesSearch && matchesCategory;
   });
 
-  const addCalculator = (template: CalculatorTemplate) => {
+  const addCalculator = async (template: CalculatorTemplate) => {
     // Map template IDs to actual calculator routes for embed URLs
     const calculatorRoutes: { [key: string]: string } = {
       'wedding-photography': '/wedding-photography-calculator',
@@ -314,10 +326,19 @@ export default function Dashboard() {
       last_updated: new Date().toISOString()
     };
 
+    // Get user session for isolated storage
+    const userSession = localStorage.getItem('user_session');
+    const userCalculatorKey = `userCalculators_${userSession}`;
+    
     const updated = [...userCalculators, newCalculator];
     setUserCalculators(updated);
-    localStorage.setItem('userCalculators', JSON.stringify(updated));
+    localStorage.setItem(userCalculatorKey, JSON.stringify(updated));
     setShowCalculatorModal(false);
+    
+    toast({
+      title: "Calculator Added Successfully",
+      description: `${template.name} has been added to your dashboard.`,
+    });
     
     setShowSuccessMessage(true);
     setTimeout(() => setShowSuccessMessage(false), 3000);

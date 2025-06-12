@@ -469,7 +469,7 @@ export default function Dashboard() {
   };
 
   // Reset quote usage for testing
-  const resetQuoteUsage = () => {
+  const resetQuoteUsageForTesting = () => {
     if (confirm('Reset quote usage for this month? This is for testing purposes only.')) {
       resetQuoteUsage();
       
@@ -868,7 +868,16 @@ export default function Dashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Quotes This Month</p>
-                  <p className="text-2xl font-bold text-white">{user.quotesUsedThisMonth}</p>
+                  <p className="text-2xl font-bold text-white">{user.quotesUsedThisMonth}/{user.quotesLimit}</p>
+                  <div className="w-full bg-midnight-700 rounded-full h-2 mt-2">
+                    <div 
+                      className="bg-neon-500 h-2 rounded-full transition-all duration-300" 
+                      style={{ width: `${Math.min(100, (user.quotesUsedThisMonth / user.quotesLimit) * 100)}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {user.quotesLimit - user.quotesUsedThisMonth} remaining
+                  </p>
                 </div>
                 <BarChart3 className="h-8 w-8 text-neon-400" />
               </div>
@@ -899,6 +908,62 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Quote Tracking Test Section */}
+        <Card className="bg-midnight-800 border-midnight-700 mb-8">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center">
+              <Activity className="h-5 w-5 mr-2 text-neon-400" />
+              Quote Usage Testing
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-4">
+              <Button
+                onClick={testQuoteGeneration}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Test Quote Generation
+              </Button>
+              <Button
+                onClick={resetQuoteUsageForTesting}
+                variant="outline"
+                className="border-gray-600 text-gray-300 hover:bg-gray-700"
+              >
+                Reset Usage (Test)
+              </Button>
+              <Button
+                onClick={resetUserSession}
+                variant="outline"
+                className="border-red-600 text-red-400 hover:bg-red-900/20"
+              >
+                Reset Session (Test)
+              </Button>
+            </div>
+            <div className="mt-4 p-4 bg-midnight-900 rounded-lg">
+              <h4 className="text-white font-medium mb-2">Current Usage Stats:</h4>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div>
+                  <span className="text-gray-400">Plan:</span>
+                  <span className="text-white ml-2 capitalize">{user.subscriptionStatus}</span>
+                </div>
+                <div>
+                  <span className="text-gray-400">Used:</span>
+                  <span className="text-white ml-2">{user.quotesUsedThisMonth}</span>
+                </div>
+                <div>
+                  <span className="text-gray-400">Limit:</span>
+                  <span className="text-white ml-2">{user.quotesLimit}</span>
+                </div>
+                <div>
+                  <span className="text-gray-400">Remaining:</span>
+                  <span className="text-neon-400 ml-2">{user.quotesLimit - user.quotesUsedThisMonth}</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Your Calculators */}
         <Card className="bg-midnight-800 border-midnight-700 mb-8">

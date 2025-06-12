@@ -18,9 +18,11 @@ interface User {
   id: string;
   email: string;
   fullName: string;
-  subscriptionStatus: string;
+  subscriptionStatus: 'free' | 'pro' | 'business' | 'enterprise';
   quotesUsedThisMonth: number;
   quotesLimit: number;
+  calculatorsUsed: number;
+  calculatorLimit: number;
 }
 
 interface UserCalculator {
@@ -51,14 +53,47 @@ interface CalculatorTemplate {
   slug: string;
 }
 
-const mockUser: User = {
-  id: "1",
-  email: "user@example.com",
-  fullName: "John Doe",
-  subscriptionStatus: "Pro",
-  quotesUsedThisMonth: 0,
-  quotesLimit: 1000
+// Subscription tier definitions
+const SUBSCRIPTION_TIERS = {
+  free: { name: 'Free for Life', calculators: 1, quotes: 5, price: 0 },
+  pro: { name: 'Pro Launch Special', calculators: 5, quotes: 25, price: 5 },
+  business: { name: 'Business', calculators: 10, quotes: 50, price: 35 },
+  enterprise: { name: 'Enterprise', calculators: 999, quotes: 999, price: 99 }
 };
+
+const getUserSubscriptionData = () => {
+  const userSession = localStorage.getItem('user_session');
+  const subscriptionKey = `subscription_${userSession}`;
+  const quotesKey = `quotes_${userSession}`;
+  
+  const savedSubscription = localStorage.getItem(subscriptionKey);
+  const savedQuotes = localStorage.getItem(quotesKey);
+  
+  const subscription = savedSubscription ? JSON.parse(savedSubscription) : 'free';
+  const quotesUsed = savedQuotes ? parseInt(savedQuotes) : 0;
+  
+  const tier = SUBSCRIPTION_TIERS[subscription as keyof typeof SUBSCRIPTION_TIERS];
+  
+  return {
+    subscription,
+    quotesUsed,
+    tier
+  };
+};
+
+const mockUser: User = (() => {
+  const { subscription, quotesUsed, tier } = getUserSubscriptionData();
+  return {
+    id: "1",
+    email: "user@example.com",
+    fullName: "John Doe",
+    subscriptionStatus: subscription,
+    quotesUsedThisMonth: quotesUsed,
+    quotesLimit: tier.quotes,
+    calculatorsUsed: 0,
+    calculatorLimit: tier.calculators
+  };
+})();
 
 const calculatorTemplates: CalculatorTemplate[] = [
   // Photography Services
@@ -150,16 +185,16 @@ const performanceData = [
 const clientData: Array<{id: number, name: string, email: string, project: string, quote: string, status: string, date: string}> = [];
 
 export default function Dashboard() {
-  const [user] = useState<User>(mockUser);
+  const [user, setUser] = useState<User>(mockUser);
   const [userCalculators, setUserCalculators] = useState<UserCalculator[]>([]);
   const [showCalculatorModal, setShowCalculatorModal] = useState(false);
   const [showCustomizeModal, setShowCustomizeModal] = useState(false);
   const [showEmbedModal, setShowEmbedModal] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [selectedCalculator, setSelectedCalculator] = useState<UserCalculator | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [customConfig, setCustomConfig] = useState<any>({});
-
 
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const { toast } = useToast();
@@ -175,12 +210,19 @@ export default function Dashboard() {
     // Load user-specific calculators
     const userCalculatorKey = `userCalculators_${userSession}`;
     const saved = localStorage.getItem(userCalculatorKey);
-    if (saved) {
-      setUserCalculators(JSON.parse(saved));
-    } else {
-      // New user gets empty calculator list
-      setUserCalculators([]);
-    }
+    const calculators = saved ? JSON.parse(saved) : [];
+    setUserCalculators(calculators);
+
+    // Update user with current calculator count and subscription data
+    const { subscription, quotesUsed, tier } = getUserSubscriptionData();
+    setUser(prev => ({
+      ...prev,
+      subscriptionStatus: subscription,
+      quotesUsedThisMonth: quotesUsed,
+      quotesLimit: tier.quotes,
+      calculatorsUsed: calculators.length,
+      calculatorLimit: tier.calculators
+    }));
   }, []);
 
   const filteredCalculators = calculatorTemplates.filter(calc => {
@@ -190,7 +232,40 @@ export default function Dashboard() {
     return matchesSearch && matchesCategory;
   });
 
+  const checkSubscriptionLimits = () => {
+    if (user.calculatorsUsed >= user.calculatorLimit) {
+      return { canAdd: false, reason: 'calculator_limit' };
+    }
+    return { canAdd: true };
+  };
+
+  const upgradeSubscription = (newTier: keyof typeof SUBSCRIPTION_TIERS) => {
+    const userSession = localStorage.getItem('user_session');
+    const subscriptionKey = `subscription_${userSession}`;
+    localStorage.setItem(subscriptionKey, JSON.stringify(newTier));
+    
+    const tier = SUBSCRIPTION_TIERS[newTier];
+    setUser(prev => ({
+      ...prev,
+      subscriptionStatus: newTier,
+      calculatorLimit: tier.calculators,
+      quotesLimit: tier.quotes
+    }));
+    
+    setShowUpgradeModal(false);
+    toast({
+      title: "Subscription Upgraded!",
+      description: `Welcome to ${tier.name}! You now have access to ${tier.calculators} calculators and ${tier.quotes} quotes per month.`,
+    });
+  };
+
   const addCalculator = async (template: CalculatorTemplate) => {
+    // Check subscription limits
+    const limitCheck = checkSubscriptionLimits();
+    if (!limitCheck.canAdd) {
+      setShowUpgradeModal(true);
+      return;
+    }
     // Map template IDs to actual calculator routes for embed URLs
     const calculatorRoutes: { [key: string]: string } = {
       'wedding-photography': '/wedding-photography-calculator',
@@ -333,6 +408,13 @@ export default function Dashboard() {
     const updated = [...userCalculators, newCalculator];
     setUserCalculators(updated);
     localStorage.setItem(userCalculatorKey, JSON.stringify(updated));
+    
+    // Update user calculator count
+    setUser(prev => ({
+      ...prev,
+      calculatorsUsed: updated.length
+    }));
+    
     setShowCalculatorModal(false);
     
     toast({
@@ -453,6 +535,65 @@ export default function Dashboard() {
           <p className="text-gray-400">Manage your quote calculators and track performance</p>
         </div>
 
+        {/* Subscription Status */}
+        <Card className="bg-midnight-800 border-midnight-700 mb-6">
+          <CardContent className="p-6">
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="text-lg font-semibold text-white">
+                  {SUBSCRIPTION_TIERS[user.subscriptionStatus].name}
+                </h3>
+                <p className="text-gray-400 text-sm">
+                  {user.calculatorsUsed}/{user.calculatorLimit} calculators • {user.quotesUsedThisMonth}/{user.quotesLimit} quotes used
+                </p>
+              </div>
+              {user.subscriptionStatus === 'free' && (
+                <Button 
+                  onClick={() => setShowUpgradeModal(true)}
+                  className="bg-neon-500 hover:bg-neon-600 text-black font-medium"
+                >
+                  Upgrade Now
+                </Button>
+              )}
+            </div>
+            
+            {/* Usage bars */}
+            <div className="mt-4 space-y-3">
+              <div>
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="text-gray-400">Calculator Usage</span>
+                  <span className="text-white">{user.calculatorsUsed}/{user.calculatorLimit}</span>
+                </div>
+                <div className="w-full bg-midnight-700 rounded-full h-2">
+                  <div 
+                    className={`h-2 rounded-full ${
+                      user.calculatorsUsed >= user.calculatorLimit ? 'bg-red-500' : 
+                      user.calculatorsUsed / user.calculatorLimit > 0.8 ? 'bg-yellow-500' : 'bg-neon-400'
+                    }`}
+                    style={{ width: `${Math.min((user.calculatorsUsed / user.calculatorLimit) * 100, 100)}%` }}
+                  ></div>
+                </div>
+              </div>
+              
+              <div>
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="text-gray-400">Quote Usage</span>
+                  <span className="text-white">{user.quotesUsedThisMonth}/{user.quotesLimit}</span>
+                </div>
+                <div className="w-full bg-midnight-700 rounded-full h-2">
+                  <div 
+                    className={`h-2 rounded-full ${
+                      user.quotesUsedThisMonth >= user.quotesLimit ? 'bg-red-500' : 
+                      user.quotesUsedThisMonth / user.quotesLimit > 0.8 ? 'bg-yellow-500' : 'bg-neon-400'
+                    }`}
+                    style={{ width: `${Math.min((user.quotesUsedThisMonth / user.quotesLimit) * 100, 100)}%` }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card className="bg-midnight-800 border-midnight-700">
@@ -460,7 +601,7 @@ export default function Dashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Active Calculators</p>
-                  <p className="text-2xl font-bold text-white">{userCalculators.length}</p>
+                  <p className="text-2xl font-bold text-white">{user.calculatorsUsed}/{user.calculatorLimit}</p>
                 </div>
                 <Calculator className="h-8 w-8 text-neon-400" />
               </div>
@@ -1614,6 +1755,131 @@ export default function Dashboard() {
           <div className="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50">
             Calculator added successfully!
           </div>
+        )}
+
+        {/* Subscription Upgrade Modal */}
+        {showUpgradeModal && (
+          <Dialog open={showUpgradeModal} onOpenChange={setShowUpgradeModal}>
+            <DialogContent className="max-w-4xl bg-midnight-800 border-midnight-700">
+              <DialogHeader>
+                <DialogTitle className="text-white text-xl">Upgrade Your Subscription</DialogTitle>
+                <DialogDescription className="text-gray-400">
+                  You've reached your {user.subscriptionStatus === 'free' ? 'calculator limit' : 'usage limits'}. Choose a plan that fits your needs.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-6">
+                {Object.entries(SUBSCRIPTION_TIERS).map(([tier, details]) => (
+                  <Card 
+                    key={tier} 
+                    className={`bg-midnight-900 border-midnight-600 hover:border-neon-500/50 transition-all ${
+                      tier === 'pro' ? 'border-neon-500 shadow-lg shadow-neon-500/20' : ''
+                    }`}
+                  >
+                    <CardContent className="p-6">
+                      <div className="text-center">
+                        <h3 className="text-lg font-semibold text-white mb-2">{details.name}</h3>
+                        {tier === 'pro' && (
+                          <div className="bg-neon-500 text-black text-xs font-bold px-2 py-1 rounded-full mb-2">
+                            LIMITED TIME
+                          </div>
+                        )}
+                        <div className="text-3xl font-bold text-white mb-1">
+                          {details.price === 0 ? 'Free' : `€${details.price}`}
+                        </div>
+                        {details.price > 0 && (
+                          <div className="text-sm text-gray-400 mb-4">/month</div>
+                        )}
+                        
+                        <div className="space-y-3 text-left">
+                          <div className="flex items-center text-sm">
+                            <div className="w-2 h-2 bg-neon-400 rounded-full mr-2"></div>
+                            <span className="text-gray-300">
+                              {details.calculators === 999 ? 'Unlimited' : details.calculators} calculators
+                            </span>
+                          </div>
+                          <div className="flex items-center text-sm">
+                            <div className="w-2 h-2 bg-neon-400 rounded-full mr-2"></div>
+                            <span className="text-gray-300">
+                              {details.quotes === 999 ? 'Unlimited' : details.quotes} quotes/month
+                            </span>
+                          </div>
+                          
+                          {tier === 'pro' && (
+                            <>
+                              <div className="flex items-center text-sm">
+                                <div className="w-2 h-2 bg-neon-400 rounded-full mr-2"></div>
+                                <span className="text-gray-300">Priority support</span>
+                              </div>
+                              <div className="flex items-center text-sm">
+                                <div className="w-2 h-2 bg-neon-400 rounded-full mr-2"></div>
+                                <span className="text-gray-300">Custom branding</span>
+                              </div>
+                            </>
+                          )}
+                          
+                          {tier === 'business' && (
+                            <>
+                              <div className="flex items-center text-sm">
+                                <div className="w-2 h-2 bg-neon-400 rounded-full mr-2"></div>
+                                <span className="text-gray-300">Analytics dashboard</span>
+                              </div>
+                              <div className="flex items-center text-sm">
+                                <div className="w-2 h-2 bg-neon-400 rounded-full mr-2"></div>
+                                <span className="text-gray-300">Lead management</span>
+                              </div>
+                              <div className="flex items-center text-sm">
+                                <div className="w-2 h-2 bg-neon-400 rounded-full mr-2"></div>
+                                <span className="text-gray-300">API access</span>
+                              </div>
+                            </>
+                          )}
+                          
+                          {tier === 'enterprise' && (
+                            <>
+                              <div className="flex items-center text-sm">
+                                <div className="w-2 h-2 bg-neon-400 rounded-full mr-2"></div>
+                                <span className="text-gray-300">White-label solution</span>
+                              </div>
+                              <div className="flex items-center text-sm">
+                                <div className="w-2 h-2 bg-neon-400 rounded-full mr-2"></div>
+                                <span className="text-gray-300">Dedicated support</span>
+                              </div>
+                              <div className="flex items-center text-sm">
+                                <div className="w-2 h-2 bg-neon-400 rounded-full mr-2"></div>
+                                <span className="text-gray-300">Custom integrations</span>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                        
+                        <Button
+                          className={`w-full mt-6 ${
+                            tier === user.subscriptionStatus 
+                              ? 'bg-gray-600 cursor-not-allowed' 
+                              : tier === 'pro' 
+                                ? 'bg-neon-500 hover:bg-neon-600 text-black font-medium' 
+                                : 'bg-midnight-700 hover:bg-midnight-600 text-white border border-midnight-600'
+                          }`}
+                          onClick={() => tier !== user.subscriptionStatus && upgradeSubscription(tier as keyof typeof SUBSCRIPTION_TIERS)}
+                          disabled={tier === user.subscriptionStatus}
+                        >
+                          {tier === user.subscriptionStatus ? 'Current Plan' : 
+                           tier === 'free' ? 'Downgrade' : 
+                           tier === 'enterprise' ? 'Contact Sales' : 
+                           'Upgrade Now'}
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              
+              <div className="text-center text-sm text-gray-400 pt-4 border-t border-midnight-600">
+                Need help choosing? <span className="text-neon-400 cursor-pointer hover:underline">Contact our sales team</span>
+              </div>
+            </DialogContent>
+          </Dialog>
         )}
       </div>
     </div>

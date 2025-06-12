@@ -33,6 +33,11 @@ export default function Register() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
+  // Get plan parameters from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const selectedPlan = urlParams.get('plan');
+  const selectedPrice = urlParams.get('price');
+
   const form = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -42,6 +47,46 @@ export default function Register() {
       confirmPassword: "",
     },
   });
+
+  // Helper function to redirect to Stripe checkout for paid plans
+  const redirectToCheckout = async (tier: string, price: string) => {
+    try {
+      const response = await fetch('/api/create-subscription-checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tier,
+          userId: `new_user_${Date.now()}`
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.url) {
+        // Store selected plan for after payment
+        localStorage.setItem('selected_tier', tier);
+        // Redirect to Stripe checkout
+        window.location.href = data.url;
+      } else {
+        throw new Error('No checkout URL received');
+      }
+      
+    } catch (error) {
+      console.error('Checkout error:', error);
+      toast({
+        title: "Payment Setup Failed",
+        description: "Redirecting to dashboard. You can upgrade later.",
+        variant: "destructive"
+      });
+      setLocation('/dashboard');
+    }
+  };
 
   const onSubmit = async (data: RegisterForm) => {
     setIsLoading(true);
@@ -57,10 +102,15 @@ export default function Register() {
         
         toast({
           title: "Registration successful!",
-          description: "Please select your subscription plan to continue.",
+          description: selectedPlan ? "Redirecting to checkout..." : "Welcome to QuoteKit!",
         });
         
-        setLocation('/subscribe');
+        // If a paid plan was selected, redirect to checkout
+        if (selectedPlan && selectedPlan !== 'free') {
+          await redirectToCheckout(selectedPlan, selectedPrice || '5');
+        } else {
+          setLocation('/dashboard');
+        }
         return;
       }
 
@@ -72,10 +122,15 @@ export default function Register() {
         
         toast({
           title: "Registration successful!",
-          description: "Please select your subscription plan to continue.",
+          description: selectedPlan ? "Redirecting to checkout..." : "Welcome to QuoteKit!",
         });
         
-        setLocation('/subscribe');
+        // If a paid plan was selected, redirect to checkout
+        if (selectedPlan && selectedPlan !== 'free') {
+          await redirectToCheckout(selectedPlan, selectedPrice || '5');
+        } else {
+          setLocation('/dashboard');
+        }
         return;
       }
 
@@ -94,10 +149,15 @@ export default function Register() {
           
           toast({
             title: "Welcome to QuoteKit!",
-            description: "Your account has been created. Let's set up your subscription.",
+            description: selectedPlan ? "Redirecting to checkout..." : "Your account has been created.",
           });
           
-          setLocation('/subscribe');
+          // If a paid plan was selected, redirect to checkout
+          if (selectedPlan && selectedPlan !== 'free') {
+            await redirectToCheckout(selectedPlan, selectedPrice || '5');
+          } else {
+            setLocation('/dashboard');
+          }
           return;
         }
         

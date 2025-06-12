@@ -212,8 +212,12 @@ export default function Pricing() {
                             : 'bg-gray-700 text-white hover:bg-gray-600'
                         }`}
                       >
-                        <Link href={plan.name === 'Free' ? '/register' : '/register'}>
-                          {plan.cta}
+                        <Link href={
+                          plan.name === 'Free' 
+                            ? '/register' 
+                            : `/register?plan=${plan.name.toLowerCase()}&price=${plan.price.replace('€', '')}`
+                        }>
+                          {plan.name === 'Free' ? plan.cta : `Start ${plan.name} Trial`}
                         </Link>
                       </Button>
                     </div>

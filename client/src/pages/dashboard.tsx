@@ -362,9 +362,20 @@ export default function Dashboard() {
       console.log('Checkout response:', data);
       
       if (data.url) {
-        // Redirect to Stripe checkout
-        console.log('Redirecting to:', data.url);
-        window.location.href = data.url;
+        // Open Stripe checkout in new tab to avoid iframe restrictions
+        console.log('Opening checkout in new tab:', data.url);
+        const checkoutWindow = window.open(data.url, '_blank', 'noopener,noreferrer');
+        
+        if (!checkoutWindow) {
+          // Fallback if popup is blocked - show modal with link
+          setCheckoutUrl(data.url);
+          setShowCheckoutModal(true);
+        } else {
+          toast({
+            title: "Checkout Opened",
+            description: "Complete your payment in the new tab to upgrade your subscription.",
+          });
+        }
       } else {
         throw new Error('No checkout URL received');
       }

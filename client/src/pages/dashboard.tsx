@@ -199,7 +199,49 @@ export default function Dashboard() {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const { toast } = useToast();
 
+  // Get current user email for session isolation
+  const getCurrentUserEmail = () => {
+    try {
+      const supabaseUser = localStorage.getItem('user');
+      if (supabaseUser) {
+        const parsed = JSON.parse(supabaseUser);
+        return parsed.email;
+      }
+      
+      const tempUser = localStorage.getItem('temp_user');
+      if (tempUser) {
+        const parsed = JSON.parse(tempUser);
+        return parsed.email;
+      }
+      
+      return null;
+    } catch {
+      return null;
+    }
+  };
+
   useEffect(() => {
+    // Get current user email for session isolation
+    const getCurrentUserEmailLocal = () => {
+      try {
+        const supabaseUser = localStorage.getItem('user');
+        if (supabaseUser) {
+          const parsed = JSON.parse(supabaseUser);
+          return parsed.email;
+        }
+        
+        const tempUser = localStorage.getItem('temp_user');
+        if (tempUser) {
+          const parsed = JSON.parse(tempUser);
+          return parsed.email;
+        }
+        
+        return null;
+      } catch {
+        return null;
+      }
+    };
+
     // Check for account creation flag - if this is a new account, clear all data
     const isNewAccount = localStorage.getItem('new_account_created');
     if (isNewAccount === 'true') {
@@ -211,6 +253,21 @@ export default function Dashboard() {
         }
       });
       localStorage.removeItem('new_account_created');
+    }
+
+    // Check if user just logged in/registered and force new session for data isolation
+    const userEmail = getCurrentUserEmailLocal();
+    const lastUserEmail = localStorage.getItem('last_user_email');
+    
+    if (userEmail && userEmail !== lastUserEmail) {
+      // Different user - clear all previous data and create new session
+      const keys = Object.keys(localStorage);
+      keys.forEach(key => {
+        if (key.startsWith('userCalculators_') || key.startsWith('subscription_') || key === 'user_session') {
+          localStorage.removeItem(key);
+        }
+      });
+      localStorage.setItem('last_user_email', userEmail);
     }
 
     // Generate unique user session if not exists
@@ -615,24 +672,14 @@ export default function Dashboard() {
                   {user.calculatorsUsed}/{user.calculatorLimit} calculators • {user.quotesUsedThisMonth}/{user.quotesLimit} quotes used
                 </p>
               </div>
-              <div className="flex gap-2">
-                {user.subscriptionStatus === 'free' && (
-                  <Button 
-                    onClick={() => setShowUpgradeModal(true)}
-                    className="bg-neon-500 hover:bg-neon-600 text-black font-medium"
-                  >
-                    Upgrade Now
-                  </Button>
-                )}
+              {user.subscriptionStatus === 'free' && (
                 <Button 
-                  onClick={resetUserSession}
-                  variant="outline"
-                  size="sm"
-                  className="border-red-600 text-red-400 hover:bg-red-600/10"
+                  onClick={() => setShowUpgradeModal(true)}
+                  className="bg-neon-500 hover:bg-neon-600 text-black font-medium"
                 >
-                  Reset Session (Test)
+                  Upgrade Now
                 </Button>
-              </div>
+              )}
             </div>
             
             {/* Usage bars */}

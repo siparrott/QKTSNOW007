@@ -70,6 +70,7 @@ import Pricing from "@/pages/pricing";
 import Login from "@/pages/login";
 import Register from "@/pages/register";
 import Subscribe from "@/pages/subscribe";
+import Checkout from "@/pages/checkout";
 import Dashboard from "@/pages/dashboard";
 import Upgrade from "@/pages/upgrade";
 import Profile from "@/pages/profile";
@@ -204,6 +205,7 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
       <Route path="/subscribe" component={Subscribe} />
+      <Route path="/checkout" component={Checkout} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/upgrade" component={Upgrade} />
       <Route path="/profile" component={Profile} />

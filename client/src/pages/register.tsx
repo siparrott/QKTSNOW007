@@ -53,42 +53,10 @@ export default function Register() {
 
   // Helper function to redirect to Stripe checkout for paid plans
   const redirectToCheckout = async (tier: string, price: string) => {
-    try {
-      const response = await fetch('/api/create-subscription-checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          tier,
-          userId: `new_user_${Date.now()}`
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      
-      if (data.url) {
-        // Store selected plan for after payment
-        localStorage.setItem('selected_tier', tier);
-        // Redirect to Stripe checkout
-        window.location.href = data.url;
-      } else {
-        throw new Error('No checkout URL received');
-      }
-      
-    } catch (error) {
-      console.error('Checkout error:', error);
-      toast({
-        title: "Payment Setup Failed",
-        description: "Redirecting to dashboard. You can upgrade later.",
-        variant: "destructive"
-      });
-      setLocation('/dashboard');
-    }
+    // Store selected plan for after payment
+    localStorage.setItem('selected_tier', tier);
+    // Redirect to dedicated checkout page which handles Stripe properly
+    setLocation(`/checkout?tier=${tier}&userId=new_user_${Date.now()}`);
   };
 
   const onSubmit = async (data: RegisterForm) => {

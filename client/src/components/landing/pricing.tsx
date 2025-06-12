@@ -2,111 +2,36 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Check, Rocket, Zap, Building2, Crown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
 import { useLocation } from "wouter";
 
 export default function Pricing() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
 
-  const handlePlanSelection = async (planName: string) => {
-    try {
-      if (planName === "Starter") {
-        // Free plan - redirect to signup
-        setLocation("/register");
-        return;
-      }
+  const handlePlanSelection = (planName: string) => {
+    if (planName === "Starter") {
+      // Free plan - redirect to signup
+      setLocation("/register");
+      return;
+    }
 
-      const priceId = getPriceId(planName);
-      if (!priceId) {
-        throw new Error(`No price ID found for plan: ${planName}`);
-      }
+    // For paid plans, redirect to registration with plan parameters
+    const planMap = {
+      "Pro": { tier: "pro", price: "5" },
+      "Business": { tier: "business", price: "35" },
+      "Enterprise": { tier: "enterprise", price: "95" }
+    };
 
-      console.log("Creating checkout session for:", { planName, priceId });
-
-      // For paid plans, create Stripe checkout session
-      const response = await fetch("/api/create-checkout-session", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          planName,
-          priceId
-        })
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`HTTP ${response.status}: ${errorText}`);
-      }
-
-      const data = await response.json();
-      console.log("Checkout session response:", data);
-      
-      if (data.url) {
-        console.log("Redirecting to Stripe checkout:", data.url);
-        
-        // Try multiple redirect methods for better compatibility
-        let redirectSuccess = false;
-        
-        try {
-          // Method 1: Direct assignment
-          window.location.href = data.url;
-          redirectSuccess = true;
-        } catch (e) {
-          console.log("Method 1 failed, trying method 2");
-          try {
-            // Method 2: Window.open in new tab
-            const stripeWindow = window.open(data.url, '_blank', 'noopener,noreferrer');
-            if (stripeWindow) {
-              redirectSuccess = true;
-            } else {
-              throw new Error("Popup blocked");
-            }
-          } catch (e2) {
-            console.log("Method 2 failed, trying method 3");
-            // Method 3: Create a temporary link and click it
-            const link = document.createElement('a');
-            link.href = data.url;
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            redirectSuccess = true;
-          }
-        }
-        
-        // If all methods fail, show user a direct link
-        if (!redirectSuccess) {
-          toast({
-            title: "Payment Ready",
-            description: `Click here to complete your payment: ${data.url}`,
-            variant: "default",
-          });
-        }
-      } else {
-        throw new Error("No checkout URL received from server");
-      }
-    } catch (error) {
-      console.error("Payment error:", error);
+    const plan = planMap[planName as keyof typeof planMap];
+    if (plan) {
+      setLocation(`/register?plan=${plan.tier}&price=${plan.price}`);
+    } else {
       toast({
-        title: "Payment Error",
-        description: error instanceof Error ? error.message : "Unable to process payment. Please try again.",
-        variant: "destructive",
+        title: "Invalid Plan",
+        description: "Please select a valid plan.",
+        variant: "destructive"
       });
     }
-  };
-
-  const getPriceId = (planName: string) => {
-    // Real Stripe price IDs created in Stripe
-    const priceIds = {
-      "Pro": "price_1RYoePIgi4Fqo7Cvk81kiiuZ", // €5/month Pro plan
-      "Business": "price_1RYoeQIgi4Fqo7CviSGzAy4h", // €35/month Business plan  
-      "Enterprise": "price_1RYoeQIgi4Fqo7CvCEuZyKcQ" // €95/month Enterprise plan
-    };
-    return priceIds[planName as keyof typeof priceIds];
   };
 
   const plans = [
@@ -130,244 +55,166 @@ export default function Pricing() {
     },
     {
       name: "Pro",
-      description: "Launch Offer: €5/month (normally €15/month)",
+      description: "Launch offer - save 67%",
       price: "€5",
       period: "/month",
-      quotesLimit: "6–20 quotes/month",
+      quotesLimit: "6-20 quotes/month",
       icon: <Zap className="h-6 w-6" />,
       features: [
         "Everything in Starter",
         "PDF + Email export",
-        "CRM/Webhook integration", 
-        "Analytics dashboard",
-        "Style configuration JSON editor",
-        "Priority support"
+        "Priority email support",
+        "Year branding",
+        "Style configuration JSON editor"
       ],
       cta: "Get Pro Deal",
       popular: true,
-      bestFor: "Solo professionals ready to grow",
-      originalPrice: "€15"
+      bestFor: "Scaling businesses needing to impress customers"
     },
     {
       name: "Business",
-      description: "For busy teams",
+      description: "For growing businesses",
       price: "€35",
       period: "/month",
-      quotesLimit: "21–100 quotes/month",
+      quotesLimit: "21-500 quotes/month",
       icon: <Building2 className="h-6 w-6" />,
       features: [
-        "Everything in Pro",
-        "Advanced analytics",
-        "Team collaboration tools",
-        "White-label options",
+        "20 calculators",
+        "Team collaboration",
         "API access",
-        "Dedicated support"
+        "Phone support",
+        "Custom integrations",
+        "White-label solution",
+        "Advanced reporting",
+        "Multi-language support"
       ],
-      cta: "Start Business",
+      cta: "Start Business Trial",
       popular: false,
-      bestFor: "Busy teams or multi-niche users"
+      bestFor: "Growing companies with high-volume needs"
     },
     {
       name: "Enterprise",
-      description: "Custom solutions",
+      description: "For large organizations",
       price: "€95",
       period: "/month",
-      quotesLimit: "100+ quotes/month",
+      quotesLimit: "500+ quotes/month",
       icon: <Crown className="h-6 w-6" />,
       features: [
-        "Everything in Business",
-        "Custom integrations",
+        "Unlimited calculators",
         "Dedicated account manager",
-        "Custom invoicing available",
+        "Custom development",
+        "24/7 phone support",
         "SLA guarantee",
+        "On-premise deployment",
+        "Advanced security",
         "Training & onboarding"
       ],
       cta: "Contact Sales",
       popular: false,
-      bestFor: "Agencies, franchises, large teams"
+      bestFor: "Enterprise clients seeking custom solutions"
     }
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0 },
-  };
-
   return (
-    <section id="pricing" className="py-12 lg:py-16 bg-midnight-800/50">
-      <div className="container mx-auto px-4 lg:px-8">
-        <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-        >
-          <h2 className="text-3xl md:text-5xl font-bold mb-4">
-            <span className="text-neon-400">QuoteKit Pricing Plans</span>
-          </h2>
-          <p className="text-lg text-gray-300 max-w-3xl mx-auto mb-8">
-            Turn curiosity into clients — without wasting hours on back-and-forth messages.<br/>
-            Try free, upgrade when you're ready.
-          </p>
-          <div className="bg-gradient-to-r from-neon-500/20 to-neon-600/20 border border-neon-500/30 rounded-lg p-4 max-w-2xl mx-auto">
-            <div className="text-lg font-bold text-neon-400">Launch Offer: Lock in Pro for only €5/month (normally €15/month)</div>
-            <div className="text-sm text-gray-300">Available until launch phase ends</div>
-          </div>
-        </motion.div>
+    <section className="py-24 bg-gradient-to-br from-midnight-900 via-midnight-800 to-blue-900">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-4xl font-bold text-white mb-4"
+          >
+            Choose Your Plan
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-xl text-gray-300 max-w-3xl mx-auto"
+          >
+            Start free, upgrade when you're ready. All plans include our core AI quote generation.
+          </motion.p>
+        </div>
 
-        <motion.div
-          className="max-w-7xl mx-auto"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {plans.map((plan, index) => (
-              <motion.div
-                key={plan.name}
-                className={`relative rounded-2xl p-6 ${
-                  plan.popular
-                    ? "bg-gradient-to-b from-neon-500/20 to-midnight-800 border-2 border-neon-500 transform scale-105"
-                    : "bg-gradient-to-b from-gray-800/50 to-midnight-800 border border-gray-700"
-                }`}
-                variants={itemVariants}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-neon-500 text-white px-4 py-1 rounded-full text-xs font-bold">
-                    MOST POPULAR
-                  </div>
-                )}
-
-                <div className="text-center mb-6">
-                  <div className="flex items-center justify-center mb-3">
-                    <div className={`p-2 rounded-lg ${plan.popular ? "bg-neon-500" : "bg-gray-700"}`}>
-                      {plan.icon}
-                    </div>
-                  </div>
-                  <h3 className="text-xl font-bold text-white mb-2">{plan.name}</h3>
-                  <p className="text-sm text-gray-300 mb-4">{plan.description}</p>
-                  
-                  <div className="mb-4">
-                    <div className="flex items-baseline justify-center gap-1">
-                      <span className="text-3xl font-bold text-white">{plan.price}</span>
-                      <span className="text-gray-400">{plan.period}</span>
-                    </div>
-                    {plan.originalPrice && (
-                      <div className="text-sm text-gray-500 line-through">Was {plan.originalPrice}/month</div>
-                    )}
-                    <div className="text-sm text-gray-400 mt-1">{plan.quotesLimit}</div>
-                  </div>
-                  
-                  <div className="text-xs text-gray-500 mb-4">
-                    Best for: {plan.bestFor}
-                  </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {plans.map((plan, index) => (
+            <motion.div
+              key={plan.name}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
+              className={`relative bg-midnight-800 rounded-2xl p-8 border-2 transition-all duration-300 hover:scale-105 ${
+                plan.popular
+                  ? "border-neon-400 shadow-lg shadow-neon-400/20"
+                  : "border-midnight-600 hover:border-neon-400/50"
+              }`}
+            >
+              {plan.popular && (
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                  <span className="bg-gradient-to-r from-neon-400 to-neon-500 text-black px-6 py-2 rounded-full text-sm font-semibold">
+                    Most Popular
+                  </span>
                 </div>
+              )}
 
-                <div className="mb-6">
-                  <ul className="space-y-2">
-                    {plan.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-start text-sm">
-                        <Check className="h-4 w-4 text-green-400 mr-2 mt-0.5 flex-shrink-0" />
-                        <span className="text-gray-300">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-neon-400/10 rounded-full mb-4">
+                  <div className="text-neon-400">{plan.icon}</div>
                 </div>
-
+                <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
+                <p className="text-gray-400 text-sm mb-4">{plan.description}</p>
                 <div className="text-center">
-                  <Button 
-                    onClick={() => handlePlanSelection(plan.name)}
-                    className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 ${
-                      plan.popular
-                        ? "bg-neon-500 hover:bg-neon-600 text-white hover:shadow-glow"
-                        : "bg-gray-700 hover:bg-gray-600 text-white"
-                    }`}
-                  >
-                    {plan.cta}
-                  </Button>
+                  <span className="text-4xl font-bold text-white">{plan.price}</span>
+                  <span className="text-gray-400">{plan.period}</span>
                 </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+                <p className="text-neon-400 text-sm mt-2">{plan.quotesLimit}</p>
+              </div>
+
+              <ul className="space-y-4 mb-8">
+                {plan.features.map((feature, featureIndex) => (
+                  <li key={featureIndex} className="flex items-start space-x-3">
+                    <Check className="h-5 w-5 text-neon-400 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-300 text-sm">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <Button
+                onClick={() => handlePlanSelection(plan.name)}
+                className={`w-full py-3 text-lg font-semibold transition-all duration-300 ${
+                  plan.popular
+                    ? "bg-gradient-to-r from-neon-400 to-neon-500 text-black hover:from-neon-500 hover:to-neon-600"
+                    : "bg-midnight-700 text-white border border-midnight-600 hover:bg-midnight-600 hover:border-neon-400/50"
+                }`}
+                variant={plan.popular ? "default" : "outline"}
+              >
+                {plan.cta}
+              </Button>
+
+              <p className="text-xs text-gray-500 text-center mt-4">{plan.bestFor}</p>
+            </motion.div>
+          ))}
+        </div>
 
         <motion.div
-          className="text-center mt-16"
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
           viewport={{ once: true }}
+          transition={{ delay: 0.5 }}
+          className="text-center mt-16"
         >
-          <div className="max-w-4xl mx-auto">
-            <h3 className="text-xl font-bold text-white mb-6">All Plans Include:</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 text-sm text-gray-300 mb-8">
-              <div className="flex items-center">
-                <Check className="h-4 w-4 text-green-400 mr-2" />
-                Fully embeddable AI quote widget
-              </div>
-              <div className="flex items-center">
-                <Check className="h-4 w-4 text-green-400 mr-2" />
-                Real-time price calculation
-              </div>
-              <div className="flex items-center">
-                <Check className="h-4 w-4 text-green-400 mr-2" />
-                Custom branding & styling tools
-              </div>
-              <div className="flex items-center">
-                <Check className="h-4 w-4 text-green-400 mr-2" />
-                Email lead capture
-              </div>
-              <div className="flex items-center">
-                <Check className="h-4 w-4 text-green-400 mr-2" />
-                Admin dashboard access
-              </div>
-            </div>
-            
-            <div className="bg-gray-800/50 rounded-lg p-6 mb-8">
-              <h4 className="text-lg font-semibold text-white mb-4">Pro & Higher Also Get:</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 text-sm text-gray-300">
-                <div className="flex items-center">
-                  <Check className="h-4 w-4 text-neon-400 mr-2" />
-                  PDF + Email export
-                </div>
-                <div className="flex items-center">
-                  <Check className="h-4 w-4 text-neon-400 mr-2" />
-                  CRM/Webhook integration
-                </div>
-                <div className="flex items-center">
-                  <Check className="h-4 w-4 text-neon-400 mr-2" />
-                  Analytics dashboard
-                </div>
-                <div className="flex items-center">
-                  <Check className="h-4 w-4 text-neon-400 mr-2" />
-                  Style configuration JSON editor
-                </div>
-                <div className="flex items-center">
-                  <Check className="h-4 w-4 text-neon-400 mr-2" />
-                  Priority support
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <p className="text-gray-400">
-            <span className="inline-flex items-center">
-              <Check className="text-green-400 mr-2 h-5 w-5" />
-              30-day money-back guarantee • No setup fees • Cancel anytime
-            </span>
+          <p className="text-gray-400 mb-4">
+            All plans include 14-day free trial • No credit card required • Cancel anytime
           </p>
+          <div className="flex flex-wrap justify-center gap-8 text-sm text-gray-500">
+            <span>✓ SSL encryption</span>
+            <span>✓ GDPR compliant</span>
+            <span>✓ 99.9% uptime</span>
+            <span>✓ 24/7 support</span>
+          </div>
         </motion.div>
       </div>
     </section>

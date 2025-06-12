@@ -200,14 +200,27 @@ export default function Dashboard() {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Check for account creation flag - if this is a new account, clear all data
+    const isNewAccount = localStorage.getItem('new_account_created');
+    if (isNewAccount === 'true') {
+      // Clear all existing data for this new account
+      const keys = Object.keys(localStorage);
+      keys.forEach(key => {
+        if (key.startsWith('userCalculators_') || key.startsWith('subscription_') || key === 'user_session') {
+          localStorage.removeItem(key);
+        }
+      });
+      localStorage.removeItem('new_account_created');
+    }
+
     // Generate unique user session if not exists
     let userSession = localStorage.getItem('user_session');
     if (!userSession) {
-      userSession = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      userSession = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9) + '_' + performance.now();
       localStorage.setItem('user_session', userSession);
     }
 
-    // Load user-specific calculators
+    // Load user-specific calculators (should be empty for new users)
     const userCalculatorKey = `userCalculators_${userSession}`;
     const saved = localStorage.getItem(userCalculatorKey);
     const calculators = saved ? JSON.parse(saved) : [];
@@ -277,6 +290,39 @@ export default function Dashboard() {
       toast({
         title: "Calculator Deleted",
         description: "Calculator has been removed from your dashboard.",
+      });
+    }
+  };
+
+  // Force clean user session - for testing new user experience
+  const resetUserSession = () => {
+    if (confirm('This will clear all your data and simulate a new user account. Continue?')) {
+      // Clear all user-specific data
+      const keys = Object.keys(localStorage);
+      keys.forEach(key => {
+        if (key.startsWith('userCalculators_') || key.startsWith('subscription_') || key === 'user_session') {
+          localStorage.removeItem(key);
+        }
+      });
+      
+      // Generate new session
+      const newSession = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9) + '_' + performance.now();
+      localStorage.setItem('user_session', newSession);
+      
+      // Reset state
+      setUserCalculators([]);
+      setUser(prev => ({
+        ...prev,
+        subscriptionStatus: 'free',
+        quotesUsedThisMonth: 0,
+        quotesLimit: SUBSCRIPTION_TIERS.free.quotes,
+        calculatorsUsed: 0,
+        calculatorLimit: SUBSCRIPTION_TIERS.free.calculators
+      }));
+      
+      toast({
+        title: "Session Reset",
+        description: "Your account has been reset to simulate a new user experience.",
       });
     }
   };
@@ -569,14 +615,24 @@ export default function Dashboard() {
                   {user.calculatorsUsed}/{user.calculatorLimit} calculators • {user.quotesUsedThisMonth}/{user.quotesLimit} quotes used
                 </p>
               </div>
-              {user.subscriptionStatus === 'free' && (
+              <div className="flex gap-2">
+                {user.subscriptionStatus === 'free' && (
+                  <Button 
+                    onClick={() => setShowUpgradeModal(true)}
+                    className="bg-neon-500 hover:bg-neon-600 text-black font-medium"
+                  >
+                    Upgrade Now
+                  </Button>
+                )}
                 <Button 
-                  onClick={() => setShowUpgradeModal(true)}
-                  className="bg-neon-500 hover:bg-neon-600 text-black font-medium"
+                  onClick={resetUserSession}
+                  variant="outline"
+                  size="sm"
+                  className="border-red-600 text-red-400 hover:bg-red-600/10"
                 >
-                  Upgrade Now
+                  Reset Session (Test)
                 </Button>
-              )}
+              </div>
             </div>
             
             {/* Usage bars */}

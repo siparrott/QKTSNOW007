@@ -53,6 +53,7 @@ export default function Register() {
       if (user && session) {
         localStorage.setItem('user', JSON.stringify(user));
         localStorage.setItem('supabase_session', JSON.stringify(session));
+        localStorage.setItem('new_account_created', 'true');
         
         toast({
           title: "Registration successful!",
@@ -67,6 +68,7 @@ export default function Register() {
       if (user && !session) {
         const tempUser = storeTempUser(data.email, data.password);
         createTempSession(tempUser);
+        localStorage.setItem('new_account_created', 'true');
         
         toast({
           title: "Registration successful!",
@@ -88,6 +90,7 @@ export default function Register() {
           
           const tempUser = storeTempUser(data.email, data.password);
           createTempSession(tempUser);
+          localStorage.setItem('new_account_created', 'true');
           
           toast({
             title: "Welcome to QuoteKit!",

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
+import pricingImage from "@assets/1a_1749650402887.png";
 import { 
   Check, 
   Star,
@@ -131,7 +132,7 @@ export default function Pricing() {
               {/* Statistics and Testimonials Image */}
               <div className="mb-16">
                 <img 
-                  src="/attached_assets/1a_1749650402887.png" 
+                  src={pricingImage} 
                   alt="Customer testimonials and statistics showing 300% conversion increase, 24/7 lead generation, 5min setup"
                   className="mx-auto max-w-4xl w-full rounded-2xl shadow-2xl"
                 />

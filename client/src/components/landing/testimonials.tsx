@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
+import testimonialImage from "@assets/1a_1749650402887.png";
 
 export default function Testimonials() {
   const testimonials = [
@@ -108,7 +109,7 @@ export default function Testimonials() {
           viewport={{ once: true }}
         >
           <img 
-            src="/attached_assets/1a_1749650402887.png" 
+            src={testimonialImage} 
             alt="Customer testimonials and statistics showing 300% conversion increase, 24/7 lead generation, 5min setup"
             className="mx-auto max-w-4xl w-full rounded-2xl shadow-2xl"
           />

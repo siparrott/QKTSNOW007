@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
+import featuresImage from "@assets/ChatGPT Image Jun 11, 2025, 03_36_34 PM_1749650396269.png";
 import { 
   Zap, 
   Brain, 
@@ -249,7 +250,7 @@ export default function Features() {
               {/* Feature Grid Image */}
               <div className="mb-16">
                 <img 
-                  src="/attached_assets/ChatGPT Image Jun 11, 2025, 03_36_34 PM_1749650396269.png" 
+                  src={featuresImage} 
                   alt="QuoteKit Features: Unlimited Embeds, Instant Lead Capture, AI Pricing Logic, Powerful Admin Tools"
                   className="mx-auto max-w-2xl w-full rounded-2xl shadow-2xl"
                 />

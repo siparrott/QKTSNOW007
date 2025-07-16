@@ -1990,8 +1990,8 @@ export default function Dashboard() {
                   }}
                 >
                   <CalculatorPreview 
-                    calculatorType={selectedCalculator.template_id as any}
-                    config={customConfig}
+                    slug={selectedCalculator.template_id}
+                    customConfig={customConfig}
                   />
                 </div>
               </div>

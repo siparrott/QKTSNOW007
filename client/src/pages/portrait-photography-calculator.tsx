@@ -306,10 +306,10 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
   );
 
   const steps = [
-    { number: 1, title: "Portrait & Duration", completed: !!formData.portraitType && !!formData.duration },
-    { number: 2, title: "Location & Wardrobe", completed: !!formData.location && !!formData.wardrobeChanges },
-    { number: 3, title: "Add-ons & Usage", completed: !!formData.usageType },
-    { number: 4, title: "Contact Details", completed: !!formData.contactInfo.email },
+    { number: 1, title: textConfig?.stepTitle1 || "Portrait & Duration", completed: !!formData.portraitType && !!formData.duration },
+    { number: 2, title: textConfig?.stepTitle2 || "Location & Wardrobe", completed: !!formData.location && !!formData.wardrobeChanges },
+    { number: 3, title: textConfig?.stepTitle3 || "Add-ons & Usage", completed: !!formData.usageType },
+    { number: 4, title: textConfig?.stepTitle4 || "Contact Details", completed: !!formData.contactInfo.email },
   ];
 
   return (
@@ -355,7 +355,13 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                       {step.completed ? <CheckCircle className="h-4 w-4" /> : step.number}
                     </div>
                     <span className="ml-2 text-sm font-medium text-gray-700">
-                      {step.title}
+                      <EditableText
+                        text={step.title}
+                        onSave={(value) => updateTextContent(`stepTitle${step.number}`, value)}
+                        isPreview={isPreview}
+                        placeholder={step.title}
+                        className="text-sm font-medium text-gray-700"
+                      />
                     </span>
                     {index < steps.length - 1 && (
                       <div className="w-8 h-px bg-gray-300 mx-4"></div>
@@ -771,7 +777,15 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
           {/* Pricing Sidebar */}
           <div className="lg:col-span-1">
             <Card className="p-6 bg-white/95 backdrop-blur-sm border-gray-200 rounded-2xl shadow-xl sticky top-8">
-              <h3 className="text-xl font-display text-gray-800 mb-4">Your Portrait Session</h3>
+              <h3 className="text-xl font-display text-gray-800 mb-4">
+                <EditableText
+                  text={textConfig?.priceCardTitle || "Your Portrait Session"}
+                  onSave={(value) => updateTextContent('priceCardTitle', value)}
+                  isPreview={isPreview}
+                  placeholder="Your Portrait Session"
+                  className="text-xl font-display text-gray-800"
+                />
+              </h3>
               
               <div className="space-y-3">
                 <div className="text-3xl font-bold text-rose-600">

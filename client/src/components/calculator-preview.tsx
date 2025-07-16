@@ -163,10 +163,8 @@ export default function CalculatorPreview({ slug, customConfig, className = "", 
         </div>
       }>
         <CalculatorComponent 
-          customConfig={{
-            ...customConfig,
-            onConfigChange
-          }}
+          customConfig={customConfig}
+          onConfigChange={onConfigChange}
           isPreview={true}
           hideHeader={true}
           forceDetailedView={customConfig?.forceDetailedView}

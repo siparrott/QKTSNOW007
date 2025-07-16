@@ -1745,7 +1745,7 @@ export default function Dashboard() {
                           isPreview: true
                         }}
                         onConfigChange={(newConfig) => {
-                          setCustomConfig(newConfig);
+                          setCustomConfig(prev => ({ ...prev, ...newConfig }));
                         }}
                         className="h-full"
                       />
@@ -1784,7 +1784,9 @@ export default function Dashboard() {
                           : calc
                       );
                       setUserCalculators(updatedCalculators);
-                      localStorage.setItem('userCalculators', JSON.stringify(updatedCalculators));
+                      const userSession = localStorage.getItem('user_session');
+                      const userCalculatorKey = `userCalculators_${userSession}`;
+                      localStorage.setItem(userCalculatorKey, JSON.stringify(updatedCalculators));
                       
                       toast({
                         title: "Calculator Updated!",

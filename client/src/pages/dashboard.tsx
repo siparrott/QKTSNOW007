@@ -1727,28 +1727,29 @@ export default function Dashboard() {
                   
                   <div className="flex-1 overflow-hidden bg-gray-100 relative">
                     <div 
-                      className="w-full h-full overflow-y-auto"
+                      className="w-full h-full overflow-y-auto p-4"
                       style={{
                         backgroundColor: customConfig.backgroundColor || '#ffffff',
                         color: customConfig.textColor || '#000000',
-                        fontSize: `${customConfig.fontSize || 16}px`,
-                        minHeight: '800px'
+                        fontSize: `${customConfig.fontSize || 16}px`
                       }}
                     >
-                      <CalculatorPreview 
-                        slug={selectedCalculator.template_id}
-                        customConfig={{
-                          ...customConfig,
-                          forceDetailedView: true,
-                          useComprehensiveCalculator: true,
-                          calculatorType: `comprehensive-${selectedCalculator.template_id}`,
-                          isPreview: true
-                        }}
-                        onConfigChange={(newConfig) => {
-                          setCustomConfig(prev => ({ ...prev, ...newConfig }));
-                        }}
-                        className="h-full"
-                      />
+                      <div className="transform scale-75 origin-top-left w-[133%] h-[133%]">
+                        <CalculatorPreview 
+                          slug={selectedCalculator.template_id}
+                          customConfig={{
+                            ...customConfig,
+                            forceDetailedView: true,
+                            useComprehensiveCalculator: true,
+                            calculatorType: `comprehensive-${selectedCalculator.template_id}`,
+                            isPreview: true
+                          }}
+                          onConfigChange={(newConfig) => {
+                            setCustomConfig(prev => ({ ...prev, ...newConfig }));
+                          }}
+                          className="h-auto max-h-none"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>

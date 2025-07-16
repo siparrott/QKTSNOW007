@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -59,6 +59,106 @@ interface PortraitPhotographyCalculatorProps {
 
 export default function PortraitPhotographyCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false, onConfigChange }: PortraitPhotographyCalculatorProps = {}) {
   const [textConfig, setTextConfig] = useState(propConfig || {});
+  const [customConfig, setCustomConfig] = useState(propConfig || {});
+  
+  // Apply custom configuration (colors, styling, etc.)
+  const applyCustomConfig = (config: any) => {
+    console.log('Applying config to portrait-photography calculator:', config);
+    setCustomConfig(config);
+    
+    // Apply primary color with dynamic CSS injection for comprehensive coverage
+    if (config.brandColors?.primary) {
+      const primaryColor = config.brandColors.primary;
+      document.documentElement.style.setProperty('--primary', primaryColor);
+      document.documentElement.style.setProperty('--rose-500', primaryColor);
+      document.documentElement.style.setProperty('--rose-400', primaryColor);
+      document.documentElement.style.setProperty('--rose-600', primaryColor);
+      
+      // Create dynamic CSS for comprehensive color application
+      const existingStyle = document.getElementById('portrait-dynamic-colors');
+      if (existingStyle) {
+        existingStyle.remove();
+      }
+      
+      const style = document.createElement('style');
+      style.id = 'portrait-dynamic-colors';
+      style.innerHTML = `
+        .portrait-calculator .bg-rose-500,
+        .portrait-calculator .bg-rose-400,
+        .portrait-calculator .bg-rose-600,
+        .portrait-calculator .hover\\:bg-rose-600:hover {
+          background-color: ${primaryColor} !important;
+        }
+        
+        .portrait-calculator .text-rose-500,
+        .portrait-calculator .text-rose-400,
+        .portrait-calculator .text-rose-600 {
+          color: ${primaryColor} !important;
+        }
+        
+        .portrait-calculator .border-rose-400,
+        .portrait-calculator .border-rose-300,
+        .portrait-calculator .border-rose-200 {
+          border-color: ${primaryColor} !important;
+        }
+        
+        .portrait-calculator .bg-rose-50 {
+          background-color: ${primaryColor}15 !important;
+        }
+        
+        .portrait-calculator .from-rose-50,
+        .portrait-calculator .to-pink-50 {
+          background: linear-gradient(to bottom right, ${primaryColor}15, ${primaryColor}10) !important;
+        }
+        
+        /* Button styling */
+        .portrait-calculator .bg-green-500 {
+          background-color: ${primaryColor} !important;
+        }
+        
+        .portrait-calculator .hover\\:bg-green-600:hover {
+          background-color: ${primaryColor}dd !important;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+    
+    // Apply secondary color
+    if (config.brandColors?.secondary) {
+      document.documentElement.style.setProperty('--secondary', config.brandColors.secondary);
+      document.documentElement.style.setProperty('--gray-700', config.brandColors.secondary);
+    }
+    
+    // Apply accent color
+    if (config.brandColors?.accent) {
+      document.documentElement.style.setProperty('--accent', config.brandColors.accent);
+      document.documentElement.style.setProperty('--green-500', config.brandColors.accent);
+    }
+    
+    // Apply typography
+    if (config.styling?.fontFamily) {
+      document.documentElement.style.setProperty('--font-family', config.styling.fontFamily);
+      document.body.style.fontFamily = config.styling.fontFamily;
+    }
+    
+    // Apply border radius
+    if (config.styling?.borderRadius) {
+      document.documentElement.style.setProperty('--radius', config.styling.borderRadius);
+    }
+    
+    // Update text config
+    if (config.textContent) {
+      setTextConfig(prevText => ({ ...prevText, ...config.textContent }));
+    }
+  };
+  
+  // Apply config on mount and when propConfig changes
+  useEffect(() => {
+    if (propConfig) {
+      applyCustomConfig(propConfig);
+    }
+  }, [propConfig]);
+  
   // Handle text content updates from customConfig
   const updateTextContent = (key: string, value: string) => {
     const newConfig = {
@@ -313,7 +413,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
   ];
 
   return (
-    <div className="min-h-screen&">
+    <div className="min-h-screen portrait-calculator">
       {!hideHeader && <QuoteKitHeader />}
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}

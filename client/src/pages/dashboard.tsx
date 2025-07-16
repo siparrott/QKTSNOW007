@@ -1118,6 +1118,175 @@ export default function Dashboard() {
                       </div>
                     </div>
 
+                    {/* Pricing Configuration */}
+                    <div>
+                      <h3 className="text-white font-medium mb-4 flex items-center">
+                        <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
+                        <DollarSign className="h-4 w-4 mr-2" />
+                        Pricing Configuration
+                      </h3>
+                      <div className="space-y-4">
+                        <div className="border border-midnight-600 rounded-lg p-4">
+                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Base Pricing</h4>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <Label className="text-gray-300 text-xs">Base Price (€)</Label>
+                              <Input
+                                type="number"
+                                value={customConfig.basePrice || 200}
+                                onChange={(e) => setCustomConfig({...customConfig, basePrice: Number(e.target.value)})}
+                                placeholder="200"
+                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-gray-300 text-xs">Hourly Rate (€)</Label>
+                              <Input
+                                type="number"
+                                value={customConfig.hourlyRate || 100}
+                                onChange={(e) => setCustomConfig({...customConfig, hourlyRate: Number(e.target.value)})}
+                                placeholder="100"
+                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-gray-300 text-xs">Location Fee (€)</Label>
+                              <Input
+                                type="number"
+                                value={customConfig.locationFee || 50}
+                                onChange={(e) => setCustomConfig({...customConfig, locationFee: Number(e.target.value)})}
+                                placeholder="50"
+                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-gray-300 text-xs">Currency</Label>
+                              <Select value={customConfig.currency || 'EUR'} onValueChange={(value) => setCustomConfig({...customConfig, currency: value})}>
+                                <SelectTrigger className="bg-midnight-900 border-midnight-600 text-white text-sm">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="EUR">€ Euro</SelectItem>
+                                  <SelectItem value="USD">$ USD</SelectItem>
+                                  <SelectItem value="GBP">£ Pound</SelectItem>
+                                  <SelectItem value="CHF">₣ CHF</SelectItem>
+                                  <SelectItem value="CAD">C$ CAD</SelectItem>
+                                  <SelectItem value="AUD">A$ AUD</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="border border-midnight-600 rounded-lg p-4">
+                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Add-on Services</h4>
+                          <div className="space-y-3">
+                            {(customConfig.addOnPrices || [
+                              { name: "Rush delivery", price: 100 },
+                              { name: "Print package", price: 150 },
+                              { name: "Social media package", price: 75 }
+                            ]).map((addon, index) => (
+                              <div key={index} className="flex gap-2">
+                                <div className="flex-1">
+                                  <Input
+                                    value={addon.name}
+                                    onChange={(e) => {
+                                      const newAddOns = [...(customConfig.addOnPrices || [])];
+                                      newAddOns[index] = { ...addon, name: e.target.value };
+                                      setCustomConfig({...customConfig, addOnPrices: newAddOns});
+                                    }}
+                                    placeholder="Add-on name"
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                                <div className="w-20">
+                                  <Input
+                                    type="number"
+                                    value={addon.price}
+                                    onChange={(e) => {
+                                      const newAddOns = [...(customConfig.addOnPrices || [])];
+                                      newAddOns[index] = { ...addon, price: Number(e.target.value) };
+                                      setCustomConfig({...customConfig, addOnPrices: newAddOns});
+                                    }}
+                                    placeholder="Price"
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    const newAddOns = [...(customConfig.addOnPrices || [])];
+                                    newAddOns.splice(index, 1);
+                                    setCustomConfig({...customConfig, addOnPrices: newAddOns});
+                                  }}
+                                  className="text-red-400 hover:text-red-300 hover:bg-red-500/20 px-2"
+                                >
+                                  ×
+                                </Button>
+                              </div>
+                            ))}
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => {
+                                const newAddOns = [...(customConfig.addOnPrices || []), { name: "", price: 0 }];
+                                setCustomConfig({...customConfig, addOnPrices: newAddOns});
+                              }}
+                              className="text-neon-400 hover:text-neon-300 hover:bg-neon-500/20 text-xs"
+                            >
+                              + Add Service
+                            </Button>
+                          </div>
+                        </div>
+
+                        <div className="border border-midnight-600 rounded-lg p-4">
+                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Duration Pricing</h4>
+                          <div className="space-y-2">
+                            {(customConfig.durationPrices || [
+                              { duration: "30 minutes", multiplier: 0.5 },
+                              { duration: "1 hour", multiplier: 1 },
+                              { duration: "2 hours", multiplier: 1.8 },
+                              { duration: "Half day", multiplier: 3 }
+                            ]).map((duration, index) => (
+                              <div key={index} className="flex gap-2 items-center">
+                                <div className="flex-1">
+                                  <Input
+                                    value={duration.duration}
+                                    onChange={(e) => {
+                                      const newDurations = [...(customConfig.durationPrices || [])];
+                                      newDurations[index] = { ...duration, duration: e.target.value };
+                                      setCustomConfig({...customConfig, durationPrices: newDurations});
+                                    }}
+                                    placeholder="Duration"
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                                <div className="w-20">
+                                  <Input
+                                    type="number"
+                                    step="0.1"
+                                    value={duration.multiplier}
+                                    onChange={(e) => {
+                                      const newDurations = [...(customConfig.durationPrices || [])];
+                                      newDurations[index] = { ...duration, multiplier: Number(e.target.value) };
+                                      setCustomConfig({...customConfig, durationPrices: newDurations});
+                                    }}
+                                    placeholder="×"
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                                <span className="text-xs text-gray-400 w-8">×</span>
+                              </div>
+                            ))}
+                          </div>
+                          <p className="text-xs text-gray-400 mt-2">
+                            Multiplier × Base Price = Final Price for duration
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
                     {/* Comprehensive Text Customization */}
                     <div>
                       <h3 className="text-white font-medium mb-4 flex items-center">

@@ -843,17 +843,35 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                         window.open(mailtoUrl, "_blank");
                       }}
                     >
-                      📸 Book My Portrait
+                      <EditableText
+                        text={textConfig?.bookingButtonText || "📸 Book My Portrait"}
+                        onSave={(value) => updateTextContent('bookingButtonText', value)}
+                        isPreview={isPreview}
+                        placeholder="📸 Book My Portrait"
+                        className="w-full"
+                      />
                     </Button>
                     
                     <div className="flex items-center justify-center space-x-6 text-xs text-gray-500">
                       <div className="flex items-center">
                         <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
-                        Professional Quality
+                        <EditableText
+                          text={textConfig?.qualityBadge || "Professional Quality"}
+                          onSave={(value) => updateTextContent('qualityBadge', value)}
+                          isPreview={isPreview}
+                          placeholder="Professional Quality"
+                          className="text-xs text-gray-500"
+                        />
                       </div>
                       <div className="flex items-center">
                         <div className="w-2 h-2 bg-rose-500 rounded-full mr-1"></div>
-                        Same-Day Preview
+                        <EditableText
+                          text={textConfig?.previewBadge || "Same-Day Preview"}
+                          onSave={(value) => updateTextContent('previewBadge', value)}
+                          isPreview={isPreview}
+                          placeholder="Same-Day Preview"
+                          className="text-xs text-gray-500"
+                        />
                       </div>
                     </div>
                   </div>

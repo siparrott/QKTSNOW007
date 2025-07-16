@@ -66,62 +66,81 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
     console.log('Applying config to portrait-photography calculator:', config);
     setCustomConfig(config);
     
-    // Apply primary color with dynamic CSS injection for comprehensive coverage
-    if (config.brandColors?.primary) {
-      const primaryColor = config.brandColors.primary;
-      document.documentElement.style.setProperty('--primary', primaryColor);
-      document.documentElement.style.setProperty('--rose-500', primaryColor);
-      document.documentElement.style.setProperty('--rose-400', primaryColor);
-      document.documentElement.style.setProperty('--rose-600', primaryColor);
-      
-      // Create dynamic CSS for comprehensive color application
-      const existingStyle = document.getElementById('portrait-dynamic-colors');
-      if (existingStyle) {
-        existingStyle.remove();
+    // Apply dynamic color theming like other calculators
+    const styleId = 'portrait-calculator-custom-styles';
+    let existingStyle = document.getElementById(styleId);
+    if (existingStyle) {
+      existingStyle.remove();
+    }
+    
+    const style = document.createElement('style');
+    style.id = styleId;
+    
+    // Handle multiple config format variations
+    const primaryColor = config.brandColors?.primary || config.primaryColor || config.backgroundColor || '#f43f5e';
+    const secondaryColor = config.brandColors?.secondary || config.secondaryColor || config.textColor || '#6b7280';
+    const accentColor = config.brandColors?.accent || config.accentColor || '#10b981';
+    const fontFamily = config.styling?.fontFamily || config.fontFamily || 'Inter';
+    const borderRadius = config.styling?.borderRadius || config.borderRadius || '0.5rem';
+    
+    style.textContent = `
+      :root {
+        --custom-primary: ${primaryColor};
+        --custom-secondary: ${secondaryColor};
+        --custom-accent: ${accentColor};
+        --custom-font: ${fontFamily};
+        --custom-radius: ${borderRadius};
       }
       
-      const style = document.createElement('style');
-      style.id = 'portrait-dynamic-colors';
-      style.innerHTML = `
-        .portrait-calculator .bg-rose-500,
-        .portrait-calculator .bg-rose-400,
-        .portrait-calculator .bg-rose-600,
-        .portrait-calculator .hover\\:bg-rose-600:hover {
-          background-color: ${primaryColor} !important;
-        }
-        
-        .portrait-calculator .text-rose-500,
-        .portrait-calculator .text-rose-400,
-        .portrait-calculator .text-rose-600 {
-          color: ${primaryColor} !important;
-        }
-        
-        .portrait-calculator .border-rose-400,
-        .portrait-calculator .border-rose-300,
-        .portrait-calculator .border-rose-200 {
-          border-color: ${primaryColor} !important;
-        }
-        
-        .portrait-calculator .bg-rose-50 {
-          background-color: ${primaryColor}15 !important;
-        }
-        
-        .portrait-calculator .from-rose-50,
-        .portrait-calculator .to-pink-50 {
-          background: linear-gradient(to bottom right, ${primaryColor}15, ${primaryColor}10) !important;
-        }
-        
-        /* Button styling */
-        .portrait-calculator .bg-green-500 {
-          background-color: ${primaryColor} !important;
-        }
-        
-        .portrait-calculator .hover\\:bg-green-600:hover {
-          background-color: ${primaryColor}dd !important;
-        }
-      `;
-      document.head.appendChild(style);
-    }
+      .portrait-calculator {
+        font-family: var(--custom-font) !important;
+      }
+      
+      .portrait-calculator * {
+        font-family: inherit !important;
+      }
+      
+      /* Primary color applications - Override all rose/pink colors */
+      .portrait-calculator .bg-rose-500,
+      .portrait-calculator .bg-rose-400,
+      .portrait-calculator .bg-rose-600,
+      .portrait-calculator .hover\\:bg-rose-600:hover,
+      .portrait-calculator .bg-green-500,
+      .portrait-calculator .hover\\:bg-green-600:hover {
+        background-color: ${primaryColor} !important;
+        color: white !important;
+      }
+      
+      .portrait-calculator .text-rose-500,
+      .portrait-calculator .text-rose-400,
+      .portrait-calculator .text-rose-600 {
+        color: ${primaryColor} !important;
+      }
+      
+      .portrait-calculator .border-rose-400,
+      .portrait-calculator .border-rose-300,
+      .portrait-calculator .border-rose-200,
+      .portrait-calculator .hover\\:border-rose-300:hover {
+        border-color: ${primaryColor} !important;
+      }
+      
+      .portrait-calculator .bg-rose-50,
+      .portrait-calculator .from-rose-50,
+      .portrait-calculator .to-pink-50 {
+        background-color: ${primaryColor}15 !important;
+      }
+      
+      .portrait-calculator .bg-gradient-to-br.from-rose-50.to-pink-50 {
+        background: linear-gradient(to bottom right, ${primaryColor}15, ${primaryColor}10) !important;
+      }
+      
+      /* Border radius customization */
+      .portrait-calculator [class*="rounded"] {
+        border-radius: ${borderRadius} !important;
+      }
+    `;
+    
+    document.head.appendChild(style);
     
     // Apply secondary color
     if (config.brandColors?.secondary) {

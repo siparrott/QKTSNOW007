@@ -71,7 +71,7 @@ export function EditableText({
 
   if (isEditing) {
     return (
-      <div className="relative inline-block w-full">
+      <>
         {multiline ? (
           <textarea
             ref={inputRef as React.RefObject<HTMLTextAreaElement>}
@@ -95,24 +95,7 @@ export function EditableText({
             placeholder={placeholder}
           />
         )}
-        <div className="absolute -right-16 top-0 flex gap-1">
-          <Button
-            size="sm"
-            onClick={handleSave}
-            className="h-6 w-6 p-0 bg-green-500 hover:bg-green-600 text-white"
-          >
-            <Check className="h-3 w-3" />
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={handleCancel}
-            className="h-6 w-6 p-0 border-gray-300"
-          >
-            <X className="h-3 w-3" />
-          </Button>
-        </div>
-      </div>
+      </>
     );
   }
 

@@ -313,23 +313,21 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-display text-gray-800 mb-2">
-            <EditableText
-              text={propConfig?.mainTitle || "Portrait Photography Calculator"}
-              onSave={(value) => updateTextContent('mainTitle', value)}
-              isPreview={isPreview}
-              placeholder="Portrait Photography Calculator"
-            />
-          </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto font-body">
-            <EditableText
-              text={propConfig?.subtitle || "Beautiful portraits that capture your authentic self. Get your personalized quote instantly."}
-              onSave={(value) => updateTextContent('subtitle', value)}
-              isPreview={isPreview}
-              placeholder="Beautiful portraits that capture your authentic self. Get your personalized quote instantly."
-              multiline={true}
-            />
-          </p>
+          <EditableText
+            text={propConfig?.mainTitle || "Portrait Photography Calculator"}
+            onSave={(value) => updateTextContent('mainTitle', value)}
+            isPreview={isPreview}
+            placeholder="Portrait Photography Calculator"
+            className="text-4xl font-display text-gray-800 mb-2 block"
+          />
+          <EditableText
+            text={propConfig?.subtitle || "Beautiful portraits that capture your authentic self. Get your personalized quote instantly."}
+            onSave={(value) => updateTextContent('subtitle', value)}
+            isPreview={isPreview}
+            placeholder="Beautiful portraits that capture your authentic self. Get your personalized quote instantly."
+            multiline={true}
+            className="text-gray-600 max-w-2xl mx-auto font-body block"
+          />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -365,26 +363,26 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
               {currentStep === 1 && (
                 <div className="space-y-6">
                   <div>
-                    <h2 className="text-2xl font-display text-gray-800 mb-4 flex items-center">
+                    <div className="text-2xl font-display text-gray-800 mb-4 flex items-center">
                       <Heart className="h-6 w-6 mr-2 text-rose-500" />
                       <EditableText
                         text={propConfig?.step1Title || "Tell us about your portrait session"}
                         onSave={(value) => updateTextContent('step1Title', value)}
                         isPreview={isPreview}
                         placeholder="Tell us about your portrait session"
+                        className="text-2xl font-display text-gray-800"
                       />
-                    </h2>
+                    </div>
                     
                     {/* Natural Language Input */}
                     <div className="mb-6 p-4 bg-rose-50 rounded-xl border border-rose-200">
-                      <label className="block text-sm font-body text-gray-700 mb-2">
-                        <EditableText
-                          text={propConfig?.visionLabel || "Describe your vision (optional)"}
-                          onSave={(value) => updateTextContent('visionLabel', value)}
-                          isPreview={isPreview}
-                          placeholder="Describe your vision (optional)"
-                        />
-                      </label>
+                      <EditableText
+                        text={propConfig?.visionLabel || "Describe your vision (optional)"}
+                        onSave={(value) => updateTextContent('visionLabel', value)}
+                        isPreview={isPreview}
+                        placeholder="Describe your vision (optional)"
+                        className="block text-sm font-body text-gray-700 mb-2"
+                      />
                       <Textarea
                         placeholder="e.g., I want an outdoor shoot with 2 outfits and retouching"
                         value={formData.naturalLanguageInput}
@@ -405,14 +403,13 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
 
                     <div className="space-y-6">
                       <div>
-                        <h3 className="text-lg font-display text-gray-700 mb-3">
-                          <EditableText
-                            text={propConfig?.portraitTypeLabel || "Portrait Type"}
-                            onSave={(value) => updateTextContent('portraitTypeLabel', value)}
-                            isPreview={isPreview}
-                            placeholder="Portrait Type"
-                          />
-                        </h3>
+                        <EditableText
+                          text={propConfig?.portraitTypeLabel || "Portrait Type"}
+                          onSave={(value) => updateTextContent('portraitTypeLabel', value)}
+                          isPreview={isPreview}
+                          placeholder="Portrait Type"
+                          className="text-lg font-display text-gray-700 mb-3 block"
+                        />
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                           {portraitTypes.map((type) => (
                             <OptionCard
@@ -428,14 +425,13 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                       </div>
 
                       <div>
-                        <h3 className="text-lg font-display text-gray-700 mb-3">
-                          <EditableText
-                            text={propConfig?.durationLabel || "Session Duration"}
-                            onSave={(value) => updateTextContent('durationLabel', value)}
-                            isPreview={isPreview}
-                            placeholder="Session Duration"
-                          />
-                        </h3>
+                        <EditableText
+                          text={propConfig?.durationLabel || "Session Duration"}
+                          onSave={(value) => updateTextContent('durationLabel', value)}
+                          isPreview={isPreview}
+                          placeholder="Session Duration"
+                          className="text-lg font-display text-gray-700 mb-3 block"
+                        />
                         <div className="grid grid-cols-1 gap-4">
                           {durations.map((duration) => (
                             <OptionCard

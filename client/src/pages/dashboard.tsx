@@ -1813,7 +1813,8 @@ export default function Dashboard() {
                       style={{
                         backgroundColor: customConfig.backgroundColor || '#ffffff',
                         color: customConfig.textColor || '#000000',
-                        fontSize: `${customConfig.fontSize || 16}px`
+                        fontSize: `${customConfig.fontSize || 16}px`,
+                        minHeight: '800px'
                       }}
                     >
                       <CalculatorPreview 

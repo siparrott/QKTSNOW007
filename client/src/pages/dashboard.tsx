@@ -10,10 +10,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
-import { Calculator, Plus, Settings, Eye, Copy, ExternalLink, BarChart3, Users, TrendingUp, Activity, Calendar, DollarSign, Palette, Type, Layout, Zap, Bell, Smartphone, Monitor, Tablet, Trash2 } from "lucide-react";
+import { Calculator, Plus, Settings, Eye, Copy, ExternalLink, BarChart3, Users, TrendingUp, Activity, Calendar, DollarSign, Palette, Type, Layout, Zap, Bell, Smartphone, Monitor, Tablet, Trash2, Edit3 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart as RechartsBarChart, Bar } from "recharts";
 import CalculatorPreview from "../components/calculator-preview";
 import { getQuoteStats, incrementQuoteUsage, canGenerateQuote, resetQuoteUsage } from "@/lib/quote-tracker";
+import { EditableText } from "@/components/editable-text";
 
 interface User {
   id: string;
@@ -1311,6 +1312,25 @@ export default function Dashboard() {
                           </div>
                         </div>
 
+                        {/* Inline Editing Info */}
+                        <div className="border border-neon-500/30 rounded-lg p-4 bg-neon-500/5">
+                          <h4 className="text-neon-400 font-medium mb-3 text-sm flex items-center">
+                            <Edit3 className="h-4 w-4 mr-2" />
+                            Live Preview Editing
+                          </h4>
+                          <p className="text-gray-300 text-xs mb-3">
+                            Click any text in the live preview to edit it directly. Changes will be saved automatically.
+                          </p>
+                          <div className="bg-midnight-900 border border-midnight-600 rounded p-3">
+                            <div className="text-xs text-gray-400 mb-2">Preview shows:</div>
+                            <div className="text-xs text-gray-300 space-y-1">
+                              <div>• Click-to-edit titles and descriptions</div>
+                              <div>• Hover hints for editable content</div>
+                              <div>• Real-time text updates</div>
+                            </div>
+                          </div>
+                        </div>
+
                         {/* Calculator-Specific Fields */}
                         {(() => {
                           const getCalculatorSpecificFields = () => {
@@ -1804,6 +1824,9 @@ export default function Dashboard() {
                           useComprehensiveCalculator: true,
                           calculatorType: `comprehensive-${selectedCalculator.template_id}`,
                           isPreview: true
+                        }}
+                        onConfigChange={(newConfig) => {
+                          setCustomConfig(newConfig);
                         }}
                         className="h-full"
                       />

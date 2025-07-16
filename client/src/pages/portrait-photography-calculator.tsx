@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { QuoteKitHeader } from "@/components/calculator-header";
+import { EditableText } from "@/components/editable-text";
 import { 
   Camera, 
   Clock, 
@@ -56,6 +57,15 @@ interface PortraitPhotographyCalculatorProps {
 }
 
 export default function PortraitPhotographyCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: PortraitPhotographyCalculatorProps = {}) {
+  // Handle text content updates from customConfig
+  const updateTextContent = (key: string, value: string) => {
+    if (propConfig?.onConfigChange) {
+      propConfig.onConfigChange({
+        ...propConfig,
+        [key]: value
+      });
+    }
+  };
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [formData, setFormData] = useState<PortraitFormData>({
@@ -304,10 +314,21 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-display text-gray-800 mb-2">
-            Portrait Photography Calculator
+            <EditableText
+              text={propConfig?.mainTitle || "Portrait Photography Calculator"}
+              onSave={(value) => updateTextContent('mainTitle', value)}
+              isPreview={isPreview}
+              placeholder="Portrait Photography Calculator"
+            />
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto font-body">
-            Beautiful portraits that capture your authentic self. Get your personalized quote instantly.
+            <EditableText
+              text={propConfig?.subtitle || "Beautiful portraits that capture your authentic self. Get your personalized quote instantly."}
+              onSave={(value) => updateTextContent('subtitle', value)}
+              isPreview={isPreview}
+              placeholder="Beautiful portraits that capture your authentic self. Get your personalized quote instantly."
+              multiline={true}
+            />
           </p>
         </div>
 
@@ -346,13 +367,23 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                   <div>
                     <h2 className="text-2xl font-display text-gray-800 mb-4 flex items-center">
                       <Heart className="h-6 w-6 mr-2 text-rose-500" />
-                      Tell us about your portrait session
+                      <EditableText
+                        text={propConfig?.step1Title || "Tell us about your portrait session"}
+                        onSave={(value) => updateTextContent('step1Title', value)}
+                        isPreview={isPreview}
+                        placeholder="Tell us about your portrait session"
+                      />
                     </h2>
                     
                     {/* Natural Language Input */}
                     <div className="mb-6 p-4 bg-rose-50 rounded-xl border border-rose-200">
                       <label className="block text-sm font-body text-gray-700 mb-2">
-                        Describe your vision (optional)
+                        <EditableText
+                          text={propConfig?.visionLabel || "Describe your vision (optional)"}
+                          onSave={(value) => updateTextContent('visionLabel', value)}
+                          isPreview={isPreview}
+                          placeholder="Describe your vision (optional)"
+                        />
                       </label>
                       <Textarea
                         placeholder="e.g., I want an outdoor shoot with 2 outfits and retouching"
@@ -374,7 +405,14 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
 
                     <div className="space-y-6">
                       <div>
-                        <h3 className="text-lg font-display text-gray-700 mb-3">Portrait Type</h3>
+                        <h3 className="text-lg font-display text-gray-700 mb-3">
+                          <EditableText
+                            text={propConfig?.portraitTypeLabel || "Portrait Type"}
+                            onSave={(value) => updateTextContent('portraitTypeLabel', value)}
+                            isPreview={isPreview}
+                            placeholder="Portrait Type"
+                          />
+                        </h3>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                           {portraitTypes.map((type) => (
                             <OptionCard
@@ -390,7 +428,14 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                       </div>
 
                       <div>
-                        <h3 className="text-lg font-display text-gray-700 mb-3">Session Duration</h3>
+                        <h3 className="text-lg font-display text-gray-700 mb-3">
+                          <EditableText
+                            text={propConfig?.durationLabel || "Session Duration"}
+                            onSave={(value) => updateTextContent('durationLabel', value)}
+                            isPreview={isPreview}
+                            placeholder="Session Duration"
+                          />
+                        </h3>
                         <div className="grid grid-cols-1 gap-4">
                           {durations.map((duration) => (
                             <OptionCard
@@ -413,7 +458,12 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                       disabled={!formData.portraitType || !formData.duration}
                       className="bg-rose-500 hover:bg-rose-600 text-white px-8 font-semibold rounded-lg"
                     >
-                      Next Step
+                      <EditableText
+                        text={propConfig?.nextStepButton || "Next Step"}
+                        onSave={(value) => updateTextContent('nextStepButton', value)}
+                        isPreview={isPreview}
+                        placeholder="Next Step"
+                      />
                     </Button>
                   </div>
                 </div>

@@ -66,9 +66,10 @@ interface CalculatorPreviewProps {
   slug: string;
   customConfig?: any;
   className?: string;
+  onConfigChange?: (config: any) => void;
 }
 
-export default function CalculatorPreview({ slug, customConfig, className = "" }: CalculatorPreviewProps) {
+export default function CalculatorPreview({ slug, customConfig, className = "", onConfigChange }: CalculatorPreviewProps) {
   console.log('Applying config to', slug, 'calculator:', customConfig);
   
   const CalculatorComponent = calculatorComponents[slug];
@@ -162,7 +163,10 @@ export default function CalculatorPreview({ slug, customConfig, className = "" }
         </div>
       }>
         <CalculatorComponent 
-          customConfig={customConfig}
+          customConfig={{
+            ...customConfig,
+            onConfigChange
+          }}
           isPreview={true}
           hideHeader={true}
           forceDetailedView={customConfig?.forceDetailedView}

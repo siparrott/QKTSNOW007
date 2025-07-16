@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { QuoteKitHeader } from "@/components/calculator-header";
 import { EditableText } from "@/components/editable-text";
+import SEOHead from "@/components/seo-head";
 import { 
   Camera, 
   Clock, 
@@ -433,6 +434,12 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
 
   return (
     <div className="min-h-screen portrait-calculator">
+      <SEOHead 
+        title="Portrait Photography Quote Calculator | AI-Powered Pricing | QuoteKit.ai"
+        description="Get instant portrait photography quotes with our AI calculator. Professional pricing for individual, couple, family & business portraits. Custom quotes in 30 seconds."
+        keywords="portrait photography quotes, photography pricing calculator, portrait session pricing, photographer quote tool, photography cost calculator"
+        url="https://quotekit.ai/portrait-photography-calculator"
+      />
       {!hideHeader && <QuoteKitHeader />}
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}

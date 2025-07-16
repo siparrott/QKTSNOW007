@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
 import featuresImage from "@assets/ChatGPT Image Jun 11, 2025, 03_36_34 PM_1749650396269.png";
+import SEOHead from "@/components/seo-head";
 import { 
   Zap, 
   Brain, 
@@ -196,6 +197,12 @@ export default function Features() {
 
   return (
     <div className="min-h-screen" style={{backgroundColor: '#060517'}}>
+      <SEOHead 
+        title="Features - AI-Powered Quote Calculators for Service Businesses | QuoteKit.ai"
+        description="Discover powerful features of QuoteKit.ai: AI processing, instant quotes, custom branding, lead capture, analytics & more. Perfect for photographers, contractors & consultants."
+        keywords="quote calculator features, AI quotes, service pricing, automated quotes, lead generation, business tools, custom branding"
+        url="https://quotekit.ai/features"
+      />
       <Header />
       
       <div className="relative overflow-hidden">

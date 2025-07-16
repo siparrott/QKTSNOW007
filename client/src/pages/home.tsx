@@ -10,23 +10,17 @@ import FinalCTA from "@/components/landing/final-cta";
 import Footer from "@/components/landing/footer";
 import { Button } from "@/components/ui/button";
 import { Rocket } from "lucide-react";
+import SEOHead from "@/components/seo-head";
 
 export default function Home() {
-  useEffect(() => {
-    document.title = "QuoteKits - AI-Powered Quote Calculators for Service Businesses";
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Transform your service business with embeddable AI-powered quote calculators. Get instant pricing for 58+ niches including photography, home services, and consulting.');
-    } else {
-      const meta = document.createElement('meta');
-      meta.name = 'description';
-      meta.content = 'Transform your service business with embeddable AI-powered quote calculators. Get instant pricing for 58+ niches including photography, home services, and consulting.';
-      document.head.appendChild(meta);
-    }
-  }, []);
-
   return (
     <div className="min-h-screen bg-midnight-900 text-white overflow-x-hidden">
+      <SEOHead 
+        title="QuoteKit.ai – AI-Powered Quote Calculators for Service Businesses"
+        description="Transform your service business with intelligent quote calculators for 50+ industries. AI-powered pricing, instant quotes, and seamless lead capture. Boost conversions by 300%."
+        keywords="quote calculator, AI quotes, service pricing, automated quotes, pricing calculator, lead generation, business quotes, instant pricing"
+        url="https://quotekit.ai/"
+      />
       <Header />
       <Hero />
       <HowItWorks />

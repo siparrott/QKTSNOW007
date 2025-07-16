@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
 import pricingImage from "@assets/1a_1749650402887.png";
+import SEOHead from "@/components/seo-head";
 import { 
   Check, 
   Star,
@@ -99,6 +100,12 @@ const pricingPlans = [
 export default function Pricing() {
   return (
     <div className="min-h-screen" style={{backgroundColor: '#060517'}}>
+      <SEOHead 
+        title="Pricing - Start Free Quote Calculator | QuoteKit.ai"
+        description="Simple, transparent pricing for AI quote calculators. Start free, then just €5/month for Pro features. No hidden fees. Perfect for service businesses."
+        keywords="quote calculator pricing, AI quotes cost, service pricing plans, automated quotes subscription, business tools pricing"
+        url="https://quotekit.ai/pricing"
+      />
       <Header />
       
       <div className="relative overflow-hidden">

@@ -476,12 +476,24 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                   <div>
                     <h2 className="text-2xl font-display text-gray-800 mb-4 flex items-center">
                       <MapPin className="h-6 w-6 mr-2 text-rose-500" />
-                      Location & styling details
+                      <EditableText
+                        text={textConfig?.step2Title || "Location & styling details"}
+                        onSave={(value) => updateTextContent('step2Title', value)}
+                        isPreview={isPreview}
+                        placeholder="Location & styling details"
+                        className="text-2xl font-display text-gray-800"
+                      />
                     </h2>
                     
                     <div className="space-y-6">
                       <div>
-                        <h3 className="text-lg font-display text-gray-700 mb-3">Shooting Location</h3>
+                        <EditableText
+                          text={textConfig?.locationLabel || "Shooting Location"}
+                          onSave={(value) => updateTextContent('locationLabel', value)}
+                          isPreview={isPreview}
+                          placeholder="Shooting Location"
+                          className="text-lg font-display text-gray-700 mb-3 block"
+                        />
                         <div className="grid grid-cols-1 gap-4">
                           {locations.map((location) => (
                             <OptionCard
@@ -497,7 +509,13 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                       </div>
 
                       <div>
-                        <h3 className="text-lg font-display text-gray-700 mb-3">Wardrobe Changes</h3>
+                        <EditableText
+                          text={textConfig?.wardrobeLabel || "Wardrobe Changes"}
+                          onSave={(value) => updateTextContent('wardrobeLabel', value)}
+                          isPreview={isPreview}
+                          placeholder="Wardrobe Changes"
+                          className="text-lg font-display text-gray-700 mb-3 block"
+                        />
                         <div className="grid grid-cols-1 gap-4">
                           {wardrobeOptions.map((wardrobe) => (
                             <OptionCard
@@ -539,12 +557,24 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                   <div>
                     <h2 className="text-2xl font-display text-gray-800 mb-4 flex items-center">
                       <Palette className="h-6 w-6 mr-2 text-rose-500" />
-                      Enhance your session
+                      <EditableText
+                        text={textConfig?.step3Title || "Enhance your session"}
+                        onSave={(value) => updateTextContent('step3Title', value)}
+                        isPreview={isPreview}
+                        placeholder="Enhance your session"
+                        className="text-2xl font-display text-gray-800"
+                      />
                     </h2>
                     
                     <div className="space-y-6">
                       <div>
-                        <h3 className="text-lg font-display text-gray-700 mb-3">Add-ons (Optional)</h3>
+                        <EditableText
+                          text={textConfig?.addOnsLabel || "Add-ons (Optional)"}
+                          onSave={(value) => updateTextContent('addOnsLabel', value)}
+                          isPreview={isPreview}
+                          placeholder="Add-ons (Optional)"
+                          className="text-lg font-display text-gray-700 mb-3 block"
+                        />
                         <div className="grid grid-cols-1 gap-3">
                           {addOnOptions.map((addOn) => (
                             <div
@@ -586,7 +616,13 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                       </div>
 
                       <div>
-                        <h3 className="text-lg font-display text-gray-700 mb-3">Usage Type</h3>
+                        <EditableText
+                          text={textConfig?.usageTypeLabel || "Usage Type"}
+                          onSave={(value) => updateTextContent('usageTypeLabel', value)}
+                          isPreview={isPreview}
+                          placeholder="Usage Type"
+                          className="text-lg font-display text-gray-700 mb-3 block"
+                        />
                         <div className="grid grid-cols-1 gap-4">
                           {usageTypes.map((usage) => (
                             <OptionCard
@@ -601,7 +637,13 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                       </div>
 
                       <div>
-                        <h3 className="text-lg font-display text-gray-700 mb-3">Promo Code (Optional)</h3>
+                        <EditableText
+                          text={textConfig?.promoCodeLabel || "Promo Code (Optional)"}
+                          onSave={(value) => updateTextContent('promoCodeLabel', value)}
+                          isPreview={isPreview}
+                          placeholder="Promo Code (Optional)"
+                          className="text-lg font-display text-gray-700 mb-3 block"
+                        />
                         <Input
                           placeholder="Enter promo code (e.g., PORTRAIT10)"
                           value={formData.promoCode}
@@ -637,7 +679,13 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                   <div>
                     <h2 className="text-2xl font-display text-gray-800 mb-4 flex items-center">
                       <Mail className="h-6 w-6 mr-2 text-rose-500" />
-                      Get your personalized quote
+                      <EditableText
+                        text={textConfig?.step4Title || "Get your personalized quote"}
+                        onSave={(value) => updateTextContent('step4Title', value)}
+                        isPreview={isPreview}
+                        placeholder="Get your personalized quote"
+                        className="text-2xl font-display text-gray-800"
+                      />
                     </h2>
                     
                     <div className="space-y-4">
@@ -754,9 +802,22 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                 {/* Ready to Book Section */}
                 <div className="mt-6 pt-6 border-t border-gray-200">
                   <div className="text-center space-y-4">
-                    <h3 className="text-lg font-display text-gray-800">Ready to Book Your Portrait?</h3>
+                    <EditableText
+                      text={textConfig?.bookingTitle || "Ready to Book Your Portrait?"}
+                      onSave={(value) => updateTextContent('bookingTitle', value)}
+                      isPreview={isPreview}
+                      placeholder="Ready to Book Your Portrait?"
+                      className="text-lg font-display text-gray-800 block"
+                    />
                     <p className="text-sm text-gray-600">
-                      This quote is valid for 72 hours. Let's create beautiful portraits that capture your essence.
+                      <EditableText
+                        text={textConfig?.bookingDescription || "This quote is valid for 72 hours. Let's create beautiful portraits that capture your essence."}
+                        onSave={(value) => updateTextContent('bookingDescription', value)}
+                        isPreview={isPreview}
+                        placeholder="This quote is valid for 72 hours. Let's create beautiful portraits that capture your essence."
+                        multiline={true}
+                        className="text-sm text-gray-600"
+                      />
                     </p>
                     
                     <Button 

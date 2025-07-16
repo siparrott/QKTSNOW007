@@ -10,8 +10,7 @@ import { z } from "zod";
 import { Link, useLocation } from "wouter";
 import Header from "@/components/landing/header";
 import { useToast } from "@/hooks/use-toast";
-import { loginWithEmail } from "@/lib/supabase";
-import { getTempUser, createTempSession } from "@/lib/auth-bypass";
+import { apiRequest } from "@/lib/queryClient";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 
 const loginSchema = z.object({
@@ -38,55 +37,16 @@ export default function Login() {
   const onSubmit = async (data: LoginForm) => {
     setIsLoading(true);
     try {
-      // For production/live deployment, use demo credentials for instant access
-      const isDemoLogin = (
-        (data.email === 'demo@quotekit.ai' || data.email === 'kipperry@yahoo.co.uk') && 
-        data.password === 'password'
-      ) || 
-      (data.email === 'admin@example.com' && data.password === 'admin123') ||
-      (data.email === 'test@example.com' && data.password === 'test123');
+      // Call the PostgreSQL authentication endpoint
+      const response = await apiRequest('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
 
-      if (isDemoLogin) {
-        // Create demo session for instant access
-        const demoUser = {
-          id: `demo_${Date.now()}`,
-          email: data.email,
-          email_confirmed_at: new Date().toISOString(),
-          created_at: new Date().toISOString(),
-          app_metadata: {},
-          user_metadata: {
-            full_name: data.email === 'kipperry@yahoo.co.uk' ? 'Kip Perry' : 'Demo User',
-            subscription: 'pro'
-          }
-        };
-
-        const demoSession = {
-          user: demoUser,
-          access_token: `demo_token_${demoUser.id}`,
-          refresh_token: `demo_refresh_${demoUser.id}`,
-          expires_in: 3600,
-          token_type: 'bearer'
-        };
-
-        // Store session data
-        localStorage.setItem('supabase_session', JSON.stringify(demoSession));
-        localStorage.setItem('user', JSON.stringify(demoUser));
-        
-        toast({
-          title: "Welcome back!",
-          description: "You've been successfully logged in with demo credentials.",
-        });
-        
-        setLocation('/dashboard');
-        return;
-      }
-
-      // Try Supabase login for real credentials
-      const { user, session, error } = await loginWithEmail(data.email, data.password);
-
-      if (user && session) {
-        localStorage.setItem('supabase_session', JSON.stringify(session));
-        localStorage.setItem('user', JSON.stringify(user));
+      if (response.user && response.token) {
+        // Store authentication token and user data
+        localStorage.setItem('auth_token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
         
         toast({
           title: "Welcome back!",
@@ -96,39 +56,12 @@ export default function Login() {
         setLocation('/dashboard');
         return;
       }
-
-      // If Supabase login failed, try temp user authentication
-      if (error?.message?.includes("Email not confirmed") || error?.message?.includes("Invalid login credentials")) {
-        const tempUser = getTempUser(data.email, data.password);
-        if (tempUser) {
-          createTempSession(tempUser);
-          
-          toast({
-            title: "Welcome back!",
-            description: "You've been successfully logged in.",
-          });
-          
-          setLocation('/dashboard');
-          return;
-        }
-      }
-
-      // If all methods fail, show helpful error message with demo credentials
-      if (error) {
-        throw new Error(`${error.message}. Try demo@quotekit.ai / password for instant access.`);
-      }
-      
-      throw new Error("Login failed. Try demo@quotekit.ai / password for instant access.");
     } catch (error: any) {
       console.error('Login error:', error);
       
-      // Show helpful error message with demo credentials
-      const errorMessage = error.message || "Invalid credentials";
-      const demoHint = "Try demo@quotekit.ai / password for instant access";
-      
       toast({
         title: "Login Failed",
-        description: errorMessage.includes("demo@quotekit.ai") ? errorMessage : `${errorMessage}. ${demoHint}`,
+        description: error.message || "Invalid email or password. Please check your credentials.",
         variant: "destructive",
       });
     } finally {
@@ -153,13 +86,10 @@ export default function Login() {
                 <CardDescription className="text-gray-400">
                   Sign in to your QuoteKit account
                 </CardDescription>
-                <div className="mt-4 p-3 bg-blue-950/50 border border-blue-800/50 rounded-lg">
-                  <p className="text-sm text-blue-200 font-medium">Demo Access:</p>
-                  <p className="text-xs text-blue-300 mt-1">
-                    Email: <code className="bg-blue-900/50 px-1 rounded">demo@quotekit.ai</code>
-                  </p>
-                  <p className="text-xs text-blue-300">
-                    Password: <code className="bg-blue-900/50 px-1 rounded">password</code>
+                <div className="mt-4 p-3 bg-green-950/50 border border-green-800/50 rounded-lg">
+                  <p className="text-sm text-green-200 font-medium">✓ PostgreSQL Authentication Active</p>
+                  <p className="text-xs text-green-300 mt-1">
+                    Use the credentials from your Replit account registration
                   </p>
                 </div>
               </CardHeader>

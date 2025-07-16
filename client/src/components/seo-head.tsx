@@ -7,6 +7,10 @@ interface SEOHeadProps {
   image?: string;
   keywords?: string;
   type?: string;
+  price?: string;
+  currency?: string;
+  rating?: string;
+  reviewCount?: string;
 }
 
 export default function SEOHead({ 
@@ -15,7 +19,11 @@ export default function SEOHead({
   url = "https://quotekit.ai",
   image = "https://quotekit.ai/og-image.jpg",
   keywords = "quote calculator, AI quotes, service pricing, automated quotes, pricing calculator, lead generation",
-  type = "website"
+  type = "website",
+  price = "5.00",
+  currency = "EUR",
+  rating = "4.9",
+  reviewCount = "237"
 }: SEOHeadProps) {
   
   useEffect(() => {
@@ -69,7 +77,52 @@ export default function SEOHead({
     }
     canonical.setAttribute('href', url);
     
-  }, [title, description, url, image, keywords, type]);
+    // Add JSON-LD structured data
+    let existingScript = document.querySelector('script[type="application/ld+json"]');
+    if (existingScript) {
+      existingScript.remove();
+    }
+    
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.innerHTML = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      name: "QuoteKits",
+      url: url,
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      description: description,
+      creator: {
+        "@type": "Organization",
+        name: "QuoteKit.ai"
+      },
+      offers: {
+        "@type": "Offer",
+        price: price,
+        priceCurrency: currency,
+        availability: "https://schema.org/InStock",
+        description: "Monthly subscription for AI-powered quote calculators"
+      },
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: rating,
+        reviewCount: reviewCount,
+        bestRating: "5",
+        worstRating: "1"
+      },
+      featureList: [
+        "AI-powered quote generation",
+        "50+ industry templates",
+        "Embeddable calculators",
+        "Lead capture forms",
+        "Custom branding",
+        "Real-time analytics"
+      ]
+    });
+    document.head.appendChild(script);
+    
+  }, [title, description, url, image, keywords, type, price, currency, rating, reviewCount]);
 
   return null; // This component only updates the document head
 }

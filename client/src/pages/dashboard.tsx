@@ -192,6 +192,7 @@ export default function Dashboard() {
   const [showCalculatorModal, setShowCalculatorModal] = useState(false);
   const [showCustomizeModal, setShowCustomizeModal] = useState(false);
   const [showEmbedModal, setShowEmbedModal] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [checkoutUrl, setCheckoutUrl] = useState("");
@@ -689,92 +690,9 @@ export default function Dashboard() {
   };
 
   const previewCalculator = (calc: UserCalculator) => {
-    // Map template IDs to actual calculator routes
-    const calculatorRoutes: { [key: string]: string } = {
-      'wedding-photography': '/wedding-photography-calculator',
-      'boudoir-photography': '/boudoir-photography-calculator',
-      'portrait-photography': '/portrait-photography-calculator',
-      'commercial-photography': '/commercial-photography-calculator',
-      'real-estate-photography': '/real-estate-photography-calculator',
-      'event-videography': '/event-videography-calculator',
-      'drone-photography': '/drone-photography-calculator',
-      'food-photography': '/food-photography-calculator',
-      'newborn-photography': '/newborn-photography-calculator',
-      'maternity-photography': '/maternity-photography-calculator',
-      'home-renovation': '/home-renovation-calculator-new',
-      'roofing-services': '/roofing-calculator',
-      'electrician': '/electrician-calculator',
-      'plumbing': '/plumbing-calculator',
-      'solar': '/solar-calculator',
-      'window-door': '/window-door-calculator',
-      'landscaping': '/landscaping-calculator',
-      'painting-decorating': '/painting-decorating-calculator',
-      'makeup-artist': '/makeup-artist-calculator',
-      'hair-stylist': '/hair-stylist-calculator',
-      'tattoo-artist': '/tattoo-artist-calculator',
-      'massage-therapy': '/massage-therapy-calculator',
-      'personal-training': '/personal-training-calculator',
-      'nutritionist': '/nutritionist-calculator',
-      'legal-services': '/legal-advisor-calculator',
-      'tax-preparer': '/tax-preparer-calculator',
-      'business-coach': '/business-coach-calculator',
-      'life-coach': '/life-coach-calculator',
-      'virtual-assistant': '/virtual-assistant-calculator',
-      'translation-services': '/translation-services-calculator',
-      'web-designer': '/web-designer-calculator',
-      'seo-agency': '/seo-agency-calculator',
-      'video-editor': '/video-editor-calculator',
-      'marketing-consultant': '/marketing-consultant-calculator',
-      'copywriter': '/copywriter-calculator',
-      'auto-mechanic': '/auto-mechanic-calculator',
-      'car-detailing': '/car-detailing-calculator',
-      'mobile-car-wash': '/mobile-car-wash-calculator',
-      'motorcycle-repair': '/motorcycle-repair-calculator',
-      'driving-instructor': '/driving-instructor-calculator',
-      'airport-transfer': '/airport-transfer-calculator',
-      'chauffeur-limo': '/chauffeur-limo-calculator',
-      'van-rental': '/van-rental-calculator',
-      'moving-services': '/moving-services-calculator',
-      'boat-charter': '/boat-charter-calculator',
-      'cleaning-services': '/cleaning-services-calculator',
-      'pest-control': '/pest-control-calculator',
-      'interior-design': '/interior-design-calculator',
-      'dentist': '/dentist-calculator',
-      'plastic-surgery': '/plastic-surgery-calculator',
-      'private-medical': '/private-medical-calculator',
-      'childcare-services': '/childcare-services-calculator',
-      'private-school': '/private-school-calculator',
-      'private-tutor': '/private-tutor-calculator',
-      'hypnotherapist': '/hypnotherapist-calculator',
-      'dog-trainer': '/dog-trainer-calculator'
-    };
-    
-    const route = calculatorRoutes[calc.template_id] || `/calculator/${calc.template_id}`;
-    
-    // Pass configuration as URL parameters for dynamic customization
-    const configParams = new URLSearchParams();
-    
-    // Add layout configuration to force detailed view
-    if (calc.layout_json?.forceDetailedView) {
-      configParams.append('forceDetailedView', 'true');
-    }
-    if (calc.layout_json?.useComprehensiveCalculator) {
-      configParams.append('useComprehensiveCalculator', 'true');
-    }
-    if (calc.config?.calculatorType) {
-      configParams.append('calculatorType', calc.config.calculatorType);
-    }
-    
-    if (calc.config) {
-      Object.keys(calc.config).forEach(key => {
-        if (calc.config[key] !== undefined && calc.config[key] !== null && typeof calc.config[key] !== 'object') {
-          configParams.append(key, String(calc.config[key]));
-        }
-      });
-    }
-    
-    const finalUrl = configParams.toString() ? `${route}?${configParams.toString()}` : route;
-    window.open(finalUrl, '_blank');
+    setSelectedCalculator(calc);
+    setCustomConfig(calc.config || {});
+    setShowPreviewModal(true);
   };
 
   const showEmbedCode = (calc: UserCalculator) => {
@@ -2042,6 +1960,50 @@ export default function Dashboard() {
                     Close
                   </Button>
                 </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+
+        {/* Preview Modal */}
+        {showPreviewModal && selectedCalculator && (
+          <Dialog open={showPreviewModal} onOpenChange={setShowPreviewModal}>
+            <DialogContent className="max-w-6xl max-h-[90vh] bg-midnight-800 border-midnight-700">
+              <DialogHeader>
+                <DialogTitle className="text-white flex items-center">
+                  <Eye className="h-5 w-5 mr-2 text-neon-400" />
+                  Preview: {selectedCalculator.name}
+                </DialogTitle>
+                <DialogDescription className="text-gray-400">
+                  See how your calculator looks and test its functionality.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="flex-1 overflow-hidden bg-gray-100 relative">
+                <div 
+                  className="w-full h-full overflow-y-auto"
+                  style={{
+                    backgroundColor: customConfig.backgroundColor || '#ffffff',
+                    color: customConfig.textColor || '#000000',
+                    fontSize: `${customConfig.fontSize || 16}px`,
+                    minHeight: '700px'
+                  }}
+                >
+                  <CalculatorPreview 
+                    calculatorType={selectedCalculator.template_id as any}
+                    config={customConfig}
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowPreviewModal(false)}
+                  className="border-midnight-600 text-gray-300 hover:bg-midnight-800"
+                >
+                  Close Preview
+                </Button>
               </div>
             </DialogContent>
           </Dialog>

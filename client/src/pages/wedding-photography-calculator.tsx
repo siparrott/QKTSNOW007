@@ -380,48 +380,97 @@ export default function WeddingPhotographyCalculator({
     }, 50);
   };
 
-  const packageTypes = [
-    { id: "elopement", label: customConfig?.elopementPackage || "Elopement / Small Ceremony", basePrice: 950, hours: 4, icon: "💕", popular: false },
-    { id: "half-day", label: customConfig?.halfDayPackage || "Half-Day Coverage", basePrice: 1200, hours: 6, icon: "☀️", popular: true },
-    { id: "full-day", label: customConfig?.fullDayPackage || "Full-Day Coverage", basePrice: 1800, hours: 10, icon: "💍", popular: true },
-    { id: "destination", label: customConfig?.destinationPackage || "Destination Wedding", basePrice: 2500, hours: 12, icon: "✈️", popular: false },
-  ];
+  // Use custom pricing configuration if available
+  const getPackageTypePricing = () => {
+    if (customConfig?.packagePrices) {
+      return customConfig.packagePrices;
+    }
+    return [
+      { id: "elopement", label: "Elopement / Small Ceremony", basePrice: 950, hours: 4, icon: "💕", popular: false },
+      { id: "half-day", label: "Half-Day Coverage", basePrice: 1200, hours: 6, icon: "☀️", popular: true },
+      { id: "full-day", label: "Full-Day Coverage", basePrice: 1800, hours: 10, icon: "💍", popular: true },
+      { id: "destination", label: "Destination Wedding", basePrice: 2500, hours: 12, icon: "✈️", popular: false },
+    ];
+  };
 
-  const hourOptions = [
-    { id: "4", label: "4 Hours", surcharge: 0, popular: false },
-    { id: "6", label: "6 Hours", surcharge: 300, popular: true },
-    { id: "8", label: "8 Hours", surcharge: 600, popular: true },
-    { id: "10+", label: "10+ Hours", surcharge: 900, popular: false },
-  ];
+  const getHourPricing = () => {
+    if (customConfig?.sessionDurations) {
+      return customConfig.sessionDurations.map(duration => ({
+        id: duration.id.replace('-min', '').replace('-hour', ''),
+        label: duration.label,
+        surcharge: duration.price,
+        popular: duration.id === "6-hour" || duration.id === "8-hour"
+      }));
+    }
+    return [
+      { id: "4", label: "4 Hours", surcharge: 0, popular: false },
+      { id: "6", label: "6 Hours", surcharge: 300, popular: true },
+      { id: "8", label: "8 Hours", surcharge: 600, popular: true },
+      { id: "10+", label: "10+ Hours", surcharge: 900, popular: false },
+    ];
+  };
 
-  const locationOptions = [
-    { id: "1", label: customConfig?.singleLocation || "1 Location", surcharge: 0, popular: false },
-    { id: "2", label: customConfig?.twoLocations || "2 Locations", surcharge: 150, popular: true },
-    { id: "3+", label: customConfig?.multipleLocations || "3+ Locations", surcharge: 350, popular: false },
-  ];
+  const getLocationPricing = () => {
+    if (customConfig?.locationPrices) {
+      return customConfig.locationPrices.map(location => ({
+        id: location.id,
+        label: location.label,
+        surcharge: location.price,
+        popular: location.id === "2"
+      }));
+    }
+    return [
+      { id: "1", label: "1 Location", surcharge: 0, popular: false },
+      { id: "2", label: "2 Locations", surcharge: 150, popular: true },
+      { id: "3+", label: "3+ Locations", surcharge: 350, popular: false },
+    ];
+  };
 
-  const deliveryOptions = [
-    { id: "gallery", label: "Online Gallery Only", price: 0, popular: false },
-    { id: "usb-album", label: "USB + Album", price: 250, popular: true },
-    { id: "video-highlights", label: "Video Highlights Add-On", price: 400, popular: true },
-  ];
+  const getDeliveryPricing = () => {
+    if (customConfig?.deliveryPrices) {
+      return customConfig.deliveryPrices;
+    }
+    return [
+      { id: "gallery", label: "Online Gallery Only", price: 0, popular: false },
+      { id: "usb-album", label: "USB + Album", price: 250, popular: true },
+      { id: "video-highlights", label: "Video Highlights Add-On", price: 400, popular: true },
+    ];
+  };
 
-  const addOnOptions = [
-    { id: "engagement", label: customConfig?.engagementSession || "Engagement Session", price: 300, popular: true },
-    { id: "second-photographer", label: customConfig?.secondPhotographer || "Second Photographer", price: 250, popular: true },
-    { id: "drone", label: customConfig?.dronePhotography || "Drone Coverage", price: 150, popular: false },
-    { id: "album", label: customConfig?.weddingAlbum || "Album & Prints", price: 200, popular: true },
-    { id: "rehearsal", label: customConfig?.rehearsalDinner || "Rehearsal Dinner Coverage", price: 350, popular: false },
-    { id: "express", label: customConfig?.expressDelivery || "Express Turnaround", price: 175, popular: false },
-  ];
+  const getEnhancementPricing = () => {
+    if (customConfig?.enhancementPrices) {
+      return customConfig.enhancementPrices.map(addon => ({
+        ...addon,
+        popular: addon.id === "engagement" || addon.id === "second-photographer"
+      }));
+    }
+    return [
+      { id: "engagement", label: "Engagement Session", price: 300, popular: true },
+      { id: "second-photographer", label: "Second Photographer", price: 250, popular: true },
+      { id: "drone", label: "Drone Coverage", price: 150, popular: false },
+      { id: "album", label: "Album & Prints", price: 200, popular: true },
+      { id: "rehearsal", label: "Rehearsal Dinner Coverage", price: 350, popular: false },
+      { id: "express", label: "Express Turnaround", price: 175, popular: false },
+    ];
+  };
+
+  const packageTypes = getPackageTypePricing();
+  const hourOptions = getHourPricing();
+  const locationOptions = getLocationPricing();
+  const deliveryOptions = getDeliveryPricing();
+  const addOnOptions = getEnhancementPricing();
 
   const calculatePricing = (): PricingBreakdown => {
+    // Use custom pricing configuration if available
+    const currency = customConfig?.currency || "EUR";
+    const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
+    
     const packageType = packageTypes.find(p => p.id === formData.packageType);
     const hours = hourOptions.find(h => h.id === formData.hours);
     const locations = locationOptions.find(l => l.id === formData.locations);
     const delivery = deliveryOptions.find(d => d.id === formData.deliveryOption);
 
-    const basePrice = packageType?.basePrice || 0;
+    const basePrice = packageType?.basePrice || customConfig?.basePrice || 0;
     const hoursAdd = hours?.surcharge || 0;
     const locationsAdd = locations?.surcharge || 0;
     const deliveryAdd = delivery?.price || 0;
@@ -431,36 +480,31 @@ export default function WeddingPhotographyCalculator({
     const breakdown: string[] = [];
 
     // Base package
-    breakdown.push(`${packageType?.label || 'Base package'}: €${basePrice.toFixed(0)}`);
+    breakdown.push(`${packageType?.label || 'Base package'}: ${currencySymbol}${basePrice.toFixed(0)}`);
 
     // Hours upgrade
     if (hoursAdd > 0) {
-      breakdown.push(`${hours?.label} coverage: €${hoursAdd}`);
+      breakdown.push(`${hours?.label} coverage: ${currencySymbol}${hoursAdd}`);
     }
 
     // Locations
     if (locationsAdd > 0) {
-      breakdown.push(`${locations?.label}: €${locationsAdd}`);
+      breakdown.push(`${locations?.label}: ${currencySymbol}${locationsAdd}`);
     }
 
     // Delivery option
     if (deliveryAdd > 0) {
-      breakdown.push(`${delivery?.label}: €${deliveryAdd}`);
+      breakdown.push(`${delivery?.label}: ${currencySymbol}${deliveryAdd}`);
     }
 
-    // Add-ons
+    // Add-ons - use dynamic pricing from configuration
     formData.addOns.forEach(addOnId => {
       const addOn = addOnOptions.find(a => a.id === addOnId);
-      if (addOn) {
+      if (addOn && addOn.price > 0) {
         addOnsTotal += addOn.price;
-        breakdown.push(`${addOn.label}: €${addOn.price}`);
+        breakdown.push(`${addOn.label}: ${currencySymbol}${addOn.price}`);
       }
     });
-
-    // Smart logic: suggest drone for 2+ locations
-    if (formData.locations === "2" || formData.locations === "3+" && !formData.addOns.includes("drone")) {
-      // This would be a suggestion, not auto-added
-    }
 
     let subtotal = basePrice + hoursAdd + locationsAdd + deliveryAdd + addOnsTotal;
 
@@ -468,7 +512,7 @@ export default function WeddingPhotographyCalculator({
     let discount = 0;
     if (formData.promoCode.toLowerCase() === "wedding15") {
       discount = subtotal * 0.15;
-      breakdown.push(`Promo code discount (15%): -€${discount.toFixed(2)}`);
+      breakdown.push(`Promo code discount (15%): -${currencySymbol}${discount.toFixed(2)}`);
     }
 
     const total = subtotal - discount;
@@ -483,6 +527,8 @@ export default function WeddingPhotographyCalculator({
       discount,
       total,
       breakdown,
+      currency,
+      currencySymbol,
     };
   };
 

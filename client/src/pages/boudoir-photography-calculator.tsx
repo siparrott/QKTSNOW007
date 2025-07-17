@@ -36,42 +36,7 @@ interface PricingBreakdown {
   breakdown: string[];
 }
 
-const pricingConfig = {
-  basePrice: 250,
-  sessionTypes: {
-    classic: 0,
-    lingerie: 25,
-    nude: 50,
-    glamour: 35
-  },
-  durations: {
-    "1hr": 0,
-    "2hr": 75,
-    "3hr": 150
-  },
-  locations: {
-    studio: 0,
-    hotel: 100,
-    location: 100
-  },
-  outfitPricing: {
-    "1": 0,
-    "2": 50,
-    "3": 100,
-    "4": 150,
-    "5": 200
-  },
-  addOns: {
-    makeup: 60,
-    album: 120,
-    "deluxe-retouching": 75
-  },
-  promoCodes: {
-    BOUDOIR10: 0.1,
-    NEWCLIENT: 0.15,
-    GODDESS: 0.2
-  }
-};
+// Removed hardcoded pricing config - now using dynamic configuration
 
 interface BoudoirPhotographyCalculatorProps {
   customConfig?: any;
@@ -232,51 +197,113 @@ export default function BoudoirPhotographyCalculator({
     }, 50);
   };
 
+  // Use custom pricing configuration if available
+  const getSessionTypePricing = () => {
+    if (customConfig?.groupPrices) {
+      return customConfig.groupPrices.reduce((acc: any, group: any) => {
+        acc[group.id] = group.price;
+        return acc;
+      }, {});
+    }
+    return { classic: 0, lingerie: 25, nude: 50, glamour: 35 };
+  };
+
+  const getDurationPricing = () => {
+    if (customConfig?.sessionDurations) {
+      return customConfig.sessionDurations.reduce((acc: any, duration: any) => {
+        const key = duration.id.replace('-', '');
+        acc[key] = duration.price;
+        return acc;
+      }, {});
+    }
+    return { "1hr": 0, "2hr": 75, "3hr": 150 };
+  };
+
+  const getLocationPricing = () => {
+    if (customConfig?.locationPrices) {
+      return customConfig.locationPrices.reduce((acc: any, location: any) => {
+        acc[location.id] = location.price;
+        return acc;
+      }, {});
+    }
+    return { studio: 0, hotel: 100, location: 100 };
+  };
+
+  const getOutfitPricing = () => {
+    if (customConfig?.wardrobePrices) {
+      return customConfig.wardrobePrices.reduce((acc: any, wardrobe: any) => {
+        acc[wardrobe.id] = wardrobe.price;
+        return acc;
+      }, {});
+    }
+    return { "1": 0, "2": 50, "3": 100, "4": 150, "5": 200 };
+  };
+
+  const getAddOnPricing = () => {
+    if (customConfig?.enhancementPrices) {
+      return customConfig.enhancementPrices.reduce((acc: any, addon: any) => {
+        acc[addon.id] = addon.price;
+        return acc;
+      }, {});
+    }
+    return { makeup: 60, album: 120, "deluxe-retouching": 75 };
+  };
+
   const calculatePricing = (): PricingBreakdown => {
-    let total = pricingConfig.basePrice;
-    const breakdown: string[] = [`Base Session (1hr, studio, 1 outfit): €${pricingConfig.basePrice}`];
+    const currency = customConfig?.currency || "EUR";
+    const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
+    const basePrice = customConfig?.basePrice || 250;
+    
+    const sessionTypePricing = getSessionTypePricing();
+    const durationPricing = getDurationPricing();
+    const locationPricing = getLocationPricing();
+    const outfitPricing = getOutfitPricing();
+    const addOnPricing = getAddOnPricing();
+
+    let total = basePrice;
+    const breakdown: string[] = [`Base Session (1hr, studio, 1 outfit): ${currencySymbol}${basePrice}`];
 
     // Session type
-    const sessionTypeAdd = pricingConfig.sessionTypes[formData.sessionType as keyof typeof pricingConfig.sessionTypes] || 0;
+    const sessionTypeAdd = sessionTypePricing[formData.sessionType] || 0;
     if (sessionTypeAdd > 0) {
       total += sessionTypeAdd;
       const sessionName = formData.sessionType.charAt(0).toUpperCase() + formData.sessionType.slice(1);
-      breakdown.push(`${sessionName} Session: +€${sessionTypeAdd}`);
+      breakdown.push(`${sessionName} Session: +${currencySymbol}${sessionTypeAdd}`);
     }
 
     // Duration
-    const durationAdd = pricingConfig.durations[formData.duration as keyof typeof pricingConfig.durations] || 0;
+    const durationAdd = durationPricing[formData.duration] || 0;
     if (durationAdd > 0) {
       total += durationAdd;
-      breakdown.push(`${formData.duration} Duration: +€${durationAdd}`);
+      breakdown.push(`${formData.duration} Duration: +${currencySymbol}${durationAdd}`);
     }
 
     // Location
-    const locationAdd = pricingConfig.locations[formData.location as keyof typeof pricingConfig.locations] || 0;
+    const locationAdd = locationPricing[formData.location] || 0;
     if (locationAdd > 0) {
       total += locationAdd;
       const locationName = formData.location === "location" ? "On-Location" : "Hotel Suite";
-      breakdown.push(`${locationName}: +€${locationAdd}`);
+      breakdown.push(`${locationName}: +${currencySymbol}${locationAdd}`);
     }
 
     // Outfits
-    const outfitAdd = pricingConfig.outfitPricing[formData.outfitCount as keyof typeof pricingConfig.outfitPricing] || 0;
+    const outfitAdd = outfitPricing[formData.outfitCount] || 0;
     if (outfitAdd > 0) {
       total += outfitAdd;
-      breakdown.push(`${formData.outfitCount} Outfits: +€${outfitAdd}`);
+      breakdown.push(`${formData.outfitCount} Outfits: +${currencySymbol}${outfitAdd}`);
     }
 
     // Add-ons
     let addOnsCost = 0;
     formData.addOns.forEach(addOnId => {
-      const cost = pricingConfig.addOns[addOnId as keyof typeof pricingConfig.addOns];
+      const cost = addOnPricing[addOnId];
       if (cost) {
         addOnsCost += cost;
         let label = addOnId.split('-').map(word => 
           word.charAt(0).toUpperCase() + word.slice(1)
         ).join(' ');
         if (addOnId === "deluxe-retouching") label = "Deluxe Retouching";
-        breakdown.push(`${label}: +€${cost}`);
+        breakdown.push(`${label}: +${currencySymbol}${cost}`);
       }
     });
     total += addOnsCost;
@@ -286,16 +313,17 @@ export default function BoudoirPhotographyCalculator({
     // Promo code
     let discount = 0;
     if (formData.promoCode) {
-      const discountRate = pricingConfig.promoCodes[formData.promoCode.toUpperCase() as keyof typeof pricingConfig.promoCodes];
+      const promoCodes: any = { BOUDOIR10: 0.1, NEWCLIENT: 0.15, GODDESS: 0.2 };
+      const discountRate = promoCodes[formData.promoCode.toUpperCase()];
       if (discountRate) {
         discount = subtotal * discountRate;
         total -= discount;
-        breakdown.push(`Promo Code (${formData.promoCode.toUpperCase()}): -€${discount.toFixed(0)}`);
+        breakdown.push(`Promo Code (${formData.promoCode.toUpperCase()}): -${currencySymbol}${discount.toFixed(0)}`);
       }
     }
 
     return {
-      basePrice: pricingConfig.basePrice,
+      basePrice,
       sessionTypeAdd,
       durationAdd,
       locationAdd,

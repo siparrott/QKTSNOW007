@@ -82,80 +82,135 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
     { id: "advertising", label: "Advertising Campaign", icon: "🎯" },
   ];
 
-  const imageCounts = [
-    { id: "1-5", label: "1-5 images", price: 0, icon: "📷" },
-    { id: "6-15", label: "6-15 images", price: 300, icon: "📸", popular: true },
-    { id: "16-30", label: "16-30 images", price: 750, icon: "🎥", popular: true },
-    { id: "30+", label: "30+ images", price: 1200, icon: "🏢" },
-  ];
+  // Use custom pricing configuration if available
+  const getImageCountPricing = () => {
+    if (customConfig?.groupPrices) {
+      return customConfig.groupPrices.map((group: any) => ({
+        id: group.id,
+        label: group.label,
+        price: group.price,
+        icon: group.icon || "📷",
+        popular: group.id === "6-15" || group.id === "16-30"
+      }));
+    }
+    return [
+      { id: "1-5", label: "1-5 images", price: 0, icon: "📷" },
+      { id: "6-15", label: "6-15 images", price: 300, icon: "📸", popular: true },
+      { id: "16-30", label: "16-30 images", price: 750, icon: "🎥", popular: true },
+      { id: "30+", label: "30+ images", price: 1200, icon: "🏢" },
+    ];
+  };
 
-  const locations = [
-    { id: "studio", label: "In-Studio", price: 0, icon: "🏢" },
-    { id: "on-location", label: "On-location (office, warehouse, outdoors)", price: 100, icon: "🌍" },
-    { id: "hybrid", label: "Hybrid (multiple locations)", price: 200, icon: "🔄" },
-  ];
+  const getLocationPricing = () => {
+    if (customConfig?.locationPrices) {
+      return customConfig.locationPrices.map((location: any) => ({
+        id: location.id,
+        label: location.label,
+        price: location.price,
+        icon: location.icon || "🏢"
+      }));
+    }
+    return [
+      { id: "studio", label: "In-Studio", price: 0, icon: "🏢" },
+      { id: "on-location", label: "On-location (office, warehouse, outdoors)", price: 100, icon: "🌍" },
+      { id: "hybrid", label: "Hybrid (multiple locations)", price: 200, icon: "🔄" },
+    ];
+  };
 
-  const durations = [
-    { id: "1-hour", label: "Up to 1 hour", price: 0, icon: "⏰" },
-    { id: "half-day", label: "Half-day (4 hours)", price: 250, icon: "🌅", popular: true },
-    { id: "full-day", label: "Full-day (8 hours)", price: 600, icon: "☀️", popular: true },
-    { id: "multi-day", label: "Multi-day", price: 1200, icon: "📅" },
-  ];
+  const getDurationPricing = () => {
+    if (customConfig?.sessionDurations) {
+      return customConfig.sessionDurations.map((duration: any) => ({
+        id: duration.id,
+        label: duration.label,
+        price: duration.price,
+        icon: duration.icon || "⏰",
+        popular: duration.id === "half-day" || duration.id === "full-day"
+      }));
+    }
+    return [
+      { id: "1-hour", label: "Up to 1 hour", price: 0, icon: "⏰" },
+      { id: "half-day", label: "Half-day (4 hours)", price: 250, icon: "🌅", popular: true },
+      { id: "full-day", label: "Full-day (8 hours)", price: 600, icon: "☀️", popular: true },
+      { id: "multi-day", label: "Multi-day", price: 1200, icon: "📅" },
+    ];
+  };
 
-  const addOnOptions = [
-    { id: "creative-director", label: "Creative Director / Art Direction", price: 200, popular: true },
-    { id: "stylist", label: "Wardrobe Stylist", price: 150 },
-    { id: "basic-retouching", label: "Basic Retouching", price: 50 },
-    { id: "advanced-retouching", label: "Advanced Retouching", price: 100, popular: true },
-    { id: "casting", label: "Model/Actor Casting", price: 300 },
-    { id: "set-design", label: "Set Design / Props", price: 180 },
-    { id: "local-rights", label: "Usage Rights: Local", price: 100 },
-    { id: "national-rights", label: "Usage Rights: National", price: 250 },
-    { id: "global-rights", label: "Usage Rights: Global", price: 500 },
-  ];
+  const getEnhancementPricing = () => {
+    if (customConfig?.enhancementPrices) {
+      return customConfig.enhancementPrices.map((addon: any) => ({
+        ...addon,
+        popular: addon.id === "creative-director" || addon.id === "advanced-retouching"
+      }));
+    }
+    return [
+      { id: "creative-director", label: "Creative Director / Art Direction", price: 200, popular: true },
+      { id: "stylist", label: "Wardrobe Stylist", price: 150 },
+      { id: "basic-retouching", label: "Basic Retouching", price: 50 },
+      { id: "advanced-retouching", label: "Advanced Retouching", price: 100, popular: true },
+      { id: "casting", label: "Model/Actor Casting", price: 300 },
+      { id: "set-design", label: "Set Design / Props", price: 180 },
+      { id: "local-rights", label: "Usage Rights: Local", price: 100 },
+      { id: "national-rights", label: "Usage Rights: National", price: 250 },
+      { id: "global-rights", label: "Usage Rights: Global", price: 500 },
+    ];
+  };
 
-  const deliverySpeeds = [
-    { id: "standard", label: "Standard (3-5 days)", price: 0, icon: "📅" },
-    { id: "rush", label: "Rush (48 hours)", price: 90, icon: "⚡" },
-    { id: "same-day", label: "Same-Day Preview", price: 150, icon: "🚨" },
-  ];
+  const getDeliveryPricing = () => {
+    if (customConfig?.deliveryPrices) {
+      return customConfig.deliveryPrices;
+    }
+    return [
+      { id: "standard", label: "Standard (3-5 days)", price: 0, icon: "📅" },
+      { id: "rush", label: "Rush (48 hours)", price: 90, icon: "⚡" },
+      { id: "same-day", label: "Same-Day Preview", price: 150, icon: "🚨" },
+    ];
+  };
+
+  const imageCounts = getImageCountPricing();
+  const locations = getLocationPricing();
+  const durations = getDurationPricing();
+  const addOnOptions = getEnhancementPricing();
+  const deliverySpeeds = getDeliveryPricing();
 
   const calculatePricing = (): PricingBreakdown => {
-    const baseStudio = 350; // Base: product shoot, 1hr, in-studio, 5 images
+    const currency = customConfig?.currency || "EUR";
+    const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
+    const baseStudio = customConfig?.basePrice || 350;
+    
     let imageAdd = 0;
     let durationAdd = 0;
     let locationAdd = 0;
     let addOnsTotal = 0;
     let deliveryAdd = 0;
-    const breakdown: string[] = [`Base package (product, 1hr, studio, 1-5 images): €${baseStudio}`];
+    const breakdown: string[] = [`Base package (product, 1hr, studio, 1-5 images): ${currencySymbol}${baseStudio}`];
 
     // Image count pricing
     const images = imageCounts.find(i => i.id === formData.imageCount);
     if (images && images.price > 0) {
       imageAdd = images.price;
-      breakdown.push(`${images.label}: €${imageAdd}`);
+      breakdown.push(`${images.label}: ${currencySymbol}${imageAdd}`);
     }
 
     // Duration pricing
     const duration = durations.find(d => d.id === formData.duration);
     if (duration && duration.price > 0) {
       durationAdd = duration.price;
-      breakdown.push(`${duration.label}: €${durationAdd}`);
+      breakdown.push(`${duration.label}: ${currencySymbol}${durationAdd}`);
     }
 
     // Location pricing
     const location = locations.find(l => l.id === formData.location);
     if (location && location.price > 0) {
       locationAdd = location.price;
-      breakdown.push(`${location.label}: €${locationAdd}`);
+      breakdown.push(`${location.label}: ${currencySymbol}${locationAdd}`);
     }
 
-    // Add-ons pricing
+    // Add-ons pricing - use dynamic pricing from configuration
     formData.addOns.forEach(addOnId => {
       const addOn = addOnOptions.find(a => a.id === addOnId);
-      if (addOn) {
+      if (addOn && addOn.price > 0) {
         addOnsTotal += addOn.price;
-        breakdown.push(`${addOn.label}: €${addOn.price}`);
+        breakdown.push(`${addOn.label}: ${currencySymbol}${addOn.price}`);
       }
     });
 
@@ -163,7 +218,7 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
     const delivery = deliverySpeeds.find(d => d.id === formData.deliverySpeed);
     if (delivery && delivery.price > 0) {
       deliveryAdd = delivery.price;
-      breakdown.push(`${delivery.label}: €${deliveryAdd}`);
+      breakdown.push(`${delivery.label}: ${currencySymbol}${deliveryAdd}`);
     }
 
     const subtotal = baseStudio + imageAdd + durationAdd + locationAdd + addOnsTotal + deliveryAdd;
@@ -172,7 +227,7 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
     let discount = 0;
     if (formData.promoCode.toLowerCase() === "commercial10") {
       discount = subtotal * 0.1;
-      breakdown.push(`Promo code discount (10%): -€${discount.toFixed(2)}`);
+      breakdown.push(`Promo code discount (10%): -${currencySymbol}${discount.toFixed(2)}`);
     }
 
     const total = subtotal - discount;
@@ -188,6 +243,8 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
       discount,
       total,
       breakdown,
+      currency,
+      currencySymbol,
     };
   };
 

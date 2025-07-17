@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { QuoteKitHeader } from "@/components/calculator-header";
-import EditableText from "@/components/editable-text";
+import { EditableText } from "@/components/editable-text";
 import { 
   Car, 
   Clock, 

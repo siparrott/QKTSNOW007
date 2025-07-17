@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { QuoteKitHeader } from "@/components/calculator-header";
+import { EditableText } from "@/components/editable-text";
 import { 
   Bike, 
   Wrench, 
@@ -57,12 +58,31 @@ interface MotorcycleRepairCalculatorProps {
   customConfig?: any;
   isPreview?: boolean;
   hideHeader?: boolean;
+  onConfigChange?: (config: any) => void;
 }
 
-export default function MotorcycleRepairCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: MotorcycleRepairCalculatorProps = {}) {
+export default function MotorcycleRepairCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false, onConfigChange }: MotorcycleRepairCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [quoteGenerated, setQuoteGenerated] = useState(false);
+  const [textConfig, setTextConfig] = useState<any>(propConfig?.textContent || {});
+  
+  // Text customization functionality
+  const updateTextContent = (key: string, value: string) => {
+    const newConfig = {
+      ...textConfig,
+      [key]: value
+    };
+    setTextConfig(newConfig);
+    
+    // Notify parent component about the change
+    if (onConfigChange) {
+      onConfigChange({
+        ...propConfig,
+        textContent: newConfig
+      });
+    }
+  };
   const [formData, setFormData] = useState<MotorcycleRepairFormData>({
     bikeType: "",
     serviceType: "",
@@ -339,11 +359,19 @@ export default function MotorcycleRepairCalculator({ customConfig: propConfig, i
         {/* Hero Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-gray-300 to-red-400 mb-4">
-            Motorcycle Repair Services
+            <EditableText
+              value={textConfig.headline || "Motorcycle Repair Services"}
+              onSave={(value) => updateTextContent('headline', value)}
+              className="inline-block"
+              isPreview={isPreview}
+            />
           </h1>
-          <p className="text-gray-300 max-w-2xl mx-auto font-medium text-lg">
-            Expert motorcycle repairs with certified mechanics, genuine parts, and comprehensive warranty coverage.
-          </p>
+          <EditableText
+            value={textConfig.description || "Expert motorcycle repairs with certified mechanics, genuine parts, and comprehensive warranty coverage."}
+            onSave={(value) => updateTextContent('description', value)}
+            className="text-gray-300 max-w-2xl mx-auto font-medium text-lg block"
+            isPreview={isPreview}
+          />
           <div className="flex items-center justify-center mt-6 space-x-8 text-sm text-red-400">
             <span className="flex items-center">
               <Shield className="h-4 w-4 mr-2" />

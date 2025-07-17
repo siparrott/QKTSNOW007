@@ -62,27 +62,29 @@ interface VanRentalCalculatorProps {
   customConfig?: any;
   isPreview?: boolean;
   hideHeader?: boolean;
+  onConfigChange?: (config: any) => void;
 }
 
-export default function VanRentalCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: VanRentalCalculatorProps = {}) {
+export default function VanRentalCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false, onConfigChange }: VanRentalCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [quoteGenerated, setQuoteGenerated] = useState(false);
-  
-  // Use the propConfig as customConfig for consistency
-  const customConfig = propConfig;
-  const [textConfig, setTextConfig] = useState<any>({});
+  const [textConfig, setTextConfig] = useState<any>(propConfig?.textContent || {});
   
   // Text customization functionality
   const updateTextContent = (key: string, value: string) => {
-    setTextConfig(prev => ({ ...prev, [key]: value }));
-    // Send update to parent if in preview mode
-    if (isPreview) {
-      window.parent?.postMessage({
-        type: 'TEXT_UPDATE',
-        key,
-        value
-      }, '*');
+    const newConfig = {
+      ...textConfig,
+      [key]: value
+    };
+    setTextConfig(newConfig);
+    
+    // Notify parent component about the change
+    if (onConfigChange) {
+      onConfigChange({
+        ...propConfig,
+        textContent: newConfig
+      });
     }
   };
   const [formData, setFormData] = useState<VanRentalFormData>({
@@ -364,11 +366,19 @@ export default function VanRentalCalculator({ customConfig: propConfig, isPrevie
         {/* Hero Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-slate-700 via-blue-700 to-slate-600 mb-4">
-            Van Rental Services
+            <EditableText
+              value={textConfig.headline || "Van Rental Services"}
+              onSave={(value) => updateTextContent('headline', value)}
+              className="inline-block"
+              isPreview={isPreview}
+            />
           </h1>
-          <p className="text-slate-700 max-w-2xl mx-auto font-medium text-lg">
-            Professional van hire with flexible options, competitive rates, and full insurance coverage.
-          </p>
+          <EditableText
+            value={textConfig.description || "Professional van hire with flexible options, competitive rates, and full insurance coverage."}
+            onSave={(value) => updateTextContent('description', value)}
+            className="text-slate-700 max-w-2xl mx-auto font-medium text-lg block"
+            isPreview={isPreview}
+          />
           <div className="flex items-center justify-center mt-6 space-x-8 text-sm text-blue-700">
             <span className="flex items-center">
               <Shield className="h-4 w-4 mr-2" />

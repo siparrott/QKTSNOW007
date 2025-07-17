@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { QuoteKitHeader } from "@/components/calculator-header";
-import EditableText from "@/components/editable-text";
+import { EditableText } from "@/components/editable-text";
 import { 
   Heart, 
   Clock, 
@@ -330,6 +330,25 @@ export default function AutoMechanicCalculator({ customConfig: propConfig, isPre
     <div className="min-h-screen bg-gradient-to-br from-gray-100 via-slate-100 to-blue-100">
       {!hideHeader && <QuoteKitHeader />}
       <div className="max-w-7xl mx-auto px-4 py-8">
+        
+        {/* Calculator Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-800 mb-2 flex items-center justify-center">
+            <Wrench className="h-10 w-10 mr-3 text-blue-600" />
+            <EditableText
+              value={textConfig.headline || "Auto Mechanic Quote Calculator"}
+              onSave={(value) => updateTextContent('headline', value)}
+              className="flex-1"
+              isPreview={isPreview}
+            />
+          </h1>
+          <EditableText
+            value={textConfig.description || "Get instant pricing for professional auto repair services. Quality parts, expert technicians, and transparent pricing."}
+            onSave={(value) => updateTextContent('description', value)}
+            className="text-gray-600 max-w-2xl mx-auto font-medium"
+            isPreview={isPreview}
+          />
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Form */}

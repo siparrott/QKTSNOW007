@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { QuoteKitHeader } from "@/components/calculator-header";
-import EditableText from "@/components/editable-text";
+import { EditableText } from "@/components/editable-text";
 import { 
   Calendar, 
   Clock, 

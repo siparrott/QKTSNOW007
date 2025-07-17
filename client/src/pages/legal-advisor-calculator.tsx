@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { QuoteKitHeader } from "@/components/calculator-header";
+import { EditableText } from "@/components/editable-text";
 import { 
   Scale, 
   FileText, 
@@ -87,10 +88,30 @@ interface LegalAdvisorCalculatorProps {
   customConfig?: any;
   isPreview?: boolean;
   hideHeader?: boolean;
+  onConfigChange?: (config: any) => void;
 }
 
-export default function LegalAdvisorCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: LegalAdvisorCalculatorProps = {}) {
+export default function LegalAdvisorCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false, onConfigChange }: LegalAdvisorCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
+  const [textConfig, setTextConfig] = useState<any>(propConfig?.textContent || {});
+  
+  // Text customization functionality
+  const updateTextContent = (key: string, value: string) => {
+    const newConfig = {
+      ...textConfig,
+      [key]: value
+    };
+    setTextConfig(newConfig);
+    
+    // Notify parent component about the change
+    if (onConfigChange) {
+      onConfigChange({
+        ...propConfig,
+        textContent: newConfig
+      });
+    }
+  };
+  
   const [formData, setFormData] = useState({
     serviceType: "",
     consultationType: "",
@@ -472,11 +493,19 @@ export default function LegalAdvisorCalculator({ customConfig: propConfig, isPre
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-slate-800 mb-4">
-              Legal Advisor Pricing Calculator
+              <EditableText
+                value={textConfig.headline || "Legal Advisor Pricing Calculator"}
+                onSave={(value) => updateTextContent('headline', value)}
+                className="inline-block"
+                isPreview={isPreview}
+              />
             </h1>
-            <p className="text-lg text-slate-600 mb-6">
-              Get an instant quote for professional legal consultation services
-            </p>
+            <EditableText
+              value={textConfig.description || "Get an instant quote for professional legal consultation services"}
+              onSave={(value) => updateTextContent('description', value)}
+              className="text-lg text-slate-600 mb-6 block"
+              isPreview={isPreview}
+            />
             
             {/* Progress Bar */}
             <div className="w-full bg-slate-200 rounded-full h-2 mb-4">

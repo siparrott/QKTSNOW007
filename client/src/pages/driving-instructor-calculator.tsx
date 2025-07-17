@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { QuoteKitHeader } from "@/components/calculator-header";
+import { EditableText } from "@/components/editable-text";
 import { 
   Car, 
   MapPin, 
@@ -60,12 +61,31 @@ interface DrivingInstructorCalculatorProps {
   customConfig?: any;
   isPreview?: boolean;
   hideHeader?: boolean;
+  onConfigChange?: (config: any) => void;
 }
 
-export default function DrivingInstructorCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: DrivingInstructorCalculatorProps = {}) {
+export default function DrivingInstructorCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false, onConfigChange }: DrivingInstructorCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [quoteGenerated, setQuoteGenerated] = useState(false);
+  const [textConfig, setTextConfig] = useState<any>(propConfig?.textContent || {});
+  
+  // Text customization functionality
+  const updateTextContent = (key: string, value: string) => {
+    const newConfig = {
+      ...textConfig,
+      [key]: value
+    };
+    setTextConfig(newConfig);
+    
+    // Notify parent component about the change
+    if (onConfigChange) {
+      onConfigChange({
+        ...propConfig,
+        textContent: newConfig
+      });
+    }
+  };
   const [formData, setFormData] = useState<DrivingInstructorFormData>({
     transmissionType: "",
     lessonType: "",
@@ -319,11 +339,19 @@ export default function DrivingInstructorCalculator({ customConfig: propConfig, 
         {/* Hero Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-gray-700 to-blue-600 mb-4">
-            Driving Instructor Services
+            <EditableText
+              value={textConfig.headline || "Driving Instructor Services"}
+              onSave={(value) => updateTextContent('headline', value)}
+              className="inline-block"
+              isPreview={isPreview}
+            />
           </h1>
-          <p className="text-gray-700 max-w-2xl mx-auto font-medium text-lg">
-            Professional driving lessons with qualified instructors, modern vehicles, and personalized learning approaches.
-          </p>
+          <EditableText
+            value={textConfig.description || "Professional driving lessons with qualified instructors, modern vehicles, and personalized learning approaches."}
+            onSave={(value) => updateTextContent('description', value)}
+            className="text-gray-700 max-w-2xl mx-auto font-medium text-lg block"
+            isPreview={isPreview}
+          />
           <div className="flex items-center justify-center mt-6 space-x-8 text-sm text-blue-700">
             <span className="flex items-center">
               <Shield className="h-4 w-4 mr-2" />

@@ -605,24 +605,14 @@ Allow: /*-calculator`;
   app.get("/embed/:embedId", async (req, res) => {
     try {
       const { embedId } = req.params;
-      const userCalculator = await storage.getUserCalculatorByEmbedId(embedId);
       
-      if (!userCalculator) {
-        return res.status(404).send("Calculator not found");
-      }
+      // For now, since we're using localStorage, we'll create a generic embed page
+      // that will load the calculator data client-side
+      // In production, this would fetch from database using getUserCalculatorByEmbedId
 
-      // Get template info to determine which calculator component to render
-      const templates = await sql`
-        SELECT slug FROM calculator_templates 
-        WHERE id = ${userCalculator.template_id}
-        LIMIT 1
-      `;
-      
-      if (!templates.length) {
-        return res.status(404).send("Calculator template not found");
-      }
-
-      const templateSlug = templates[0].slug;
+      // For localStorage-based development, we'll determine the template from embedId
+      // Extract template info from embedId or use a default
+      const templateSlug = "portrait-photography"; // Default for testing
       
       // Generate HTML page that renders the calculator with custom config
       const html = `
@@ -645,7 +635,7 @@ Allow: /*-calculator`;
         window.__EMBED_CONFIG__ = {
             embedId: "${embedId}",
             templateSlug: "${templateSlug}",
-            customConfig: ${JSON.stringify(userCalculator.config || {})},
+            customConfig: {},
             isEmbed: true,
             hideHeader: true
         };

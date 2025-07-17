@@ -203,6 +203,10 @@ export default function Dashboard() {
     const userSession = localStorage.getItem('user_session');
     const userCalculatorKey = `userCalculators_${userSession}`;
     localStorage.removeItem(userCalculatorKey);
+    toast({
+      title: "Test Data Cleared",
+      description: "All calculator data has been reset. Create a new calculator to test embed codes.",
+    });
     window.location.reload();
   };
   const [selectedCalculator, setSelectedCalculator] = useState<UserCalculator | null>(null);
@@ -2420,12 +2424,13 @@ export default function Dashboard() {
                   </label>
                   <div className="flex items-center space-x-2">
                     <code className="flex-1 px-3 py-2 bg-midnight-900 border border-midnight-600 rounded text-sm text-gray-300 font-mono">
-                      {selectedCalculator.embed_url}
+                      {`${window.location.origin}/embed/${selectedCalculator.embedId || selectedCalculator.id}`}
                     </code>
                     <Button
                       size="sm"
                       onClick={() => {
-                        navigator.clipboard.writeText(selectedCalculator.embed_url);
+                        const embedUrl = `${window.location.origin}/embed/${selectedCalculator.embedId || selectedCalculator.id}`;
+                        navigator.clipboard.writeText(embedUrl);
                         toast({
                           title: "Copied!",
                           description: "Direct link copied to clipboard.",
@@ -2446,7 +2451,7 @@ export default function Dashboard() {
                   <div className="flex items-start space-x-2">
                     <code className="flex-1 px-3 py-2 bg-midnight-900 border border-midnight-600 rounded text-sm text-gray-300 font-mono whitespace-pre-wrap">
 {`<iframe 
-  src="${selectedCalculator.embed_url}" 
+  src="${window.location.origin}/embed/${selectedCalculator.embedId || selectedCalculator.id}" 
   width="100%" 
   height="600" 
   frameborder="0">
@@ -2455,7 +2460,8 @@ export default function Dashboard() {
                     <Button
                       size="sm"
                       onClick={() => {
-                        const embedCode = `<iframe src="${selectedCalculator.embed_url}" width="100%" height="600" frameborder="0"></iframe>`;
+                        const embedUrl = `${window.location.origin}/embed/${selectedCalculator.embedId || selectedCalculator.id}`;
+                        const embedCode = `<iframe src="${embedUrl}" width="100%" height="600" frameborder="0"></iframe>`;
                         navigator.clipboard.writeText(embedCode);
                         toast({
                           title: "Copied!",

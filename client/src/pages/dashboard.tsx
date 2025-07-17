@@ -44,6 +44,7 @@ interface UserCalculator {
   prompt_md: string;
   created_at: string;
   last_updated: string;
+  embedId?: string;
 }
 
 interface CalculatorTemplate {
@@ -617,7 +618,7 @@ export default function Dashboard() {
       id: `calc_${Date.now()}`,
       name: template.name,
       slug: `${template.slug}-${Date.now()}`,
-      embed_url: `${window.location.origin}/embed/${embedId}`,
+      embed_url: `https://quotekits.com/embed/${embedId}`,
       admin_url: `${window.location.origin}/dashboard`,
       embedId: embedId,
       calculator_id: parseInt(template.id),

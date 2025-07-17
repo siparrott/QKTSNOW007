@@ -73,10 +73,27 @@ import Subscribe from "@/pages/subscribe";
 import Checkout from "@/pages/checkout";
 import Dashboard from "@/pages/dashboard";
 import Upgrade from "@/pages/upgrade";
+import EmbedCalculator from "@/components/embed-calculator";
 import Profile from "@/pages/profile";
 import TwoFactorSetup from "@/pages/two-factor-setup";
 import TwoFactorVerify from "@/pages/two-factor-verify";
 
+// Check if this is an embed route at startup
+function EmbedHandler() {
+  const embedConfig = (window as any).__EMBED_CONFIG__;
+  
+  if (embedConfig) {
+    return (
+      <EmbedCalculator
+        embedId={embedConfig.embedId}
+        templateSlug={embedConfig.templateSlug}
+        customConfig={embedConfig.customConfig}
+      />
+    );
+  }
+  
+  return null;
+}
 
 function Router() {
   return (
@@ -218,6 +235,20 @@ function Router() {
 }
 
 function App() {
+  // Check if this is an embed page
+  const embedConfig = (window as any).__EMBED_CONFIG__;
+  
+  if (embedConfig) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <EmbedHandler />
+        </TooltipProvider>
+      </QueryClientProvider>
+    );
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>

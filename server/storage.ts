@@ -1259,7 +1259,12 @@ export class MemStorage implements IStorage {
   }
 
   async getUserCalculatorByEmbedId(embedId: string): Promise<UserCalculator | undefined> {
-    return this.userCalculators.get(embedId);
+    for (const userCalculator of this.userCalculators.values()) {
+      if (userCalculator.embedId === embedId) {
+        return userCalculator;
+      }
+    }
+    return undefined;
   }
 
   async createUserCalculator(insertUserCalculator: InsertUserCalculator): Promise<UserCalculator> {

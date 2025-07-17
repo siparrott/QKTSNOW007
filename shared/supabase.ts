@@ -4,6 +4,9 @@ import postgres from 'postgres';
 // For server-side operations, use direct PostgreSQL connection
 const sql = postgres(process.env.DATABASE_URL!);
 
+// Export sql for use in other modules
+export { sql };
+
 // Initialize Supabase client for browser operations
 export const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -177,11 +180,12 @@ export async function cloneCalculator(userId: string, templateId: string): Promi
 
     // Generate unique slug for user calculator
     const uniqueSlug = `${template.slug}-${userId.slice(0, 8)}-${Date.now()}`;
-    // Point to the actual calculator pages that exist on the homepage
-    const baseUrl = process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : 'https://7c3afad0-e42a-4035-89da-60d967bcf12e-00-cahqkruxgnqx.spock.replit.dev';
-    const embedUrl = `${baseUrl}/${template.slug}-calculator`;
-    const adminUrl = `${baseUrl}/${template.slug}-calculator`;
+    // Create embed ID for unique calculator instance
     const embedId = `embed_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    // Point to the embed route that will serve the customized calculator
+    const baseUrl = process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : 'https://7c3afad0-e42a-4035-89da-60d967bcf12e-00-cahqkruxgnqx.spock.replit.dev';
+    const embedUrl = `${baseUrl}/embed/${embedId}`;
+    const adminUrl = `${baseUrl}/dashboard`;
     
     // Generate calculator_id based on template mapping (only using valid IDs 1-3)
     const calculatorIdMap: { [key: string]: number } = {
@@ -218,6 +222,29 @@ export async function cloneCalculator(userId: string, templateId: string): Promi
     return userCalculators[0] as any;
   } catch (error) {
     console.error('Error in cloneCalculator:', error);
+    return null;
+  }
+}
+
+// Get user calculator by embed ID (needed for embed system)
+export async function getUserCalculatorByEmbedId(embedId: string): Promise<UserCalculator | null> {
+  try {
+    const data = await sql`
+      SELECT * FROM user_calculators 
+      WHERE embed_id = ${embedId}
+      LIMIT 1
+    `;
+    
+    if (!data.length) return null;
+    
+    const calc = data[0] as any;
+    // Parse JSON fields properly
+    return {
+      ...calc,
+      config: calc.config ? (typeof calc.config === 'string' ? JSON.parse(calc.config) : calc.config) : null
+    };
+  } catch (error) {
+    console.error('Error fetching user calculator by embed ID:', error);
     return null;
   }
 }

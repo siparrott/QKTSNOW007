@@ -540,37 +540,8 @@ export default function Dashboard() {
       setShowUpgradeModal(true);
       return;
     }
-    // Map template IDs to actual calculator routes for embed URLs
-    const calculatorRoutes: { [key: string]: string } = {
-      'wedding-photography': '/wedding-photography-calculator',
-      'home-renovation': '/home-renovation-calculator-new',
-      'legal-services': '/legal-advisor-calculator',
-      'pest-control': '/pest-control-calculator',
-      'portrait-photography': '/portrait-photography-calculator',
-      'roofing-services': '/roofing-calculator',
-      'electrician': '/electrician-calculator',
-      'drone-photography': '/drone-photography-calculator',
-      'event-videography': '/event-videography-calculator',
-      'real-estate-photography': '/real-estate-photography-calculator',
-      'commercial-photography': '/commercial-photography-calculator',
-      'food-photography': '/food-photography-calculator',
-      'landscaping': '/landscaping-calculator',
-      'solar': '/solar-calculator',
-      'window-door': '/window-door-calculator',
-      'makeup-artist': '/makeup-artist-calculator',
-      'hair-stylist': '/hair-stylist-calculator',
-      'cleaning-services': '/cleaning-services-calculator',
-      'virtual-assistant': '/virtual-assistant-calculator',
-      'business-coach': '/business-coach-calculator',
-      'tax-preparer': '/tax-preparer-calculator',
-      'translation-services': '/translation-services-calculator',
-      'dentist': '/dentist-calculator',
-      'childcare': '/childcare-calculator',
-      'plastic-surgery': '/plastic-surgery-calculator',
-      'private-medical': '/private-medical-calculator'
-    };
-
-    const calculatorRoute = calculatorRoutes[template.template_id] || `/calculator/${template.template_id}`;
+    // Generate unique embed ID for the user calculator
+    const embedId = `embed_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
     // Create deep clone of the comprehensive calculator with all detailed features
     const getDetailedConfig = (templateId: string) => {
@@ -646,8 +617,9 @@ export default function Dashboard() {
       id: `calc_${Date.now()}`,
       name: template.name,
       slug: `${template.slug}-${Date.now()}`,
-      embed_url: `${window.location.origin}${calculatorRoute}`,
+      embed_url: `${window.location.origin}/embed/${embedId}`,
       admin_url: `${window.location.origin}/dashboard`,
+      embedId: embedId,
       calculator_id: parseInt(template.id),
       config: detailedConfig,
       custom_branding: {},

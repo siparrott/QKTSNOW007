@@ -18,6 +18,7 @@ import {
   registerUserSchema,
   loginUserSchema
 } from "@shared/schema";
+import { sql } from "@shared/supabase";
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -600,7 +601,67 @@ Allow: /*-calculator`;
     }
   });
 
-  // Get embed calculator data
+  // Serve embed calculator HTML page
+  app.get("/embed/:embedId", async (req, res) => {
+    try {
+      const { embedId } = req.params;
+      const userCalculator = await storage.getUserCalculatorByEmbedId(embedId);
+      
+      if (!userCalculator) {
+        return res.status(404).send("Calculator not found");
+      }
+
+      // Get template info to determine which calculator component to render
+      const templates = await sql`
+        SELECT slug FROM calculator_templates 
+        WHERE id = ${userCalculator.template_id}
+        LIMIT 1
+      `;
+      
+      if (!templates.length) {
+        return res.status(404).send("Calculator template not found");
+      }
+
+      const templateSlug = templates[0].slug;
+      
+      // Generate HTML page that renders the calculator with custom config
+      const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quote Calculator</title>
+    <script type="module" crossorigin src="/assets/index.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index.css">
+    <style>
+        body { margin: 0; padding: 0; }
+        #root { min-height: 100vh; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script>
+        window.__EMBED_CONFIG__ = {
+            embedId: "${embedId}",
+            templateSlug: "${templateSlug}",
+            customConfig: ${JSON.stringify(userCalculator.config || {})},
+            isEmbed: true,
+            hideHeader: true
+        };
+    </script>
+</body>
+</html>`;
+      
+      res.setHeader('Content-Type', 'text/html');
+      res.send(html);
+    } catch (error) {
+      console.error('Embed route error:', error);
+      res.status(500).send("Internal server error");
+    }
+  });
+
+  // Get embed calculator data (API endpoint)
   app.get("/api/embed/:embedId", async (req, res) => {
     try {
       const { embedId } = req.params;
@@ -610,15 +671,9 @@ Allow: /*-calculator`;
         return res.status(404).json({ error: "Calculator not found" });
       }
 
-      const calculator = await storage.getCalculatorBySlug(userCalculator.calculatorId.toString());
-      if (!calculator) {
-        return res.status(404).json({ error: "Calculator template not found" });
-      }
-
       res.json({
         userCalculator,
-        calculator,
-        config: userCalculator.config || calculator.defaultConfig
+        config: userCalculator.config || {}
       });
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch embed calculator" });

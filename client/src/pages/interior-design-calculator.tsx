@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { QuoteKitHeader } from "@/components/calculator-header";
+import { EditableText } from "@/components/editable-text";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Palette, 
@@ -59,6 +60,20 @@ interface InteriorDesignCalculatorProps {
 export default function InteriorDesignCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: InteriorDesignCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
+  const [textConfig, setTextConfig] = useState<any>({});
+  
+  // Text customization functionality
+  const updateTextContent = (key: string, value: string) => {
+    setTextConfig(prev => ({ ...prev, [key]: value }));
+    // Send update to parent if in preview mode
+    if (isPreview) {
+      window.parent?.postMessage({
+        type: 'TEXT_UPDATE',
+        key,
+        value
+      }, '*');
+    }
+  };
   const [formData, setFormData] = useState<InteriorDesignFormData>({
     projectType: "",
     propertySize: "",

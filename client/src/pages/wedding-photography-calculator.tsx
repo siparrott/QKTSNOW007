@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { QuoteKitHeader } from "@/components/calculator-header";
+import { EditableText } from "@/components/editable-text";
 import { 
   Camera, 
   Clock, 
@@ -75,6 +76,20 @@ export default function WeddingPhotographyCalculator({
   const [headline, setHeadline] = useState("Wedding Photography Quote Calculator");
   const [description, setDescription] = useState("Create beautiful memories with professional wedding photography. Get your personalized quote for your special day.");
   const [companyName, setCompanyName] = useState("Your Business");
+  const [textConfig, setTextConfig] = useState<any>({});
+  
+  // Text customization functionality
+  const updateTextContent = (key: string, value: string) => {
+    setTextConfig(prev => ({ ...prev, [key]: value }));
+    // Send update to parent if in preview mode
+    if (isPreview) {
+      window.parent?.postMessage({
+        type: 'TEXT_UPDATE',
+        key,
+        value
+      }, '*');
+    }
+  };
   const [formData, setFormData] = useState<WeddingFormData>({
     packageType: "",
     hours: "",

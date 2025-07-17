@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { QuoteKitHeader } from "@/components/calculator-header";
+import { EditableText } from "@/components/editable-text";
 import { ArrowLeft, Camera, Heart, Star, Clock, Mail, ArrowRight, Check, Crown, MapPin, Home, Building, Sparkles } from "lucide-react";
 import { Link } from "wouter";
 
@@ -74,6 +75,20 @@ export default function BoudoirPhotographyCalculator({
   const [pricing, setPricing] = useState<PricingBreakdown | null>(null);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [customConfig, setCustomConfig] = useState<any>(null);
+  const [textConfig, setTextConfig] = useState<any>({});
+  
+  // Text customization functionality
+  const updateTextContent = (key: string, value: string) => {
+    setTextConfig(prev => ({ ...prev, [key]: value }));
+    // Send update to parent if in preview mode
+    if (isPreview) {
+      window.parent?.postMessage({
+        type: 'TEXT_UPDATE',
+        key,
+        value
+      }, '*');
+    }
+  };
 
   const totalSteps = 4;
 

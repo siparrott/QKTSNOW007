@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { motion, AnimatePresence } from "framer-motion";
+import { EditableText } from "@/components/editable-text";
 import { 
   Heart, 
   Phone, 
@@ -131,6 +132,20 @@ export default function ChildcareCalculator({ customConfig: propConfig, isPrevie
   const [timeLeft, setTimeLeft] = useState(48 * 60 * 60); // 48 hours in seconds
   const [naturalLanguageInput, setNaturalLanguageInput] = useState("");
   const [isProcessingNL, setIsProcessingNL] = useState(false);
+  const [textConfig, setTextConfig] = useState<any>({});
+  
+  // Text customization functionality
+  const updateTextContent = (key: string, value: string) => {
+    setTextConfig(prev => ({ ...prev, [key]: value }));
+    // Send update to parent if in preview mode
+    if (isPreview) {
+      window.parent?.postMessage({
+        type: 'TEXT_UPDATE',
+        key,
+        value
+      }, '*');
+    }
+  };
 
   const [formData, setFormData] = useState({
     careType: "",

@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { QuoteKitHeader } from "@/components/calculator-header";
+import { EditableText } from "@/components/editable-text";
 import { 
   Heart, 
   Clock, 
@@ -63,10 +64,29 @@ interface CarDetailingCalculatorProps {
   customConfig?: any;
   isPreview?: boolean;
   hideHeader?: boolean;
+  onConfigChange?: (config: any) => void;
 }
 
-export default function CarDetailingCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: CarDetailingCalculatorProps = {}) {
+export default function CarDetailingCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false, onConfigChange }: CarDetailingCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
+  const [textConfig, setTextConfig] = useState<any>(propConfig?.textContent || {});
+  
+  // Text customization functionality
+  const updateTextContent = (key: string, value: string) => {
+    const newConfig = {
+      ...textConfig,
+      [key]: value
+    };
+    setTextConfig(newConfig);
+    
+    // Notify parent component about the change
+    if (onConfigChange) {
+      onConfigChange({
+        ...propConfig,
+        textContent: newConfig
+      });
+    }
+  };
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [formData, setFormData] = useState<CarDetailingFormData>({
     vehicleType: "",
@@ -336,7 +356,12 @@ export default function CarDetailingCalculator({ customConfig: propConfig, isPre
                   <div>
                     <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center">
                       <Car className="h-6 w-6 mr-2 text-teal-500" />
-                      Vehicle and service details
+                      <EditableText
+                        value={textConfig.serviceTitle || "Vehicle and service details"}
+                        onSave={(value) => updateTextContent('serviceTitle', value)}
+                        className="flex-1"
+                        isPreview={isPreview}
+                      />
                     </h2>
                     
                     {/* Natural Language Input */}

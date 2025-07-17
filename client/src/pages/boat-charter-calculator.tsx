@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { QuoteKitHeader } from "@/components/calculator-header";
+import { EditableText } from "@/components/editable-text";
 import { 
   Anchor, 
   Waves, 
@@ -60,10 +61,30 @@ interface BoatCharterCalculatorProps {
   customConfig?: any;
   isPreview?: boolean;
   hideHeader?: boolean;
+  onConfigChange?: (config: any) => void;
 }
 
-export default function BoatCharterCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: BoatCharterCalculatorProps = {}) {
+export default function BoatCharterCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false, onConfigChange }: BoatCharterCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
+  const [textConfig, setTextConfig] = useState<any>(propConfig?.textContent || {});
+  
+  // Text customization functionality
+  const updateTextContent = (key: string, value: string) => {
+    const newConfig = {
+      ...textConfig,
+      [key]: value
+    };
+    setTextConfig(newConfig);
+    
+    // Notify parent component about the change
+    if (onConfigChange) {
+      onConfigChange({
+        ...propConfig,
+        textContent: newConfig
+      });
+    }
+  };
+  
   const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [quoteGenerated, setQuoteGenerated] = useState(false);
   const [formData, setFormData] = useState<BoatCharterFormData>({

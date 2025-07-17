@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Edit2, Check, X } from 'lucide-react';
 
 interface EditableTextProps {
-  text: string;
+  value: string;
+  text?: string; // for backwards compatibility
   onSave: (newText: string) => void;
   className?: string;
   placeholder?: string;
@@ -11,7 +12,8 @@ interface EditableTextProps {
   isPreview?: boolean;
 }
 
-export function EditableText({
+export default function EditableText({
+  value,
   text,
   onSave,
   className = '',
@@ -20,13 +22,14 @@ export function EditableText({
   isPreview = false
 }: EditableTextProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [editValue, setEditValue] = useState(text);
+  const displayText = value || text || '';
+  const [editValue, setEditValue] = useState(displayText);
   const [isHovered, setIsHovered] = useState(false);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    setEditValue(text);
-  }, [text]);
+    setEditValue(displayText);
+  }, [displayText]);
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -49,7 +52,7 @@ export function EditableText({
   };
 
   const handleCancel = () => {
-    setEditValue(text);
+    setEditValue(displayText);
     setIsEditing(false);
   };
 
@@ -66,7 +69,7 @@ export function EditableText({
   };
 
   if (!isPreview) {
-    return <span className={className}>{text}</span>;
+    return <span className={className}>{displayText}</span>;
   }
 
   if (isEditing) {
@@ -107,10 +110,13 @@ export function EditableText({
       onMouseLeave={() => setIsHovered(false)}
       title="Click to edit this text"
     >
-      {text || placeholder}
+      {displayText || placeholder}
       {isHovered && (
         <Edit2 className="h-3 w-3 absolute -top-1 -right-1 bg-blue-500 text-white rounded-full p-0.5 opacity-75" />
       )}
     </span>
   );
 }
+
+// Named export for consistency
+export { EditableText };

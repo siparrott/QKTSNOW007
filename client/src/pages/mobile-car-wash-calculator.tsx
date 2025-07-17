@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { QuoteKitHeader } from "@/components/calculator-header";
+import EditableText from "@/components/editable-text";
 import { 
   Car, 
   Clock, 
@@ -55,11 +56,31 @@ interface MobileCarWashCalculatorProps {
   customConfig?: any;
   isPreview?: boolean;
   hideHeader?: boolean;
+  onConfigChange?: (config: any) => void;
 }
 
-export default function MobileCarWashCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: MobileCarWashCalculatorProps = {}) {
+export default function MobileCarWashCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false, onConfigChange }: MobileCarWashCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isProcessingAI, setIsProcessingAI] = useState(false);
+  const [textConfig, setTextConfig] = useState<any>(propConfig?.textContent || {});
+  
+  // Text customization functionality
+  const updateTextContent = (key: string, value: string) => {
+    const newConfig = {
+      ...textConfig,
+      [key]: value
+    };
+    setTextConfig(newConfig);
+    
+    // Notify parent component about the change
+    if (onConfigChange) {
+      onConfigChange({
+        ...propConfig,
+        textContent: newConfig
+      });
+    }
+  };
+  
   const [formData, setFormData] = useState<CarWashFormData>({
     vehicleSize: "",
     servicePackage: "",
@@ -311,11 +332,19 @@ export default function MobileCarWashCalculator({ customConfig: propConfig, isPr
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-blue-800 mb-2 flex items-center justify-center">
             <Droplets className="h-10 w-10 mr-3 text-blue-500" />
-            Mobile Car Wash Quote Calculator
+            <EditableText
+              value={textConfig.headline || "Mobile Car Wash Quote Calculator"}
+              onSave={(value) => updateTextContent('headline', value)}
+              className="flex-1"
+              isPreview={isPreview}
+            />
           </h1>
-          <p className="text-blue-600 max-w-2xl mx-auto font-medium">
-            Get instant pricing for professional mobile car wash services. We come to you with eco-friendly solutions and sparkling results.
-          </p>
+          <EditableText
+            value={textConfig.description || "Get instant pricing for professional mobile car wash services. We come to you with eco-friendly solutions and sparkling results."}
+            onSave={(value) => updateTextContent('description', value)}
+            className="text-blue-600 max-w-2xl mx-auto font-medium"
+            isPreview={isPreview}
+          />
           <div className="flex items-center justify-center mt-4 space-x-6 text-sm text-blue-500">
             <span className="flex items-center">
               <Droplets className="h-4 w-4 mr-1" />

@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { QuoteKitHeader } from "@/components/calculator-header";
+import EditableText from "@/components/editable-text";
 import { 
   Calendar, 
   Clock, 
@@ -113,12 +114,31 @@ interface VirtualAssistantCalculatorProps {
   customConfig?: any;
   isPreview?: boolean;
   hideHeader?: boolean;
+  onConfigChange?: (config: any) => void;
 }
 
-export default function VirtualAssistantCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: VirtualAssistantCalculatorProps = {}) {
+export default function VirtualAssistantCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false, onConfigChange }: VirtualAssistantCalculatorProps = {}) {
   const [step, setStep] = useState(1);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [aiInput, setAiInput] = useState("");
+  const [textConfig, setTextConfig] = useState<any>(propConfig?.textContent || {});
+  
+  // Text customization functionality
+  const updateTextContent = (key: string, value: string) => {
+    const newConfig = {
+      ...textConfig,
+      [key]: value
+    };
+    setTextConfig(newConfig);
+    
+    // Notify parent component about the change
+    if (onConfigChange) {
+      onConfigChange({
+        ...propConfig,
+        textContent: newConfig
+      });
+    }
+  };
   const [quote, setQuote] = useState<VirtualAssistantQuote>({
     serviceType: '',
     hoursPerWeek: '',
@@ -258,12 +278,18 @@ export default function VirtualAssistantCalculator({ customConfig: propConfig, i
                 <User className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Virtual Assistant Quote Calculator
-            </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Get an instant estimate for professional virtual assistant services tailored to your business needs
-            </p>
+            <EditableText
+              value={textConfig.headline || "Virtual Assistant Quote Calculator"}
+              onSave={(value) => updateTextContent('headline', value)}
+              className="text-4xl font-bold text-gray-900 mb-4"
+              isPreview={isPreview}
+            />
+            <EditableText
+              value={textConfig.description || "Get an instant estimate for professional virtual assistant services tailored to your business needs"}
+              onSave={(value) => updateTextContent('description', value)}
+              className="text-xl text-gray-600 max-w-2xl mx-auto"
+              isPreview={isPreview}
+            />
           </motion.div>
 
           {/* AI Assistant Toggle */}

@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { QuoteKitHeader } from "@/components/calculator-header";
+import { EditableText } from "@/components/editable-text";
 import { 
   Plane, 
   Car, 
@@ -63,10 +64,29 @@ interface AirportTransferCalculatorProps {
   customConfig?: any;
   isPreview?: boolean;
   hideHeader?: boolean;
+  onConfigChange?: (config: any) => void;
 }
 
-export default function AirportTransferCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: AirportTransferCalculatorProps = {}) {
+export default function AirportTransferCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false, onConfigChange }: AirportTransferCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
+  const [textConfig, setTextConfig] = useState<any>(propConfig?.textContent || {});
+  
+  // Text customization functionality
+  const updateTextContent = (key: string, value: string) => {
+    const newConfig = {
+      ...textConfig,
+      [key]: value
+    };
+    setTextConfig(newConfig);
+    
+    // Notify parent component about the change
+    if (onConfigChange) {
+      onConfigChange({
+        ...propConfig,
+        textContent: newConfig
+      });
+    }
+  };
   const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [quoteGenerated, setQuoteGenerated] = useState(false);
   const [formData, setFormData] = useState<AirportTransferFormData>({
@@ -346,10 +366,20 @@ export default function AirportTransferCalculator({ customConfig: propConfig, is
         {/* Hero Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-blue-700 to-sky-600 mb-4">
-            Airport Transfer Services
+            <EditableText
+              value={textConfig.heroTitle || "Airport Transfer Services"}
+              onSave={(value) => updateTextContent('heroTitle', value)}
+              className="inline-block"
+              isPreview={isPreview}
+            />
           </h1>
           <p className="text-blue-700 max-w-2xl mx-auto font-medium text-lg">
-            Professional airport transfers with punctual service, comfortable vehicles, and competitive rates.
+            <EditableText
+              value={textConfig.heroDescription || "Professional airport transfers with punctual service, comfortable vehicles, and competitive rates."}
+              onSave={(value) => updateTextContent('heroDescription', value)}
+              className="inline-block"
+              isPreview={isPreview}
+            />
           </p>
           <div className="flex items-center justify-center mt-6 space-x-8 text-sm text-blue-600">
             <span className="flex items-center">

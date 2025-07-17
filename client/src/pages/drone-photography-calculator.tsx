@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { QuoteKitHeader } from "@/components/calculator-header";
+import { EditableText } from "@/components/editable-text";
 import { 
   Camera, 
   Clock, 
@@ -50,10 +51,29 @@ interface DronePhotographyCalculatorProps {
   customConfig?: any;
   isPreview?: boolean;
   hideHeader?: boolean;
+  onConfigChange?: (config: any) => void;
 }
 
-export default function DronePhotographyCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: DronePhotographyCalculatorProps = {}) {
+export default function DronePhotographyCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false, onConfigChange }: DronePhotographyCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
+  const [textConfig, setTextConfig] = useState<any>(propConfig?.textContent || {});
+  
+  // Text customization functionality
+  const updateTextContent = (key: string, value: string) => {
+    const newConfig = {
+      ...textConfig,
+      [key]: value
+    };
+    setTextConfig(newConfig);
+    
+    // Notify parent component about the change
+    if (onConfigChange) {
+      onConfigChange({
+        ...propConfig,
+        textContent: newConfig
+      });
+    }
+  };
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [formData, setFormData] = useState<DroneFormData>({
     projectType: "",
@@ -286,10 +306,20 @@ export default function DronePhotographyCalculator({ customConfig: propConfig, i
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-display text-white mb-2">
-            Drone & Aerial Photography Calculator
+            <EditableText
+              value={textConfig.heroTitle || "Drone & Aerial Photography Calculator"}
+              onSave={(value) => updateTextContent('heroTitle', value)}
+              className="inline-block"
+              isPreview={isPreview}
+            />
           </h1>
           <p className="text-cyan-200 max-w-2xl mx-auto font-body">
-            Get an instant quote for your aerial photography project. Professional pilots, cinematic results.
+            <EditableText
+              value={textConfig.heroDescription || "Get an instant quote for your aerial photography project. Professional pilots, cinematic results."}
+              onSave={(value) => updateTextContent('heroDescription', value)}
+              className="inline-block"
+              isPreview={isPreview}
+            />
           </p>
         </div>
 

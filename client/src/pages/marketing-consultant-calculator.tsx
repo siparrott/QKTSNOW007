@@ -69,6 +69,20 @@ export default function MarketingConsultantCalculator({ customConfig: propConfig
   
   // Use the propConfig as customConfig for consistency
   const customConfig = propConfig;
+  const [textConfig, setTextConfig] = useState<any>({});
+  
+  // Text customization functionality
+  const updateTextContent = (key: string, value: string) => {
+    setTextConfig(prev => ({ ...prev, [key]: value }));
+    // Send update to parent if in preview mode
+    if (isPreview) {
+      window.parent?.postMessage({
+        type: 'TEXT_UPDATE',
+        key,
+        value
+      }, '*');
+    }
+  };
   const [formData, setFormData] = useState<MarketingConsultantFormData>({
     marketingGoal: "",
     serviceFocus: "",

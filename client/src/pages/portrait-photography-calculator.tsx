@@ -291,9 +291,17 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
     let durationAdd = 0;
     let locationAdd = 0;
     let wardrobeAdd = 0;
+    let portraitTypeAdd = 0;
     let addOnsTotal = 0;
     let usageAdd = 0;
     const breakdown: string[] = [`Base session: ${currencySymbol}${baseSession}`];
+
+    // Portrait type/group size pricing
+    const portraitType = portraitTypes.find(p => p.id === formData.portraitType);
+    if (portraitType && portraitType.price > 0) {
+      portraitTypeAdd = portraitType.price;
+      breakdown.push(`${portraitType.label}: ${currencySymbol}${portraitTypeAdd}`);
+    }
 
     // Duration pricing - use custom duration multipliers if available
     const duration = durations.find(d => d.id === formData.duration);
@@ -318,14 +326,14 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
       }
     }
 
-    // Location pricing - use custom location fee
+    // Location pricing - use actual location pricing from configuration
     const location = locations.find(l => l.id === formData.location);
-    if (location && location.id !== 'studio') {
-      locationAdd = locationFee;
+    if (location && location.price > 0) {
+      locationAdd = location.price;
       breakdown.push(`${location.label}: ${currencySymbol}${locationAdd}`);
     }
 
-    // Wardrobe changes pricing
+    // Wardrobe changes pricing - use actual wardrobe pricing from configuration
     const wardrobe = wardrobeOptions.find(w => w.id === formData.wardrobeChanges);
     if (wardrobe && wardrobe.price > 0) {
       wardrobeAdd = wardrobe.price;
@@ -363,7 +371,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
       breakdown.push(`${usage.label}: ${currencySymbol}${usageAdd}`);
     }
 
-    const subtotal = baseSession + durationAdd + locationAdd + wardrobeAdd + addOnsTotal + usageAdd;
+    const subtotal = baseSession + durationAdd + locationAdd + wardrobeAdd + portraitTypeAdd + addOnsTotal + usageAdd;
     
     // Promo code discount
     let discount = 0;
@@ -379,6 +387,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
       durationAdd,
       locationAdd,
       wardrobeAdd,
+      portraitTypeAdd,
       addOnsTotal,
       usageAdd,
       subtotal,

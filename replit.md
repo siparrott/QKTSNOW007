@@ -157,9 +157,15 @@ Changelog:
   * Currency selection support (EUR, USD, GBP, CHF, CAD, AUD) 
   * Add-on services manager with custom pricing
   * Duration pricing multipliers system
+  * Session Duration Pricing controls (+€75, +€150 amounts configurable)
+  * Group Size Pricing configuration (Individual, Couple, Family pricing)
+  * Location Pricing controls (+€60 amounts for Outdoor, Client location)
+  * Wardrobe Changes Pricing controls (+€40, +€80 amounts for outfit changes)
   * Real-time preview updates for all pricing changes
   * Connected calculator pricing logic to custom configuration
+  * Fixed calculator to use dynamic pricing instead of hardcoded values
   * All currency symbols update throughout calculator interface
+  * Every pricing field now fully customizable without code access
 - July 16, 2025. Comprehensive SEO optimization package implemented
   * Added SEO Head component for dynamic meta tag management
   * Implemented server-side SEO routes (sitemap.xml, robots.txt)

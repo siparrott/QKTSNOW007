@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { QuoteKitHeader } from "@/components/calculator-header";
+import { EditableText } from "@/components/editable-text";
 import { 
   Baby, 
   Clock, 
@@ -64,6 +65,8 @@ export default function NewbornPhotographyCalculator({ customConfig: propConfig,
   
   // Use the propConfig as customConfig for consistency
   const customConfig = propConfig;
+  const [textConfig, setTextConfig] = useState<any>({});
+  
   const [formData, setFormData] = useState<NewbornFormData>({
     sessionType: "",
     babyAge: "",
@@ -79,6 +82,19 @@ export default function NewbornPhotographyCalculator({ customConfig: propConfig,
       phone: "",
     },
   });
+
+  // Text customization functionality
+  const updateTextContent = (key: string, value: string) => {
+    setTextConfig(prev => ({ ...prev, [key]: value }));
+    // Send update to parent if in preview mode
+    if (isPreview) {
+      window.parent?.postMessage({
+        type: 'TEXT_UPDATE',
+        key,
+        value
+      }, '*');
+    }
+  };
 
   const sessionTypes = [
     { id: "classic-studio", label: "Classic Studio (posed)", basePrice: 290, icon: "👶", popular: true },
@@ -295,6 +311,23 @@ export default function NewbornPhotographyCalculator({ customConfig: propConfig,
     <div className="min-h-screen bg-gradient-to-br from-rose-25 via-pink-25 to-stone-50">
       {!hideHeader && <QuoteKitHeader />}
       <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <EditableText
+            text={textConfig?.mainTitle || customConfig?.textCustomization?.headline || "Newborn Photography Calculator"}
+            onSave={(value) => updateTextContent('mainTitle', value)}
+            isPreview={isPreview}
+            placeholder="Newborn Photography Calculator"
+            className="text-4xl font-serif text-stone-800 mb-2 block"
+          />
+          <EditableText
+            text={textConfig?.subtitle || customConfig?.textCustomization?.description || "Capture these fleeting moments with gentle, professional newborn photography. Get your personalized quote for your precious new arrival."}
+            onSave={(value) => updateTextContent('subtitle', value)}
+            isPreview={isPreview}
+            placeholder="Capture these fleeting moments with gentle, professional newborn photography..."
+            className="text-stone-600 max-w-2xl mx-auto font-light block"
+          />
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Form */}

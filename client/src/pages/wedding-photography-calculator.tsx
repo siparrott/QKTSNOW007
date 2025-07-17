@@ -705,9 +705,10 @@ export default function WeddingPhotographyCalculator({
                     `${customConfig?.companyBranding?.companyName || customConfig?.companyName} - Wedding Photography` : 
                     "Wedding Photography Quote Calculator")
                   }
-              onUpdate={(value) => updateTextContent('headline', value)}
+              onSave={(value) => updateTextContent('headline', value)}
               placeholder="Enter calculator headline..."
               className="text-4xl font-serif text-stone-800"
+              isPreview={true}
             />
           </h1>
           <p className="text-stone-600 max-w-2xl mx-auto font-light">
@@ -715,9 +716,10 @@ export default function WeddingPhotographyCalculator({
               text={textConfig.description || customConfig?.textCustomization?.description || customConfig?.description || 
                    "Create beautiful memories with professional wedding photography. Get your personalized quote for your special day."
                   }
-              onUpdate={(value) => updateTextContent('description', value)}
+              onSave={(value) => updateTextContent('description', value)}
               placeholder="Enter calculator description..."
               className="text-stone-600 font-light"
+              isPreview={true}
             />
           </p>
         </div>
@@ -801,9 +803,10 @@ export default function WeddingPhotographyCalculator({
                         <h3 className="text-lg font-serif text-stone-700 mb-3">
                           <EditableText
                             text={textConfig.packageTypeLabel || "Package Type"}
-                            onUpdate={(value) => updateTextContent('packageTypeLabel', value)}
+                            onSave={(value) => updateTextContent('packageTypeLabel', value)}
                             placeholder="Enter section label..."
                             className="text-lg font-serif text-stone-700"
+                            isPreview={true}
                           />
                         </h3>
                         <div className="grid grid-cols-2 gap-4">
@@ -832,9 +835,10 @@ export default function WeddingPhotographyCalculator({
                         <h3 className="text-lg font-serif text-stone-700 mb-3">
                           <EditableText
                             text={textConfig.coverageHoursLabel || "Coverage Hours"}
-                            onUpdate={(value) => updateTextContent('coverageHoursLabel', value)}
+                            onSave={(value) => updateTextContent('coverageHoursLabel', value)}
                             placeholder="Enter section label..."
                             className="text-lg font-serif text-stone-700"
+                            isPreview={true}
                           />
                         </h3>
                         <div className="grid grid-cols-2 gap-4">
@@ -872,9 +876,10 @@ export default function WeddingPhotographyCalculator({
                       <MapPin className="h-6 w-6 mr-2 text-rose-400" />
                       <EditableText
                         text={textConfig.locationsLabel || "Locations and additional services"}
-                        onUpdate={(value) => updateTextContent('locationsLabel', value)}
+                        onSave={(value) => updateTextContent('locationsLabel', value)}
                         placeholder="Enter section label..."
                         className="text-2xl font-serif text-stone-800"
+                        isPreview={true}
                       />
                     </h2>
                     
@@ -883,9 +888,10 @@ export default function WeddingPhotographyCalculator({
                         <h3 className="text-lg font-serif text-stone-700 mb-3">
                           <EditableText
                             text={textConfig.numberOfLocationsLabel || "Number of Locations"}
-                            onUpdate={(value) => updateTextContent('numberOfLocationsLabel', value)}
+                            onSave={(value) => updateTextContent('numberOfLocationsLabel', value)}
                             placeholder="Enter section label..."
                             className="text-lg font-serif text-stone-700"
+                            isPreview={true}
                           />
                         </h3>
                         <div className="grid grid-cols-3 gap-4">
@@ -913,9 +919,10 @@ export default function WeddingPhotographyCalculator({
                         <h3 className="text-lg font-serif text-stone-700 mb-3">
                           <EditableText
                             text={textConfig.deliveryOptionsLabel || "Delivery Options"}
-                            onUpdate={(value) => updateTextContent('deliveryOptionsLabel', value)}
+                            onSave={(value) => updateTextContent('deliveryOptionsLabel', value)}
                             placeholder="Enter section label..."
                             className="text-lg font-serif text-stone-700"
+                            isPreview={true}
                           />
                         </h3>
                         <div className="grid grid-cols-1 gap-3">
@@ -935,9 +942,10 @@ export default function WeddingPhotographyCalculator({
                         <h3 className="text-lg font-serif text-stone-700 mb-3">
                           <EditableText
                             text={textConfig.addOnsLabel || "Add-ons (Optional)"}
-                            onUpdate={(value) => updateTextContent('addOnsLabel', value)}
+                            onSave={(value) => updateTextContent('addOnsLabel', value)}
                             placeholder="Enter section label..."
                             className="text-lg font-serif text-stone-700"
+                            isPreview={true}
                           />
                         </h3>
                         <div className="grid grid-cols-1 gap-3">
@@ -1161,9 +1169,10 @@ export default function WeddingPhotographyCalculator({
               <h3 className="text-xl font-serif text-stone-800 mb-4">
                 <EditableText
                   text={textConfig.investmentTitle || "Your Wedding Investment"}
-                  onUpdate={(value) => updateTextContent('investmentTitle', value)}
+                  onSave={(value) => updateTextContent('investmentTitle', value)}
                   placeholder="Enter pricing section title..."
                   className="text-xl font-serif text-stone-800"
+                  isPreview={true}
                 />
               </h3>
               
@@ -1199,17 +1208,19 @@ export default function WeddingPhotographyCalculator({
                     <h3 className="text-lg font-serif text-stone-800">
                       <EditableText
                         text={textConfig.ctaTitle || "Ready to Capture Your Love Story?"}
-                        onUpdate={(value) => updateTextContent('ctaTitle', value)}
+                        onSave={(value) => updateTextContent('ctaTitle', value)}
                         placeholder="Enter call-to-action title..."
                         className="text-lg font-serif text-stone-800"
+                        isPreview={true}
                       />
                     </h3>
                     <p className="text-sm text-stone-600">
                       <EditableText
                         text={textConfig.ctaDescription || "This quote is valid for 72 hours. Award-winning wedding photographer with stunning portfolio."}
-                        onUpdate={(value) => updateTextContent('ctaDescription', value)}
+                        onSave={(value) => updateTextContent('ctaDescription', value)}
                         placeholder="Enter call-to-action description..."
                         className="text-sm text-stone-600"
+                        isPreview={true}
                       />
                     </p>
                     

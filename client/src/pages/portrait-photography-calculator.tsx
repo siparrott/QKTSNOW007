@@ -253,7 +253,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
 
   const calculatePricing = (): PricingBreakdown => {
     // Use custom pricing configuration if available, otherwise use defaults
-    const baseSession = customConfig?.basePrice || 150;
+    const baseSession = customConfig?.basePrice ?? 150;
     const locationFee = customConfig?.locationFee || 50;
     const currency = customConfig?.currency || 'EUR';
     const currencySymbol = currency === 'USD' ? '$' : currency === 'GBP' ? '£' : currency === 'CHF' ? '₣' : '€';

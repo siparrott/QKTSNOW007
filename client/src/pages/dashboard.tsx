@@ -702,13 +702,57 @@ export default function Dashboard() {
 
   const customizeCalculator = (calc: UserCalculator) => {
     setSelectedCalculator(calc);
-    setCustomConfig(calc.config || {});
+    // Merge existing config with pricing defaults
+    const existingConfig = calc.config || {};
+    const configWithDefaults = {
+      // Pricing defaults
+      basePrice: 200,
+      hourlyRate: 100,
+      locationFee: 50,
+      currency: 'EUR',
+      addOnPrices: [
+        { name: "Rush delivery", price: 100 },
+        { name: "Print package", price: 150 },
+        { name: "Social media package", price: 75 }
+      ],
+      durationPrices: [
+        { duration: "30 minutes", multiplier: 0.5 },
+        { duration: "1 hour", multiplier: 1 },
+        { duration: "2 hours", multiplier: 1.8 },
+        { duration: "Half day", multiplier: 3 }
+      ],
+      // Merge with existing config (existing config takes precedence)
+      ...existingConfig
+    };
+    setCustomConfig(configWithDefaults);
     setShowCustomizeModal(true);
   };
 
   const previewCalculator = (calc: UserCalculator) => {
     setSelectedCalculator(calc);
-    setCustomConfig(calc.config || {});
+    // Merge existing config with pricing defaults
+    const existingConfig = calc.config || {};
+    const configWithDefaults = {
+      // Pricing defaults
+      basePrice: 200,
+      hourlyRate: 100,
+      locationFee: 50,
+      currency: 'EUR',
+      addOnPrices: [
+        { name: "Rush delivery", price: 100 },
+        { name: "Print package", price: 150 },
+        { name: "Social media package", price: 75 }
+      ],
+      durationPrices: [
+        { duration: "30 minutes", multiplier: 0.5 },
+        { duration: "1 hour", multiplier: 1 },
+        { duration: "2 hours", multiplier: 1.8 },
+        { duration: "Half day", multiplier: 3 }
+      ],
+      // Merge with existing config (existing config takes precedence)
+      ...existingConfig
+    };
+    setCustomConfig(configWithDefaults);
     setShowPreviewModal(true);
   };
 

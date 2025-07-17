@@ -49,6 +49,8 @@ interface PricingBreakdown {
   discount: number;
   total: number;
   breakdown: string[];
+  currency: string;
+  currencySymbol: string;
 }
 
 interface PortraitPhotographyCalculatorProps {
@@ -250,41 +252,77 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
   ];
 
   const calculatePricing = (): PricingBreakdown => {
-    const baseSession = 150; // Base: 30 min, studio, 1 outfit
+    // Use custom pricing configuration if available, otherwise use defaults
+    const baseSession = customConfig?.basePrice || 150;
+    const locationFee = customConfig?.locationFee || 50;
+    const currency = customConfig?.currency || 'EUR';
+    const currencySymbol = currency === 'USD' ? '$' : currency === 'GBP' ? '£' : currency === 'CHF' ? '₣' : '€';
+    
     let durationAdd = 0;
     let locationAdd = 0;
     let wardrobeAdd = 0;
     let addOnsTotal = 0;
     let usageAdd = 0;
-    const breakdown: string[] = [`Base session (30min, studio, 1 outfit): €${baseSession}`];
+    const breakdown: string[] = [`Base session: ${currencySymbol}${baseSession}`];
 
-    // Duration pricing
+    // Duration pricing - use custom duration multipliers if available
     const duration = durations.find(d => d.id === formData.duration);
-    if (duration && duration.price > 0) {
-      durationAdd = duration.price;
-      breakdown.push(`${duration.label}: €${durationAdd}`);
+    if (duration) {
+      const durationPrices = customConfig?.durationPrices || [
+        { duration: "30 minutes", multiplier: 0.5 },
+        { duration: "1 hour", multiplier: 1 },
+        { duration: "2 hours", multiplier: 1.8 },
+        { duration: "Half day", multiplier: 3 }
+      ];
+      
+      const customDuration = durationPrices.find(dp => 
+        dp.duration.toLowerCase().includes(duration.id.replace('-', ' ')) ||
+        duration.label.toLowerCase().includes(dp.duration.toLowerCase())
+      );
+      
+      if (customDuration && customDuration.multiplier !== 1) {
+        durationAdd = Math.round(baseSession * (customDuration.multiplier - 1));
+        if (durationAdd > 0) {
+          breakdown.push(`${duration.label} (${customDuration.multiplier}×): ${currencySymbol}${durationAdd}`);
+        }
+      }
     }
 
-    // Location pricing
+    // Location pricing - use custom location fee
     const location = locations.find(l => l.id === formData.location);
-    if (location && location.price > 0) {
-      locationAdd = location.price;
-      breakdown.push(`${location.label}: €${locationAdd}`);
+    if (location && location.id !== 'studio') {
+      locationAdd = locationFee;
+      breakdown.push(`${location.label}: ${currencySymbol}${locationAdd}`);
     }
 
     // Wardrobe changes pricing
     const wardrobe = wardrobeOptions.find(w => w.id === formData.wardrobeChanges);
     if (wardrobe && wardrobe.price > 0) {
       wardrobeAdd = wardrobe.price;
-      breakdown.push(`${wardrobe.label}: €${wardrobeAdd}`);
+      breakdown.push(`${wardrobe.label}: ${currencySymbol}${wardrobeAdd}`);
     }
 
-    // Add-ons pricing
+    // Add-ons pricing - use custom add-on prices if available
     formData.addOns.forEach(addOnId => {
       const addOn = addOnOptions.find(a => a.id === addOnId);
-      if (addOn && addOn.price > 0) {
-        addOnsTotal += addOn.price;
-        breakdown.push(`${addOn.label}: €${addOn.price}`);
+      if (addOn) {
+        let addOnPrice = addOn.price;
+        
+        // Check for custom add-on pricing
+        if (customConfig?.addOnPrices) {
+          const customAddOn = customConfig.addOnPrices.find((cap: any) => 
+            cap.name.toLowerCase().includes(addOn.label.toLowerCase()) ||
+            addOn.label.toLowerCase().includes(cap.name.toLowerCase())
+          );
+          if (customAddOn) {
+            addOnPrice = customAddOn.price;
+          }
+        }
+        
+        if (addOnPrice > 0) {
+          addOnsTotal += addOnPrice;
+          breakdown.push(`${addOn.label}: ${currencySymbol}${addOnPrice}`);
+        }
       }
     });
 
@@ -292,7 +330,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
     const usage = usageTypes.find(u => u.id === formData.usageType);
     if (usage && usage.price > 0) {
       usageAdd = usage.price;
-      breakdown.push(`${usage.label}: €${usageAdd}`);
+      breakdown.push(`${usage.label}: ${currencySymbol}${usageAdd}`);
     }
 
     const subtotal = baseSession + durationAdd + locationAdd + wardrobeAdd + addOnsTotal + usageAdd;
@@ -301,7 +339,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
     let discount = 0;
     if (formData.promoCode.toLowerCase() === "portrait10") {
       discount = subtotal * 0.1;
-      breakdown.push(`Promo code discount (10%): -€${discount.toFixed(2)}`);
+      breakdown.push(`Promo code discount (10%): -${currencySymbol}${discount.toFixed(2)}`);
     }
 
     const total = subtotal - discount;
@@ -317,6 +355,8 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
       discount,
       total,
       breakdown,
+      currency,
+      currencySymbol,
     };
   };
 
@@ -929,12 +969,12 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                     {pricing.discount > 0 && (
                       <div className="flex justify-between text-green-600 font-semibold">
                         <span>Discount</span>
-                        <span>-€{pricing.discount.toFixed(2)}</span>
+                        <span>-{pricing.currencySymbol}{pricing.discount.toFixed(2)}</span>
                       </div>
                     )}
                     <div className="border-t border-gray-200 pt-2 flex justify-between font-bold text-gray-800">
                       <span>Total</span>
-                      <span>€{pricing.total.toLocaleString()}</span>
+                      <span>{pricing.currencySymbol}{pricing.total.toLocaleString()}</span>
                     </div>
                   </div>
                 )}
@@ -964,7 +1004,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                       className="w-full bg-rose-500 hover:bg-rose-600 text-white py-3 font-semibold rounded-lg"
                       onClick={() => {
                         const subject = "Portrait Photography Booking";
-                        const body = `I'm ready to book my portrait session! My quote is €${pricing.total.toLocaleString()}`;
+                        const body = `I'm ready to book my portrait session! My quote is ${pricing.currencySymbol}${pricing.total.toLocaleString()}`;
                         const mailtoUrl = `mailto:info@portraitstudio.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
                         window.open(mailtoUrl, "_blank");
                       }}

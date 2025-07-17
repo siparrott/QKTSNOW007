@@ -721,6 +721,18 @@ export default function Dashboard() {
         { duration: "2 hours", multiplier: 1.8 },
         { duration: "Half day", multiplier: 3 }
       ],
+      sessionDurations: [
+        { id: "30-min", label: "30 minutes", price: 0, icon: "⏰" },
+        { id: "1-hour", label: "1 hour", price: 75, icon: "🕐" },
+        { id: "2-hours", label: "2 hours", price: 150, icon: "⏱️" }
+      ],
+      groupPrices: [
+        { id: "individual", label: "Individual", price: 0, icon: "👤" },
+        { id: "couple", label: "Couple", price: 50, icon: "💕" },
+        { id: "family", label: "Family", price: 100, icon: "👨‍👩‍👧‍👦" },
+        { id: "senior", label: "Senior / Graduation", price: 0, icon: "🎓" },
+        { id: "branding", label: "Branding / Business", price: 80, icon: "💼" }
+      ],
       // Merge with existing config (existing config takes precedence)
       ...existingConfig
     };
@@ -748,6 +760,18 @@ export default function Dashboard() {
         { duration: "1 hour", multiplier: 1 },
         { duration: "2 hours", multiplier: 1.8 },
         { duration: "Half day", multiplier: 3 }
+      ],
+      sessionDurations: [
+        { id: "30-min", label: "30 minutes", price: 0, icon: "⏰" },
+        { id: "1-hour", label: "1 hour", price: 75, icon: "🕐" },
+        { id: "2-hours", label: "2 hours", price: 150, icon: "⏱️" }
+      ],
+      groupPrices: [
+        { id: "individual", label: "Individual", price: 0, icon: "👤" },
+        { id: "couple", label: "Couple", price: 50, icon: "💕" },
+        { id: "family", label: "Family", price: 100, icon: "👨‍👩‍👧‍👦" },
+        { id: "senior", label: "Senior / Graduation", price: 0, icon: "🎓" },
+        { id: "branding", label: "Branding / Business", price: 80, icon: "💼" }
       ],
       // Merge with existing config (existing config takes precedence)
       ...existingConfig
@@ -1344,6 +1368,82 @@ export default function Dashboard() {
                           <p className="text-xs text-gray-400 mt-2">
                             Multiplier × Base Price = Final Price for duration
                           </p>
+                        </div>
+
+                        {/* Session Duration Direct Pricing */}
+                        <div className="border border-midnight-600 rounded-lg p-4">
+                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Session Duration Pricing</h4>
+                          <p className="text-xs text-gray-400 mb-3">Control the +€75, +€150 amounts shown in calculator</p>
+                          <div className="space-y-3">
+                            {(customConfig.sessionDurations || [
+                              { id: "30-min", label: "30 minutes", price: 0, icon: "⏰" },
+                              { id: "1-hour", label: "1 hour", price: 75, icon: "🕐" },
+                              { id: "2-hours", label: "2 hours", price: 150, icon: "⏱️" }
+                            ]).map((duration, index) => (
+                              <div key={index} className="grid grid-cols-2 gap-2">
+                                <Input
+                                  placeholder="Duration Label"
+                                  value={duration.label}
+                                  onChange={(e) => {
+                                    const newDurations = [...(customConfig.sessionDurations || [])];
+                                    newDurations[index] = { ...duration, label: e.target.value };
+                                    setCustomConfig({...customConfig, sessionDurations: newDurations});
+                                  }}
+                                  className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                />
+                                <Input
+                                  type="number"
+                                  placeholder="Extra Price (€)"
+                                  value={duration.price}
+                                  onChange={(e) => {
+                                    const newDurations = [...(customConfig.sessionDurations || [])];
+                                    newDurations[index] = { ...duration, price: Number(e.target.value) || 0 };
+                                    setCustomConfig({...customConfig, sessionDurations: newDurations});
+                                  }}
+                                  className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Group Size Pricing */}
+                        <div className="border border-midnight-600 rounded-lg p-4">
+                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Group Size Pricing</h4>
+                          <p className="text-xs text-gray-400 mb-3">Pricing for Individual, Couple, Family, etc.</p>
+                          <div className="space-y-3">
+                            {(customConfig.groupPrices || [
+                              { id: "individual", label: "Individual", price: 0, icon: "👤" },
+                              { id: "couple", label: "Couple", price: 50, icon: "💕" },
+                              { id: "family", label: "Family", price: 100, icon: "👨‍👩‍👧‍👦" },
+                              { id: "senior", label: "Senior / Graduation", price: 0, icon: "🎓" },
+                              { id: "branding", label: "Branding / Business", price: 80, icon: "💼" }
+                            ]).map((group, index) => (
+                              <div key={index} className="grid grid-cols-2 gap-2">
+                                <Input
+                                  placeholder="Group Type"
+                                  value={group.label}
+                                  onChange={(e) => {
+                                    const newGroups = [...(customConfig.groupPrices || [])];
+                                    newGroups[index] = { ...group, label: e.target.value };
+                                    setCustomConfig({...customConfig, groupPrices: newGroups});
+                                  }}
+                                  className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                />
+                                <Input
+                                  type="number"
+                                  placeholder="Extra Price (€)"
+                                  value={group.price}
+                                  onChange={(e) => {
+                                    const newGroups = [...(customConfig.groupPrices || [])];
+                                    newGroups[index] = { ...group, price: Number(e.target.value) || 0 };
+                                    setCustomConfig({...customConfig, groupPrices: newGroups});
+                                  }}
+                                  className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                />
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>

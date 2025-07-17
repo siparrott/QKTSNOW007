@@ -211,19 +211,34 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
     },
   });
 
-  const portraitTypes = [
-    { id: "individual", label: "Individual", icon: "👤", popular: true },
-    { id: "couple", label: "Couple", icon: "💕", popular: true },
-    { id: "family", label: "Family", icon: "👨‍👩‍👧‍👦" },
-    { id: "senior", label: "Senior / Graduation", icon: "🎓" },
-    { id: "branding", label: "Branding / Business", icon: "💼", popular: true },
-  ];
+  // Use custom group pricing if available
+  const getGroupPricing = () => {
+    if (customConfig?.groupPrices) {
+      return customConfig.groupPrices;
+    }
+    return [
+      { id: "individual", label: "Individual", price: 0, icon: "👤", popular: true },
+      { id: "couple", label: "Couple", price: 50, icon: "💕", popular: true },
+      { id: "family", label: "Family", price: 100, icon: "👨‍👩‍👧‍👦" },
+      { id: "senior", label: "Senior / Graduation", price: 0, icon: "🎓" },
+      { id: "branding", label: "Branding / Business", price: 80, icon: "💼", popular: true },
+    ];
+  };
 
-  const durations = [
-    { id: "30-min", label: "30 minutes", price: 0, icon: "⏰" },
-    { id: "1-hour", label: "1 hour", price: 75, icon: "🕐", popular: true },
-    { id: "2-hours", label: "2 hours", price: 150, icon: "⏱️" },
-  ];
+  // Use custom duration pricing if available
+  const getDurationPricing = () => {
+    if (customConfig?.sessionDurations) {
+      return customConfig.sessionDurations;
+    }
+    return [
+      { id: "30-min", label: "30 minutes", price: 0, icon: "⏰" },
+      { id: "1-hour", label: "1 hour", price: 75, icon: "🕐", popular: true },
+      { id: "2-hours", label: "2 hours", price: 150, icon: "⏱️" },
+    ];
+  };
+
+  const portraitTypes = getGroupPricing();
+  const durations = getDurationPricing();
 
   const locations = [
     { id: "studio", label: "Studio", price: 0, icon: "🏢" },

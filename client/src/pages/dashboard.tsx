@@ -197,6 +197,14 @@ export default function Dashboard() {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [checkoutUrl, setCheckoutUrl] = useState("");
+  
+  // Clear test data function
+  const clearTestData = () => {
+    const userSession = localStorage.getItem('user_session');
+    const userCalculatorKey = `userCalculators_${userSession}`;
+    localStorage.removeItem(userCalculatorKey);
+    window.location.reload();
+  };
   const [selectedCalculator, setSelectedCalculator] = useState<UserCalculator | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -618,7 +626,7 @@ export default function Dashboard() {
       id: `calc_${Date.now()}`,
       name: template.name,
       slug: `${template.slug}-${Date.now()}`,
-      embed_url: `https://quotekits.com/embed/${embedId}`,
+      embed_url: `${window.location.origin}/embed/${embedId}`,
       admin_url: `${window.location.origin}/dashboard`,
       embedId: embedId,
       calculator_id: parseInt(template.id),
@@ -823,14 +831,24 @@ export default function Dashboard() {
                   {user.calculatorsUsed}/{user.calculatorLimit} calculators • {user.quotesUsedThisMonth}/{user.quotesLimit} quotes used
                 </p>
               </div>
-              {user.subscriptionStatus === 'free' && (
-                <Button 
-                  onClick={() => setShowUpgradeModal(true)}
-                  className="bg-neon-500 hover:bg-neon-600 text-black font-medium"
+              <div className="flex space-x-2">
+                {user.subscriptionStatus === 'free' && (
+                  <Button 
+                    onClick={() => setShowUpgradeModal(true)}
+                    className="bg-neon-500 hover:bg-neon-600 text-black font-medium"
+                  >
+                    Upgrade Now
+                  </Button>
+                )}
+                <Button
+                  onClick={clearTestData}
+                  variant="outline"
+                  size="sm"
+                  className="border-red-600 text-red-400 hover:bg-red-600/10 hover:border-red-500"
                 >
-                  Upgrade Now
+                  Clear Test Data
                 </Button>
-              )}
+              </div>
             </div>
             
             {/* Usage bars */}

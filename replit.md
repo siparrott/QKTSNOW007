@@ -170,6 +170,17 @@ npm run dev    # Development with hot reload
 
 ```
 Changelog:
+- July 17, 2025. DOMAIN MIGRATION COMPLETE: All embed URLs now use quotekits.com
+  * FIXED: Replaced hardcoded replit.dev domains with quotekits.com across platform
+  * Updated embed URL generation in shared/supabase.ts to use CUSTOM_DOMAIN env var
+  * Modified dashboard embed code generation to show quotekits.com URLs
+  * All new calculator embeds will now properly use custom domain for SEO backlinks
+  * Existing embed codes may need regeneration to get new domain
+- July 17, 2025. WEDDING CALCULATOR EDITABLETEXT IMPLEMENTATION COMPLETE
+  * FIXED: Added proper onConfigChange callback system matching Portrait Calculator
+  * Implemented text config initialization and updates in applyCustomConfig
+  * All EditableText components now properly save changes with correct props (onSave, isPreview)
+  * Text customization functionality fully operational across Wedding Photography Calculator
 - July 17, 2025. MAJOR EDITABLETEXT EXPANSION: Successfully scaled to 27+ calculators
   * MASSIVE PROGRESS: Implemented EditableText functionality across 27+ calculators (up from 1)
   * COMPREHENSIVE COVERAGE: Photography (Portrait, Wedding, Boudoir, Commercial, Real Estate, Food, Maternity, Newborn), Home Services (Electrician, Roofing, Painting & Decorating, Interior Design), Wellness (Massage Therapy, Personal Training, Hair Stylist, Makeup Artist), Business Services (Copywriter, Web Designer, SEO Agency, Dentist, Childcare), Life Coaching (Nutritionist, Life Coach)

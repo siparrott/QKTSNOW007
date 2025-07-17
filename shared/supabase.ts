@@ -183,7 +183,7 @@ export async function cloneCalculator(userId: string, templateId: string): Promi
     // Create embed ID for unique calculator instance
     const embedId = `embed_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     // Point to the embed route that will serve the customized calculator
-    const baseUrl = process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : 'https://7c3afad0-e42a-4035-89da-60d967bcf12e-00-cahqkruxgnqx.spock.replit.dev';
+    const baseUrl = process.env.CUSTOM_DOMAIN || 'https://quotekits.com';
     const embedUrl = `${baseUrl}/embed/${embedId}`;
     const adminUrl = `${baseUrl}/dashboard`;
     

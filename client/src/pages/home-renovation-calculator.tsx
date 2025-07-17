@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { QuoteKitHeader } from "@/components/calculator-header";
+import { EditableText } from "@/components/editable-text";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -62,6 +63,20 @@ interface HomeRenovationCalculatorProps {
 export default function HomeRenovationCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: HomeRenovationCalculatorProps = {}) {
   const { toast } = useToast();
   const [customConfig, setCustomConfig] = useState<any>(propConfig || null);
+  const [textConfig, setTextConfig] = useState<any>({});
+  
+  // Text customization functionality
+  const updateTextContent = (key: string, value: string) => {
+    setTextConfig(prev => ({ ...prev, [key]: value }));
+    // Send update to parent if in preview mode
+    if (isPreview) {
+      window.parent?.postMessage({
+        type: 'TEXT_UPDATE',
+        key,
+        value
+      }, '*');
+    }
+  };
 
   // Use custom pricing configuration if available
   const getPricingConfig = () => {

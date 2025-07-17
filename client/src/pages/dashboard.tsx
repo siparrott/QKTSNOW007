@@ -743,6 +743,18 @@ export default function Dashboard() {
         { id: "2", label: "2 Outfits", price: 40, icon: "👔" },
         { id: "3+", label: "3+ Outfits", price: 80, icon: "👗" }
       ],
+      enhancementPrices: [
+        { id: "makeup", label: "Professional Makeup", price: 80 },
+        { id: "standard-retouching", label: "Standard Retouching", price: 0 },
+        { id: "deluxe-retouching", label: "Deluxe Retouching", price: 50 },
+        { id: "express-delivery", label: "Express Delivery", price: 50 },
+        { id: "extra-images", label: "Extra Images (+5)", price: 100 },
+        { id: "headshot-bundle", label: "Headshot Bundle", price: 75 }
+      ],
+      usagePrices: [
+        { id: "personal", label: "Personal Use", price: 0, icon: "🏠" },
+        { id: "commercial", label: "Commercial / Branding", price: 120, icon: "💼" }
+      ],
       // Merge with existing config (existing config takes precedence)
       ...existingConfig
     };
@@ -792,6 +804,18 @@ export default function Dashboard() {
         { id: "1", label: "1 Outfit", price: 0, icon: "👕" },
         { id: "2", label: "2 Outfits", price: 40, icon: "👔" },
         { id: "3+", label: "3+ Outfits", price: 80, icon: "👗" }
+      ],
+      enhancementPrices: [
+        { id: "makeup", label: "Professional Makeup", price: 80 },
+        { id: "standard-retouching", label: "Standard Retouching", price: 0 },
+        { id: "deluxe-retouching", label: "Deluxe Retouching", price: 50 },
+        { id: "express-delivery", label: "Express Delivery", price: 50 },
+        { id: "extra-images", label: "Extra Images (+5)", price: 100 },
+        { id: "headshot-bundle", label: "Headshot Bundle", price: 75 }
+      ],
+      usagePrices: [
+        { id: "personal", label: "Personal Use", price: 0, icon: "🏠" },
+        { id: "commercial", label: "Commercial / Branding", price: 120, icon: "💼" }
       ],
       // Merge with existing config (existing config takes precedence)
       ...existingConfig
@@ -1532,6 +1556,82 @@ export default function Dashboard() {
                                     const newWardrobe = [...(customConfig.wardrobePrices || [])];
                                     newWardrobe[index] = { ...wardrobe, price: Number(e.target.value) || 0 };
                                     setCustomConfig({...customConfig, wardrobePrices: newWardrobe});
+                                  }}
+                                  className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Add-on Services Pricing */}
+                        <div className="border border-midnight-600 rounded-lg p-4">
+                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Add-on Services Pricing</h4>
+                          <p className="text-xs text-gray-400 mb-3">Control Professional Makeup (+€80), Retouching, etc.</p>
+                          <div className="space-y-3">
+                            {(customConfig.enhancementPrices || [
+                              { id: "makeup", label: "Professional Makeup", price: 80 },
+                              { id: "standard-retouching", label: "Standard Retouching", price: 0 },
+                              { id: "deluxe-retouching", label: "Deluxe Retouching", price: 50 },
+                              { id: "express-delivery", label: "Express Delivery", price: 50 },
+                              { id: "extra-images", label: "Extra Images (+5)", price: 100 },
+                              { id: "headshot-bundle", label: "Headshot Bundle", price: 75 }
+                            ]).map((addon, index) => (
+                              <div key={index} className="grid grid-cols-2 gap-2">
+                                <Input
+                                  placeholder="Add-on Service"
+                                  value={addon.label}
+                                  onChange={(e) => {
+                                    const newAddons = [...(customConfig.enhancementPrices || [])];
+                                    newAddons[index] = { ...addon, label: e.target.value };
+                                    setCustomConfig({...customConfig, enhancementPrices: newAddons});
+                                  }}
+                                  className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                />
+                                <Input
+                                  type="number"
+                                  placeholder="Price (€)"
+                                  value={addon.price}
+                                  onChange={(e) => {
+                                    const newAddons = [...(customConfig.enhancementPrices || [])];
+                                    newAddons[index] = { ...addon, price: Number(e.target.value) || 0 };
+                                    setCustomConfig({...customConfig, enhancementPrices: newAddons});
+                                  }}
+                                  className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Usage Type Pricing */}
+                        <div className="border border-midnight-600 rounded-lg p-4">
+                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Usage Type Pricing</h4>
+                          <p className="text-xs text-gray-400 mb-3">Control Commercial/Branding (+€120) pricing</p>
+                          <div className="space-y-3">
+                            {(customConfig.usagePrices || [
+                              { id: "personal", label: "Personal Use", price: 0, icon: "🏠" },
+                              { id: "commercial", label: "Commercial / Branding", price: 120, icon: "💼" }
+                            ]).map((usage, index) => (
+                              <div key={index} className="grid grid-cols-2 gap-2">
+                                <Input
+                                  placeholder="Usage Type"
+                                  value={usage.label}
+                                  onChange={(e) => {
+                                    const newUsage = [...(customConfig.usagePrices || [])];
+                                    newUsage[index] = { ...usage, label: e.target.value };
+                                    setCustomConfig({...customConfig, usagePrices: newUsage});
+                                  }}
+                                  className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                />
+                                <Input
+                                  type="number"
+                                  placeholder="Extra Price (€)"
+                                  value={usage.price}
+                                  onChange={(e) => {
+                                    const newUsage = [...(customConfig.usagePrices || [])];
+                                    newUsage[index] = { ...usage, price: Number(e.target.value) || 0 };
+                                    setCustomConfig({...customConfig, usagePrices: newUsage});
                                   }}
                                   className="bg-midnight-900 border-midnight-600 text-white text-xs"
                                 />

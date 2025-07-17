@@ -267,19 +267,37 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
   const locations = getLocationPricing();
   const wardrobeOptions = getWardrobePricing();
 
-  const addOnOptions = [
-    { id: "makeup", label: "Professional Makeup", price: 80, popular: true },
-    { id: "standard-retouching", label: "Standard Retouching", price: 0 },
-    { id: "deluxe-retouching", label: "Deluxe Retouching", price: 50, popular: true },
-    { id: "express-delivery", label: "Express Delivery", price: 50 },
-    { id: "extra-images", label: "Extra Images (+5)", price: 100 },
-    { id: "headshot-bundle", label: "Headshot Bundle", price: 75 },
-  ];
+  // Use custom enhancement pricing if available
+  const getEnhancementPricing = () => {
+    if (customConfig?.enhancementPrices) {
+      return customConfig.enhancementPrices.map(addon => ({
+        ...addon,
+        popular: addon.id === "makeup" || addon.id === "deluxe-retouching"
+      }));
+    }
+    return [
+      { id: "makeup", label: "Professional Makeup", price: 80, popular: true },
+      { id: "standard-retouching", label: "Standard Retouching", price: 0 },
+      { id: "deluxe-retouching", label: "Deluxe Retouching", price: 50, popular: true },
+      { id: "express-delivery", label: "Express Delivery", price: 50 },
+      { id: "extra-images", label: "Extra Images (+5)", price: 100 },
+      { id: "headshot-bundle", label: "Headshot Bundle", price: 75 },
+    ];
+  };
 
-  const usageTypes = [
-    { id: "personal", label: "Personal Use", price: 0, icon: "🏠" },
-    { id: "commercial", label: "Commercial / Branding", price: 120, icon: "💼" },
-  ];
+  // Use custom usage pricing if available
+  const getUsagePricing = () => {
+    if (customConfig?.usagePrices) {
+      return customConfig.usagePrices;
+    }
+    return [
+      { id: "personal", label: "Personal Use", price: 0, icon: "🏠" },
+      { id: "commercial", label: "Commercial / Branding", price: 120, icon: "💼" },
+    ];
+  };
+
+  const addOnOptions = getEnhancementPricing();
+  const usageTypes = getUsagePricing();
 
   const calculatePricing = (): PricingBreakdown => {
     // Use custom pricing configuration if available, otherwise use defaults
@@ -340,31 +358,16 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
       breakdown.push(`${wardrobe.label}: ${currencySymbol}${wardrobeAdd}`);
     }
 
-    // Add-ons pricing - use custom add-on prices if available
+    // Add-ons pricing - use dynamic enhancement pricing from configuration
     formData.addOns.forEach(addOnId => {
       const addOn = addOnOptions.find(a => a.id === addOnId);
-      if (addOn) {
-        let addOnPrice = addOn.price;
-        
-        // Check for custom add-on pricing
-        if (customConfig?.addOnPrices) {
-          const customAddOn = customConfig.addOnPrices.find((cap: any) => 
-            cap.name.toLowerCase().includes(addOn.label.toLowerCase()) ||
-            addOn.label.toLowerCase().includes(cap.name.toLowerCase())
-          );
-          if (customAddOn) {
-            addOnPrice = customAddOn.price;
-          }
-        }
-        
-        if (addOnPrice > 0) {
-          addOnsTotal += addOnPrice;
-          breakdown.push(`${addOn.label}: ${currencySymbol}${addOnPrice}`);
-        }
+      if (addOn && addOn.price > 0) {
+        addOnsTotal += addOn.price;
+        breakdown.push(`${addOn.label}: ${currencySymbol}${addOn.price}`);
       }
     });
 
-    // Usage type pricing
+    // Usage type pricing - use dynamic usage pricing from configuration
     const usage = usageTypes.find(u => u.id === formData.usageType);
     if (usage && usage.price > 0) {
       usageAdd = usage.price;

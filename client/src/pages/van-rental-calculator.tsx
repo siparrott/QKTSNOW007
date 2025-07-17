@@ -67,6 +67,9 @@ export default function VanRentalCalculator({ customConfig: propConfig, isPrevie
   const [currentStep, setCurrentStep] = useState(1);
   const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [quoteGenerated, setQuoteGenerated] = useState(false);
+  
+  // Use the propConfig as customConfig for consistency
+  const customConfig = propConfig;
   const [formData, setFormData] = useState<VanRentalFormData>({
     rentalType: "",
     duration: "",

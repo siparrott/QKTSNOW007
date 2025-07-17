@@ -58,6 +58,9 @@ interface FoodPhotographyCalculatorProps {
 export default function FoodPhotographyCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: FoodPhotographyCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
+  
+  // Use the propConfig as customConfig for consistency
+  const customConfig = propConfig;
   const [formData, setFormData] = useState<FoodFormData>({
     clientType: "",
     dishCount: "",

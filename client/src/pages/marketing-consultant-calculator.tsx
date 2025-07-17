@@ -66,6 +66,9 @@ export default function MarketingConsultantCalculator({ customConfig: propConfig
   const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [quoteGenerated, setQuoteGenerated] = useState(false);
   const [showNaturalLanguage, setShowNaturalLanguage] = useState(false);
+  
+  // Use the propConfig as customConfig for consistency
+  const customConfig = propConfig;
   const [formData, setFormData] = useState<MarketingConsultantFormData>({
     marketingGoal: "",
     serviceFocus: "",

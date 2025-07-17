@@ -61,6 +61,9 @@ interface NewbornPhotographyCalculatorProps {
 export default function NewbornPhotographyCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: NewbornPhotographyCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
+  
+  // Use the propConfig as customConfig for consistency
+  const customConfig = propConfig;
   const [formData, setFormData] = useState<NewbornFormData>({
     sessionType: "",
     babyAge: "",

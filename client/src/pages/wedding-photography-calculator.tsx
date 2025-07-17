@@ -60,6 +60,7 @@ interface WeddingPhotographyCalculatorProps {
   forceDetailedView?: boolean;
   useComprehensiveCalculator?: boolean;
   calculatorType?: string;
+  onConfigChange?: (config: any) => void;
 }
 
 export default function WeddingPhotographyCalculator({ 
@@ -68,7 +69,8 @@ export default function WeddingPhotographyCalculator({
   hideHeader = false,
   forceDetailedView = false,
   useComprehensiveCalculator = false,
-  calculatorType
+  calculatorType,
+  onConfigChange
 }: WeddingPhotographyCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
@@ -76,17 +78,28 @@ export default function WeddingPhotographyCalculator({
   const [headline, setHeadline] = useState("Wedding Photography Quote Calculator");
   const [description, setDescription] = useState("Create beautiful memories with professional wedding photography. Get your personalized quote for your special day.");
   const [companyName, setCompanyName] = useState("Your Business");
-  const [textConfig, setTextConfig] = useState<any>({});
+  const [textConfig, setTextConfig] = useState<any>(propConfig?.textContent || {});
   
   // Text customization functionality
   const updateTextContent = (key: string, value: string) => {
-    setTextConfig(prev => ({ ...prev, [key]: value }));
+    const newConfig = {
+      ...textConfig,
+      [key]: value
+    };
+    setTextConfig(newConfig);
+    
+    // Send update to parent via callback if available
+    if (onConfigChange) {
+      onConfigChange(newConfig);
+    }
+    
     // Send update to parent if in preview mode
     if (isPreview) {
       window.parent?.postMessage({
         type: 'TEXT_UPDATE',
         key,
-        value
+        value,
+        textConfig: newConfig
       }, '*');
     }
   };
@@ -182,6 +195,11 @@ export default function WeddingPhotographyCalculator({
   const applyCustomConfig = (config: any) => {
     console.log('Applying config to wedding calculator:', config);
     setCustomConfig(config);
+    
+    // Update text config from the configuration
+    if (config.textContent) {
+      setTextConfig(prevText => ({ ...prevText, ...config.textContent }));
+    }
     
     // Update text content will be handled by component re-render
     

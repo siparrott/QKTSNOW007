@@ -71,44 +71,105 @@ export default function PestControlCalculator({ customConfig: propConfig, isPrev
     },
   });
 
-  const pestTypes = [
-    { id: "cockroaches", label: "Cockroaches", surcharge: 50, icon: "🪳", popular: true },
-    { id: "ants", label: "Ants", surcharge: 25, icon: "🐜", popular: true },
-    { id: "wasps", label: "Wasps/Bees", surcharge: 75, icon: "🐝" },
-    { id: "bedbugs", label: "Bedbugs", surcharge: 150, icon: "🛏️" },
-    { id: "rodents", label: "Rodents (Mice/Rats)", surcharge: 100, icon: "🐭", popular: true },
-    { id: "termites", label: "Termites", surcharge: 250, icon: "🪵" },
-    { id: "general", label: "General Pest Prevention", surcharge: 0, icon: "🛡️" },
-  ];
+  // Use custom pricing configuration if available
+  const getPestTypePricing = () => {
+    if (customConfig?.groupPrices) {
+      return customConfig.groupPrices.map((group: any) => ({
+        id: group.id,
+        label: group.label,
+        surcharge: group.price,
+        icon: group.icon || "🪳",
+        popular: ["cockroaches", "ants", "rodents"].includes(group.id)
+      }));
+    }
+    return [
+      { id: "cockroaches", label: "Cockroaches", surcharge: 50, icon: "🪳", popular: true },
+      { id: "ants", label: "Ants", surcharge: 25, icon: "🐜", popular: true },
+      { id: "wasps", label: "Wasps/Bees", surcharge: 75, icon: "🐝" },
+      { id: "bedbugs", label: "Bedbugs", surcharge: 150, icon: "🛏️" },
+      { id: "rodents", label: "Rodents (Mice/Rats)", surcharge: 100, icon: "🐭", popular: true },
+      { id: "termites", label: "Termites", surcharge: 250, icon: "🪵" },
+      { id: "general", label: "General Pest Prevention", surcharge: 0, icon: "🛡️" },
+    ];
+  };
 
-  const infestationLevels = [
-    { id: "light", label: "Light", surcharge: 0, icon: "🟢", popular: true },
-    { id: "moderate", label: "Moderate", surcharge: 75, icon: "🟡", popular: true },
-    { id: "severe", label: "Severe", surcharge: 150, icon: "🔴" },
-  ];
+  const getInfestationLevelPricing = () => {
+    if (customConfig?.sessionDurations) {
+      return customConfig.sessionDurations.map((duration: any) => ({
+        id: duration.id,
+        label: duration.label,
+        surcharge: duration.price,
+        icon: duration.icon || "🟢",
+        popular: duration.id === "light" || duration.id === "moderate"
+      }));
+    }
+    return [
+      { id: "light", label: "Light", surcharge: 0, icon: "🟢", popular: true },
+      { id: "moderate", label: "Moderate", surcharge: 75, icon: "🟡", popular: true },
+      { id: "severe", label: "Severe", surcharge: 150, icon: "🔴" },
+    ];
+  };
 
-  const propertyTypes = [
-    { id: "apartment", label: "Apartment", multiplier: 1, icon: "🏠" },
-    { id: "house", label: "Detached House", multiplier: 1.2, icon: "🏡", popular: true },
-    { id: "commercial", label: "Commercial Unit", multiplier: 1.5, icon: "🏢" },
-    { id: "warehouse", label: "Warehouse / Industrial", multiplier: 2, icon: "🏭" },
-  ];
+  const getPropertyTypePricing = () => {
+    if (customConfig?.locationPrices) {
+      return customConfig.locationPrices.map((location: any) => ({
+        id: location.id,
+        label: location.label,
+        multiplier: location.multiplier || 1,
+        icon: location.icon || "🏠",
+        popular: location.id === "house"
+      }));
+    }
+    return [
+      { id: "apartment", label: "Apartment", multiplier: 1, icon: "🏠" },
+      { id: "house", label: "Detached House", multiplier: 1.2, icon: "🏡", popular: true },
+      { id: "commercial", label: "Commercial Unit", multiplier: 1.5, icon: "🏢" },
+      { id: "warehouse", label: "Warehouse / Industrial", multiplier: 2, icon: "🏭" },
+    ];
+  };
 
-  const serviceTypes = [
-    { id: "one-time", label: "One-Time Treatment", multiplier: 1, icon: "🎯", popular: true },
-    { id: "monthly", label: "Monthly Maintenance", multiplier: 0.8, icon: "📅", popular: true },
-    { id: "quarterly", label: "Quarterly Prevention", multiplier: 0.9, icon: "🗓️" },
-  ];
+  const getServiceTypePricing = () => {
+    if (customConfig?.deliveryPrices) {
+      return customConfig.deliveryPrices.map((delivery: any) => ({
+        id: delivery.id,
+        label: delivery.label,
+        multiplier: delivery.multiplier || 1,
+        icon: delivery.icon || "🎯",
+        popular: delivery.id === "one-time" || delivery.id === "monthly"
+      }));
+    }
+    return [
+      { id: "one-time", label: "One-Time Treatment", multiplier: 1, icon: "🎯", popular: true },
+      { id: "monthly", label: "Monthly Maintenance", multiplier: 0.8, icon: "📅", popular: true },
+      { id: "quarterly", label: "Quarterly Prevention", multiplier: 0.9, icon: "🗓️" },
+    ];
+  };
 
-  const addOnOptions = [
-    { id: "eco-friendly", label: "Eco-Friendly Chemicals", price: 40, popular: true },
-    { id: "same-day", label: "Same-Day Service", price: 80 },
-    { id: "follow-up", label: "Follow-Up Visit", price: 50, popular: true },
-    { id: "pet-safe", label: "Pet-Safe Treatment", price: 40, popular: true },
-  ];
+  const getAddOnPricing = () => {
+    if (customConfig?.enhancementPrices) {
+      return customConfig.enhancementPrices.map((addon: any) => ({
+        ...addon,
+        popular: ["eco-friendly", "follow-up", "pet-safe"].includes(addon.id)
+      }));
+    }
+    return [
+      { id: "eco-friendly", label: "Eco-Friendly Chemicals", price: 40, popular: true },
+      { id: "same-day", label: "Same-Day Service", price: 80 },
+      { id: "follow-up", label: "Follow-Up Visit", price: 50, popular: true },
+      { id: "pet-safe", label: "Pet-Safe Treatment", price: 40, popular: true },
+    ];
+  };
+
+  const pestTypes = getPestTypePricing();
+  const infestationLevels = getInfestationLevelPricing();
+  const propertyTypes = getPropertyTypePricing();
+  const serviceTypes = getServiceTypePricing();
+  const addOnOptions = getAddOnPricing();
 
   const calculatePricing = (): PricingBreakdown => {
-    const basePrice = 100;
+    const currency = customConfig?.currency || "EUR";
+    const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
+    const basePrice = customConfig?.basePrice || 100;
     
     const pest = pestTypes.find(p => p.id === formData.pestType);
     const infestation = infestationLevels.find(i => i.id === formData.infestationLevel);
@@ -119,16 +180,16 @@ export default function PestControlCalculator({ customConfig: propConfig, isPrev
     const infestationSurcharge = infestation?.surcharge || 0;
     let addOnsTotal = 0;
 
-    const breakdown: string[] = [`Base visit: €${basePrice}`];
+    const breakdown: string[] = [`Base visit: ${currencySymbol}${basePrice}`];
 
     // Pest type surcharge
     if (pestTypeSurcharge > 0) {
-      breakdown.push(`${pest?.label} treatment: €${pestTypeSurcharge}`);
+      breakdown.push(`${pest?.label} treatment: ${currencySymbol}${pestTypeSurcharge}`);
     }
 
     // Infestation level surcharge
     if (infestationSurcharge > 0) {
-      breakdown.push(`${infestation?.label} infestation: €${infestationSurcharge}`);
+      breakdown.push(`${infestation?.label} infestation: ${currencySymbol}${infestationSurcharge}`);
     }
 
     let subtotalBeforeProperty = basePrice + pestTypeSurcharge + infestationSurcharge;
@@ -137,7 +198,7 @@ export default function PestControlCalculator({ customConfig: propConfig, isPrev
     let propertyMultiplier = 0;
     if (property && property.multiplier > 1) {
       propertyMultiplier = subtotalBeforeProperty * (property.multiplier - 1);
-      breakdown.push(`${property.label} surcharge (${((property.multiplier - 1) * 100).toFixed(0)}%): €${propertyMultiplier.toFixed(2)}`);
+      breakdown.push(`${property.label} surcharge (${((property.multiplier - 1) * 100).toFixed(0)}%): ${currencySymbol}${propertyMultiplier.toFixed(2)}`);
     }
 
     let subtotalAfterProperty = subtotalBeforeProperty + propertyMultiplier;
@@ -145,16 +206,16 @@ export default function PestControlCalculator({ customConfig: propConfig, isPrev
     // Service type multiplier
     if (service && service.multiplier < 1) {
       const discount = subtotalAfterProperty * (1 - service.multiplier);
-      breakdown.push(`${service.label} discount (${((1 - service.multiplier) * 100).toFixed(0)}%): -€${discount.toFixed(2)}`);
+      breakdown.push(`${service.label} discount (${((1 - service.multiplier) * 100).toFixed(0)}%): -${currencySymbol}${discount.toFixed(2)}`);
       subtotalAfterProperty -= discount;
     }
 
-    // Add-ons
+    // Add-ons - use dynamic pricing from configuration
     formData.addOns.forEach(addOnId => {
       const addOn = addOnOptions.find(a => a.id === addOnId);
-      if (addOn) {
+      if (addOn && addOn.price > 0) {
         addOnsTotal += addOn.price;
-        breakdown.push(`${addOn.label}: €${addOn.price}`);
+        breakdown.push(`${addOn.label}: ${currencySymbol}${addOn.price}`);
       }
     });
 
@@ -164,7 +225,7 @@ export default function PestControlCalculator({ customConfig: propConfig, isPrev
     let discount = 0;
     if (formData.promoCode.toLowerCase() === "pest10") {
       discount = subtotal * 0.1;
-      breakdown.push(`Promo code discount (10%): -€${discount.toFixed(2)}`);
+      breakdown.push(`Promo code discount (10%): -${currencySymbol}${discount.toFixed(2)}`);
     }
 
     const total = subtotal - discount;

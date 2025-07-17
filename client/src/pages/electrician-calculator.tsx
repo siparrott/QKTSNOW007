@@ -146,82 +146,120 @@ export default function ElectricianCalculator({ customConfig: propConfig, isPrev
     },
   });
 
-  const serviceTypes = [
-    { id: "new-installation", label: "New Installation", icon: "⚡", popular: false },
-    { id: "rewiring", label: "Rewiring", icon: "🔌", popular: true },
-    { id: "fault-finding", label: "Fault Finding", icon: "🔍", popular: false },
-    { id: "fuse-box-upgrade", label: "Fuse Box Upgrade", icon: "📦", popular: true },
-    { id: "lighting-installation", label: "Lighting Installation", icon: "💡", popular: true },
-    { id: "ev-charger", label: "EV Charger Install", icon: "🚗", popular: false },
-    { id: "smart-home", label: "Smart Home Setup", icon: "🏠", popular: false },
-  ];
+  // Use custom pricing configuration if available
+  const getServiceTypePricing = () => {
+    if (customConfig?.groupPrices) {
+      return customConfig.groupPrices.map((group: any) => ({
+        id: group.id,
+        label: group.label,
+        icon: group.icon || "⚡",
+        popular: group.id === "rewiring" || group.id === "fuse-box-upgrade" || group.id === "lighting-installation"
+      }));
+    }
+    return [
+      { id: "new-installation", label: "New Installation", icon: "⚡", popular: false },
+      { id: "rewiring", label: "Rewiring", icon: "🔌", popular: true },
+      { id: "fault-finding", label: "Fault Finding", icon: "🔍", popular: false },
+      { id: "fuse-box-upgrade", label: "Fuse Box Upgrade", icon: "📦", popular: true },
+      { id: "lighting-installation", label: "Lighting Installation", icon: "💡", popular: true },
+      { id: "ev-charger", label: "EV Charger Install", icon: "🚗", popular: false },
+      { id: "smart-home", label: "Smart Home Setup", icon: "🏠", popular: false },
+    ];
+  };
 
-  const propertyTypes = [
-    { id: "apartment", label: "Apartment", icon: "🏢" },
-    { id: "house", label: "House", icon: "🏡" },
-    { id: "commercial", label: "Commercial Unit", icon: "🏬" },
-    { id: "construction", label: "Construction Site", icon: "🚧" },
-  ];
+  const getPropertyTypePricing = () => {
+    if (customConfig?.locationPrices) {
+      return customConfig.locationPrices.map((location: any) => ({
+        id: location.id,
+        label: location.label,
+        icon: location.icon || "🏢"
+      }));
+    }
+    return [
+      { id: "apartment", label: "Apartment", icon: "🏢" },
+      { id: "house", label: "House", icon: "🏡" },
+      { id: "commercial", label: "Commercial Unit", icon: "🏬" },
+      { id: "construction", label: "Construction Site", icon: "🚧" },
+    ];
+  };
 
-  const roomCounts = [
-    "1 room", "2 rooms", "3 rooms", "4 rooms", "5 rooms", 
-    "6 rooms", "7 rooms", "8 rooms", "9 rooms", "10+ rooms"
-  ];
+  const getRoomCountOptions = () => {
+    if (customConfig?.sessionDurations) {
+      return customConfig.sessionDurations.map((duration: any) => duration.label);
+    }
+    return [
+      "1 room", "2 rooms", "3 rooms", "4 rooms", "5 rooms", 
+      "6 rooms", "7 rooms", "8 rooms", "9 rooms", "10+ rooms"
+    ];
+  };
 
-  const urgencyLevels = [
-    { id: "standard", label: "Standard (1-3 days)", price: 0, icon: "📅" },
-    { id: "next-day", label: "Next Day", price: 50, icon: "⏰" },
-    { id: "emergency", label: "Emergency (Same Day)", price: 100, icon: "🚨" },
-  ];
+  const getUrgencyPricing = () => {
+    if (customConfig?.deliveryPrices) {
+      return customConfig.deliveryPrices;
+    }
+    return [
+      { id: "standard", label: "Standard (1-3 days)", price: 0, icon: "📅" },
+      { id: "next-day", label: "Next Day", price: 50, icon: "⏰" },
+      { id: "emergency", label: "Emergency (Same Day)", price: 100, icon: "🚨" },
+    ];
+  };
 
-  const addOnOptions = [
-    { id: "certificate", label: "Certificate of Compliance", price: 40 },
-    { id: "cleanup", label: "Cleanup/Disposal", price: 50 },
-    { id: "materials", label: "Materials Included", price: 100 },
-    { id: "extra-tech", label: "Extra Technician", price: 70 },
-  ];
+  const getAddOnPricing = () => {
+    if (customConfig?.enhancementPrices) {
+      return customConfig.enhancementPrices;
+    }
+    return [
+      { id: "certificate", label: "Certificate of Compliance", price: 40 },
+      { id: "cleanup", label: "Cleanup/Disposal", price: 50 },
+      { id: "materials", label: "Materials Included", price: 100 },
+      { id: "extra-tech", label: "Extra Technician", price: 70 },
+    ];
+  };
+
+  const serviceTypes = getServiceTypePricing();
+  const propertyTypes = getPropertyTypePricing();
+  const roomCounts = getRoomCountOptions();
+  const urgencyLevels = getUrgencyPricing();
+  const addOnOptions = getAddOnPricing();
 
   const calculatePricing = (): PricingBreakdown => {
-    const baseCallOut = 80;
+    const currency = customConfig?.currency || "EUR";
+    const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
+    const baseCallOut = customConfig?.basePrice || 80;
+    
     let serviceTypeAdd = 0;
     let roomAdd = 0;
     let urgencyAdd = 0;
     let addOnsCost = 0;
-    const breakdown: string[] = [`Base call-out fee: €${baseCallOut}`];
+    const breakdown: string[] = [`Base call-out fee: ${currencySymbol}${baseCallOut}`];
 
-    // Service type pricing
-    switch (formData.serviceType) {
-      case "fuse-box-upgrade":
-        serviceTypeAdd = 120;
-        breakdown.push("Fuse box upgrade: €120");
-        break;
-      case "ev-charger":
-        serviceTypeAdd = 200;
-        breakdown.push("EV charger installation: €200");
-        break;
-      case "smart-home":
-        serviceTypeAdd = 225; // Mid-range of 150-300
-        breakdown.push("Smart home setup: €225");
-        break;
-      case "rewiring":
-        serviceTypeAdd = 150;
-        breakdown.push("Rewiring service: €150");
-        break;
-      case "lighting-installation":
-        serviceTypeAdd = 80;
-        breakdown.push("Lighting installation: €80");
-        break;
-      default:
-        serviceTypeAdd = 50;
-        breakdown.push("Standard service: €50");
+    // Service type pricing - use dynamic pricing from configuration
+    const servicePricing: any = {
+      "fuse-box-upgrade": 120,
+      "ev-charger": 200,
+      "smart-home": 225,
+      "rewiring": 150,
+      "lighting-installation": 80
+    };
+
+    if (customConfig?.groupPrices) {
+      const serviceConfig = customConfig.groupPrices.find((group: any) => group.id === formData.serviceType);
+      if (serviceConfig) {
+        serviceTypeAdd = serviceConfig.price;
+        breakdown.push(`${serviceConfig.label}: ${currencySymbol}${serviceTypeAdd}`);
+      }
+    } else {
+      serviceTypeAdd = servicePricing[formData.serviceType] || 50;
+      const serviceLabel = serviceTypes.find(s => s.id === formData.serviceType)?.label || "Standard service";
+      breakdown.push(`${serviceLabel}: ${currencySymbol}${serviceTypeAdd}`);
     }
 
     // Room count pricing
     if (formData.roomCount) {
       const roomNumber = parseInt(formData.roomCount.split(" ")[0]);
       if (roomNumber > 1) {
-        roomAdd = (roomNumber - 1) * 60;
-        breakdown.push(`Additional ${roomNumber - 1} rooms: €${roomAdd}`);
+        roomAdd = (roomNumber - 1) * (customConfig?.hourlyRate || 60);
+        breakdown.push(`Additional ${roomNumber - 1} rooms: ${currencySymbol}${roomAdd}`);
       }
     }
 
@@ -230,16 +268,16 @@ export default function ElectricianCalculator({ customConfig: propConfig, isPrev
     if (urgency) {
       urgencyAdd = urgency.price;
       if (urgencyAdd > 0) {
-        breakdown.push(`${urgency.label}: €${urgencyAdd}`);
+        breakdown.push(`${urgency.label}: ${currencySymbol}${urgencyAdd}`);
       }
     }
 
-    // Add-ons pricing
+    // Add-ons pricing - use dynamic pricing from configuration
     formData.addOns.forEach(addOnId => {
       const addOn = addOnOptions.find(a => a.id === addOnId);
-      if (addOn) {
+      if (addOn && addOn.price > 0) {
         addOnsCost += addOn.price;
-        breakdown.push(`${addOn.label}: €${addOn.price}`);
+        breakdown.push(`${addOn.label}: ${currencySymbol}${addOn.price}`);
       }
     });
 
@@ -249,7 +287,7 @@ export default function ElectricianCalculator({ customConfig: propConfig, isPrev
     let discount = 0;
     if (formData.promoCode.toLowerCase() === "save10") {
       discount = subtotal * 0.1;
-      breakdown.push(`Promo code discount (10%): -€${discount.toFixed(2)}`);
+      breakdown.push(`Promo code discount (10%): -${currencySymbol}${discount.toFixed(2)}`);
     }
 
     const total = subtotal - discount;
@@ -264,6 +302,8 @@ export default function ElectricianCalculator({ customConfig: propConfig, isPrev
       discount,
       total,
       breakdown,
+      currency,
+      currencySymbol,
     };
   };
 

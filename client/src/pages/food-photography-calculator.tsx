@@ -74,57 +74,122 @@ export default function FoodPhotographyCalculator({ customConfig: propConfig, is
     },
   });
 
-  const clientTypes = [
-    { id: "restaurant", label: "Restaurant", icon: "🍽️", popular: true },
-    { id: "chef", label: "Chef / Personal Brand", icon: "👨‍🍳", popular: true },
-    { id: "product", label: "Product Brand", icon: "📦" },
-    { id: "editorial", label: "Magazine / Editorial", icon: "📰" },
-    { id: "social", label: "Social Media Campaign", icon: "📱" },
-  ];
+  // Use custom pricing configuration if available
+  const getClientTypePricing = () => {
+    if (customConfig?.groupPrices) {
+      return customConfig.groupPrices.map((group: any) => ({
+        id: group.id,
+        label: group.label,
+        icon: group.icon || "🍽️",
+        popular: group.id === "restaurant" || group.id === "chef"
+      }));
+    }
+    return [
+      { id: "restaurant", label: "Restaurant", icon: "🍽️", popular: true },
+      { id: "chef", label: "Chef / Personal Brand", icon: "👨‍🍳", popular: true },
+      { id: "product", label: "Product Brand", icon: "📦" },
+      { id: "editorial", label: "Magazine / Editorial", icon: "📰" },
+      { id: "social", label: "Social Media Campaign", icon: "📱" },
+    ];
+  };
 
-  const dishCounts = [
-    { id: "1-5", label: "1-5 dishes", price: 0, icon: "🍴" },
-    { id: "6-10", label: "6-10 dishes", price: 100, icon: "🍽️", popular: true },
-    { id: "11-20", label: "11-20 dishes", price: 200, icon: "🍱", popular: true },
-    { id: "20+", label: "20+ dishes", price: 300, icon: "🍷" },
-  ];
+  const getDishCountPricing = () => {
+    if (customConfig?.sessionDurations) {
+      return customConfig.sessionDurations.map((duration: any) => ({
+        id: duration.id,
+        label: duration.label,
+        price: duration.price,
+        icon: duration.icon || "🍴",
+        popular: duration.id === "6-10" || duration.id === "11-20"
+      }));
+    }
+    return [
+      { id: "1-5", label: "1-5 dishes", price: 0, icon: "🍴" },
+      { id: "6-10", label: "6-10 dishes", price: 100, icon: "🍽️", popular: true },
+      { id: "11-20", label: "11-20 dishes", price: 200, icon: "🍱", popular: true },
+      { id: "20+", label: "20+ dishes", price: 300, icon: "🍷" },
+    ];
+  };
 
-  const locations = [
-    { id: "studio", label: "In-studio", price: 0, icon: "🏢" },
-    { id: "on-location", label: "On-location (restaurant/kitchen)", price: 75, icon: "🏪" },
-    { id: "outdoor", label: "Outdoor / Natural Light", price: 50, icon: "🌅" },
-  ];
+  const getLocationPricing = () => {
+    if (customConfig?.locationPrices) {
+      return customConfig.locationPrices.map((location: any) => ({
+        ...location,
+        icon: location.icon || "🏢"
+      }));
+    }
+    return [
+      { id: "studio", label: "In-studio", price: 0, icon: "🏢" },
+      { id: "on-location", label: "On-location (restaurant/kitchen)", price: 75, icon: "🏪" },
+      { id: "outdoor", label: "Outdoor / Natural Light", price: 50, icon: "🌅" },
+    ];
+  };
 
-  const imageStyles = [
-    { id: "overhead", label: "Overhead", price: 0, icon: "📐" },
-    { id: "lifestyle", label: "Lifestyle / Table Setting", price: 80, icon: "🕯️", popular: true },
-    { id: "studio", label: "Studio Lighting", price: 0, icon: "💡" },
-    { id: "process", label: "Process Shots (cooking, chopping)", price: 60, icon: "🔪" },
-  ];
+  const getImageStylePricing = () => {
+    if (customConfig?.wardrobePrices) {
+      return customConfig.wardrobePrices.map((style: any) => ({
+        ...style,
+        icon: style.icon || "📐",
+        popular: style.id === "lifestyle"
+      }));
+    }
+    return [
+      { id: "overhead", label: "Overhead", price: 0, icon: "📐" },
+      { id: "lifestyle", label: "Lifestyle / Table Setting", price: 80, icon: "🕯️", popular: true },
+      { id: "studio", label: "Studio Lighting", price: 0, icon: "💡" },
+      { id: "process", label: "Process Shots (cooking, chopping)", price: 60, icon: "🔪" },
+    ];
+  };
 
-  const addOnOptions = [
-    { id: "stylist", label: "Food Stylist Required", price: 150, popular: true },
-    { id: "props", label: "Props Included", price: 100, popular: true },
-    { id: "fast", label: "Fast Turnaround (48 hrs)", price: 80 },
-    { id: "raw", label: "Raw Files Provided", price: 50 },
-    { id: "commercial", label: "Commercial License", price: 200 },
-  ];
+  const getAddOnPricing = () => {
+    if (customConfig?.enhancementPrices) {
+      return customConfig.enhancementPrices.map((addon: any) => ({
+        ...addon,
+        popular: addon.id === "stylist" || addon.id === "props"
+      }));
+    }
+    return [
+      { id: "stylist", label: "Food Stylist Required", price: 150, popular: true },
+      { id: "props", label: "Props Included", price: 100, popular: true },
+      { id: "fast", label: "Fast Turnaround (48 hrs)", price: 80 },
+      { id: "raw", label: "Raw Files Provided", price: 50 },
+      { id: "commercial", label: "Commercial License", price: 200 },
+    ];
+  };
 
-  const deliveryFormats = [
-    { id: "jpeg", label: "Edited JPEGs", price: 0, icon: "📄" },
-    { id: "social", label: "Social Media Format", price: 40, icon: "📱" },
-    { id: "tiff", label: "High-Res TIFF", price: 60, icon: "🖼️" },
-    { id: "web", label: "Web-Optimized Versions", price: 30, icon: "🌐" },
-  ];
+  const getDeliveryFormatPricing = () => {
+    if (customConfig?.deliveryPrices) {
+      return customConfig.deliveryPrices.map((format: any) => ({
+        ...format,
+        icon: format.icon || "📄"
+      }));
+    }
+    return [
+      { id: "jpeg", label: "Edited JPEGs", price: 0, icon: "📄" },
+      { id: "social", label: "Social Media Format", price: 40, icon: "📱" },
+      { id: "tiff", label: "High-Res TIFF", price: 60, icon: "🖼️" },
+      { id: "web", label: "Web-Optimized Versions", price: 30, icon: "🌐" },
+    ];
+  };
+
+  const clientTypes = getClientTypePricing();
+  const dishCounts = getDishCountPricing();
+  const locations = getLocationPricing();
+  const imageStyles = getImageStylePricing();
+  const addOnOptions = getAddOnPricing();
+  const deliveryFormats = getDeliveryFormatPricing();
 
   const calculatePricing = (): PricingBreakdown => {
-    const baseStudio = 180; // Base: in-studio, 1-5 dishes, edited JPEGs
+    const currency = customConfig?.currency || "EUR";
+    const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
+    const baseStudio = customConfig?.basePrice || 180;
+    
     let dishAdd = 0;
     let locationAdd = 0;
     let styleAdd = 0;
     let addOnsTotal = 0;
     let deliveryAdd = 0;
-    const breakdown: string[] = [`Base package (in-studio, 1-5 dishes, JPEGs): €${baseStudio}`];
+    const breakdown: string[] = [`Base package (in-studio, 1-5 dishes, JPEGs): ${currencySymbol}${baseStudio}`];
 
     // Dish count pricing
     const dishes = dishCounts.find(d => d.id === formData.dishCount);

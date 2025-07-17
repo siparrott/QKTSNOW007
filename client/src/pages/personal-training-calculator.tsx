@@ -107,12 +107,15 @@ export default function PersonalTrainingCalculator({ customConfig: propConfig, i
   ];
 
   const calculatePricing = (): PricingBreakdown => {
+    const currency = customConfig?.currency || "EUR";
+    const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
+    
     const trainingType = trainingTypes.find(t => t.id === formData.trainingType);
     const sessionFormat = sessionFormats.find(f => f.id === formData.sessionFormat);
     const frequency = frequencies.find(f => f.id === formData.frequency);
     const duration = durations.find(d => d.id === formData.duration);
 
-    const sessionPrice = (sessionFormat?.basePrice || 0) * (duration?.multiplier || 1);
+    const sessionPrice = (sessionFormat?.basePrice || customConfig?.basePrice || 60) * (duration?.multiplier || 1);
     const basePrice = sessionPrice * (frequency?.sessions || 1) * 4; // Monthly price
     const trainingAdd = trainingType?.surcharge || 0;
     const frequencyAdd = 0; // Already included in base calculation
@@ -124,20 +127,20 @@ export default function PersonalTrainingCalculator({ customConfig: propConfig, i
     const breakdown: string[] = [];
 
     // Base session
-    breakdown.push(`${sessionFormat?.label || 'Base training'} (${frequency?.label}, ${duration?.label}): €${basePrice.toFixed(0)}`);
+    breakdown.push(`${sessionFormat?.label || 'Base training'} (${frequency?.label}, ${duration?.label}): ${currencySymbol}${basePrice.toFixed(0)}`);
 
     // Training type surcharge
     if (trainingAdd !== 0) {
       const totalTrainingAdd = trainingAdd * (frequency?.sessions || 1) * 4;
-      breakdown.push(`${trainingType?.label} specialty: €${totalTrainingAdd > 0 ? '+' : ''}${totalTrainingAdd}`);
+      breakdown.push(`${trainingType?.label} specialty: ${currencySymbol}${totalTrainingAdd > 0 ? '+' : ''}${totalTrainingAdd}`);
     }
 
-    // Add-ons
+    // Add-ons - use dynamic pricing
     formData.addOns.forEach(addOnId => {
       const addOn = addOnOptions.find(a => a.id === addOnId);
-      if (addOn) {
+      if (addOn && addOn.price > 0) {
         addOnsTotal += addOn.price;
-        breakdown.push(`${addOn.label}: €${addOn.price}`);
+        breakdown.push(`${addOn.label}: ${currencySymbol}${addOn.price}`);
       }
     });
 
@@ -147,7 +150,7 @@ export default function PersonalTrainingCalculator({ customConfig: propConfig, i
     let discount = 0;
     if (formData.promoCode.toLowerCase() === "fit10") {
       discount = subtotal * 0.1;
-      breakdown.push(`Promo code discount (10%): -€${discount.toFixed(2)}`);
+      breakdown.push(`Promo code discount (10%): -${currencySymbol}${discount.toFixed(2)}`);
     }
 
     const total = subtotal - discount;

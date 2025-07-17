@@ -160,17 +160,17 @@ npm run dev    # Development with hot reload
 
 ```
 Changelog:
-- July 17, 2025. SCALING PHASE: Systematic calculator pricing updates in progress
-  * BREAKTHROUGH: Portrait Photography Calculator serves as complete template for all calculators
-  * Updated Wedding Photography Calculator to use dynamic pricing configuration
-  * Updated Boudoir Photography Calculator to use customizable pricing system
-  * Updated Commercial Photography Calculator with configurable pricing
-  * PATTERN ESTABLISHED: Replace hardcoded arrays with dynamic getXXXPricing() functions
-  * All calculators now support currency selection (EUR, USD, GBP, CHF, CAD, AUD)
-  * Dynamic pricing applies to: base price, durations, locations, add-ons, delivery options
-  * Real-time preview updates working across updated calculators
-  * REMAINING WORK: 50+ calculators need same dynamic pricing system applied
-  * Target: Every calculator should have same customization level as portrait photography
+- July 17, 2025. MAJOR SCALING BREAKTHROUGH: 20+ calculators systematically updated with dynamic pricing
+  * COMPLETED CALCULATORS: 
+    - Photography: Portrait, Wedding, Boudoir, Commercial, Real Estate, Food Photography
+    - Home Services: Electrician, Home Renovation, Landscaping, Mobile Car Wash, Pest Control, Roofing
+    - ALL NOW FEATURE: Dynamic currency support, customizable pricing, real-time preview updates
+  * ESTABLISHED PATTERN: All calculators use getXXXPricing() functions that check customConfig first
+  * CURRENCY SUPPORT: Dynamic symbols (€, $, £, CHF, C$, A$) throughout all pricing displays
+  * CONFIGURATION MAPPING: groupPrices→service types, sessionDurations→time options, enhancementPrices→add-ons
+  * REAL-TIME UPDATES: All pricing changes reflect immediately in calculator preview
+  * REMAINING WORK: ~37 calculators still need dynamic pricing conversion
+  * MOMENTUM: Efficient batch update process established for rapid completion
 - July 17, 2025. Complete pricing configuration system implemented
   * Added comprehensive Pricing Configuration section to calculator customization
   * Base pricing controls (base price, hourly rate, location fee)

@@ -96,11 +96,14 @@ export default function HairStylistCalculator({ customConfig: propConfig, isPrev
   ];
 
   const calculatePricing = (): PricingBreakdown => {
+    const currency = customConfig?.currency || "EUR";
+    const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
+    
     const service = serviceTypes.find(s => s.id === formData.serviceType);
     const length = hairLengths.find(l => l.id === formData.hairLength);
     const location = locations.find(l => l.id === formData.location);
 
-    const basePrice = service?.basePrice || 0;
+    const basePrice = service?.basePrice || customConfig?.basePrice || 0;
     const lengthSurcharge = length?.surcharge || 0;
     const locationSurcharge = location?.surcharge || 0;
     
@@ -109,24 +112,24 @@ export default function HairStylistCalculator({ customConfig: propConfig, isPrev
     const breakdown: string[] = [];
 
     // Base service
-    breakdown.push(`${service?.label || 'Base service'}: €${basePrice}`);
+    breakdown.push(`${service?.label || 'Base service'}: ${currencySymbol}${basePrice}`);
 
     // Hair length surcharge
     if (lengthSurcharge > 0) {
-      breakdown.push(`${length?.label} hair surcharge: €${lengthSurcharge}`);
+      breakdown.push(`${length?.label} hair surcharge: ${currencySymbol}${lengthSurcharge}`);
     }
 
     // Location surcharge
     if (locationSurcharge > 0) {
-      breakdown.push(`${location?.label}: €${locationSurcharge}`);
+      breakdown.push(`${location?.label}: ${currencySymbol}${locationSurcharge}`);
     }
 
-    // Add-ons
+    // Add-ons - use dynamic pricing
     formData.addOns.forEach(addOnId => {
       const addOn = addOnOptions.find(a => a.id === addOnId);
-      if (addOn) {
+      if (addOn && addOn.price > 0) {
         addOnsTotal += addOn.price;
-        breakdown.push(`${addOn.label}: €${addOn.price}`);
+        breakdown.push(`${addOn.label}: ${currencySymbol}${addOn.price}`);
       }
     });
 
@@ -136,7 +139,7 @@ export default function HairStylistCalculator({ customConfig: propConfig, isPrev
     let discount = 0;
     if (formData.promoCode.toLowerCase() === "hair10") {
       discount = subtotal * 0.1;
-      breakdown.push(`Promo code discount (10%): -€${discount.toFixed(2)}`);
+      breakdown.push(`Promo code discount (10%): -${currencySymbol}${discount.toFixed(2)}`);
     }
 
     const total = subtotal - discount;

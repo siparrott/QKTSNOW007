@@ -73,52 +73,89 @@ export default function MobileCarWashCalculator({ customConfig: propConfig, isPr
 
 
 
-  const vehicleSizeOptions = [
-    { label: "Compact Car", value: "compact", adjustment: 0, icon: <Car className="h-5 w-5" /> },
-    { label: "Sedan", value: "sedan", adjustment: 10, icon: <Car className="h-5 w-5" /> },
-    { label: "SUV", value: "suv", adjustment: 20, icon: <Car className="h-6 w-6" /> },
-    { label: "Truck / Van", value: "truck", adjustment: 30, icon: <Car className="h-7 w-7" /> },
-  ];
+  // Use custom pricing configuration if available
+  const getVehicleSizePricing = () => {
+    if (customConfig?.groupPrices) {
+      return customConfig.groupPrices.map((group: any) => ({
+        label: group.label,
+        value: group.id,
+        adjustment: group.price,
+        icon: <Car className="h-5 w-5" />
+      }));
+    }
+    return [
+      { label: "Compact Car", value: "compact", adjustment: 0, icon: <Car className="h-5 w-5" /> },
+      { label: "Sedan", value: "sedan", adjustment: 10, icon: <Car className="h-5 w-5" /> },
+      { label: "SUV", value: "suv", adjustment: 20, icon: <Car className="h-6 w-6" /> },
+      { label: "Truck / Van", value: "truck", adjustment: 30, icon: <Car className="h-7 w-7" /> },
+    ];
+  };
 
-  const servicePackageOptions = [
-    { 
-      label: "Exterior Only", 
-      value: "exterior", 
-      price: 30, 
-      description: "Wash, rinse, and dry exterior surfaces",
-      icon: <Droplets className="h-5 w-5" />
-    },
-    { 
-      label: "Exterior + Interior", 
-      value: "ext_int", 
-      price: 50, 
-      description: "Complete exterior wash plus interior vacuum and wipe down",
-      icon: <Sparkles className="h-5 w-5" />,
-      popular: true
-    },
-    { 
-      label: "Full Detail", 
-      value: "full_detail", 
-      price: 110, 
-      description: "Premium wash, wax, interior deep clean, and conditioning",
-      icon: <Star className="h-5 w-5" />
-    },
-    { 
-      label: "Showroom Finish", 
-      value: "showroom", 
-      price: 180, 
-      description: "Ultimate detailing with paint correction and ceramic protection",
-      icon: <Shield className="h-5 w-5" />
-    },
-  ];
+  const getServicePackagePricing = () => {
+    if (customConfig?.sessionDurations) {
+      return customConfig.sessionDurations.map((duration: any) => ({
+        label: duration.label,
+        value: duration.id,
+        price: duration.price,
+        description: duration.description || "Professional car wash service",
+        icon: <Sparkles className="h-5 w-5" />,
+        popular: duration.id === "ext_int"
+      }));
+    }
+    return [
+      { 
+        label: "Exterior Only", 
+        value: "exterior", 
+        price: 30, 
+        description: "Wash, rinse, and dry exterior surfaces",
+        icon: <Droplets className="h-5 w-5" />
+      },
+      { 
+        label: "Exterior + Interior", 
+        value: "ext_int", 
+        price: 50, 
+        description: "Complete exterior wash plus interior vacuum and wipe down",
+        icon: <Sparkles className="h-5 w-5" />,
+        popular: true
+      },
+      { 
+        label: "Full Detail", 
+        value: "full_detail", 
+        price: 110, 
+        description: "Premium wash, wax, interior deep clean, and conditioning",
+        icon: <Star className="h-5 w-5" />
+      },
+      { 
+        label: "Showroom Finish", 
+        value: "showroom", 
+        price: 180, 
+        description: "Ultimate detailing with paint correction and ceramic protection",
+        icon: <Shield className="h-5 w-5" />
+      },
+    ];
+  };
 
-  const addOnOptions = [
-    { label: "Engine Bay Cleaning", value: "engine", price: 25, icon: "🔧" },
-    { label: "Pet Hair Removal", value: "pet_hair", price: 20, icon: "🐕" },
-    { label: "Ceramic Coating", value: "ceramic", price: 100, icon: "✨" },
-    { label: "Wax & Polish", value: "wax", price: 35, icon: "🪞" },
-    { label: "Headlight Restoration", value: "headlight", price: 40, icon: "💡" },
-  ];
+  const getAddOnPricing = () => {
+    if (customConfig?.enhancementPrices) {
+      return customConfig.enhancementPrices.map((addon: any) => ({
+        label: addon.label,
+        value: addon.id,
+        price: addon.price,
+        icon: addon.icon || "🔧"
+      }));
+    }
+    return [
+      { label: "Engine Bay Cleaning", value: "engine", price: 25, icon: "🔧" },
+      { label: "Pet Hair Removal", value: "pet_hair", price: 20, icon: "🐕" },
+      { label: "Ceramic Coating", value: "ceramic", price: 100, icon: "✨" },
+      { label: "Wax & Polish", value: "wax", price: 35, icon: "🪞" },
+      { label: "Headlight Restoration", value: "headlight", price: 40, icon: "💡" },
+    ];
+  };
+
+  const vehicleSizeOptions = getVehicleSizePricing();
+  const servicePackageOptions = getServicePackagePricing();
+  const addOnOptions = getAddOnPricing();
 
   const locationOptions = [
     { label: "At Home", value: "home", icon: <Home className="h-5 w-5" /> },
@@ -169,6 +206,9 @@ export default function MobileCarWashCalculator({ customConfig: propConfig, isPr
   };
 
   const calculatePricing = (): PricingBreakdown => {
+    const currency = customConfig?.currency || "EUR";
+    const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
+    
     const selectedVehicle = vehicleSizeOptions.find(v => v.value === formData.vehicleSize);
     const selectedPackage = servicePackageOptions.find(p => p.value === formData.servicePackage);
     const selectedUrgency = urgencyOptions.find(u => u.value === formData.urgency);

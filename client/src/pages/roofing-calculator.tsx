@@ -73,57 +73,132 @@ export default function RoofingCalculator({ customConfig: propConfig, isPreview 
     },
   });
 
-  const serviceTypes = [
-    { id: "leak-repair", label: "Leak Repair", basePrice: 150, icon: "🔧", popular: true },
-    { id: "replacement", label: "Full Replacement", basePrice: 120, perMeter: true, icon: "🏗️", popular: true },
-    { id: "gutter-cleaning", label: "Gutter Cleaning", basePrice: 150, icon: "🌊" },
-    { id: "tile-replacement", label: "Tile/Slate Replacement", basePrice: 200, icon: "🧱" },
-    { id: "inspection", label: "Inspection Only", basePrice: 75, icon: "🔍" },
-  ];
+  // Use custom pricing configuration if available
+  const getServiceTypePricing = () => {
+    if (customConfig?.groupPrices) {
+      return customConfig.groupPrices.map((group: any) => ({
+        id: group.id,
+        label: group.label,
+        basePrice: group.price,
+        perMeter: group.perMeter || false,
+        icon: group.icon || "🔧",
+        popular: group.id === "leak-repair" || group.id === "replacement"
+      }));
+    }
+    return [
+      { id: "leak-repair", label: "Leak Repair", basePrice: 150, icon: "🔧", popular: true },
+      { id: "replacement", label: "Full Replacement", basePrice: 120, perMeter: true, icon: "🏗️", popular: true },
+      { id: "gutter-cleaning", label: "Gutter Cleaning", basePrice: 150, icon: "🌊" },
+      { id: "tile-replacement", label: "Tile/Slate Replacement", basePrice: 200, icon: "🧱" },
+      { id: "inspection", label: "Inspection Only", basePrice: 75, icon: "🔍" },
+    ];
+  };
 
-  const roofTypes = [
-    { id: "flat", label: "Flat", multiplier: 1, icon: "⬜" },
-    { id: "pitched", label: "Pitched", multiplier: 1, icon: "🔺", popular: true },
-    { id: "metal", label: "Metal", multiplier: 1.15, icon: "🔩" },
-    { id: "tile", label: "Tile", multiplier: 1.2, icon: "🧱", popular: true },
-    { id: "asphalt", label: "Asphalt Shingle", multiplier: 1, icon: "🏠" },
-  ];
+  const getRoofTypePricing = () => {
+    if (customConfig?.sessionDurations) {
+      return customConfig.sessionDurations.map((duration: any) => ({
+        id: duration.id,
+        label: duration.label,
+        multiplier: duration.multiplier || 1,
+        icon: duration.icon || "⬜",
+        popular: duration.id === "pitched" || duration.id === "tile"
+      }));
+    }
+    return [
+      { id: "flat", label: "Flat", multiplier: 1, icon: "⬜" },
+      { id: "pitched", label: "Pitched", multiplier: 1, icon: "🔺", popular: true },
+      { id: "metal", label: "Metal", multiplier: 1.15, icon: "🔩" },
+      { id: "tile", label: "Tile", multiplier: 1.2, icon: "🧱", popular: true },
+      { id: "asphalt", label: "Asphalt Shingle", multiplier: 1, icon: "🏠" },
+    ];
+  };
 
-  const roofSizes = [
-    { id: "small", label: "Small (up to 50m²)", meters: 50, icon: "📐" },
-    { id: "medium", label: "Medium (50-150m²)", meters: 100, icon: "📏", popular: true },
-    { id: "large", label: "Large (150-300m²)", meters: 225, icon: "📊", popular: true },
-    { id: "extra-large", label: "Extra Large (300m²+)", meters: 400, icon: "📈" },
-  ];
+  const getRoofSizePricing = () => {
+    if (customConfig?.wardrobePrices) {
+      return customConfig.wardrobePrices.map((size: any) => ({
+        id: size.id,
+        label: size.label,
+        meters: size.meters || 100,
+        icon: size.icon || "📐",
+        popular: size.id === "medium" || size.id === "large"
+      }));
+    }
+    return [
+      { id: "small", label: "Small (up to 50m²)", meters: 50, icon: "📐" },
+      { id: "medium", label: "Medium (50-150m²)", meters: 100, icon: "📏", popular: true },
+      { id: "large", label: "Large (150-300m²)", meters: 225, icon: "📊", popular: true },
+      { id: "extra-large", label: "Extra Large (300m²+)", meters: 400, icon: "📈" },
+    ];
+  };
 
-  const buildingTypes = [
-    { id: "house", label: "House", multiplier: 1, icon: "🏠", popular: true },
-    { id: "apartment", label: "Apartment Block", multiplier: 1.1, icon: "🏢" },
-    { id: "commercial", label: "Commercial", multiplier: 1.2, icon: "🏭" },
-  ];
+  const getBuildingTypePricing = () => {
+    if (customConfig?.locationPrices) {
+      return customConfig.locationPrices.map((location: any) => ({
+        id: location.id,
+        label: location.label,
+        multiplier: location.multiplier || 1,
+        icon: location.icon || "🏠",
+        popular: location.id === "house"
+      }));
+    }
+    return [
+      { id: "house", label: "House", multiplier: 1, icon: "🏠", popular: true },
+      { id: "apartment", label: "Apartment Block", multiplier: 1.1, icon: "🏢" },
+      { id: "commercial", label: "Commercial", multiplier: 1.2, icon: "🏭" },
+    ];
+  };
 
-  const accessLevels = [
-    { id: "easy", label: "Easy", fee: 0, icon: "✅", popular: true },
-    { id: "moderate", label: "Moderate", fee: 100, icon: "⚠️" },
-    { id: "difficult", label: "Difficult", fee: 200, icon: "🚫" },
-  ];
+  const getAccessLevelPricing = () => {
+    if (customConfig?.deliveryPrices) {
+      return customConfig.deliveryPrices.map((delivery: any) => ({
+        id: delivery.id,
+        label: delivery.label,
+        fee: delivery.price,
+        icon: delivery.icon || "✅",
+        popular: delivery.id === "easy"
+      }));
+    }
+    return [
+      { id: "easy", label: "Easy", fee: 0, icon: "✅", popular: true },
+      { id: "moderate", label: "Moderate", fee: 100, icon: "⚠️" },
+      { id: "difficult", label: "Difficult", fee: 200, icon: "🚫" },
+    ];
+  };
 
-  const addOnOptions = [
-    { id: "gutter-guard", label: "Gutter Guard Installation", price: 180, popular: true },
-    { id: "waterproof", label: "Waterproof Coating", price: 150, popular: true },
-    { id: "skylight", label: "Skylight Installation", price: 250 },
-    { id: "fascia", label: "Fascia Replacement", price: 120 },
-    { id: "emergency", label: "Emergency Call-Out", price: 100 },
-  ];
+  const getAddOnPricing = () => {
+    if (customConfig?.enhancementPrices) {
+      return customConfig.enhancementPrices.map((addon: any) => ({
+        ...addon,
+        popular: addon.id === "gutter-guard" || addon.id === "waterproof"
+      }));
+    }
+    return [
+      { id: "gutter-guard", label: "Gutter Guard Installation", price: 180, popular: true },
+      { id: "waterproof", label: "Waterproof Coating", price: 150, popular: true },
+      { id: "skylight", label: "Skylight Installation", price: 250 },
+      { id: "fascia", label: "Fascia Replacement", price: 120 },
+      { id: "emergency", label: "Emergency Call-Out", price: 100 },
+    ];
+  };
+
+  const serviceTypes = getServiceTypePricing();
+  const roofTypes = getRoofTypePricing();
+  const roofSizes = getRoofSizePricing();
+  const buildingTypes = getBuildingTypePricing();
+  const accessLevels = getAccessLevelPricing();
+  const addOnOptions = getAddOnPricing();
 
   const calculatePricing = (): PricingBreakdown => {
+    const currency = customConfig?.currency || "EUR";
+    const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
+    
     const service = serviceTypes.find(s => s.id === formData.serviceType);
     const roofType = roofTypes.find(r => r.id === formData.roofType);
     const size = roofSizes.find(s => s.id === formData.roofSize);
     const building = buildingTypes.find(b => b.id === formData.buildingType);
     const access = accessLevels.find(a => a.id === formData.accessDifficulty);
 
-    let basePrice = service?.basePrice || 0;
+    let basePrice = service?.basePrice || customConfig?.basePrice || 0;
     let sizeMultiplier = 0;
     let typeMultiplier = 0;
     let accessFee = access?.fee || 0;
@@ -133,9 +208,9 @@ export default function RoofingCalculator({ customConfig: propConfig, isPreview 
 
     if (service?.perMeter && size) {
       sizeMultiplier = basePrice * size.meters;
-      breakdown.push(`${service.label} (${size.meters}m²): €${sizeMultiplier.toLocaleString()}`);
+      breakdown.push(`${service.label} (${size.meters}m²): ${currencySymbol}${sizeMultiplier.toLocaleString()}`);
     } else if (service) {
-      breakdown.push(`${service.label}: €${basePrice}`);
+      breakdown.push(`${service.label}: ${currencySymbol}${basePrice}`);
     }
 
     // Roof type multiplier

@@ -123,12 +123,15 @@ export default function AutoMechanicCalculator({ customConfig: propConfig, isPre
   ];
 
   const calculatePricing = (): PricingBreakdown => {
+    const currency = customConfig?.currency || "EUR";
+    const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
+    
     const vehicle = vehicleTypes.find(v => v.id === formData.vehicleType);
     const service = servicesNeeded.find(s => s.id === formData.serviceNeeded);
     const urgency = urgencyLevels.find(u => u.id === formData.urgency);
     const location = serviceLocations.find(l => l.id === formData.serviceLocation);
 
-    const basePrice = service?.price || 40; // Base inspection if no service selected
+    const basePrice = service?.price || customConfig?.basePrice || 40;
     const vehicleAdjustment = vehicle?.adjustment || 0;
     const urgencyAdjustment = urgency?.adjustment || 0;
     const locationSurcharge = location?.surcharge || 0;
@@ -138,32 +141,32 @@ export default function AutoMechanicCalculator({ customConfig: propConfig, isPre
     const breakdown: string[] = [];
 
     // Base service price
-    breakdown.push(`${service?.label || 'Base inspection'}: €${basePrice}`);
+    breakdown.push(`${service?.label || 'Base inspection'}: ${currencySymbol}${basePrice}`);
     
     // Vehicle type adjustment
     if (vehicleAdjustment > 0) {
-      breakdown.push(`${vehicle?.label} surcharge: +€${vehicleAdjustment}`);
+      breakdown.push(`${vehicle?.label} surcharge: +${currencySymbol}${vehicleAdjustment}`);
     }
     
     // Urgency adjustment
     if (urgencyAdjustment > 0) {
-      breakdown.push(`${urgency?.label}: +€${urgencyAdjustment}`);
+      breakdown.push(`${urgency?.label}: +${currencySymbol}${urgencyAdjustment}`);
     }
     
     // Location surcharge
     if (locationSurcharge > 0) {
-      breakdown.push(`${location?.label}: +€${locationSurcharge}`);
+      breakdown.push(`${location?.label}: +${currencySymbol}${locationSurcharge}`);
     }
 
-    // Add-ons
+    // Add-ons - use dynamic pricing
     formData.addOns.forEach(addOnId => {
       const addOn = addOnOptions.find(a => a.id === addOnId);
       if (addOn) {
         if (addOn.isPercentage) {
           // Premium parts percentage will be calculated after base total
           breakdown.push(`${addOn.label}: +${addOn.percentage}%`);
-        } else {
-          breakdown.push(`${addOn.label}: +€${addOn.price}`);
+        } else if (addOn.price > 0) {
+          breakdown.push(`${addOn.label}: +${currencySymbol}${addOn.price}`);
           addOnsTotal += addOn.price;
         }
       }
@@ -182,7 +185,7 @@ export default function AutoMechanicCalculator({ customConfig: propConfig, isPre
     let promoDiscount = 0;
     if (formData.promoCode.toLowerCase() === "fix10" || formData.promoCode.toLowerCase() === "repair10") {
       promoDiscount = subtotal * 0.1;
-      breakdown.push(`Promo code discount (10%): -€${promoDiscount.toFixed(2)}`);
+      breakdown.push(`Promo code discount (10%): -${currencySymbol}${promoDiscount.toFixed(2)}`);
     }
 
     const total = Math.max(0, subtotal - promoDiscount);

@@ -101,11 +101,14 @@ export default function MakeupArtistCalculator({ customConfig: propConfig, isPre
   ];
 
   const calculatePricing = (): PricingBreakdown => {
+    const currency = customConfig?.currency || "EUR";
+    const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
+    
     const occasion = occasionTypes.find(o => o.id === formData.occasionType);
     const style = makeupStyles.find(s => s.id === formData.makeupStyle);
     const location = locations.find(l => l.id === formData.location);
 
-    const basePrice = occasion?.basePrice || 100;
+    const basePrice = occasion?.basePrice || customConfig?.basePrice || 100;
     const styleSurcharge = style?.surcharge || 0;
     const locationSurcharge = location?.surcharge || 0;
     const additionalPeoplePrice = (formData.peopleCount - 1) * 80;
@@ -115,37 +118,37 @@ export default function MakeupArtistCalculator({ customConfig: propConfig, isPre
     const breakdown: string[] = [];
 
     // Base pricing for first person
-    breakdown.push(`${occasion?.label || 'Base service'} (1 person): €${basePrice}`);
+    breakdown.push(`${occasion?.label || 'Base service'} (1 person): ${currencySymbol}${basePrice}`);
 
     // Additional people
     if (formData.peopleCount > 1) {
-      breakdown.push(`Additional people (${formData.peopleCount - 1}): €${additionalPeoplePrice}`);
+      breakdown.push(`Additional people (${formData.peopleCount - 1}): ${currencySymbol}${additionalPeoplePrice}`);
     }
 
     // Style surcharge
     if (styleSurcharge > 0) {
       const totalStyleSurcharge = (styleSurcharge * formData.peopleCount);
-      breakdown.push(`${style?.label} (${formData.peopleCount} people): €${totalStyleSurcharge}`);
+      breakdown.push(`${style?.label} (${formData.peopleCount} people): ${currencySymbol}${totalStyleSurcharge}`);
     }
 
     // Location surcharge
     if (locationSurcharge > 0) {
-      breakdown.push(`${location?.label}: €${locationSurcharge}`);
+      breakdown.push(`${location?.label}: ${currencySymbol}${locationSurcharge}`);
     }
 
-    // Add-ons
+    // Add-ons - use dynamic pricing
     formData.addOns.forEach(addOnId => {
       const addOn = addOnOptions.find(a => a.id === addOnId);
-      if (addOn) {
+      if (addOn && addOn.price > 0) {
         let addOnPrice = addOn.price;
         // Travel fee is flat, others are per person
         if (addOn.id !== "travel") {
           addOnPrice *= formData.peopleCount;
           addOnsTotal += addOnPrice;
-          breakdown.push(`${addOn.label} (${formData.peopleCount} people): €${addOnPrice}`);
+          breakdown.push(`${addOn.label} (${formData.peopleCount} people): ${currencySymbol}${addOnPrice}`);
         } else {
           addOnsTotal += addOnPrice;
-          breakdown.push(`${addOn.label}: €${addOnPrice}`);
+          breakdown.push(`${addOn.label}: ${currencySymbol}${addOnPrice}`);
         }
       }
     });
@@ -156,7 +159,7 @@ export default function MakeupArtistCalculator({ customConfig: propConfig, isPre
     let discount = 0;
     if (formData.promoCode.toLowerCase() === "glam10") {
       discount = subtotal * 0.1;
-      breakdown.push(`Promo code discount (10%): -€${discount.toFixed(2)}`);
+      breakdown.push(`Promo code discount (10%): -${currencySymbol}${discount.toFixed(2)}`);
     }
 
     const total = subtotal - discount;

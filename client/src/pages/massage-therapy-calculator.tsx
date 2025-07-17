@@ -97,11 +97,14 @@ export default function MassageTherapyCalculator({ customConfig: propConfig, isP
   ];
 
   const calculatePricing = (): PricingBreakdown => {
+    const currency = customConfig?.currency || "EUR";
+    const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
+    
     const sessionLength = sessionLengths.find(s => s.id === formData.sessionLength);
     const massageType = massageTypes.find(m => m.id === formData.massageType);
     const location = locations.find(l => l.id === formData.location);
 
-    const basePrice = sessionLength?.basePrice || 0;
+    const basePrice = sessionLength?.basePrice || customConfig?.basePrice || 0;
     const typeAdd = massageType?.surcharge || 0;
     const locationAdd = location?.surcharge || 0;
     
@@ -110,24 +113,24 @@ export default function MassageTherapyCalculator({ customConfig: propConfig, isP
     const breakdown: string[] = [];
 
     // Base session
-    breakdown.push(`${sessionLength?.label || 'Base session'}: €${basePrice}`);
+    breakdown.push(`${sessionLength?.label || 'Base session'}: ${currencySymbol}${basePrice}`);
 
     // Massage type surcharge
     if (typeAdd > 0) {
-      breakdown.push(`${massageType?.label} specialty: €${typeAdd}`);
+      breakdown.push(`${massageType?.label} specialty: ${currencySymbol}${typeAdd}`);
     }
 
     // Location surcharge
     if (locationAdd > 0) {
-      breakdown.push(`${location?.label} service: €${locationAdd}`);
+      breakdown.push(`${location?.label} service: ${currencySymbol}${locationAdd}`);
     }
 
-    // Add-ons
+    // Add-ons - use dynamic pricing
     formData.addOns.forEach(addOnId => {
       const addOn = addOnOptions.find(a => a.id === addOnId);
-      if (addOn) {
+      if (addOn && addOn.price > 0) {
         addOnsTotal += addOn.price;
-        breakdown.push(`${addOn.label}: €${addOn.price}`);
+        breakdown.push(`${addOn.label}: ${currencySymbol}${addOn.price}`);
       }
     });
 
@@ -137,7 +140,7 @@ export default function MassageTherapyCalculator({ customConfig: propConfig, isP
     let discount = 0;
     if (formData.promoCode.toLowerCase() === "relax10") {
       discount = subtotal * 0.1;
-      breakdown.push(`Promo code discount (10%): -€${discount.toFixed(2)}`);
+      breakdown.push(`Promo code discount (10%): -${currencySymbol}${discount.toFixed(2)}`);
     }
 
     const total = subtotal - discount;

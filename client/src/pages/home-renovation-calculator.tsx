@@ -51,56 +51,7 @@ interface PricingConfig {
   promoCodes: Record<string, number>;
 }
 
-const pricingConfig: PricingConfig = {
-  baseConsultation: 500,
-  projectTypes: {
-    "kitchen-remodel": { min: 6000, max: 15000 },
-    "bathroom-remodel": { min: 4000, max: 10000 },
-    "full-home": { min: 20000, max: 50000 },
-    "flooring": { min: 2000, max: 8000 },
-    "painting": { min: 1000, max: 5000 },
-    "basement-conversion": { min: 8000, max: 20000 },
-    "attic-renovation": { min: 5000, max: 15000 }
-  },
-  finishMultipliers: {
-    "standard": 1.0,
-    "premium": 1.2,
-    "luxury": 1.35
-  },
-  extras: {
-    "interior-design": 800,
-    "project-management": 1200,
-    "cleanup": 400,
-    "permits": 350
-  },
-  timeframeSurcharges: {
-    "flexible": 0,
-    "3-months": 0,
-    "asap": 500
-  },
-  promoCodes: {
-    "LAUNCH10": 0.1,
-    "NEWCLIENT": 0.15,
-    "QUOTEKIT": 0.1
-  }
-};
-
-const projectTypeOptions = [
-  { value: "kitchen-remodel", label: "Kitchen Remodel", popular: true },
-  { value: "bathroom-remodel", label: "Bathroom Remodel", popular: true },
-  { value: "full-home", label: "Full Home Makeover" },
-  { value: "flooring", label: "Flooring" },
-  { value: "painting", label: "Painting" },
-  { value: "basement-conversion", label: "Basement Conversion" },
-  { value: "attic-renovation", label: "Attic Renovation" }
-];
-
-const extrasOptions = [
-  { id: "interior-design", label: "Interior Design Consultation", price: 800 },
-  { id: "project-management", label: "Project Management", price: 1200 },
-  { id: "cleanup", label: "Cleanup & Disposal", price: 400 },
-  { id: "permits", label: "Permit Assistance", price: 350 }
-];
+// Removed hardcoded pricing config - now using dynamic configuration
 
 interface HomeRenovationCalculatorProps {
   customConfig?: any;
@@ -110,6 +61,105 @@ interface HomeRenovationCalculatorProps {
 
 export default function HomeRenovationCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: HomeRenovationCalculatorProps = {}) {
   const { toast } = useToast();
+  const [customConfig, setCustomConfig] = useState<any>(propConfig || null);
+
+  // Use custom pricing configuration if available
+  const getPricingConfig = () => {
+    if (customConfig) {
+      return {
+        baseConsultation: customConfig.basePrice || 500,
+        projectTypes: customConfig.groupPrices?.reduce((acc: any, group: any) => {
+          acc[group.id] = { min: group.price, max: group.price * 2.5 };
+          return acc;
+        }, {}) || {
+          "kitchen-remodel": { min: 6000, max: 15000 },
+          "bathroom-remodel": { min: 4000, max: 10000 },
+          "full-home": { min: 20000, max: 50000 },
+          "flooring": { min: 2000, max: 8000 },
+          "painting": { min: 1000, max: 5000 },
+          "basement-conversion": { min: 8000, max: 20000 },
+          "attic-renovation": { min: 5000, max: 15000 }
+        },
+        finishMultipliers: {
+          "standard": 1.0,
+          "premium": 1.2,
+          "luxury": 1.35
+        },
+        extras: customConfig.enhancementPrices?.reduce((acc: any, addon: any) => {
+          acc[addon.id] = addon.price;
+          return acc;
+        }, {}) || {
+          "interior-design": 800,
+          "project-management": 1200,
+          "cleanup": 400,
+          "permits": 350
+        },
+        timeframeSurcharges: {
+          "flexible": 0,
+          "3-months": 0,
+          "asap": 500
+        },
+        promoCodes: {
+          "LAUNCH10": 0.1,
+          "NEWCLIENT": 0.15,
+          "QUOTEKIT": 0.1
+        }
+      };
+    }
+    return {
+      baseConsultation: 500,
+      projectTypes: {
+        "kitchen-remodel": { min: 6000, max: 15000 },
+        "bathroom-remodel": { min: 4000, max: 10000 },
+        "full-home": { min: 20000, max: 50000 },
+        "flooring": { min: 2000, max: 8000 },
+        "painting": { min: 1000, max: 5000 },
+        "basement-conversion": { min: 8000, max: 20000 },
+        "attic-renovation": { min: 5000, max: 15000 }
+      },
+      finishMultipliers: {
+        "standard": 1.0,
+        "premium": 1.2,
+        "luxury": 1.35
+      },
+      extras: {
+        "interior-design": 800,
+        "project-management": 1200,
+        "cleanup": 400,
+        "permits": 350
+      },
+      timeframeSurcharges: {
+        "flexible": 0,
+        "3-months": 0,
+        "asap": 500
+      },
+      promoCodes: {
+        "LAUNCH10": 0.1,
+        "NEWCLIENT": 0.15,
+        "QUOTEKIT": 0.1
+      }
+    };
+  };
+
+  const pricingConfig = getPricingConfig();
+
+  const projectTypeOptions = [
+    { value: "kitchen-remodel", label: "Kitchen Remodel", popular: true },
+    { value: "bathroom-remodel", label: "Bathroom Remodel", popular: true },
+    { value: "full-home", label: "Full Home Makeover" },
+    { value: "flooring", label: "Flooring" },
+    { value: "painting", label: "Painting" },
+    { value: "basement-conversion", label: "Basement Conversion" },
+    { value: "attic-renovation", label: "Attic Renovation" }
+  ];
+
+  const extrasOptions = [
+    { id: "interior-design", label: "Interior Design Consultation", price: pricingConfig.extras["interior-design"] },
+    { id: "project-management", label: "Project Management", price: pricingConfig.extras["project-management"] },
+    { id: "cleanup", label: "Cleanup & Disposal", price: pricingConfig.extras["cleanup"] },
+    { id: "permits", label: "Permit Assistance", price: pricingConfig.extras["permits"] }
+  ];
+
   const [formData, setFormData] = useState<RenovationFormData>({
     projectType: "",
     propertySize: "",
@@ -143,6 +193,8 @@ export default function HomeRenovationCalculator({ customConfig: propConfig, isP
   const calculateQuote = () => {
     if (!formData.projectType) return;
 
+    const currency = customConfig?.currency || "EUR";
+    const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
     const breakdown: Array<{ label: string; amount: number }> = [];
     let total = pricingConfig.baseConsultation;
     

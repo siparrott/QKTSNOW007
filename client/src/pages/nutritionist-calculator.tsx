@@ -112,30 +112,33 @@ export default function NutritionistCalculator({ customConfig: propConfig, isPre
   ];
 
   const calculatePricing = (): PricingBreakdown => {
+    const currency = customConfig?.currency || "EUR";
+    const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
+    
     const planType = planTypes.find(p => p.id === formData.planType);
     const clientType = clientTypes.find(c => c.id === formData.clientType);
 
-    const basePrice = planType?.basePrice || 0;
+    const basePrice = planType?.basePrice || customConfig?.basePrice || 0;
     
     let addOnsTotal = 0;
     const breakdown: string[] = [];
 
     // Base plan
-    breakdown.push(`${planType?.label || 'Base plan'}: €${basePrice}`);
+    breakdown.push(`${planType?.label || 'Base plan'}: ${currencySymbol}${basePrice}`);
 
-    // Add-ons
+    // Add-ons - use dynamic pricing
     formData.addOns.forEach(addOnId => {
       const addOn = addOnOptions.find(a => a.id === addOnId);
-      if (addOn) {
+      if (addOn && addOn.price > 0) {
         let addOnPrice = addOn.price;
         
         // Weekly add-ons for longer plans
         if ((addOn.id === "whatsapp-support" || addOn.id === "zoom-checkins") && formData.planType !== "one-time") {
           const weeks = formData.planType === "4-week" ? 4 : formData.planType === "8-week" ? 8 : 4;
           addOnPrice = addOn.price * weeks;
-          breakdown.push(`${addOn.label} (${weeks} weeks): €${addOnPrice}`);
+          breakdown.push(`${addOn.label} (${weeks} weeks): ${currencySymbol}${addOnPrice}`);
         } else {
-          breakdown.push(`${addOn.label}: €${addOnPrice}`);
+          breakdown.push(`${addOn.label}: ${currencySymbol}${addOnPrice}`);
         }
         
         addOnsTotal += addOnPrice;
@@ -148,14 +151,14 @@ export default function NutritionistCalculator({ customConfig: propConfig, isPre
     let returningDiscount = 0;
     if (formData.clientType === "returning") {
       returningDiscount = subtotal * 0.1;
-      breakdown.push(`Returning client discount (10%): -€${returningDiscount.toFixed(2)}`);
+      breakdown.push(`Returning client discount (10%): -${currencySymbol}${returningDiscount.toFixed(2)}`);
     }
 
     // Promo code discount
     let promoDiscount = 0;
     if (formData.promoCode.toLowerCase() === "wellness10" || formData.promoCode.toLowerCase() === "health10") {
       promoDiscount = (subtotal - returningDiscount) * 0.1;
-      breakdown.push(`Promo code discount (10%): -€${promoDiscount.toFixed(2)}`);
+      breakdown.push(`Promo code discount (10%): -${currencySymbol}${promoDiscount.toFixed(2)}`);
     }
 
     const total = subtotal - returningDiscount - promoDiscount;

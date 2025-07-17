@@ -70,62 +70,117 @@ export default function RealEstatePhotographyCalculator({ customConfig: propConf
     },
   });
 
-  const propertyTypes = [
-    { id: "apartment", label: "Apartment", icon: "🏢", price: 0 },
-    { id: "house", label: "House", icon: "🏡", price: 50, popular: true },
-    { id: "villa", label: "Luxury Villa", icon: "🏰", price: 100 },
-    { id: "commercial", label: "Commercial Space", icon: "🏬", price: 100 },
-  ];
+  // Use custom pricing configuration if available
+  const getPropertyTypePricing = () => {
+    if (customConfig?.groupPrices) {
+      return customConfig.groupPrices.map((group: any) => ({
+        id: group.id,
+        label: group.label,
+        icon: group.icon || "🏢",
+        price: group.price,
+        popular: group.id === "house"
+      }));
+    }
+    return [
+      { id: "apartment", label: "Apartment", icon: "🏢", price: 0 },
+      { id: "house", label: "House", icon: "🏡", price: 50, popular: true },
+      { id: "villa", label: "Luxury Villa", icon: "🏰", price: 100 },
+      { id: "commercial", label: "Commercial Space", icon: "🏬", price: 100 },
+    ];
+  };
 
-  const propertySizes = [
-    { id: "under-50", label: "Under 50m²", icon: "📐" },
-    { id: "50-100", label: "50-100m²", icon: "📏", popular: true },
-    { id: "100-200", label: "100-200m²", icon: "📊", popular: true },
-    { id: "over-200", label: "Over 200m²", icon: "📈" },
-  ];
+  const getPropertySizePricing = () => {
+    if (customConfig?.sessionDurations) {
+      return customConfig.sessionDurations.map((duration: any) => ({
+        id: duration.id,
+        label: duration.label,
+        icon: duration.icon || "📐",
+        popular: duration.id === "50-100" || duration.id === "100-200"
+      }));
+    }
+    return [
+      { id: "under-50", label: "Under 50m²", icon: "📐" },
+      { id: "50-100", label: "50-100m²", icon: "📏", popular: true },
+      { id: "100-200", label: "100-200m²", icon: "📊", popular: true },
+      { id: "over-200", label: "Over 200m²", icon: "📈" },
+    ];
+  };
 
-  const serviceOptions = [
-    { id: "interior", label: "Interior Photos", price: 0, icon: "🏠" },
-    { id: "exterior", label: "Exterior Photos", price: 30, icon: "🌅" },
-    { id: "aerial", label: "Aerial/Drone Shots", price: 80, icon: "🚁", popular: true },
-    { id: "twilight", label: "Twilight Photography", price: 90, icon: "🌆", popular: true },
-    { id: "floor-plan", label: "Floor Plan", price: 60, icon: "📋" },
-    { id: "virtual-tour", label: "Virtual Tour (360°)", price: 120, icon: "🔄" },
-  ];
+  const getServicePricing = () => {
+    if (customConfig?.enhancementPrices) {
+      return customConfig.enhancementPrices.map((service: any) => ({
+        ...service,
+        icon: service.icon || "🏠",
+        popular: service.id === "aerial" || service.id === "twilight"
+      }));
+    }
+    return [
+      { id: "interior", label: "Interior Photos", price: 0, icon: "🏠" },
+      { id: "exterior", label: "Exterior Photos", price: 30, icon: "🌅" },
+      { id: "aerial", label: "Aerial/Drone Shots", price: 80, icon: "🚁", popular: true },
+      { id: "twilight", label: "Twilight Photography", price: 90, icon: "🌆", popular: true },
+      { id: "floor-plan", label: "Floor Plan", price: 60, icon: "📋" },
+      { id: "virtual-tour", label: "Virtual Tour (360°)", price: 120, icon: "🔄" },
+    ];
+  };
 
-  const timeframes = [
-    { id: "standard", label: "Standard (48-72 hrs)", price: 0, icon: "📅" },
-    { id: "rush", label: "Rush (24 hrs)", price: 50, icon: "⚡" },
-    { id: "same-day", label: "Same-Day", price: 90, icon: "🚨" },
-  ];
+  const getTimeframePricing = () => {
+    if (customConfig?.deliveryPrices) {
+      return customConfig.deliveryPrices;
+    }
+    return [
+      { id: "standard", label: "Standard (48-72 hrs)", price: 0, icon: "📅" },
+      { id: "rush", label: "Rush (24 hrs)", price: 50, icon: "⚡" },
+      { id: "same-day", label: "Same-Day", price: 90, icon: "🚨" },
+    ];
+  };
 
-  const locations = [
-    { id: "city", label: "Within City", price: 0, icon: "🏙️" },
-    { id: "nearby", label: "Up to 50km", price: 25, icon: "🚗" },
-    { id: "distant", label: "50km+", price: 75, icon: "🛣️" },
-  ];
+  const getLocationPricing = () => {
+    if (customConfig?.locationPrices) {
+      return customConfig.locationPrices.map((location: any) => ({
+        id: location.id,
+        label: location.label,
+        price: location.price,
+        icon: location.icon || "🏙️"
+      }));
+    }
+    return [
+      { id: "city", label: "Within City", price: 0, icon: "🏙️" },
+      { id: "nearby", label: "Up to 50km", price: 25, icon: "🚗" },
+      { id: "distant", label: "50km+", price: 75, icon: "🛣️" },
+    ];
+  };
+
+  const propertyTypes = getPropertyTypePricing();
+  const propertySizes = getPropertySizePricing();
+  const serviceOptions = getServicePricing();
+  const timeframes = getTimeframePricing();
+  const locations = getLocationPricing();
 
   const calculatePricing = (): PricingBreakdown => {
-    const baseApartment = 150; // Base: apartment, 50m², interior only
+    const currency = customConfig?.currency || "EUR";
+    const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
+    const baseApartment = customConfig?.basePrice || 150;
+    
     let propertyTypeAdd = 0;
     let servicesAdd = 0;
     let timeframeAdd = 0;
     let locationAdd = 0;
-    const breakdown: string[] = [`Base package (apartment, 50m², interior): €${baseApartment}`];
+    const breakdown: string[] = [`Base package (apartment, 50m², interior): ${currencySymbol}${baseApartment}`];
 
     // Property type pricing
     const property = propertyTypes.find(p => p.id === formData.propertyType);
     if (property && property.price > 0) {
       propertyTypeAdd = property.price;
-      breakdown.push(`${property.label}: €${propertyTypeAdd}`);
+      breakdown.push(`${property.label}: ${currencySymbol}${propertyTypeAdd}`);
     }
 
-    // Services pricing
+    // Services pricing - use dynamic pricing from configuration
     formData.services.forEach(serviceId => {
       const service = serviceOptions.find(s => s.id === serviceId);
       if (service && service.price > 0) {
         servicesAdd += service.price;
-        breakdown.push(`${service.label}: €${service.price}`);
+        breakdown.push(`${service.label}: ${currencySymbol}${service.price}`);
       }
     });
 
@@ -133,14 +188,14 @@ export default function RealEstatePhotographyCalculator({ customConfig: propConf
     const timeframe = timeframes.find(t => t.id === formData.timeframe);
     if (timeframe && timeframe.price > 0) {
       timeframeAdd = timeframe.price;
-      breakdown.push(`${timeframe.label}: €${timeframeAdd}`);
+      breakdown.push(`${timeframe.label}: ${currencySymbol}${timeframeAdd}`);
     }
 
     // Location pricing
     const location = locations.find(l => l.id === formData.location);
     if (location && location.price > 0) {
       locationAdd = location.price;
-      breakdown.push(`${location.label}: €${locationAdd}`);
+      breakdown.push(`${location.label}: ${currencySymbol}${locationAdd}`);
     }
 
     const subtotal = baseApartment + propertyTypeAdd + servicesAdd + timeframeAdd + locationAdd;
@@ -149,7 +204,7 @@ export default function RealEstatePhotographyCalculator({ customConfig: propConf
     let discount = 0;
     if (formData.promoCode.toLowerCase() === "save10") {
       discount = subtotal * 0.1;
-      breakdown.push(`Promo code discount (10%): -€${discount.toFixed(2)}`);
+      breakdown.push(`Promo code discount (10%): -${currencySymbol}${discount.toFixed(2)}`);
     }
 
     const total = subtotal - discount;
@@ -164,6 +219,8 @@ export default function RealEstatePhotographyCalculator({ customConfig: propConf
       discount,
       total,
       breakdown,
+      currency,
+      currencySymbol,
     };
   };
 

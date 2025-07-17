@@ -84,44 +84,59 @@ export default function CopywriterCalculator({ customConfig: propConfig, isPrevi
     { number: 4, title: "Contact & Quote", completed: quoteGenerated }
   ];
 
-  const projectTypes = [
-    { 
-      label: "Website Copy", 
-      value: "website", 
-      icon: <Globe className="h-5 w-5" />,
-      description: "Home pages, about pages, service descriptions",
-      basePrice: 100,
-      popular: true
-    },
-    { 
-      label: "Blog Post", 
-      value: "blog", 
-      icon: <FileText className="h-5 w-5" />,
-      description: "SEO articles and thought leadership content",
-      basePrice: 75
-    },
-    { 
-      label: "Sales Page", 
-      value: "sales", 
-      icon: <Target className="h-5 w-5" />,
-      description: "High-converting landing and sales pages",
-      basePrice: 150
-    },
-    { 
-      label: "Product Description", 
-      value: "product", 
-      icon: <Star className="h-5 w-5" />,
-      description: "E-commerce product copy that sells",
-      basePrice: 50
-    },
-    { 
-      label: "Email Sequence", 
-      value: "email", 
-      icon: <MessageSquare className="h-5 w-5" />,
-      description: "Welcome series and nurture campaigns",
-      basePrice: 120
+  // Use custom pricing configuration if available
+  const getProjectTypePricing = () => {
+    if (customConfig?.groupPrices) {
+      return customConfig.groupPrices.map((group: any) => ({
+        label: group.label,
+        value: group.id,
+        icon: <Globe className="h-5 w-5" />,
+        description: group.description || "Professional copywriting service",
+        basePrice: group.price,
+        popular: group.id === "website" || group.id === "blog"
+      }));
     }
-  ];
+    return [
+      { 
+        label: "Website Copy", 
+        value: "website", 
+        icon: <Globe className="h-5 w-5" />,
+        description: "Home pages, about pages, service descriptions",
+        basePrice: 100,
+        popular: true
+      },
+      { 
+        label: "Blog Post", 
+        value: "blog", 
+        icon: <FileText className="h-5 w-5" />,
+        description: "SEO articles and thought leadership content",
+        basePrice: 75
+      },
+      { 
+        label: "Sales Page", 
+        value: "sales", 
+        icon: <Target className="h-5 w-5" />,
+        description: "High-converting landing and sales pages",
+        basePrice: 150
+      },
+      { 
+        label: "Product Description", 
+        value: "product", 
+        icon: <Star className="h-5 w-5" />,
+        description: "E-commerce product copy that sells",
+        basePrice: 50
+      },
+      { 
+        label: "Email Sequence", 
+        value: "email", 
+        icon: <MessageSquare className="h-5 w-5" />,
+        description: "Welcome series and nurture campaigns",
+        basePrice: 120
+      }
+    ];
+  };
+
+  const projectTypes = getProjectTypePricing();
 
   const wordCounts = [
     { label: "Under 500", value: "under500", multiplier: 0.8, icon: <FileText className="h-4 w-4" /> },
@@ -250,19 +265,22 @@ export default function CopywriterCalculator({ customConfig: propConfig, isPrevi
   };
 
   const calculatePricing = (): PricingBreakdown => {
+    const currency = customConfig?.currency || "EUR";
+    const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
+    
     const selectedProjectType = projectTypes.find(p => p.value === formData.projectType);
     const selectedWordCount = wordCounts.find(w => w.value === formData.wordCount);
     const selectedUrgency = urgencyOptions.find(u => u.value === formData.urgency);
     
-    const basePrice = (selectedProjectType?.basePrice || 75) * (selectedWordCount?.multiplier || 1);
+    const basePrice = (selectedProjectType?.basePrice || customConfig?.basePrice || 75) * (selectedWordCount?.multiplier || 1);
     const wordCountAdd = 0; // Already included in multiplier
     const expressAdd = selectedUrgency?.addCost || 0;
     
-    // Calculate add-ons
+    // Calculate add-ons using dynamic pricing
     let addOnsTotal = 0;
     formData.addOns.forEach(addOnValue => {
       const addOn = addOnOptions.find(a => a.value === addOnValue);
-      if (addOn) {
+      if (addOn && addOn.price > 0) {
         addOnsTotal += addOn.price;
       }
     });
@@ -278,13 +296,13 @@ export default function CopywriterCalculator({ customConfig: propConfig, isPrevi
     const total = Math.max(0, subtotal - promoDiscount);
     
     const breakdown = [
-      `${selectedProjectType?.label || 'Copy'} writing (${selectedWordCount?.label || '500-1,000 words'}): €${basePrice.toFixed(2)}`,
-      ...(expressAdd > 0 ? [`Express delivery (48h): +€${expressAdd.toFixed(2)}`] : []),
+      `${selectedProjectType?.label || 'Copy'} writing (${selectedWordCount?.label || '500-1,000 words'}): ${currencySymbol}${basePrice.toFixed(2)}`,
+      ...(expressAdd > 0 ? [`Express delivery (48h): +${currencySymbol}${expressAdd.toFixed(2)}`] : []),
       ...formData.addOns.map(addOnValue => {
         const addOn = addOnOptions.find(a => a.value === addOnValue);
-        return `${addOn?.label || 'Add-on'}: +€${addOn?.price.toFixed(2) || '0.00'}`;
+        return `${addOn?.label || 'Add-on'}: +${currencySymbol}${addOn?.price.toFixed(2) || '0.00'}`;
       }),
-      ...(promoDiscount > 0 ? [`Promo discount (10%): -€${promoDiscount.toFixed(2)}`] : [])
+      ...(promoDiscount > 0 ? [`Promo discount (10%): -${currencySymbol}${promoDiscount.toFixed(2)}`] : [])
     ];
 
     // Quote expires in 72 hours

@@ -71,60 +71,119 @@ export default function LandscapingCalculator({ customConfig: propConfig, isPrev
     },
   });
 
-  const propertyTypes = [
-    { id: "front-yard", label: "Residential Front Yard", icon: "🏡" },
-    { id: "backyard", label: "Backyard", icon: "🌿", popular: true },
-    { id: "full-property", label: "Full Property", icon: "🏘️", popular: true },
-    { id: "commercial", label: "Commercial Property", icon: "🏢" },
-  ];
+  // Use custom pricing configuration if available
+  const getPropertyTypePricing = () => {
+    if (customConfig?.groupPrices) {
+      return customConfig.groupPrices.map((group: any) => ({
+        id: group.id,
+        label: group.label,
+        icon: group.icon || "🏡",
+        popular: group.id === "backyard" || group.id === "full-property"
+      }));
+    }
+    return [
+      { id: "front-yard", label: "Residential Front Yard", icon: "🏡" },
+      { id: "backyard", label: "Backyard", icon: "🌿", popular: true },
+      { id: "full-property", label: "Full Property", icon: "🏘️", popular: true },
+      { id: "commercial", label: "Commercial Property", icon: "🏢" },
+    ];
+  };
 
-  const serviceTypes = [
-    { id: "mowing", label: "Lawn Mowing / Edging", price: 0, icon: "🌱" },
-    { id: "tree-trimming", label: "Tree Trimming", price: 100, icon: "🌳", popular: true },
-    { id: "garden-design", label: "Garden Design & Planting", price: 200, icon: "🌺" },
-    { id: "irrigation", label: "Irrigation Installation", price: 300, icon: "💧" },
-    { id: "patio", label: "Patio / Deck Build", price: 900, icon: "🪨" },
-    { id: "lighting", label: "Outdoor Lighting", price: 250, icon: "💡" },
-    { id: "fence", label: "Fence Installation", price: 800, icon: "🚪" },
-    { id: "cleanup", label: "Seasonal Cleanup", price: 80, icon: "🍂", popular: true },
-  ];
+  const getServiceTypePricing = () => {
+    if (customConfig?.enhancementPrices) {
+      return customConfig.enhancementPrices.map((service: any) => ({
+        ...service,
+        icon: service.icon || "🌱",
+        popular: service.id === "tree-trimming" || service.id === "cleanup"
+      }));
+    }
+    return [
+      { id: "mowing", label: "Lawn Mowing / Edging", price: 0, icon: "🌱" },
+      { id: "tree-trimming", label: "Tree Trimming", price: 100, icon: "🌳", popular: true },
+      { id: "garden-design", label: "Garden Design & Planting", price: 200, icon: "🌺" },
+      { id: "irrigation", label: "Irrigation Installation", price: 300, icon: "💧" },
+      { id: "patio", label: "Patio / Deck Build", price: 900, icon: "🪨" },
+      { id: "lighting", label: "Outdoor Lighting", price: 250, icon: "💡" },
+      { id: "fence", label: "Fence Installation", price: 800, icon: "🚪" },
+      { id: "cleanup", label: "Seasonal Cleanup", price: 80, icon: "🍂", popular: true },
+    ];
+  };
 
-  const propertySizes = [
-    { id: "small", label: "Small (up to 200m²)", price: 0, icon: "📐" },
-    { id: "medium", label: "Medium (200-500m²)", price: 50, icon: "📏", popular: true },
-    { id: "large", label: "Large (500-1000m²)", price: 100, icon: "📊", popular: true },
-    { id: "very-large", label: "Very Large (1000m²+)", price: 150, icon: "📈" },
-  ];
+  const getPropertySizePricing = () => {
+    if (customConfig?.sessionDurations) {
+      return customConfig.sessionDurations.map((duration: any) => ({
+        id: duration.id,
+        label: duration.label,
+        price: duration.price,
+        icon: duration.icon || "📐",
+        popular: duration.id === "medium" || duration.id === "large"
+      }));
+    }
+    return [
+      { id: "small", label: "Small (up to 200m²)", price: 0, icon: "📐" },
+      { id: "medium", label: "Medium (200-500m²)", price: 50, icon: "📏", popular: true },
+      { id: "large", label: "Large (500-1000m²)", price: 100, icon: "📊", popular: true },
+      { id: "very-large", label: "Very Large (1000m²+)", price: 150, icon: "📈" },
+    ];
+  };
 
-  const frequencies = [
-    { id: "one-time", label: "One-time", discount: 0, icon: "1️⃣" },
-    { id: "weekly", label: "Weekly", discount: 0.10, icon: "📅", popular: true },
-    { id: "bi-weekly", label: "Bi-weekly", discount: 0.07, icon: "🗓️" },
-    { id: "monthly", label: "Monthly", discount: 0.05, icon: "📆" },
-  ];
+  const getFrequencyPricing = () => {
+    if (customConfig?.usagePrices) {
+      return customConfig.usagePrices.map((usage: any) => ({
+        id: usage.id,
+        label: usage.label,
+        discount: usage.discount || 0,
+        icon: usage.icon || "1️⃣",
+        popular: usage.id === "weekly"
+      }));
+    }
+    return [
+      { id: "one-time", label: "One-time", discount: 0, icon: "1️⃣" },
+      { id: "weekly", label: "Weekly", discount: 0.10, icon: "📅", popular: true },
+      { id: "bi-weekly", label: "Bi-weekly", discount: 0.07, icon: "🗓️" },
+      { id: "monthly", label: "Monthly", discount: 0.05, icon: "📆" },
+    ];
+  };
 
-  const addOnOptions = [
-    { id: "soil-treatment", label: "Soil & Fertilizer Treatment", price: 120, popular: true },
-    { id: "sod", label: "Sod Installation", price: 200 },
-    { id: "pressure-washing", label: "Pressure Washing", price: 80 },
-    { id: "mulching", label: "Mulching", price: 90, popular: true },
-    { id: "garden-redesign", label: "Garden Bed Redesign", price: 150 },
-  ];
+  const getAddOnPricing = () => {
+    if (customConfig?.wardrobePrices) {
+      return customConfig.wardrobePrices.map((addon: any) => ({
+        ...addon,
+        popular: addon.id === "soil-treatment" || addon.id === "mulching"
+      }));
+    }
+    return [
+      { id: "soil-treatment", label: "Soil & Fertilizer Treatment", price: 120, popular: true },
+      { id: "sod", label: "Sod Installation", price: 200 },
+      { id: "pressure-washing", label: "Pressure Washing", price: 80 },
+      { id: "mulching", label: "Mulching", price: 90, popular: true },
+      { id: "garden-redesign", label: "Garden Bed Redesign", price: 150 },
+    ];
+  };
+
+  const propertyTypes = getPropertyTypePricing();
+  const serviceTypes = getServiceTypePricing();
+  const propertySizes = getPropertySizePricing();
+  const frequencies = getFrequencyPricing();
+  const addOnOptions = getAddOnPricing();
 
   const calculatePricing = (): PricingBreakdown => {
-    const baseLawnMowing = 120; // Base: small residential, lawn mowing
+    const currency = customConfig?.currency || "EUR";
+    const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
+    const baseLawnMowing = customConfig?.basePrice || 120;
+    
     let servicePremium = 0;
     let sizePremium = 0;
     let frequencyDiscount = 0;
     let addOnsTotal = 0;
-    const breakdown: string[] = [`Base service (small property, lawn mowing): €${baseLawnMowing}`];
+    const breakdown: string[] = [`Base service (small property, lawn mowing): ${currencySymbol}${baseLawnMowing}`];
 
-    // Service type pricing
+    // Service type pricing - use dynamic pricing from configuration
     formData.serviceType.forEach(serviceId => {
       const service = serviceTypes.find(s => s.id === serviceId);
       if (service && service.price > 0) {
         servicePremium += service.price;
-        breakdown.push(`${service.label}: €${service.price}`);
+        breakdown.push(`${service.label}: ${currencySymbol}${service.price}`);
       }
     });
 
@@ -132,15 +191,15 @@ export default function LandscapingCalculator({ customConfig: propConfig, isPrev
     const size = propertySizes.find(s => s.id === formData.propertySize);
     if (size && size.price > 0) {
       sizePremium = size.price;
-      breakdown.push(`${size.label}: €${sizePremium}`);
+      breakdown.push(`${size.label}: ${currencySymbol}${sizePremium}`);
     }
 
-    // Add-ons pricing
+    // Add-ons pricing - use dynamic pricing from configuration
     formData.addOns.forEach(addOnId => {
       const addOn = addOnOptions.find(a => a.id === addOnId);
-      if (addOn) {
+      if (addOn && addOn.price > 0) {
         addOnsTotal += addOn.price;
-        breakdown.push(`${addOn.label}: €${addOn.price}`);
+        breakdown.push(`${addOn.label}: ${currencySymbol}${addOn.price}`);
       }
     });
 
@@ -150,7 +209,7 @@ export default function LandscapingCalculator({ customConfig: propConfig, isPrev
     const frequency = frequencies.find(f => f.id === formData.frequency);
     if (frequency && frequency.discount > 0) {
       frequencyDiscount = subtotal * frequency.discount;
-      breakdown.push(`${frequency.label} discount (${(frequency.discount * 100).toFixed(0)}%): -€${frequencyDiscount.toFixed(2)}`);
+      breakdown.push(`${frequency.label} discount (${(frequency.discount * 100).toFixed(0)}%): -${currencySymbol}${frequencyDiscount.toFixed(2)}`);
       subtotal -= frequencyDiscount;
     }
 
@@ -158,7 +217,7 @@ export default function LandscapingCalculator({ customConfig: propConfig, isPrev
     let discount = 0;
     if (formData.promoCode.toLowerCase() === "landscape10") {
       discount = subtotal * 0.1;
-      breakdown.push(`Promo code discount (10%): -€${discount.toFixed(2)}`);
+      breakdown.push(`Promo code discount (10%): -${currencySymbol}${discount.toFixed(2)}`);
     }
 
     const total = subtotal - discount;
@@ -173,6 +232,8 @@ export default function LandscapingCalculator({ customConfig: propConfig, isPrev
       discount,
       total,
       breakdown,
+      currency,
+      currencySymbol,
     };
   };
 

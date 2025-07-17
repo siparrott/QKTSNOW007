@@ -733,6 +733,16 @@ export default function Dashboard() {
         { id: "senior", label: "Senior / Graduation", price: 0, icon: "🎓" },
         { id: "branding", label: "Branding / Business", price: 80, icon: "💼" }
       ],
+      locationPrices: [
+        { id: "studio", label: "Studio", price: 0, icon: "🏢" },
+        { id: "outdoor", label: "Outdoor", price: 60, icon: "🌳" },
+        { id: "client-location", label: "Client's Home / Office", price: 60, icon: "🏠" }
+      ],
+      wardrobePrices: [
+        { id: "1", label: "1 Outfit", price: 0, icon: "👕" },
+        { id: "2", label: "2 Outfits", price: 40, icon: "👔" },
+        { id: "3+", label: "3+ Outfits", price: 80, icon: "👗" }
+      ],
       // Merge with existing config (existing config takes precedence)
       ...existingConfig
     };
@@ -772,6 +782,16 @@ export default function Dashboard() {
         { id: "family", label: "Family", price: 100, icon: "👨‍👩‍👧‍👦" },
         { id: "senior", label: "Senior / Graduation", price: 0, icon: "🎓" },
         { id: "branding", label: "Branding / Business", price: 80, icon: "💼" }
+      ],
+      locationPrices: [
+        { id: "studio", label: "Studio", price: 0, icon: "🏢" },
+        { id: "outdoor", label: "Outdoor", price: 60, icon: "🌳" },
+        { id: "client-location", label: "Client's Home / Office", price: 60, icon: "🏠" }
+      ],
+      wardrobePrices: [
+        { id: "1", label: "1 Outfit", price: 0, icon: "👕" },
+        { id: "2", label: "2 Outfits", price: 40, icon: "👔" },
+        { id: "3+", label: "3+ Outfits", price: 80, icon: "👗" }
       ],
       // Merge with existing config (existing config takes precedence)
       ...existingConfig
@@ -1438,6 +1458,80 @@ export default function Dashboard() {
                                     const newGroups = [...(customConfig.groupPrices || [])];
                                     newGroups[index] = { ...group, price: Number(e.target.value) || 0 };
                                     setCustomConfig({...customConfig, groupPrices: newGroups});
+                                  }}
+                                  className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Location Pricing */}
+                        <div className="border border-midnight-600 rounded-lg p-4">
+                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Location Pricing</h4>
+                          <p className="text-xs text-gray-400 mb-3">Control the +€60 amounts for Outdoor, Client location</p>
+                          <div className="space-y-3">
+                            {(customConfig.locationPrices || [
+                              { id: "studio", label: "Studio", price: 0, icon: "🏢" },
+                              { id: "outdoor", label: "Outdoor", price: 60, icon: "🌳" },
+                              { id: "client-location", label: "Client's Home / Office", price: 60, icon: "🏠" }
+                            ]).map((location, index) => (
+                              <div key={index} className="grid grid-cols-2 gap-2">
+                                <Input
+                                  placeholder="Location Type"
+                                  value={location.label}
+                                  onChange={(e) => {
+                                    const newLocations = [...(customConfig.locationPrices || [])];
+                                    newLocations[index] = { ...location, label: e.target.value };
+                                    setCustomConfig({...customConfig, locationPrices: newLocations});
+                                  }}
+                                  className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                />
+                                <Input
+                                  type="number"
+                                  placeholder="Extra Price (€)"
+                                  value={location.price}
+                                  onChange={(e) => {
+                                    const newLocations = [...(customConfig.locationPrices || [])];
+                                    newLocations[index] = { ...location, price: Number(e.target.value) || 0 };
+                                    setCustomConfig({...customConfig, locationPrices: newLocations});
+                                  }}
+                                  className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Wardrobe Changes Pricing */}
+                        <div className="border border-midnight-600 rounded-lg p-4">
+                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Wardrobe Changes Pricing</h4>
+                          <p className="text-xs text-gray-400 mb-3">Control the +€40, +€80 amounts for outfit changes</p>
+                          <div className="space-y-3">
+                            {(customConfig.wardrobePrices || [
+                              { id: "1", label: "1 Outfit", price: 0, icon: "👕" },
+                              { id: "2", label: "2 Outfits", price: 40, icon: "👔" },
+                              { id: "3+", label: "3+ Outfits", price: 80, icon: "👗" }
+                            ]).map((wardrobe, index) => (
+                              <div key={index} className="grid grid-cols-2 gap-2">
+                                <Input
+                                  placeholder="Outfit Option"
+                                  value={wardrobe.label}
+                                  onChange={(e) => {
+                                    const newWardrobe = [...(customConfig.wardrobePrices || [])];
+                                    newWardrobe[index] = { ...wardrobe, label: e.target.value };
+                                    setCustomConfig({...customConfig, wardrobePrices: newWardrobe});
+                                  }}
+                                  className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                />
+                                <Input
+                                  type="number"
+                                  placeholder="Extra Price (€)"
+                                  value={wardrobe.price}
+                                  onChange={(e) => {
+                                    const newWardrobe = [...(customConfig.wardrobePrices || [])];
+                                    newWardrobe[index] = { ...wardrobe, price: Number(e.target.value) || 0 };
+                                    setCustomConfig({...customConfig, wardrobePrices: newWardrobe});
                                   }}
                                   className="bg-midnight-900 border-midnight-600 text-white text-xs"
                                 />

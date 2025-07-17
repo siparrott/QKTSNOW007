@@ -240,17 +240,32 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
   const portraitTypes = getGroupPricing();
   const durations = getDurationPricing();
 
-  const locations = [
-    { id: "studio", label: "Studio", price: 0, icon: "🏢" },
-    { id: "outdoor", label: "Outdoor", price: 60, icon: "🌳", popular: true },
-    { id: "client-location", label: "Client's Home / Office", price: 60, icon: "🏠" },
-  ];
+  // Use custom location pricing if available
+  const getLocationPricing = () => {
+    if (customConfig?.locationPrices) {
+      return customConfig.locationPrices;
+    }
+    return [
+      { id: "studio", label: "Studio", price: 0, icon: "🏢" },
+      { id: "outdoor", label: "Outdoor", price: 60, icon: "🌳", popular: true },
+      { id: "client-location", label: "Client's Home / Office", price: 60, icon: "🏠" },
+    ];
+  };
 
-  const wardrobeOptions = [
-    { id: "1", label: "1 Outfit", price: 0, icon: "👕" },
-    { id: "2", label: "2 Outfits", price: 40, icon: "👔", popular: true },
-    { id: "3+", label: "3+ Outfits", price: 80, icon: "👗" },
-  ];
+  // Use custom wardrobe pricing if available
+  const getWardrobePricing = () => {
+    if (customConfig?.wardrobePrices) {
+      return customConfig.wardrobePrices;
+    }
+    return [
+      { id: "1", label: "1 Outfit", price: 0, icon: "👕" },
+      { id: "2", label: "2 Outfits", price: 40, icon: "👔", popular: true },
+      { id: "3+", label: "3+ Outfits", price: 80, icon: "👗" },
+    ];
+  };
+
+  const locations = getLocationPricing();
+  const wardrobeOptions = getWardrobePricing();
 
   const addOnOptions = [
     { id: "makeup", label: "Professional Makeup", price: 80, popular: true },

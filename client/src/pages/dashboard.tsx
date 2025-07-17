@@ -199,7 +199,24 @@ export default function Dashboard() {
   const [selectedCalculator, setSelectedCalculator] = useState<UserCalculator | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [customConfig, setCustomConfig] = useState<any>({});
+  const [customConfig, setCustomConfig] = useState<any>({
+    // Initialize pricing configuration with defaults
+    basePrice: 200,
+    hourlyRate: 100,
+    locationFee: 50,
+    currency: 'EUR',
+    addOnPrices: [
+      { name: "Rush delivery", price: 100 },
+      { name: "Print package", price: 150 },
+      { name: "Social media package", price: 75 }
+    ],
+    durationPrices: [
+      { duration: "30 minutes", multiplier: 0.5 },
+      { duration: "1 hour", multiplier: 1 },
+      { duration: "2 hours", multiplier: 1.8 },
+      { duration: "Half day", multiplier: 3 }
+    ]
+  });
 
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const { toast } = useToast();
@@ -1133,8 +1150,8 @@ export default function Dashboard() {
                               <Label className="text-gray-300 text-xs">Base Price (€)</Label>
                               <Input
                                 type="number"
-                                value={customConfig.basePrice || 200}
-                                onChange={(e) => setCustomConfig({...customConfig, basePrice: Number(e.target.value)})}
+                                value={customConfig.basePrice ?? 200}
+                                onChange={(e) => setCustomConfig({...customConfig, basePrice: Number(e.target.value) || 0})}
                                 placeholder="200"
                                 className="bg-midnight-900 border-midnight-600 text-white text-sm"
                               />
@@ -1143,8 +1160,8 @@ export default function Dashboard() {
                               <Label className="text-gray-300 text-xs">Hourly Rate (€)</Label>
                               <Input
                                 type="number"
-                                value={customConfig.hourlyRate || 100}
-                                onChange={(e) => setCustomConfig({...customConfig, hourlyRate: Number(e.target.value)})}
+                                value={customConfig.hourlyRate ?? 100}
+                                onChange={(e) => setCustomConfig({...customConfig, hourlyRate: Number(e.target.value) || 0})}
                                 placeholder="100"
                                 className="bg-midnight-900 border-midnight-600 text-white text-sm"
                               />
@@ -1153,8 +1170,8 @@ export default function Dashboard() {
                               <Label className="text-gray-300 text-xs">Location Fee (€)</Label>
                               <Input
                                 type="number"
-                                value={customConfig.locationFee || 50}
-                                onChange={(e) => setCustomConfig({...customConfig, locationFee: Number(e.target.value)})}
+                                value={customConfig.locationFee ?? 50}
+                                onChange={(e) => setCustomConfig({...customConfig, locationFee: Number(e.target.value) || 0})}
                                 placeholder="50"
                                 className="bg-midnight-900 border-midnight-600 text-white text-sm"
                               />

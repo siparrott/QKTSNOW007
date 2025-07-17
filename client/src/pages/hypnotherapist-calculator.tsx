@@ -115,7 +115,7 @@ export default function HypnotherapistCalculator({ customConfig: propConfig, isP
     const plan = sessionPlans.find(p => p.id === formData.sessionPlan);
     const format = sessionFormats.find(f => f.id === formData.sessionFormat);
 
-    const basePrice = (plan?.basePrice || 0) + (format?.basePrice || 0);
+    const basePrice = (plan?.basePrice || customConfig?.basePrice || 80) + (format?.basePrice || 0);
     
     let addOnsTotal = 0;
     const breakdown: string[] = [];

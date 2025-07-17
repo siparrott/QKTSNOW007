@@ -248,7 +248,7 @@ export default function VideoEditorCalculator({ customConfig: propConfig, isPrev
     const selectedFootage = footageOptions.find(f => f.value === formData.footageProvided);
     const selectedTurnaround = turnaroundTimes.find(t => t.value === formData.turnaroundTime);
     
-    const basePrice = (selectedProjectType?.basePrice || 100) * (selectedDuration?.multiplier || 1);
+    const basePrice = (selectedProjectType?.basePrice || customConfig?.basePrice || 100) * (selectedDuration?.multiplier || 1);
     const durationAdd = 0; // Already included in multiplier
     const filmingAdd = selectedFootage?.addCost || 0;
     const rushAdd = selectedTurnaround?.addCost || 0;

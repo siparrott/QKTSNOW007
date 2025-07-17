@@ -108,40 +108,43 @@ export default function DronePhotographyCalculator({ customConfig: propConfig, i
   ];
 
   const calculatePricing = (): PricingBreakdown => {
-    const baseShoot = 200; // Base 1hr, stills only, open field
+    const currency = customConfig?.currency || "EUR";
+    const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
+    
+    const baseShoot = customConfig?.basePrice || 200; // Base 1hr, stills only, open field
     let outputAdd = 0;
     let locationAdd = 0;
     let durationAdd = 0;
     let addOnsCost = 0;
-    const breakdown: string[] = [`Base shoot (1hr, stills, open field): €${baseShoot}`];
+    const breakdown: string[] = [`Base shoot (1hr, stills, open field): ${currencySymbol}${baseShoot}`];
 
     // Duration multiplier
     const duration = durations.find(d => d.id === formData.duration);
     if (duration && duration.multiplier > 1.0) {
       durationAdd = baseShoot * (duration.multiplier - 1);
-      breakdown.push(`${duration.label}: €${Math.round(durationAdd)}`);
+      breakdown.push(`${duration.label}: ${currencySymbol}${Math.round(durationAdd)}`);
     }
 
     // Output type pricing
     const output = outputTypes.find(o => o.id === formData.outputType);
     if (output && output.price > 0) {
       outputAdd = output.price;
-      breakdown.push(`${output.label}: €${outputAdd}`);
+      breakdown.push(`${output.label}: ${currencySymbol}${outputAdd}`);
     }
 
     // Location pricing
     const location = locationTypes.find(l => l.id === formData.locationType);
     if (location && location.price > 0) {
       locationAdd = location.price;
-      breakdown.push(`${location.label}: €${locationAdd}`);
+      breakdown.push(`${location.label}: ${currencySymbol}${locationAdd}`);
     }
 
-    // Add-ons pricing
+    // Add-ons pricing - use dynamic pricing
     formData.addOns.forEach(addOnId => {
       const addOn = addOnOptions.find(a => a.id === addOnId);
-      if (addOn) {
+      if (addOn && addOn.price > 0) {
         addOnsCost += addOn.price;
-        breakdown.push(`${addOn.label}: €${addOn.price}`);
+        breakdown.push(`${addOn.label}: ${currencySymbol}${addOn.price}`);
       }
     });
 
@@ -151,7 +154,7 @@ export default function DronePhotographyCalculator({ customConfig: propConfig, i
     let discount = 0;
     if (formData.promoCode.toLowerCase() === "save10") {
       discount = subtotal * 0.1;
-      breakdown.push(`Promo code discount (10%): -€${discount.toFixed(2)}`);
+      breakdown.push(`Promo code discount (10%): -${currencySymbol}${discount.toFixed(2)}`);
     }
 
     const total = subtotal - discount;

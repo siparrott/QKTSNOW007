@@ -115,7 +115,7 @@ export default function InteriorDesignCalculator({ customConfig: propConfig, isP
     const serviceLevel = serviceLevels.find(s => s.id === formData.serviceLevel);
     const urgency = urgencyLevels.find(u => u.id === formData.urgency);
 
-    const basePrice = (projectType?.basePrice || 0) * (propertySize?.multiplier || 1);
+    const basePrice = (projectType?.basePrice || customConfig?.basePrice || 180) * (propertySize?.multiplier || 1);
     const serviceLevelAdd = serviceLevel?.surcharge || 0;
     const sizeAdd = 0; // Already included in base calculation
     const urgencyAdd = urgency?.surcharge || 0;

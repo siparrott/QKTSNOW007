@@ -228,7 +228,7 @@ export default function MarketingConsultantCalculator({ customConfig: propConfig
     const selectedEngagementType = engagementTypes.find(e => e.value === formData.engagementType);
     const selectedTimeline = timelineOptions.find(t => t.value === formData.timeline);
     
-    const basePrice = (selectedServiceFocus?.basePrice || 400) * (selectedBusinessSize?.multiplier || 1) * (selectedEngagementType?.multiplier || 1) * (selectedTimeline?.urgency || 1);
+    const basePrice = (selectedServiceFocus?.basePrice || customConfig?.basePrice || 400) * (selectedBusinessSize?.multiplier || 1) * (selectedEngagementType?.multiplier || 1) * (selectedTimeline?.urgency || 1);
     const businessSizeAdd = 0; // Already included in multiplier
     const engagementAdd = 0; // Already included in multiplier
     

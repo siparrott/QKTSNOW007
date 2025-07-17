@@ -115,7 +115,7 @@ export default function SolarCalculator({ customConfig: propConfig, isPreview = 
   ];
 
   const calculatePricing = (): PricingBreakdown => {
-    const basePrice = 5000; // Base 3kW system
+    const basePrice = customConfig?.basePrice || 5000; // Base 3kW system
     const pricePerKW = 1000;
     
     const property = propertyTypes.find(p => p.id === formData.propertyType);

@@ -220,7 +220,7 @@ export default function VanRentalCalculator({ customConfig: propConfig, isPrevie
     const selectedKmLimit = kmLimitOptions.find(k => k.value === formData.kmLimit);
     const selectedAge = ageOptions.find(a => a.value === formData.driverAge);
     
-    const baseRate = selectedVan?.baseRate || 0;
+    const baseRate = selectedVan?.baseRate || customConfig?.basePrice || 35;
     const durationMultiplier = selectedDuration?.multiplier || 1;
     const kmPrice = selectedKmLimit?.price || 0;
     

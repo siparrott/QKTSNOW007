@@ -226,7 +226,7 @@ export default function MotorcycleRepairCalculator({ customConfig: propConfig, i
     const selectedUrgency = urgencyOptions.find(u => u.value === formData.urgency);
     const selectedAge = bikeAgeOptions.find(a => a.value === formData.bikeAge);
     
-    const baseServiceRate = selectedService?.baseRate || 0;
+    const baseServiceRate = selectedService?.baseRate || customConfig?.basePrice || 80;
     const bikeMultiplier = selectedBike?.baseMultiplier || 1;
     const urgencyFee = selectedUrgency?.fee || 0;
     

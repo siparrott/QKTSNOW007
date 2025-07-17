@@ -212,7 +212,7 @@ export default function ChildcareServicesCalculator({ customConfig: propConfig, 
       const breakdown: Array<{name: string, price: number, type: 'base' | 'additional' | 'discount'}> = [];
 
       // Calculate base cost
-      const ageGroupCost = defaultConfig.ageGroups[formData.ageGroup] || 0;
+      const ageGroupCost = defaultConfig.ageGroups[formData.ageGroup] || customConfig?.basePrice || 800;
       const scheduleMultiplier = defaultConfig.schedules[formData.schedule] || 1.0;
       baseCost = ageGroupCost * scheduleMultiplier;
       

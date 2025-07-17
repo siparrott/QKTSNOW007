@@ -119,7 +119,7 @@ export default function MaternityPhotographyCalculator({ customConfig: propConfi
     const whoIncluded = whoIncludedOptions.find(w => w.id === formData.whoIncluded);
     const location = locationOptions.find(l => l.id === formData.location);
 
-    const basePrice = sessionType?.basePrice || 0;
+    const basePrice = sessionType?.basePrice || customConfig?.basePrice || 280;
     const sessionTypeAdd = 0; // Already included in base price
     const weekAdd = gestationWeek?.surcharge || 0;
     const peopleAdd = whoIncluded?.surcharge || 0;

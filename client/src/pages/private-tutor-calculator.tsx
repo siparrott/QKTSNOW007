@@ -128,7 +128,7 @@ export default function PrivateTutorCalculator({ customConfig: propConfig, isPre
     const type = sessionTypes.find(t => t.id === formData.sessionType);
     const frequency = sessionFrequencies.find(f => f.id === formData.sessionFrequency);
 
-    const basePrice = duration?.basePrice || 30;
+    const basePrice = duration?.basePrice || customConfig?.basePrice || 30;
     const levelAdjustment = level?.adjustment || 0;
     const typeAdjustment = type?.adjustment || 0;
     const durationAdjustment = 0;

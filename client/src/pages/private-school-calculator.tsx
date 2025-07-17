@@ -174,7 +174,7 @@ export default function PrivateSchoolCalculator({ customConfig: propConfig, isPr
     if (!gradeLevel || !enrollmentType || !siblingStatus || !paymentPlan) return null;
 
     // Calculate base cost
-    let baseCost = gradeLevel.baseTuition * enrollmentType.multiplier;
+    let baseCost = (gradeLevel.baseTuition || customConfig?.basePrice || 12000) * enrollmentType.multiplier;
     
     // Add boarding fee if applicable
     let enrollmentAdjustment = 0;
@@ -182,10 +182,10 @@ export default function PrivateSchoolCalculator({ customConfig: propConfig, isPr
       enrollmentAdjustment = enrollmentType.addOn;
     }
     
-    // Calculate add-ons
+    // Calculate add-ons - use dynamic pricing
     const addOnCosts = formData.addOns.map(addOn => {
       const option = addOnOptions.find(a => a.value === addOn);
-      return option ? { name: option.label, amount: option.cost } : { name: "", amount: 0 };
+      return option && option.cost > 0 ? { name: option.label, amount: option.cost } : { name: "", amount: 0 };
     }).filter(a => a.name);
 
     // Apply sibling discount

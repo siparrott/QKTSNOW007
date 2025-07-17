@@ -119,7 +119,7 @@ export default function EventVideographyCalculator({ customConfig: propConfig, i
   ];
 
   const calculatePricing = (): PricingBreakdown => {
-    const baseEvent = 450; // 2 hours, solo shooter
+    const baseEvent = customConfig?.basePrice || 450; // 2 hours, solo shooter
     let durationAdd = 0;
     let deliverablesAdd = 0;
     let crewAdd = 0;

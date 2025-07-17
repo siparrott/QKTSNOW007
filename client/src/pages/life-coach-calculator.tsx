@@ -116,7 +116,7 @@ export default function LifeCoachCalculator({ customConfig: propConfig, isPrevie
     const duration = programDurations.find(p => p.id === formData.programDuration);
     const format = sessionFormats.find(f => f.id === formData.sessionFormat);
 
-    const basePrice = (duration?.basePrice || 0) + (format?.basePrice || 0);
+    const basePrice = (duration?.basePrice || customConfig?.basePrice || 120) + (format?.basePrice || 0);
     
     let addOnsTotal = 0;
     const breakdown: string[] = [];

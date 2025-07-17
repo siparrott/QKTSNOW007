@@ -202,7 +202,7 @@ export default function PlasticSurgeryCalculator({ customConfig: propConfig, isP
   });
 
   const [quote, setQuote] = useState({
-    procedureCost: 0,
+    procedureCost: customConfig?.basePrice || 0,
     anesthesiaCost: 0,
     additionalCost: 0,
     hospitalCost: 0,

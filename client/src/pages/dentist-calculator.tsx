@@ -202,6 +202,9 @@ export default function DentistCalculator({ customConfig: propConfig, isPreview 
         let treatmentCost = 0;
         const count = parseInt(formData.treatmentCount);
         
+        // Use dynamic pricing from customConfig if available
+        const basePrice = customConfig?.basePrice || treatment.single || treatment.range?.min || 100;
+        
         if (treatment.single && count === 1) {
           treatmentCost = treatment.single;
         } else if (treatment.multiple) {

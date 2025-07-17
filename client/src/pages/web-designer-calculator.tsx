@@ -234,7 +234,7 @@ export default function WebDesignerCalculator({ customConfig: propConfig, isPrev
     const selectedPlatform = platformOptions.find(p => p.value === formData.platform);
     const selectedTimeline = timelineOptions.find(t => t.value === formData.timeline);
     
-    const basePrice = (selectedWebsiteType?.basePrice || 600) * (selectedPageCount?.multiplier || 1);
+    const basePrice = (selectedWebsiteType?.basePrice || customConfig?.basePrice || 600) * (selectedPageCount?.multiplier || 1);
     const pageAddCost = 0; // Already included in multiplier
     const platformSurcharge = selectedPlatform?.surcharge || 0;
     const timelineRush = selectedTimeline?.rushFee || 0;

@@ -219,10 +219,13 @@ export default function AirportTransferCalculator({ customConfig: propConfig, is
   };
 
   const calculatePricing = (): PricingBreakdown => {
+    const currency = customConfig?.currency || "EUR";
+    const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
+    
     const selectedVehicle = vehicleTypeOptions.find(v => v.value === formData.vehicleType);
     const selectedAirport = airportOptions.find(a => a.value === formData.destinationAirport);
     
-    const baseFare = selectedVehicle?.basePrice || 0;
+    const baseFare = selectedVehicle?.basePrice || customConfig?.basePrice || 0;
     const distanceMultiplier = (selectedAirport?.distance || 40) / 35; // Base distance 35km
     const adjustedBaseFare = baseFare * distanceMultiplier;
     
@@ -233,7 +236,7 @@ export default function AirportTransferCalculator({ customConfig: propConfig, is
     // Vehicle upgrade costs already included in base price
     const vehicleUpgrade = 0;
     
-    // Add-ons total
+    // Add-ons total - use dynamic pricing
     const addOnsTotal = formData.addOns.reduce((total, addOnValue) => {
       const addOn = addOnOptions.find(a => a.value === addOnValue);
       return total + (addOn?.price || 0);
@@ -263,15 +266,15 @@ export default function AirportTransferCalculator({ customConfig: propConfig, is
     const total = Math.max(0, subtotal - promoDiscount);
     
     const breakdown = [
-      `Base fare to ${selectedAirport?.label || 'airport'}: €${adjustedBaseFare.toFixed(2)}`,
-      ...(passengerSurcharge > 0 ? [`Extra passengers (${extraPassengers}): +€${passengerSurcharge}`] : []),
+      `Base fare to ${selectedAirport?.label || 'airport'}: ${currencySymbol}${adjustedBaseFare.toFixed(2)}`,
+      ...(passengerSurcharge > 0 ? [`Extra passengers (${extraPassengers}): +${currencySymbol}${passengerSurcharge}`] : []),
       ...formData.addOns.map(addOnValue => {
         const addOn = addOnOptions.find(a => a.value === addOnValue);
-        return `${addOn?.label || 'Add-on'}: +€${addOn?.price || 0}`;
+        return `${addOn?.label || 'Add-on'}: +${currencySymbol}${addOn?.price || 0}`;
       }),
-      ...(nightSurcharge > 0 ? [`Night surcharge (22:00-06:00): +€${nightSurcharge.toFixed(2)}`] : []),
-      ...(returnFare > 0 ? [`Return trip: +€${returnFare.toFixed(2)}`] : []),
-      ...(promoDiscount > 0 ? [`Promo discount: -€${promoDiscount.toFixed(2)}`] : [])
+      ...(nightSurcharge > 0 ? [`Night surcharge (22:00-06:00): +${currencySymbol}${nightSurcharge.toFixed(2)}`] : []),
+      ...(returnFare > 0 ? [`Return trip: +${currencySymbol}${returnFare.toFixed(2)}`] : []),
+      ...(promoDiscount > 0 ? [`Promo discount: -${currencySymbol}${promoDiscount.toFixed(2)}`] : [])
     ];
 
     return {

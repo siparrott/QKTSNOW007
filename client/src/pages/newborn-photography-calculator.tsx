@@ -117,7 +117,7 @@ export default function NewbornPhotographyCalculator({ customConfig: propConfig,
     const people = peopleOptions.find(p => p.id === formData.peopleIncluded);
     const delivery = deliveryOptions.find(d => d.id === formData.deliveryPreference);
 
-    const basePrice = sessionType?.basePrice || 0;
+    const basePrice = sessionType?.basePrice || customConfig?.basePrice || 300;
     const sessionTypeAdd = 0; // Already included in base price
     const ageAdd = babyAge?.surcharge || 0;
     const peopleAdd = people?.surcharge || 0;

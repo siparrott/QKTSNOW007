@@ -106,7 +106,7 @@ export default function BusinessCoachCalculator({ customConfig: propConfig, isPr
   const progress = (currentStep / totalSteps) * 100;
 
   const calculateQuote = () => {
-    const baseRate = 200; // €200 per session
+    const baseRate = customConfig?.basePrice || 200; // €200 per session
     
     const frequency = sessionFrequencyOptions.find(f => f.value === formData.sessionFrequency);
     const duration = durationOptions.find(d => d.value === formData.packageDuration);
@@ -122,10 +122,10 @@ export default function BusinessCoachCalculator({ customConfig: propConfig, isPr
     // Apply format premium
     const formatPremium = format.premium * totalSessions;
     
-    // Calculate add-ons
+    // Calculate add-ons - use dynamic pricing
     const addOnCosts = formData.addOns.map(addOn => {
       const option = addOnOptions.find(a => a.value === addOn);
-      return option ? { name: option.label, amount: option.cost * duration.multiplier } : { name: "", amount: 0 };
+      return option && option.cost > 0 ? { name: option.label, amount: option.cost * duration.multiplier } : { name: "", amount: 0 };
     }).filter(a => a.name);
 
     // Apply discounts

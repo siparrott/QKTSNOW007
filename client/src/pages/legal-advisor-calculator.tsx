@@ -124,10 +124,10 @@ export default function LegalAdvisorCalculator({ customConfig: propConfig, isPre
     // Apply jurisdiction fee
     const jurisdictionFee = jurisdiction.fee;
     
-    // Calculate add-ons
+    // Calculate add-ons - use dynamic pricing
     const addOnCosts = formData.addOns.map(addOn => {
       const option = addOnOptions.find(a => a.value === addOn);
-      return option ? { name: option.label, amount: option.cost } : { name: "", amount: 0 };
+      return option && option.cost > 0 ? { name: option.label, amount: option.cost } : { name: "", amount: 0 };
     }).filter(a => a.name);
 
     // Apply discounts

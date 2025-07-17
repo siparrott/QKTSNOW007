@@ -213,7 +213,7 @@ export default function ChildcareCalculator({ customConfig: propConfig, isPrevie
       const breakdown: Array<{name: string, price: number, type: 'care' | 'addon' | 'discount'}> = [];
 
       // Calculate base daily rate
-      const baseCare = defaultConfig.careTypes[formData.careType] || 0;
+      const baseCare = defaultConfig.careTypes[formData.careType] || customConfig?.basePrice || 45;
       const ageMultiplier = defaultConfig.ageGroups[formData.childAge] || 1.0;
       const timeMultiplier = defaultConfig.timeSlots[formData.timeSlot] || 1.0;
       

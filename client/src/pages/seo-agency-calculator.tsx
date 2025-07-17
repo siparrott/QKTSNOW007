@@ -230,7 +230,7 @@ export default function SEOAgencyCalculator({ customConfig: propConfig, isPrevie
     const selectedBlogPlan = blogPlans.find(b => b.value === formData.blogPlan);
     const selectedBacklinkCampaign = backlinkCampaigns.find(b => b.value === formData.backlinkCampaign);
     
-    const basePrice = (selectedGoal?.basePrice || 400) * (selectedWebsiteSize?.multiplier || 1);
+    const basePrice = (selectedGoal?.basePrice || customConfig?.basePrice || 400) * (selectedWebsiteSize?.multiplier || 1);
     const websiteSizeAdd = 0; // Already included in multiplier
     const auditAdd = formData.technicalAudit ? 150 : 0;
     const blogAdd = selectedBlogPlan?.price || 0;

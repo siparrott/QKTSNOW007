@@ -200,7 +200,7 @@ export default function DrivingInstructorCalculator({ customConfig: propConfig, 
     const selectedDuration = durationOptions.find(d => d.value === formData.lessonDuration);
     const selectedPickup = pickupOptions.find(p => p.value === formData.pickupLocation);
     
-    const baseLessonRate = (selectedLessonType?.baseRate || 50) * (selectedDuration?.multiplier || 1);
+    const baseLessonRate = (selectedLessonType?.baseRate || customConfig?.basePrice || 50) * (selectedDuration?.multiplier || 1);
     const totalLessons = parseInt(formData.numberOfLessons) || 0;
     const transmissionSurcharge = (selectedTransmission?.surcharge || 0) * totalLessons;
     const pickupFee = (selectedPickup?.fee || 0) * totalLessons;

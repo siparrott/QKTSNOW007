@@ -222,14 +222,18 @@ export default function ChauffeurLimoCalculator({ customConfig: propConfig, isPr
   };
 
   const calculatePricing = (): PricingBreakdown => {
+    const currency = customConfig?.currency || "EUR";
+    const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
+    
     const selectedService = serviceTypeOptions.find(s => s.value === formData.serviceType);
     const selectedVehicle = vehicleTypeOptions.find(v => v.value === formData.vehicleType);
     const selectedDuration = durationOptions.find(d => d.value === formData.duration);
     
-    const basePrice = selectedService?.basePrice || 0;
+    const basePrice = selectedService?.basePrice || customConfig?.basePrice || 0;
     const vehicleUpcharge = selectedVehicle?.upcharge || 0;
     const durationMultiplier = selectedDuration?.multiplier || 1;
     
+    // Add-ons total - use dynamic pricing
     const addOnsTotal = formData.addOns.reduce((total, addOnValue) => {
       const addOn = addOnOptions.find(a => a.value === addOnValue);
       return total + (addOn?.price || 0);

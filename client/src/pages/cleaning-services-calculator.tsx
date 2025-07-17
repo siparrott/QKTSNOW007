@@ -184,12 +184,12 @@ export default function CleaningServicesCalculator({ customConfig: propConfig, i
     if (!cleaningType || !propertySize || !frequency || !urgency) return null;
 
     // Calculate base cost
-    const baseCost = propertySize.basePrice * cleaningType.multiplier;
+    const baseCost = (propertySize.basePrice || customConfig?.basePrice || 80) * cleaningType.multiplier;
     
-    // Calculate add-ons
+    // Calculate add-ons - use dynamic pricing
     const addOnCosts = formData.addOns.map(addOn => {
       const option = addOnOptions.find(a => a.value === addOn);
-      return option ? { name: option.label, amount: option.cost } : { name: "", amount: 0 };
+      return option && option.cost > 0 ? { name: option.label, amount: option.cost } : { name: "", amount: 0 };
     }).filter(a => a.name);
 
     // Apply frequency discount

@@ -124,7 +124,7 @@ export default function PaintingDecoratingCalculator({ customConfig: propConfig,
     const paintType = paintTypes.find(p => p.id === formData.paintType);
     const urgency = urgencyLevels.find(u => u.id === formData.urgency);
 
-    const basePrice = (projectType?.basePrice || 0) * (roomCount?.multiplier || 1);
+    const basePrice = (projectType?.basePrice || customConfig?.basePrice || 180) * (roomCount?.multiplier || 1);
     const prepWork = (wallCondition?.prepCost || 0) * (roomCount?.multiplier || 1);
     const paintUpgrade = (paintType?.upgrade || 0) * (roomCount?.multiplier || 1);
     const urgencyAdd = urgency?.surcharge || 0;

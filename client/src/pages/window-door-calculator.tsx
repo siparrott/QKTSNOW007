@@ -112,7 +112,7 @@ export default function WindowDoorCalculator({ customConfig: propConfig, isPrevi
     const material = materialTypes.find(m => m.id === formData.materialType);
     const access = accessTypes.find(a => a.id === formData.accessType);
 
-    const baseUnitPrice = service?.basePrice || 0;
+    const baseUnitPrice = service?.basePrice || customConfig?.basePrice || 150;
     const productSurcharge = product?.surcharge || 0;
     const materialSurcharge = material?.surcharge || 0;
     const accessSurchargePerUnit = access?.surcharge || 0;

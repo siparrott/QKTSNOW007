@@ -180,13 +180,13 @@ export default function TranslationServicesCalculator({ customConfig: propConfig
 
     // Calculate base cost
     const wordsCount = wordCountOption.count;
-    const baseRatePerWord = service.baseRate * docType.multiplier;
+    const baseRatePerWord = (service.baseRate || customConfig?.basePrice || 0.15) * docType.multiplier;
     const baseCost = wordsCount * baseRatePerWord;
     
     // Apply urgency multiplier
     const urgencyFee = baseCost * (urgency.multiplier - 1);
     
-    // Calculate add-ons
+    // Calculate add-ons - use dynamic pricing
     const addOnCosts = formData.addOns.map(addOn => {
       const option = addOnOptions.find(a => a.value === addOn);
       if (!option) return { name: "", amount: 0 };
@@ -194,11 +194,11 @@ export default function TranslationServicesCalculator({ customConfig: propConfig
       if (option.value === "formatting") {
         return { name: option.label, amount: (baseCost + urgencyFee) * (option.percentage! / 100) };
       } else if (option.value === "extra-proofreading") {
-        return { name: option.label, amount: wordsCount * option.cost! };
+        return { name: option.label, amount: wordsCount * (option.cost || 0) };
       } else {
         return { name: option.label, amount: option.cost || 0 };
       }
-    }).filter(a => a.name);
+    }).filter(a => a.name && a.amount > 0);
 
     // Apply discounts
     const discounts = [];

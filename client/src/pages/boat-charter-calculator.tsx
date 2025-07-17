@@ -219,11 +219,14 @@ export default function BoatCharterCalculator({ customConfig: propConfig, isPrev
   };
 
   const calculatePricing = (): PricingBreakdown => {
+    const currency = customConfig?.currency || "EUR";
+    const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
+    
     const selectedBoat = boatTypeOptions.find(b => b.value === formData.boatType);
     const selectedDuration = durationOptions.find(d => d.value === formData.duration);
     const guestCount = parseInt(formData.guests) || 0;
     
-    const baseRate = selectedBoat?.baseRate || 0;
+    const baseRate = selectedBoat?.baseRate || customConfig?.basePrice || 0;
     const baseHours = selectedDuration?.baseHours || 4;
     
     // Calculate base cost (already includes standard duration)
@@ -232,7 +235,7 @@ export default function BoatCharterCalculator({ customConfig: propConfig, isPrev
     // Extra hours fee (for multi-day or extended charters)
     const extraHoursFee = formData.duration === 'multi_day' ? baseRate * 1.5 : 0;
     
-    // Extras total
+    // Extras total - use dynamic pricing
     const extrasTotal = formData.extras.reduce((total, extraValue) => {
       const extra = extrasOptions.find(e => e.value === extraValue);
       return total + (extra?.price || 0);

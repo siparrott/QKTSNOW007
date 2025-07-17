@@ -120,12 +120,15 @@ export default function CarDetailingCalculator({ customConfig: propConfig, isPre
   ];
 
   const calculatePricing = (): PricingBreakdown => {
+    const currency = customConfig?.currency || "EUR";
+    const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
+    
     const vehicle = vehicleTypes.find(v => v.id === formData.vehicleType);
     const service = serviceLevels.find(s => s.id === formData.serviceLevel);
     const condition = conditions.find(c => c.id === formData.condition);
     const location = serviceLocations.find(l => l.id === formData.serviceLocation);
 
-    const basePrice = service?.price || 60;
+    const basePrice = service?.price || customConfig?.basePrice || 60;
     const vehicleAdjustment = vehicle?.adjustment || 0;
     const serviceLevelPrice = 0; // Already included in base price
     const conditionSurcharge = condition?.surcharge || 0;
@@ -135,29 +138,29 @@ export default function CarDetailingCalculator({ customConfig: propConfig, isPre
     const breakdown: string[] = [];
 
     // Base service price
-    breakdown.push(`${service?.label || 'Base service'}: €${basePrice}`);
+    breakdown.push(`${service?.label || 'Base service'}: ${currencySymbol}${basePrice}`);
     
     // Vehicle type adjustment
     if (vehicleAdjustment !== 0) {
-      const adjustment = vehicleAdjustment > 0 ? `+€${vehicleAdjustment}` : `-€${Math.abs(vehicleAdjustment)}`;
+      const adjustment = vehicleAdjustment > 0 ? `+${currencySymbol}${vehicleAdjustment}` : `-${currencySymbol}${Math.abs(vehicleAdjustment)}`;
       breakdown.push(`${vehicle?.label} adjustment: ${adjustment}`);
     }
     
     // Condition surcharge
     if (conditionSurcharge > 0) {
-      breakdown.push(`${condition?.label} surcharge: +€${conditionSurcharge}`);
+      breakdown.push(`${condition?.label} surcharge: +${currencySymbol}${conditionSurcharge}`);
     }
     
     // Location surcharge
     if (locationSurcharge > 0) {
-      breakdown.push(`${location?.label}: +€${locationSurcharge}`);
+      breakdown.push(`${location?.label}: +${currencySymbol}${locationSurcharge}`);
     }
 
-    // Add-ons
+    // Add-ons - use dynamic pricing
     formData.addOns.forEach(addOnId => {
       const addOn = addOnOptions.find(a => a.id === addOnId);
-      if (addOn) {
-        breakdown.push(`${addOn.label}: +€${addOn.price}`);
+      if (addOn && addOn.price > 0) {
+        breakdown.push(`${addOn.label}: +${currencySymbol}${addOn.price}`);
         addOnsTotal += addOn.price;
       }
     });
@@ -168,7 +171,7 @@ export default function CarDetailingCalculator({ customConfig: propConfig, isPre
     let promoDiscount = 0;
     if (formData.promoCode.toLowerCase() === "shine10" || formData.promoCode.toLowerCase() === "detail10") {
       promoDiscount = subtotal * 0.1;
-      breakdown.push(`Promo code discount (10%): -€${promoDiscount.toFixed(2)}`);
+      breakdown.push(`Promo code discount (10%): -${currencySymbol}${promoDiscount.toFixed(2)}`);
     }
 
     const total = Math.max(0, subtotal - promoDiscount);

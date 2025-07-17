@@ -127,7 +127,7 @@ export default function DogTrainerCalculator({ customConfig: propConfig, isPrevi
   ];
 
   const calculatePricing = (): PricingBreakdown => {
-    const basePrice = 40; // Base price for 60min one-on-one obedience training
+    const basePrice = customConfig?.basePrice || 40; // Base price for 60min one-on-one obedience training
     
     const age = dogAges.find(a => a.id === formData.dogAge);
     const size = dogSizes.find(s => s.id === formData.dogSize);

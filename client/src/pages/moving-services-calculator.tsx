@@ -218,7 +218,7 @@ export default function MovingServicesCalculator({ customConfig: propConfig, isP
     const selectedProperty = propertyTypeOptions.find(p => p.value === formData.propertyType);
     const selectedDistance = distanceOptions.find(d => d.value === formData.distance);
     
-    const baseRate = selectedMovingType?.baseRate || 0;
+    const baseRate = selectedMovingType?.baseRate || customConfig?.basePrice || 120;
     const propertyMultiplier = selectedProperty?.multiplier || 1;
     const distanceFee = selectedDistance?.fee || 0;
     

@@ -209,7 +209,7 @@ export default function PrivateMedicalCalculator({ customConfig: propConfig, isP
       const breakdown: Array<{name: string, price: number, type: 'consultation' | 'service' | 'urgency' | 'addon' | 'discount'}> = [];
 
       // Calculate consultation cost
-      consultationCost = defaultConfig.consultations[formData.consultationType] || 0;
+      consultationCost = defaultConfig.consultations[formData.consultationType] || customConfig?.basePrice || 120;
       
       const consultationNames: {[key: string]: string} = {
         "general-gp": "General GP Visit",

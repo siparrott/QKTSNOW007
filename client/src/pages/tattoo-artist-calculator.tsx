@@ -131,7 +131,7 @@ export default function TattooArtistCalculator({ customConfig: propConfig, isPre
     const customArt = customArtOptions.find(c => c.id === formData.customArt);
     const sessionType = sessionTypes.find(s => s.id === formData.sessionType);
 
-    const basePrice = size?.basePrice || 0;
+    const basePrice = size?.basePrice || customConfig?.basePrice || 80;
     const sizeAdd = 0; // Already included in base price
     const styleAdd = style?.surcharge || 0;
     const colorMultiplier = colorType?.multiplier || 1.0;

@@ -119,7 +119,7 @@ export default function LifestyleInfluencerCalculator({ customConfig: propConfig
   ];
 
   const calculatePricing = (): PricingBreakdown => {
-    const basePost = 250; // Base: 1 Post, 10K-50K followers
+    const basePost = customConfig?.basePrice || 250; // Base: 1 Post, 10K-50K followers
     let deliverablesAdd = 0;
     let usageAdd = 0;
     let exclusivityAdd = 0;

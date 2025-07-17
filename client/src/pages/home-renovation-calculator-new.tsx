@@ -117,7 +117,7 @@ export default function HomeRenovationCalculator({ customConfig: propConfig, isP
   ];
 
   const calculatePricing = (): PricingBreakdown => {
-    const baseConsultation = 500;
+    const baseConsultation = customConfig?.basePrice || 500;
     let projectTypeAdd = 0;
     let finishMultiplier = 1.0;
     let timeframeSurcharge = 0;

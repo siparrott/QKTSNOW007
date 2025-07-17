@@ -173,7 +173,7 @@ export default function PlumbingCalculator({ customConfig: propConfig, isPreview
     const propertyType = propertyTypes.find(p => p.id === formData.propertyType);
     const urgency = urgencyLevels.find(u => u.id === formData.urgencyLevel);
 
-    const basePrice = (serviceType?.basePrice || 0) * (propertyType?.multiplier || 1);
+    const basePrice = (serviceType?.basePrice || customConfig?.basePrice || 120) * (propertyType?.multiplier || 1);
     const urgencyAdd = urgency?.surcharge || 0;
     
     // Floor surcharge (€10 per floor above 1st)

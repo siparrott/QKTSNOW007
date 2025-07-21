@@ -718,26 +718,24 @@ export default function WeddingPhotographyCalculator({
           )}
           <h1 className="text-4xl font-serif text-stone-800 mb-2">
             <EditableText
-              text={textConfig.headline || customConfig?.textCustomization?.headline || customConfig?.headline || 
+              value={textConfig.headline || customConfig?.textCustomization?.headline || customConfig?.headline || 
                    (customConfig?.companyBranding?.companyName || customConfig?.companyName ? 
                     `${customConfig?.companyBranding?.companyName || customConfig?.companyName} - Wedding Photography` : 
                     "Wedding Photography Quote Calculator")
                   }
               onSave={(value) => updateTextContent('headline', value)}
-              placeholder="Enter calculator headline..."
               className="text-4xl font-serif text-stone-800"
-              isPreview={true}
+              isPreview={isPreview}
             />
           </h1>
           <p className="text-stone-600 max-w-2xl mx-auto font-light">
             <EditableText
-              text={textConfig.description || customConfig?.textCustomization?.description || customConfig?.description || 
+              value={textConfig.description || customConfig?.textCustomization?.description || customConfig?.description || 
                    "Create beautiful memories with professional wedding photography. Get your personalized quote for your special day."
                   }
               onSave={(value) => updateTextContent('description', value)}
-              placeholder="Enter calculator description..."
               className="text-stone-600 font-light"
-              isPreview={true}
+              isPreview={isPreview}
             />
           </p>
         </div>
@@ -988,10 +986,10 @@ export default function WeddingPhotographyCalculator({
                                   : [...formData.addOns, addOn.id];
                                 setFormData(prev => ({ ...prev, addOns: newAddOns }));
                               }}
-                              className={`relative p-3 rounded-xl border-2 cursor-pointer transition-all hover:shadow-lg ${
+                              className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all hover:shadow-lg ${
                                 formData.addOns.includes(addOn.id)
-                                  ? "border-rose-300 bg-rose-50 shadow-lg text-stone-800"
-                                  : "border-stone-200 hover:border-rose-200 bg-white text-stone-700 hover:bg-rose-25"
+                                  ? "border-rose-400 bg-rose-50 shadow-lg text-stone-900"
+                                  : "border-stone-300 hover:border-rose-300 bg-white text-stone-800 hover:bg-rose-25"
                               }`}
                             >
                               {addOn.popular && (
@@ -1000,13 +998,13 @@ export default function WeddingPhotographyCalculator({
                                 </Badge>
                               )}
                               <div className="flex justify-between items-center">
-                                <div className="font-serif font-semibold">{addOn.label}</div>
-                                <div className={`font-semibold ${formData.addOns.includes(addOn.id) ? "text-rose-600" : "text-stone-500"}`}>
+                                <div className="font-serif font-semibold text-stone-900">{addOn.label}</div>
+                                <div className={`font-bold text-lg ${formData.addOns.includes(addOn.id) ? "text-rose-700" : "text-stone-700"}`}>
                                   +€{addOn.price}
                                 </div>
                               </div>
                               {addOn.id === "engagement" && (
-                                <div className="text-xs text-stone-500 mt-1">
+                                <div className="text-sm text-stone-600 mt-2 font-medium">
                                   💕 What's included? → 90-minute session, 50+ edited photos, online gallery
                                 </div>
                               )}

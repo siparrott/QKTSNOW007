@@ -569,16 +569,30 @@ This quote is valid for 48 hours.
                       exit={{ opacity: 0, x: -20 }}
                       className="space-y-6"
                     >
-                      <h2 className="text-2xl font-bold text-gray-800 font-serif mb-6">Choose Your Session Style</h2>
+                      <h2 className="text-2xl font-bold text-gray-800 font-serif mb-6">
+                        <EditableText
+                          value={textConfig.step1Title || "Choose Your Session Style"}
+                          onSave={(value) => updateTextContent('step1Title', value)}
+                          className="text-2xl font-bold text-gray-800 font-serif"
+                          isPreview={isPreview}
+                        />
+                      </h2>
                       
                       {/* Natural Language Input */}
                       <div className="mb-8 bg-pink-50/80 border border-pink-200 rounded-lg p-4">
                         <div className="flex items-center mb-3">
                           <Sparkles className="h-5 w-5 text-pink-500 mr-2" />
-                          <h3 className="text-pink-700 font-semibold font-serif">Describe Your Vision (Optional)</h3>
+                          <h3 className="text-pink-700 font-semibold font-serif">
+                            <EditableText
+                              value={textConfig.visionLabel || "Describe Your Vision (Optional)"}
+                              onSave={(value) => updateTextContent('visionLabel', value)}
+                              className="text-pink-700 font-semibold font-serif"
+                              isPreview={isPreview}
+                            />
+                          </h3>
                         </div>
                         <Textarea
-                          placeholder="e.g., 'I want a 2-hour boudoir shoot at a hotel with 3 outfits and professional makeup'"
+                          placeholder={textConfig.visionPlaceholder || "e.g., 'I want a 2-hour boudoir shoot at a hotel with 3 outfits and professional makeup'"}
                           value={formData.naturalLanguageInput}
                           onChange={(e) => setFormData(prev => ({ ...prev, naturalLanguageInput: e.target.value }))}
                           className="bg-white/80 border-pink-200 mb-3 font-serif resize-none"
@@ -592,39 +606,44 @@ This quote is valid for 48 hours.
                           disabled={!formData.naturalLanguageInput.trim()}
                         >
                           <Sparkles className="h-4 w-4 mr-2" />
-                          Calculate with AI
+                          <EditableText
+                            value={textConfig.aiButtonText || "Calculate with AI"}
+                            onSave={(value) => updateTextContent('aiButtonText', value)}
+                            className="text-pink-600"
+                            isPreview={isPreview}
+                          />
                         </Button>
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
                         <OptionCard
                           icon={<Star className="w-8 h-8" />}
-                          title={customConfig?.standardSession || "Classic"}
-                          subtitle="Timeless elegance"
+                          title={textConfig.classicTitle || customConfig?.standardSession || "Classic"}
+                          subtitle={textConfig.classicSubtitle || "Timeless elegance"}
                           isSelected={formData.sessionType === "classic"}
                           onClick={() => setFormData(prev => ({ ...prev, sessionType: "classic" }))}
                         />
                         <OptionCard
                           icon={<Heart className="w-8 h-8" />}
-                          title={customConfig?.deluxeSession || "Lingerie"}
-                          subtitle="Intimate beauty"
-                          price="+€25"
+                          title={textConfig.lingerieTitle || customConfig?.deluxeSession || "Lingerie"}
+                          subtitle={textConfig.lingerieSubtitle || "Intimate beauty"}
+                          price={textConfig.lingeriePrice || "+€25"}
                           isSelected={formData.sessionType === "lingerie"}
                           onClick={() => setFormData(prev => ({ ...prev, sessionType: "lingerie" }))}
                         />
                         <OptionCard
                           icon={<Star className="w-8 h-8" />}
-                          title={customConfig?.couplesSession || "Nude"}
-                          subtitle="Artistic celebration"
-                          price="+€50"
+                          title={textConfig.nudeTitle || customConfig?.couplesSession || "Nude"}
+                          subtitle={textConfig.nudeSubtitle || "Artistic celebration"}
+                          price={textConfig.nudePrice || "+€50"}
                           isSelected={formData.sessionType === "nude"}
                           onClick={() => setFormData(prev => ({ ...prev, sessionType: "nude" }))}
                         />
                         <OptionCard
                           icon={<Crown className="w-8 h-8" />}
-                          title={customConfig?.outdoorSession || "Glamour"}
-                          subtitle="High-fashion drama"
-                          price="+€35"
+                          title={textConfig.glamourTitle || customConfig?.outdoorSession || "Glamour"}
+                          subtitle={textConfig.glamourSubtitle || "High-fashion drama"}
+                          price={textConfig.glamourPrice || "+€35"}
                           isSelected={formData.sessionType === "glamour"}
                           onClick={() => setFormData(prev => ({ ...prev, sessionType: "glamour" }))}
                         />
@@ -636,7 +655,12 @@ This quote is valid for 48 hours.
                           disabled={!formData.sessionType}
                           className="bg-pink-500 hover:bg-pink-600 text-white px-8"
                         >
-                          Next <ArrowRight className="ml-2 h-4 w-4" />
+                          <EditableText
+                            value={textConfig.nextButton || "Next"}
+                            onSave={(value) => updateTextContent('nextButton', value)}
+                            className="text-white"
+                            isPreview={isPreview}
+                          /> <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>
                       </div>
                     </motion.div>
@@ -651,10 +675,24 @@ This quote is valid for 48 hours.
                       exit={{ opacity: 0, x: -20 }}
                       className="space-y-8"
                     >
-                      <h2 className="text-2xl font-bold text-gray-800 font-serif">Duration & Location</h2>
+                      <h2 className="text-2xl font-bold text-gray-800 font-serif">
+                        <EditableText
+                          value={textConfig.step2Title || "Duration & Location"}
+                          onSave={(value) => updateTextContent('step2Title', value)}
+                          className="text-2xl font-bold text-gray-800 font-serif"
+                          isPreview={isPreview}
+                        />
+                      </h2>
                       
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-700 mb-4">Session Duration</h3>
+                        <h3 className="text-lg font-semibold text-gray-700 mb-4">
+                          <EditableText
+                            value={textConfig.durationLabel || "Session Duration"}
+                            onSave={(value) => updateTextContent('durationLabel', value)}
+                            className="text-lg font-semibold text-gray-700"
+                            isPreview={isPreview}
+                          />
+                        </h3>
                         <div className="grid grid-cols-3 gap-4">
                           <OptionCard
                             icon={<Clock className="w-6 h-6" />}
@@ -684,7 +722,14 @@ This quote is valid for 48 hours.
                       </div>
 
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-700 mb-4">Location</h3>
+                        <h3 className="text-lg font-semibold text-gray-700 mb-4">
+                          <EditableText
+                            value={textConfig.locationLabel || "Location"}
+                            onSave={(value) => updateTextContent('locationLabel', value)}
+                            className="text-lg font-semibold text-gray-700"
+                            isPreview={isPreview}
+                          />
+                        </h3>
                         <div className="grid grid-cols-3 gap-4">
                           <OptionCard
                             icon={<Home className="w-6 h-6" />}
@@ -718,14 +763,25 @@ This quote is valid for 48 hours.
                           variant="outline"
                           className="border-pink-300 text-pink-600"
                         >
-                          <ArrowLeft className="mr-2 h-4 w-4" /> Previous
+                          <ArrowLeft className="mr-2 h-4 w-4" /> 
+                          <EditableText
+                            value={textConfig.previousButton || "Previous"}
+                            onSave={(value) => updateTextContent('previousButton', value)}
+                            className="text-pink-600"
+                            isPreview={isPreview}
+                          />
                         </Button>
                         <Button
                           onClick={handleNext}
                           disabled={!formData.duration || !formData.location}
                           className="bg-pink-500 hover:bg-pink-600 text-white px-8"
                         >
-                          Next <ArrowRight className="ml-2 h-4 w-4" />
+                          <EditableText
+                            value={textConfig.nextButton || "Next"}
+                            onSave={(value) => updateTextContent('nextButton', value)}
+                            className="text-white"
+                            isPreview={isPreview}
+                          /> <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>
                       </div>
                     </motion.div>
@@ -740,10 +796,24 @@ This quote is valid for 48 hours.
                       exit={{ opacity: 0, x: -20 }}
                       className="space-y-8"
                     >
-                      <h2 className="text-2xl font-bold text-gray-800 font-serif">Outfits & Enhancements</h2>
+                      <h2 className="text-2xl font-bold text-gray-800 font-serif">
+                        <EditableText
+                          value={textConfig.step3Title || "Outfits & Enhancements"}
+                          onSave={(value) => updateTextContent('step3Title', value)}
+                          className="text-2xl font-bold text-gray-800 font-serif"
+                          isPreview={isPreview}
+                        />
+                      </h2>
                       
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-700 mb-4">Number of Outfits</h3>
+                        <h3 className="text-lg font-semibold text-gray-700 mb-4">
+                          <EditableText
+                            value={textConfig.outfitsLabel || "Number of Outfits"}
+                            onSave={(value) => updateTextContent('outfitsLabel', value)}
+                            className="text-lg font-semibold text-gray-700"
+                            isPreview={isPreview}
+                          />
+                        </h3>
                         <div className="grid grid-cols-5 gap-3">
                           {["1", "2", "3", "4", "5"].map((count) => (
                             <OptionCard
@@ -761,7 +831,14 @@ This quote is valid for 48 hours.
                       </div>
 
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-700 mb-4">Premium Add-ons</h3>
+                        <h3 className="text-lg font-semibold text-gray-700 mb-4">
+                          <EditableText
+                            value={textConfig.addOnsLabel || "Premium Add-ons"}
+                            onSave={(value) => updateTextContent('addOnsLabel', value)}
+                            className="text-lg font-semibold text-gray-700"
+                            isPreview={isPreview}
+                          />
+                        </h3>
                         <div className="space-y-4">
                           <div
                             className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
@@ -780,8 +857,22 @@ This quote is valid for 48 hours.
                               <div className="flex items-center space-x-3">
                                 <span className="text-2xl">💄</span>
                                 <div>
-                                  <h4 className="font-medium">Professional Makeup</h4>
-                                  <p className="text-sm text-gray-500">Full makeup application by pro artist</p>
+                                  <h4 className="font-medium text-stone-900 font-bold">
+                                    <EditableText
+                                      value={textConfig.makeupAddonTitle || "Professional Makeup"}
+                                      onSave={(value) => updateTextContent('makeupAddonTitle', value)}
+                                      className="font-medium text-stone-900 font-bold"
+                                      isPreview={isPreview}
+                                    />
+                                  </h4>
+                                  <p className="text-sm text-gray-500">
+                                    <EditableText
+                                      value={textConfig.makeupAddonDesc || "Full makeup application by pro artist"}
+                                      onSave={(value) => updateTextContent('makeupAddonDesc', value)}
+                                      className="text-sm text-gray-500"
+                                      isPreview={isPreview}
+                                    />
+                                  </p>
                                 </div>
                               </div>
                               <span className="text-pink-500 font-medium">+€60</span>
@@ -805,8 +896,22 @@ This quote is valid for 48 hours.
                               <div className="flex items-center space-x-3">
                                 <span className="text-2xl">📖</span>
                                 <div>
-                                  <h4 className="font-medium">Printed Album</h4>
-                                  <p className="text-sm text-gray-500">20-page premium photo album</p>
+                                  <h4 className="font-medium text-stone-900 font-bold">
+                                    <EditableText
+                                      value={textConfig.albumAddonTitle || "Printed Album"}
+                                      onSave={(value) => updateTextContent('albumAddonTitle', value)}
+                                      className="font-medium text-stone-900 font-bold"
+                                      isPreview={isPreview}
+                                    />
+                                  </h4>
+                                  <p className="text-sm text-gray-500">
+                                    <EditableText
+                                      value={textConfig.albumAddonDesc || "20-page premium photo album"}
+                                      onSave={(value) => updateTextContent('albumAddonDesc', value)}
+                                      className="text-sm text-gray-500"
+                                      isPreview={isPreview}
+                                    />
+                                  </p>
                                 </div>
                               </div>
                               <span className="text-pink-500 font-medium">+€120</span>
@@ -830,8 +935,22 @@ This quote is valid for 48 hours.
                               <div className="flex items-center space-x-3">
                                 <span className="text-2xl">✨</span>
                                 <div>
-                                  <h4 className="font-medium">Deluxe Retouching</h4>
-                                  <p className="text-sm text-gray-500">Advanced editing and enhancement</p>
+                                  <h4 className="font-medium text-stone-900 font-bold">
+                                    <EditableText
+                                      value={textConfig.retouchAddonTitle || "Deluxe Retouching"}
+                                      onSave={(value) => updateTextContent('retouchAddonTitle', value)}
+                                      className="font-medium text-stone-900 font-bold"
+                                      isPreview={isPreview}
+                                    />
+                                  </h4>
+                                  <p className="text-sm text-gray-500">
+                                    <EditableText
+                                      value={textConfig.retouchAddonDesc || "Advanced editing and enhancement"}
+                                      onSave={(value) => updateTextContent('retouchAddonDesc', value)}
+                                      className="text-sm text-gray-500"
+                                      isPreview={isPreview}
+                                    />
+                                  </p>
                                 </div>
                               </div>
                               <span className="text-pink-500 font-medium">+€75</span>
@@ -846,14 +965,25 @@ This quote is valid for 48 hours.
                           variant="outline"
                           className="border-pink-300 text-pink-600"
                         >
-                          <ArrowLeft className="mr-2 h-4 w-4" /> Previous
+                          <ArrowLeft className="mr-2 h-4 w-4" /> 
+                          <EditableText
+                            value={textConfig.previousButton || "Previous"}
+                            onSave={(value) => updateTextContent('previousButton', value)}
+                            className="text-pink-600"
+                            isPreview={isPreview}
+                          />
                         </Button>
                         <Button
                           onClick={handleNext}
                           disabled={!formData.outfitCount}
                           className="bg-pink-500 hover:bg-pink-600 text-white px-8"
                         >
-                          Next <ArrowRight className="ml-2 h-4 w-4" />
+                          <EditableText
+                            value={textConfig.nextButton || "Next"}
+                            onSave={(value) => updateTextContent('nextButton', value)}
+                            className="text-white"
+                            isPreview={isPreview}
+                          /> <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>
                       </div>
                     </motion.div>
@@ -868,12 +998,24 @@ This quote is valid for 48 hours.
                       exit={{ opacity: 0, x: -20 }}
                       className="space-y-6"
                     >
-                      <h2 className="text-2xl font-bold text-gray-800 font-serif">Final Details</h2>
+                      <h2 className="text-2xl font-bold text-gray-800 font-serif">
+                        <EditableText
+                          value={textConfig.step4Title || "Final Details"}
+                          onSave={(value) => updateTextContent('step4Title', value)}
+                          className="text-2xl font-bold text-gray-800 font-serif"
+                          isPreview={isPreview}
+                        />
+                      </h2>
                       
                       <div className="space-y-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Your Email (required for quote)
+                            <EditableText
+                              value={textConfig.emailLabel || "Your Email (required for quote)"}
+                              onSave={(value) => updateTextContent('emailLabel', value)}
+                              className="text-sm font-medium text-gray-700"
+                              isPreview={isPreview}
+                            />
                           </label>
                           <Input
                             type="email"
@@ -889,7 +1031,12 @@ This quote is valid for 48 hours.
 
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Your Name
+                            <EditableText
+                              value={textConfig.nameLabel || "Your Name"}
+                              onSave={(value) => updateTextContent('nameLabel', value)}
+                              className="text-sm font-medium text-gray-700"
+                              isPreview={isPreview}
+                            />
                           </label>
                           <Input
                             placeholder="Your beautiful name"
@@ -927,14 +1074,25 @@ This quote is valid for 48 hours.
                           variant="outline"
                           className="border-pink-300 text-pink-600"
                         >
-                          <ArrowLeft className="mr-2 h-4 w-4" /> Previous
+                          <ArrowLeft className="mr-2 h-4 w-4" /> 
+                          <EditableText
+                            value={textConfig.previousButton || "Previous"}
+                            onSave={(value) => updateTextContent('previousButton', value)}
+                            className="text-pink-600"
+                            isPreview={isPreview}
+                          />
                         </Button>
                         <Button
                           onClick={handleContactSubmit}
                           disabled={!formData.contactInfo.email}
                           className="bg-pink-500 hover:bg-pink-600 text-white px-8"
                         >
-                          Get My Quote
+                          <EditableText
+                            value={textConfig.getQuoteButton || "Get My Quote"}
+                            onSave={(value) => updateTextContent('getQuoteButton', value)}
+                            className="text-white"
+                            isPreview={isPreview}
+                          />
                         </Button>
                       </div>
                     </motion.div>
@@ -946,13 +1104,27 @@ This quote is valid for 48 hours.
             {/* Quote Display */}
             <div className="order-1 lg:order-2">
               <Card className="p-6 bg-white/80 backdrop-blur-sm border-pink-100 shadow-lg sticky top-8">
-                <h2 className="text-xl font-bold text-gray-800 font-serif mb-4">Your Boudoir Experience</h2>
+                <h2 className="text-xl font-bold text-gray-800 font-serif mb-4">
+                  <EditableText
+                    value={textConfig.quoteSidebarTitle || "Your Boudoir Experience"}
+                    onSave={(value) => updateTextContent('quoteSidebarTitle', value)}
+                    className="text-xl font-bold text-gray-800 font-serif"
+                    isPreview={isPreview}
+                  />
+                </h2>
                 
                 {pricing && (
                   <div className="space-y-4">
                     <div className="text-center p-6 bg-gradient-to-br from-pink-100 to-purple-100 rounded-xl">
                       <div className="text-4xl font-bold text-pink-600 font-serif">€{pricing.total}</div>
-                      <div className="text-sm text-gray-600 mt-1">Total Investment</div>
+                      <div className="text-sm text-gray-600 mt-1">
+                        <EditableText
+                          value={textConfig.totalInvestmentLabel || "Total Investment"}
+                          onSave={(value) => updateTextContent('totalInvestmentLabel', value)}
+                          className="text-sm text-gray-600"
+                          isPreview={isPreview}
+                        />
+                      </div>
                     </div>
 
                     <div className="space-y-2">

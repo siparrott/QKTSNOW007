@@ -210,6 +210,11 @@ export default function BoudoirPhotographyCalculator({
       
       setFormData(prev => ({...prev}));
     }, 50);
+    
+    // Initialize text configuration if provided
+    if (config.textContent) {
+      setTextConfig(config.textContent);
+    }
   };
 
   // Use custom pricing configuration if available
@@ -543,8 +548,22 @@ This quote is valid for 48 hours.
                 <Camera className="text-white h-6 w-6" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-800 font-serif">{getCompanyName()} Calculator</h1>
-                <p className="text-pink-600">Create your perfect session</p>
+                <h1 className="text-2xl font-bold text-gray-800 font-serif">
+                  <EditableText
+                    value={textConfig.mainTitle || `${getCompanyName()} Calculator`}
+                    onSave={(value) => updateTextContent('mainTitle', value)}
+                    className="text-2xl font-bold text-gray-800 font-serif"
+                    isPreview={isPreview}
+                  />
+                </h1>
+                <p className="text-pink-600">
+                  <EditableText
+                    value={textConfig.mainSubtitle || "Create your perfect session"}
+                    onSave={(value) => updateTextContent('mainSubtitle', value)}
+                    className="text-pink-600"
+                    isPreview={isPreview}
+                  />
+                </p>
               </div>
             </div>
           </div>
@@ -618,34 +637,90 @@ This quote is valid for 48 hours.
                       <div className="grid grid-cols-2 gap-4">
                         <OptionCard
                           icon={<Star className="w-8 h-8" />}
-                          title={textConfig.classicTitle || customConfig?.standardSession || "Classic"}
-                          subtitle={textConfig.classicSubtitle || "Timeless elegance"}
+                          title={
+                            <EditableText
+                              value={textConfig.classicTitle || customConfig?.standardSession || "Classic"}
+                              onSave={(value) => updateTextContent('classicTitle', value)}
+                              className="text-lg font-semibold text-gray-800"
+                              isPreview={isPreview}
+                            />
+                          }
+                          subtitle={
+                            <EditableText
+                              value={textConfig.classicSubtitle || "Timeless elegance"}
+                              onSave={(value) => updateTextContent('classicSubtitle', value)}
+                              className="text-sm text-gray-600"
+                              isPreview={isPreview}
+                            />
+                          }
                           isSelected={formData.sessionType === "classic"}
-                          onClick={() => setFormData(prev => ({ ...prev, sessionType: "classic" }))}
+                          onClick={() => setFormData((prev: BoudoirFormData) => ({ ...prev, sessionType: "classic" }))}
                         />
                         <OptionCard
                           icon={<Heart className="w-8 h-8" />}
-                          title={textConfig.lingerieTitle || customConfig?.deluxeSession || "Lingerie"}
-                          subtitle={textConfig.lingerieSubtitle || "Intimate beauty"}
+                          title={
+                            <EditableText
+                              value={textConfig.lingerieTitle || customConfig?.deluxeSession || "Lingerie"}
+                              onSave={(value) => updateTextContent('lingerieTitle', value)}
+                              className="text-lg font-semibold text-gray-800"
+                              isPreview={isPreview}
+                            />
+                          }
+                          subtitle={
+                            <EditableText
+                              value={textConfig.lingerieSubtitle || "Intimate beauty"}
+                              onSave={(value) => updateTextContent('lingerieSubtitle', value)}
+                              className="text-sm text-gray-600"
+                              isPreview={isPreview}
+                            />
+                          }
                           price={textConfig.lingeriePrice || "+€25"}
                           isSelected={formData.sessionType === "lingerie"}
-                          onClick={() => setFormData(prev => ({ ...prev, sessionType: "lingerie" }))}
+                          onClick={() => setFormData((prev: BoudoirFormData) => ({ ...prev, sessionType: "lingerie" }))}
                         />
                         <OptionCard
                           icon={<Star className="w-8 h-8" />}
-                          title={textConfig.nudeTitle || customConfig?.couplesSession || "Nude"}
-                          subtitle={textConfig.nudeSubtitle || "Artistic celebration"}
+                          title={
+                            <EditableText
+                              value={textConfig.nudeTitle || customConfig?.couplesSession || "Nude"}
+                              onSave={(value) => updateTextContent('nudeTitle', value)}
+                              className="text-lg font-semibold text-gray-800"
+                              isPreview={isPreview}
+                            />
+                          }
+                          subtitle={
+                            <EditableText
+                              value={textConfig.nudeSubtitle || "Artistic celebration"}
+                              onSave={(value) => updateTextContent('nudeSubtitle', value)}
+                              className="text-sm text-gray-600"
+                              isPreview={isPreview}
+                            />
+                          }
                           price={textConfig.nudePrice || "+€50"}
                           isSelected={formData.sessionType === "nude"}
-                          onClick={() => setFormData(prev => ({ ...prev, sessionType: "nude" }))}
+                          onClick={() => setFormData((prev: BoudoirFormData) => ({ ...prev, sessionType: "nude" }))}
                         />
                         <OptionCard
                           icon={<Crown className="w-8 h-8" />}
-                          title={textConfig.glamourTitle || customConfig?.outdoorSession || "Glamour"}
-                          subtitle={textConfig.glamourSubtitle || "High-fashion drama"}
+                          title={
+                            <EditableText
+                              value={textConfig.glamourTitle || customConfig?.outdoorSession || "Glamour"}
+                              onSave={(value) => updateTextContent('glamourTitle', value)}
+                              className="text-lg font-semibold text-gray-800"
+                              isPreview={isPreview}
+                            />
+                          }
+                          subtitle={
+                            <EditableText
+                              value={textConfig.glamourSubtitle || "High-fashion drama"}
+                              onSave={(value) => updateTextContent('glamourSubtitle', value)}
+                              className="text-sm text-gray-600"
+                              isPreview={isPreview}
+                            />
+                          }
                           price={textConfig.glamourPrice || "+€35"}
                           isSelected={formData.sessionType === "glamour"}
-                          onClick={() => setFormData(prev => ({ ...prev, sessionType: "glamour" }))}
+                          onClick={() => setFormData((prev: BoudoirFormData) => ({ ...prev, sessionType: "glamour" }))}
                         />
                       </div>
                       
@@ -733,26 +808,68 @@ This quote is valid for 48 hours.
                         <div className="grid grid-cols-3 gap-4">
                           <OptionCard
                             icon={<Home className="w-6 h-6" />}
-                            title="In-Studio"
-                            subtitle="Professional setting"
+                            title={
+                              <EditableText
+                                value={textConfig.studioLocationTitle || "In-Studio"}
+                                onSave={(value) => updateTextContent('studioLocationTitle', value)}
+                                className="text-lg font-semibold text-gray-800"
+                                isPreview={isPreview}
+                              />
+                            }
+                            subtitle={
+                              <EditableText
+                                value={textConfig.studioLocationSubtitle || "Professional setting"}
+                                onSave={(value) => updateTextContent('studioLocationSubtitle', value)}
+                                className="text-sm text-gray-600"
+                                isPreview={isPreview}
+                              />
+                            }
                             isSelected={formData.location === "studio"}
-                            onClick={() => setFormData(prev => ({ ...prev, location: "studio" }))}
+                            onClick={() => setFormData((prev: BoudoirFormData) => ({ ...prev, location: "studio" }))}
                           />
                           <OptionCard
                             icon={<Building className="w-6 h-6" />}
-                            title="Hotel Suite"
-                            subtitle="Luxury accommodation"
+                            title={
+                              <EditableText
+                                value={textConfig.hotelLocationTitle || "Hotel Suite"}
+                                onSave={(value) => updateTextContent('hotelLocationTitle', value)}
+                                className="text-lg font-semibold text-gray-800"
+                                isPreview={isPreview}
+                              />
+                            }
+                            subtitle={
+                              <EditableText
+                                value={textConfig.hotelLocationSubtitle || "Luxury accommodation"}
+                                onSave={(value) => updateTextContent('hotelLocationSubtitle', value)}
+                                className="text-sm text-gray-600"
+                                isPreview={isPreview}
+                              />
+                            }
                             price="+€100"
                             isSelected={formData.location === "hotel"}
-                            onClick={() => setFormData(prev => ({ ...prev, location: "hotel" }))}
+                            onClick={() => setFormData((prev: BoudoirFormData) => ({ ...prev, location: "hotel" }))}
                           />
                           <OptionCard
                             icon={<MapPin className="w-6 h-6" />}
-                            title="On-Location"
-                            subtitle="Your chosen venue"
+                            title={
+                              <EditableText
+                                value={textConfig.onLocationTitle || "On-Location"}
+                                onSave={(value) => updateTextContent('onLocationTitle', value)}
+                                className="text-lg font-semibold text-gray-800"
+                                isPreview={isPreview}
+                              />
+                            }
+                            subtitle={
+                              <EditableText
+                                value={textConfig.onLocationSubtitle || "Your chosen venue"}
+                                onSave={(value) => updateTextContent('onLocationSubtitle', value)}
+                                className="text-sm text-gray-600"
+                                isPreview={isPreview}
+                              />
+                            }
                             price="+€100"
                             isSelected={formData.location === "location"}
-                            onClick={() => setFormData(prev => ({ ...prev, location: "location" }))}
+                            onClick={() => setFormData((prev: BoudoirFormData) => ({ ...prev, location: "location" }))}
                           />
                         </div>
                       </div>
@@ -821,7 +938,7 @@ This quote is valid for 48 hours.
                               icon={<span className="text-2xl">👗</span>}
                               title={count}
                               subtitle={count === "1" ? "Outfit" : "Outfits"}
-                              price={count !== "1" ? `+€${pricingConfig.outfitPricing[count as keyof typeof pricingConfig.outfitPricing]}` : undefined}
+                              price={count !== "1" ? `+€${getOutfitPricing()[count]}` : undefined}
                               isSelected={formData.outfitCount === count}
                               onClick={() => setFormData(prev => ({ ...prev, outfitCount: count }))}
                               isPopular={count === "3"}
@@ -1161,7 +1278,7 @@ This quote is valid for 48 hours.
                       {formData.addOns.map(addOn => (
                         <div key={addOn} className="flex justify-between text-sm">
                           <span>{addOn === "deluxe-retouching" ? "Deluxe Retouching" : addOn.charAt(0).toUpperCase() + addOn.slice(1)}</span>
-                          <span>€{pricingConfig.addOns[addOn as keyof typeof pricingConfig.addOns]}</span>
+                          <span>€{getAddOnPricing()[addOn]}</span>
                         </div>
                       ))}
                       {pricing.discount > 0 && (
@@ -1184,16 +1301,33 @@ This quote is valid for 48 hours.
                     {/* Ready to Book Section */}
                     <div className="mt-6 pt-6 border-t border-pink-200">
                       <div className="text-center space-y-4">
-                        <h3 className="text-lg font-bold text-gray-800 font-serif">Ready to Book Your Session?</h3>
+                        <h3 className="text-lg font-bold text-gray-800 font-serif">
+                          <EditableText
+                            value={textConfig.readyToBookTitle || "Ready to Book Your Session?"}
+                            onSave={(value) => updateTextContent('readyToBookTitle', value)}
+                            className="text-lg font-bold text-gray-800 font-serif"
+                            isPreview={isPreview}
+                          />
+                        </h3>
                         <p className="text-sm text-gray-600">
-                          This quote is valid for 48 hours. Secure your preferred date today.
+                          <EditableText
+                            value={textConfig.readyToBookDescription || "This quote is valid for 48 hours. Secure your preferred date today."}
+                            onSave={(value) => updateTextContent('readyToBookDescription', value)}
+                            className="text-sm text-gray-600"
+                            isPreview={isPreview}
+                          />
                         </p>
                         
                         <Button 
                           className="w-full bg-pink-500 hover:bg-pink-600 text-white font-serif py-3"
                           onClick={() => window.open(`mailto:studio@example.com?subject=Boudoir Session Booking&body=I'm ready to book my boudoir session! My quote is €${pricing.total}`, "_blank")}
                         >
-                          📅 Book My Session
+                          <EditableText
+                            value={textConfig.bookSessionButton || "📅 Book My Session"}
+                            onSave={(value) => updateTextContent('bookSessionButton', value)}
+                            className="text-white"
+                            isPreview={isPreview}
+                          />
                         </Button>
                         
                         <div className="flex items-center justify-center space-x-6 text-xs text-gray-500">

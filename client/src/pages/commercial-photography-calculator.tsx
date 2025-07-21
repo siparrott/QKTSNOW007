@@ -48,6 +48,7 @@ interface PricingBreakdown {
   discount: number;
   total: number;
   breakdown: string[];
+  currency?: string;
 }
 
 interface CommercialPhotographyCalculatorProps {
@@ -59,7 +60,39 @@ interface CommercialPhotographyCalculatorProps {
 export default function CommercialPhotographyCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: CommercialPhotographyCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
+  const [customConfig, setCustomConfig] = useState<any>(propConfig);
   const [textConfig, setTextConfig] = useState<any>({});
+  
+  // Initialize with prop config and watch for changes
+  useEffect(() => {
+    if (propConfig) {
+      setCustomConfig(propConfig);
+      applyCustomConfig(propConfig);
+    }
+  }, [propConfig]);
+
+  // Listen for configuration updates from parent dashboard
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === 'APPLY_CONFIG') {
+        setCustomConfig(event.data.config);
+        applyCustomConfig(event.data.config);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
+  const applyCustomConfig = (config: any) => {
+    console.log('Applying config to commercial photography calculator:', config);
+    setCustomConfig(config);
+    
+    // Initialize text configuration if provided
+    if (config.textContent) {
+      setTextConfig(config.textContent);
+    }
+  };
   
   // Text customization functionality
   const updateTextContent = (key: string, value: string) => {

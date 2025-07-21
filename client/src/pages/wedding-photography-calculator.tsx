@@ -894,7 +894,12 @@ export default function WeddingPhotographyCalculator({
                       disabled={!formData.packageType || !formData.hours}
                       className="bg-rose-400 hover:bg-rose-500 text-white px-8 font-light rounded-xl"
                     >
-                      Next Step
+                      <EditableText
+                        value={textConfig.nextStepButton || "Next Step"}
+                        onSave={(value) => updateTextContent('nextStepButton', value)}
+                        className="text-white font-light"
+                        isPreview={isPreview}
+                      />
                     </Button>
                   </div>
                 </div>
@@ -1021,14 +1026,24 @@ export default function WeddingPhotographyCalculator({
                       variant="outline"
                       className="px-8 border-stone-300 text-stone-600 hover:bg-stone-50 rounded-xl"
                     >
-                      Previous
+                      <EditableText
+                        value={textConfig.previousButton || "Previous"}
+                        onSave={(value) => updateTextContent('previousButton', value)}
+                        className="text-stone-600"
+                        isPreview={isPreview}
+                      />
                     </Button>
                     <Button
                       onClick={() => setCurrentStep(3)}
                       disabled={!formData.locations || !formData.deliveryOption}
                       className="bg-rose-400 hover:bg-rose-500 text-white px-8 font-light rounded-xl"
                     >
-                      Next Step
+                      <EditableText
+                        value={textConfig.nextStepButton || "Next Step"}
+                        onSave={(value) => updateTextContent('nextStepButton', value)}
+                        className="text-white font-light"
+                        isPreview={isPreview}
+                      />
                     </Button>
                   </div>
                 </div>
@@ -1116,13 +1131,23 @@ export default function WeddingPhotographyCalculator({
                       variant="outline"
                       className="px-8 border-stone-300 text-stone-600 hover:bg-stone-50 rounded-xl"
                     >
-                      Previous
+                      <EditableText
+                        value={textConfig.previousButton || "Previous"}
+                        onSave={(value) => updateTextContent('previousButton', value)}
+                        className="text-stone-600"
+                        isPreview={isPreview}
+                      />
                     </Button>
                     <Button
                       onClick={() => setCurrentStep(4)}
                       className="bg-rose-400 hover:bg-rose-500 text-white px-8 font-light rounded-xl"
                     >
-                      Next Step
+                      <EditableText
+                        value={textConfig.nextStepButton || "Next Step"}
+                        onSave={(value) => updateTextContent('nextStepButton', value)}
+                        className="text-white font-light"
+                        isPreview={isPreview}
+                      />
                     </Button>
                   </div>
                 </div>
@@ -1222,14 +1247,24 @@ export default function WeddingPhotographyCalculator({
                       variant="outline"
                       className="px-8 border-stone-300 text-stone-600 hover:bg-stone-50 rounded-xl"
                     >
-                      Previous
+                      <EditableText
+                        value={textConfig.previousButton || "Previous"}
+                        onSave={(value) => updateTextContent('previousButton', value)}
+                        className="text-stone-600"
+                        isPreview={isPreview}
+                      />
                     </Button>
                     <Button
                       onClick={() => setIsQuoteLocked(true)}
                       disabled={!formData.contactInfo.email}
                       className="bg-rose-400 hover:bg-rose-500 text-white px-8 font-light rounded-xl"
                     >
-                      Get Quote
+                      <EditableText
+                        value={textConfig.getQuoteButton || "Get Quote"}
+                        onSave={(value) => updateTextContent('getQuoteButton', value)}
+                        className="text-white font-light"
+                        isPreview={isPreview}
+                      />
                     </Button>
                   </div>
                 </div>

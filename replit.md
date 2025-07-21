@@ -176,9 +176,10 @@ npm run dev    # Development with hot reload
 Changelog:
 - July 21, 2025. WEDDING CALCULATOR EDITABLETEXT COMPLETE: Full implementation with improved readability
   * COMPREHENSIVE COVERAGE: Added EditableText to ALL wedding calculator text elements including step navigation, headers, labels, and pricing sections
+  * NAVIGATION BUTTON EDITING: Implemented inline editing for "Previous" and "Next Step" navigation buttons across all calculator steps
   * FONT READABILITY ENHANCED: Improved contrast and typography in add-on options (text-stone-900, font-bold) for better user experience
   * TECHNICAL FIXES: Resolved all LSP diagnostics and EditableText prop errors (text→value, proper isPreview handling)
-  * COMPLETE FUNCTIONALITY: Step titles, main headers, form labels, pricing sidebar, and CTA text all editable inline
+  * COMPLETE FUNCTIONALITY: Step titles, main headers, form labels, pricing sidebar, navigation buttons, and CTA text all editable inline
   * USER TESTING VALIDATED: Live preview system working correctly with real-time text customization
   * MILESTONE: 36+ calculators now feature complete EditableText implementation
 - July 17, 2025. EDITABLETEXT IMPLEMENTATION MAJOR MILESTONE: 35+ calculators now complete

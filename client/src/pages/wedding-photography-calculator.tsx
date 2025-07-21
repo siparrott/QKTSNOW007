@@ -1053,7 +1053,14 @@ export default function WeddingPhotographyCalculator({
                     <div className="space-y-6">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <h3 className="text-lg font-serif text-stone-700 mb-3">Wedding Date (Optional)</h3>
+                          <h3 className="text-lg font-serif text-stone-700 mb-3">
+                            <EditableText
+                              value={textConfig.weddingDateLabel || "Wedding Date (Optional)"}
+                              onSave={(value) => updateTextContent('weddingDateLabel', value)}
+                              className="text-lg font-serif text-stone-700"
+                              isPreview={isPreview}
+                            />
+                          </h3>
                           <div className="relative">
                             <Calendar className="absolute left-3 top-3 h-4 w-4 text-stone-400" />
                             <Input
@@ -1066,7 +1073,14 @@ export default function WeddingPhotographyCalculator({
                         </div>
 
                         <div>
-                          <h3 className="text-lg font-serif text-stone-700 mb-3">Wedding Location (Optional)</h3>
+                          <h3 className="text-lg font-serif text-stone-700 mb-3">
+                            <EditableText
+                              value={textConfig.weddingLocationLabel || "Wedding Location (Optional)"}
+                              onSave={(value) => updateTextContent('weddingLocationLabel', value)}
+                              className="text-lg font-serif text-stone-700"
+                              isPreview={isPreview}
+                            />
+                          </h3>
                           <div className="relative">
                             <MapPin className="absolute left-3 top-3 h-4 w-4 text-stone-400" />
                             <Input
@@ -1080,7 +1094,14 @@ export default function WeddingPhotographyCalculator({
                       </div>
 
                       <div>
-                        <h3 className="text-lg font-serif text-stone-700 mb-3">Promo Code (Optional)</h3>
+                        <h3 className="text-lg font-serif text-stone-700 mb-3">
+                          <EditableText
+                            value={textConfig.promoCodeLabel || "Promo Code (Optional)"}
+                            onSave={(value) => updateTextContent('promoCodeLabel', value)}
+                            className="text-lg font-serif text-stone-700"
+                            isPreview={isPreview}
+                          />
+                        </h3>
                         <Input
                           placeholder="Enter promo code (e.g., WEDDING15)"
                           value={formData.promoCode}
@@ -1126,7 +1147,12 @@ export default function WeddingPhotographyCalculator({
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-medium text-stone-700 mb-2">
-                          Full Name
+                          <EditableText
+                            value={textConfig.fullNameLabel || "Full Name"}
+                            onSave={(value) => updateTextContent('fullNameLabel', value)}
+                            className="text-sm font-medium text-stone-700"
+                            isPreview={isPreview}
+                          />
                         </label>
                         <div className="relative">
                           <User className="absolute left-3 top-3 h-4 w-4 text-stone-400" />
@@ -1144,7 +1170,12 @@ export default function WeddingPhotographyCalculator({
 
                       <div>
                         <label className="block text-sm font-medium text-stone-700 mb-2">
-                          Email Address *
+                          <EditableText
+                            value={textConfig.emailLabel || "Email Address *"}
+                            onSave={(value) => updateTextContent('emailLabel', value)}
+                            className="text-sm font-medium text-stone-700"
+                            isPreview={isPreview}
+                          />
                         </label>
                         <div className="relative">
                           <Mail className="absolute left-3 top-3 h-4 w-4 text-stone-400" />
@@ -1164,7 +1195,12 @@ export default function WeddingPhotographyCalculator({
 
                       <div>
                         <label className="block text-sm font-medium text-stone-700 mb-2">
-                          Phone Number
+                          <EditableText
+                            value={textConfig.phoneLabel || "Phone Number"}
+                            onSave={(value) => updateTextContent('phoneLabel', value)}
+                            className="text-sm font-medium text-stone-700"
+                            isPreview={isPreview}
+                          />
                         </label>
                         <div className="relative">
                           <Phone className="absolute left-3 top-3 h-4 w-4 text-stone-400" />

@@ -428,7 +428,12 @@ export default function CarDetailingCalculator({ customConfig: propConfig, isPre
                       disabled={!formData.vehicleType || !formData.serviceLevel}
                       className="bg-teal-500 hover:bg-teal-600 text-white px-8 font-medium rounded-xl"
                     >
-                      Next Step
+                      <EditableText
+                        value={textConfig.nextStepButtonText || "Next Step"}
+                        onSave={(value) => updateTextContent('nextStepButtonText', value)}
+                        className="font-medium"
+                        isPreview={isPreview}
+                      />
                     </Button>
                   </div>
                 </div>
@@ -484,7 +489,12 @@ export default function CarDetailingCalculator({ customConfig: propConfig, isPre
                       variant="outline"
                       className="px-8 border-gray-300 text-gray-600 hover:bg-gray-50 rounded-xl"
                     >
-                      Previous
+                      <EditableText
+                        value={textConfig.previousButtonText || "Previous"}
+                        onSave={(value) => updateTextContent('previousButtonText', value)}
+                        className="font-medium"
+                        isPreview={isPreview}
+                      />
                     </Button>
                     <Button
                       onClick={() => setCurrentStep(3)}
@@ -665,7 +675,12 @@ export default function CarDetailingCalculator({ customConfig: propConfig, isPre
                       disabled={!formData.contactInfo.email}
                       className="bg-teal-500 hover:bg-teal-600 text-white px-8 font-medium rounded-xl"
                     >
-                      Get Quote
+                      <EditableText
+                        value={textConfig.getQuoteButtonText || "Get Quote"}
+                        onSave={(value) => updateTextContent('getQuoteButtonText', value)}
+                        className="font-medium"
+                        isPreview={isPreview}
+                      />
                     </Button>
                   </div>
                 </div>

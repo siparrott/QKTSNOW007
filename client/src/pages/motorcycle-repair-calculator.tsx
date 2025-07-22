@@ -459,7 +459,12 @@ export default function MotorcycleRepairCalculator({ customConfig: propConfig, i
                   <div>
                     <h3 className="text-xl font-semibold text-gray-200 mb-4 flex items-center">
                       <Bike className="h-5 w-5 mr-2 text-red-500" />
-                      Your Motorcycle
+                      <EditableText
+                        value={textConfig.motorcycleSelectionTitle || "Your Motorcycle"}
+                        onSave={(value) => updateTextContent('motorcycleSelectionTitle', value)}
+                        className="flex-1"
+                        isPreview={isPreview}
+                      />
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {bikeTypeOptions.map((option) => (
@@ -478,7 +483,12 @@ export default function MotorcycleRepairCalculator({ customConfig: propConfig, i
                   <div>
                     <h3 className="text-xl font-semibold text-gray-200 mb-4 flex items-center">
                       <Wrench className="h-5 w-5 mr-2 text-red-500" />
-                      Service Needed
+                      <EditableText
+                        value={textConfig.serviceNeededTitle || "Service Needed"}
+                        onSave={(value) => updateTextContent('serviceNeededTitle', value)}
+                        className="flex-1"
+                        isPreview={isPreview}
+                      />
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {serviceTypeOptions.map((option) => (
@@ -500,7 +510,12 @@ export default function MotorcycleRepairCalculator({ customConfig: propConfig, i
                       disabled={!formData.bikeType || !formData.serviceType}
                       className="bg-red-600 hover:bg-red-700 text-white font-semibold px-8 py-3"
                     >
-                      Continue
+                      <EditableText
+                        value={textConfig.continueButtonText || "Continue"}
+                        onSave={(value) => updateTextContent('continueButtonText', value)}
+                        className="font-semibold"
+                        isPreview={isPreview}
+                      />
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
@@ -762,7 +777,12 @@ export default function MotorcycleRepairCalculator({ customConfig: propConfig, i
                   disabled={currentStep < 4 || !formData.contactInfo.email}
                 >
                   <Wrench className="mr-2 h-5 w-5" />
-                  Book Repair Service
+                  <EditableText
+                    value={textConfig.bookServiceButtonText || "Book Repair Service"}
+                    onSave={(value) => updateTextContent('bookServiceButtonText', value)}
+                    className="font-semibold text-lg"
+                    isPreview={isPreview}
+                  />
                 </Button>
 
                 <div className="mt-4 text-center">

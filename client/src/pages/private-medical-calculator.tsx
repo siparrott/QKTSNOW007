@@ -40,6 +40,7 @@ import {
   PillBottle
 } from "lucide-react";
 import { QuoteKitHeader } from "@/components/calculator-header";
+import { EditableText } from "@/components/editable-text";
 
 // Medical specific icons
 const MedicalIcon = () => (
@@ -118,15 +119,29 @@ interface PrivateMedicalCalculatorProps {
   customConfig?: any;
   isPreview?: boolean;
   hideHeader?: boolean;
+  onConfigChange?: (config: any) => void;
 }
 
-export default function PrivateMedicalCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: PrivateMedicalCalculatorProps = {}) {
+export default function PrivateMedicalCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false, onConfigChange }: PrivateMedicalCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isCalculating, setIsCalculating] = useState(false);
   const [showQuote, setShowQuote] = useState(false);
   const [timeLeft, setTimeLeft] = useState(48 * 60 * 60); // 48 hours in seconds
   const [naturalLanguageInput, setNaturalLanguageInput] = useState("");
   const [isProcessingNL, setIsProcessingNL] = useState(false);
+  const [textConfig, setTextConfig] = useState<any>(propConfig?.textContent || {});
+  
+  // Text customization functionality
+  const updateTextContent = (key: string, value: string) => {
+    const updated = { ...textConfig, [key]: value };
+    setTextConfig(updated);
+    if (onConfigChange) {
+      onConfigChange({
+        ...propConfig,
+        textContent: updated
+      });
+    }
+  };
 
   const [formData, setFormData] = useState({
     consultationType: "",
@@ -355,7 +370,12 @@ export default function PrivateMedicalCalculator({ customConfig: propConfig, isP
                   <Zap className="w-4 h-4" />
                 </motion.div>
               ) : (
-                "Process"
+                <EditableText
+                  value={textConfig.processButtonText || "Process"}
+                  onSave={(value) => updateTextContent('processButtonText', value)}
+                  className="font-medium"
+                  isPreview={isPreview}
+                />
               )}
             </Button>
           </div>
@@ -650,7 +670,12 @@ export default function PrivateMedicalCalculator({ customConfig: propConfig, isP
               onClick={() => window.open('mailto:appointments@clinic.com?subject=Medical Appointment Request', '_blank')}
             >
               <Calendar className="w-4 h-4 mr-2" />
-              Book My Appointment
+              <EditableText
+                value={textConfig.bookAppointmentButtonText || "Book My Appointment"}
+                onSave={(value) => updateTextContent('bookAppointmentButtonText', value)}
+                className="font-medium"
+                isPreview={isPreview}
+              />
             </Button>
             <Button variant="outline" className="border-teal-600 text-teal-600 hover:bg-teal-50">
               <Download className="w-4 h-4 mr-2" />

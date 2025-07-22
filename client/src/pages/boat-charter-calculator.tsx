@@ -361,10 +361,20 @@ export default function BoatCharterCalculator({ customConfig: propConfig, isPrev
         {/* Hero Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-blue-300 to-amber-400 mb-4">
-            Boat Charter Services
+            <EditableText
+              value={textConfig.heroTitle || "Boat Charter Services"}
+              onSave={(value) => updateTextContent('heroTitle', value)}
+              className="inline-block"
+              isPreview={isPreview}
+            />
           </h1>
           <p className="text-blue-100 max-w-2xl mx-auto font-medium text-lg">
-            Luxury maritime experiences with professional crew, premium amenities, and unforgettable memories on the water.
+            <EditableText
+              value={textConfig.heroDescription || "Luxury maritime experiences with professional crew, premium amenities, and unforgettable memories on the water."}
+              onSave={(value) => updateTextContent('heroDescription', value)}
+              className="inline-block"
+              isPreview={isPreview}
+            />
           </p>
           <div className="flex items-center justify-center mt-6 space-x-8 text-sm text-teal-300">
             <span className="flex items-center">
@@ -453,7 +463,12 @@ export default function BoatCharterCalculator({ customConfig: propConfig, isPrev
                   <div>
                     <h3 className="text-xl font-semibold text-slate-800 mb-4 flex items-center">
                       <Anchor className="h-5 w-5 mr-2 text-teal-600" />
-                      Choose Your Vessel
+                      <EditableText
+                        value={textConfig.vesselSelectionTitle || "Choose Your Vessel"}
+                        onSave={(value) => updateTextContent('vesselSelectionTitle', value)}
+                        className="flex-1"
+                        isPreview={isPreview}
+                      />
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {boatTypeOptions.map((option) => (
@@ -472,7 +487,12 @@ export default function BoatCharterCalculator({ customConfig: propConfig, isPrev
                   <div>
                     <h3 className="text-xl font-semibold text-slate-800 mb-4 flex items-center">
                       <Clock className="h-5 w-5 mr-2 text-teal-600" />
-                      Charter Duration
+                      <EditableText
+                        value={textConfig.durationSelectionTitle || "Charter Duration"}
+                        onSave={(value) => updateTextContent('durationSelectionTitle', value)}
+                        className="flex-1"
+                        isPreview={isPreview}
+                      />
                     </h3>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                       {durationOptions.map((option) => (
@@ -494,7 +514,12 @@ export default function BoatCharterCalculator({ customConfig: propConfig, isPrev
                       disabled={!formData.boatType || !formData.duration}
                       className="bg-teal-600 hover:bg-teal-700 text-white font-semibold px-8 py-3"
                     >
-                      Continue
+                      <EditableText
+                        value={textConfig.continueButtonText || "Continue"}
+                        onSave={(value) => updateTextContent('continueButtonText', value)}
+                        className="font-semibold"
+                        isPreview={isPreview}
+                      />
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
@@ -675,7 +700,12 @@ export default function BoatCharterCalculator({ customConfig: propConfig, isPrev
                       disabled={!formData.contactInfo.name || !formData.contactInfo.email}
                       className="bg-teal-600 hover:bg-teal-700 text-white font-semibold px-8 py-3"
                     >
-                      Generate Quote
+                      <EditableText
+                        value={textConfig.generateQuoteButtonText || "Generate Quote"}
+                        onSave={(value) => updateTextContent('generateQuoteButtonText', value)}
+                        className="font-semibold"
+                        isPreview={isPreview}
+                      />
                       <Anchor className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
@@ -780,7 +810,12 @@ export default function BoatCharterCalculator({ customConfig: propConfig, isPrev
                   disabled={currentStep < 4 || !formData.contactInfo.email}
                 >
                   <Anchor className="mr-2 h-5 w-5" />
-                  Reserve Your Boat
+                  <EditableText
+                    value={textConfig.reserveButtonText || "Reserve Your Boat"}
+                    onSave={(value) => updateTextContent('reserveButtonText', value)}
+                    className="font-semibold text-lg"
+                    isPreview={isPreview}
+                  />
                 </Button>
 
                 <div className="mt-4 text-center">

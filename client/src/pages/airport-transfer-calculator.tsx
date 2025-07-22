@@ -239,13 +239,13 @@ export default function AirportTransferCalculator({ customConfig: propConfig, is
   };
 
   const calculatePricing = (): PricingBreakdown => {
-    const currency = customConfig?.currency || "EUR";
+    const currency = propConfig?.currency || "EUR";
     const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
     
     const selectedVehicle = vehicleTypeOptions.find(v => v.value === formData.vehicleType);
     const selectedAirport = airportOptions.find(a => a.value === formData.destinationAirport);
     
-    const baseFare = selectedVehicle?.basePrice || customConfig?.basePrice || 0;
+    const baseFare = selectedVehicle?.basePrice || propConfig?.basePrice || 0;
     const distanceMultiplier = (selectedAirport?.distance || 40) / 35; // Base distance 35km
     const adjustedBaseFare = baseFare * distanceMultiplier;
     
@@ -481,7 +481,12 @@ export default function AirportTransferCalculator({ customConfig: propConfig, is
                     <div>
                       <label className="block text-gray-700 font-medium mb-2 flex items-center">
                         <MapPin className="h-4 w-4 mr-2 text-blue-500" />
-                        Pickup Location
+                        <EditableText
+                          value={textConfig.pickupLocationLabel || "Pickup Location"}
+                          onSave={(value) => updateTextContent('pickupLocationLabel', value)}
+                          className="font-medium"
+                          isPreview={isPreview}
+                        />
                       </label>
                       <Input
                         placeholder="Hotel, address, or area"
@@ -538,7 +543,12 @@ export default function AirportTransferCalculator({ customConfig: propConfig, is
                       disabled={!formData.pickupLocation || !formData.destinationAirport}
                       className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-8 py-3"
                     >
-                      Continue
+                      <EditableText
+                        value={textConfig.continueButtonText || "Continue"}
+                        onSave={(value) => updateTextContent('continueButtonText', value)}
+                        className="font-semibold"
+                        isPreview={isPreview}
+                      />
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
@@ -551,7 +561,12 @@ export default function AirportTransferCalculator({ customConfig: propConfig, is
                   <div>
                     <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                       <Car className="h-5 w-5 mr-2 text-blue-500" />
-                      Choose Your Vehicle
+                      <EditableText
+                        value={textConfig.vehicleSelectionTitle || "Choose Your Vehicle"}
+                        onSave={(value) => updateTextContent('vehicleSelectionTitle', value)}
+                        className="flex-1"
+                        isPreview={isPreview}
+                      />
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {vehicleTypeOptions.map((option) => (
@@ -570,7 +585,12 @@ export default function AirportTransferCalculator({ customConfig: propConfig, is
                   <div>
                     <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                       <Star className="h-5 w-5 mr-2 text-blue-500" />
-                      Additional Services
+                      <EditableText
+                        value={textConfig.additionalServicesTitle || "Additional Services"}
+                        onSave={(value) => updateTextContent('additionalServicesTitle', value)}
+                        className="flex-1"
+                        isPreview={isPreview}
+                      />
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {addOnOptions.map((option) => (
@@ -617,7 +637,12 @@ export default function AirportTransferCalculator({ customConfig: propConfig, is
                       disabled={!formData.vehicleType}
                       className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-8 py-3"
                     >
-                      Continue
+                      <EditableText
+                        value={textConfig.continueStep3ButtonText || "Continue"}
+                        onSave={(value) => updateTextContent('continueStep3ButtonText', value)}
+                        className="font-semibold"
+                        isPreview={isPreview}
+                      />
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
@@ -737,7 +762,12 @@ export default function AirportTransferCalculator({ customConfig: propConfig, is
                       disabled={!formData.contactInfo.name || !formData.contactInfo.email || !formData.pickupDate || !formData.pickupTime}
                       className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-8 py-3"
                     >
-                      Generate Quote
+                      <EditableText
+                        value={textConfig.generateQuoteButtonText || "Generate Quote"}
+                        onSave={(value) => updateTextContent('generateQuoteButtonText', value)}
+                        className="font-semibold"
+                        isPreview={isPreview}
+                      />
                       <Plane className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
@@ -840,7 +870,12 @@ export default function AirportTransferCalculator({ customConfig: propConfig, is
                   disabled={currentStep < 4 || !formData.contactInfo.email}
                 >
                   <Plane className="mr-2 h-5 w-5" />
-                  Book Airport Transfer
+                  <EditableText
+                    value={textConfig.bookTransferButtonText || "Book Airport Transfer"}
+                    onSave={(value) => updateTextContent('bookTransferButtonText', value)}
+                    className="font-semibold text-lg"
+                    isPreview={isPreview}
+                  />
                 </Button>
 
                 <div className="mt-4 text-center">

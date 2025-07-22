@@ -73,25 +73,20 @@ interface AutoMechanicCalculatorProps {
 
 export default function AutoMechanicCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false, onConfigChange }: AutoMechanicCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
-  const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   const [textConfig, setTextConfig] = useState<any>(propConfig?.textContent || {});
   
   // Text customization functionality
   const updateTextContent = (key: string, value: string) => {
-    const newConfig = {
-      ...textConfig,
-      [key]: value
-    };
-    setTextConfig(newConfig);
-    
-    // Notify parent component about the change
+    const updated = { ...textConfig, [key]: value };
+    setTextConfig(updated);
     if (onConfigChange) {
       onConfigChange({
         ...propConfig,
-        textContent: newConfig
+        textContent: updated
       });
     }
   };
+  const [isQuoteLocked, setIsQuoteLocked] = useState(false);
   
   const [formData, setFormData] = useState<AutoMechanicFormData>({
     vehicleType: "",
@@ -457,7 +452,12 @@ export default function AutoMechanicCalculator({ customConfig: propConfig, isPre
                       disabled={!formData.vehicleType || !formData.serviceNeeded}
                       className="bg-blue-600 hover:bg-blue-700 text-white px-8 font-bold rounded-lg"
                     >
-                      Next Step
+                      <EditableText
+                        value={textConfig.nextStepButtonText || "Next Step"}
+                        onSave={(value) => updateTextContent('nextStepButtonText', value)}
+                        className="font-bold"
+                        isPreview={isPreview}
+                      />
                     </Button>
                   </div>
                 </div>
@@ -513,7 +513,12 @@ export default function AutoMechanicCalculator({ customConfig: propConfig, isPre
                       variant="outline"
                       className="px-8 border-gray-400 text-gray-700 hover:bg-gray-100 rounded-lg font-bold"
                     >
-                      Previous
+                      <EditableText
+                        value={textConfig.previousButtonText || "Previous"}
+                        onSave={(value) => updateTextContent('previousButtonText', value)}
+                        className="font-bold"
+                        isPreview={isPreview}
+                      />
                     </Button>
                     <Button
                       onClick={() => setCurrentStep(3)}
@@ -694,7 +699,12 @@ export default function AutoMechanicCalculator({ customConfig: propConfig, isPre
                       disabled={!formData.contactInfo.email}
                       className="bg-blue-600 hover:bg-blue-700 text-white px-8 font-bold rounded-lg"
                     >
-                      Get Quote
+                      <EditableText
+                        value={textConfig.getQuoteButtonText || "Get Quote"}
+                        onSave={(value) => updateTextContent('getQuoteButtonText', value)}
+                        className="font-bold"
+                        isPreview={isPreview}
+                      />
                     </Button>
                   </div>
                 </div>

@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { QuoteKitHeader } from "@/components/calculator-header";
+import { EditableText } from "@/components/editable-text";
 import { 
   GraduationCap, 
   Users, 
@@ -121,10 +122,25 @@ interface PrivateSchoolCalculatorProps {
   customConfig?: any;
   isPreview?: boolean;
   hideHeader?: boolean;
+  onConfigChange?: (config: any) => void;
 }
 
-export default function PrivateSchoolCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: PrivateSchoolCalculatorProps = {}) {
+export default function PrivateSchoolCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false, onConfigChange }: PrivateSchoolCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
+  const [textConfig, setTextConfig] = useState<any>(propConfig?.textContent || {});
+  
+  // Text customization functionality
+  const updateTextContent = (key: string, value: string) => {
+    const updated = { ...textConfig, [key]: value };
+    setTextConfig(updated);
+    if (onConfigChange) {
+      onConfigChange({
+        ...propConfig,
+        textContent: updated
+      });
+    }
+  };
+  
   const [formData, setFormData] = useState({
     gradeLevel: "",
     enrollmentType: "",
@@ -304,8 +320,22 @@ export default function PrivateSchoolCalculator({ customConfig: propConfig, isPr
             className="space-y-6"
           >
             <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-slate-800 mb-2">What grade level?</h2>
-              <p className="text-slate-600">Select your child's current or intended grade level</p>
+              <h2 className="text-2xl font-bold text-slate-800 mb-2">
+                <EditableText
+                  value={textConfig.step1Title || "What grade level?"}
+                  onSave={(value) => updateTextContent('step1Title', value)}
+                  className="text-2xl font-bold text-slate-800"
+                  isPreview={isPreview}
+                />
+              </h2>
+              <p className="text-slate-600">
+                <EditableText
+                  value={textConfig.step1Description || "Select your child's current or intended grade level"}
+                  onSave={(value) => updateTextContent('step1Description', value)}
+                  className="text-slate-600"
+                  isPreview={isPreview}
+                />
+              </p>
               
               <Button
                 variant="outline"
@@ -313,7 +343,12 @@ export default function PrivateSchoolCalculator({ customConfig: propConfig, isPr
                 className="mt-4 border-blue-200 text-blue-700 hover:bg-blue-50"
               >
                 <BrainCircuit className="mr-2 h-4 w-4" />
-                Try Natural Language Input
+                <EditableText
+                  value={textConfig.naturalLanguageButtonText || "Try Natural Language Input"}
+                  onSave={(value) => updateTextContent('naturalLanguageButtonText', value)}
+                  className="font-medium"
+                  isPreview={isPreview}
+                />
               </Button>
             </div>
 

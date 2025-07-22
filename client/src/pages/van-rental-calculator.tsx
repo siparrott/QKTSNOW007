@@ -525,7 +525,12 @@ export default function VanRentalCalculator({ customConfig: propConfig, isPrevie
                       disabled={!formData.rentalType || !formData.duration || !formData.kmLimit}
                       className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3"
                     >
-                      Continue
+                      <EditableText
+                        value={textConfig.continueButtonText || "Continue"}
+                        onSave={(value) => updateTextContent('continueButtonText', value)}
+                        className="font-semibold"
+                        isPreview={isPreview}
+                      />
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
@@ -691,7 +696,12 @@ export default function VanRentalCalculator({ customConfig: propConfig, isPrevie
                       disabled={!formData.contactInfo.name || !formData.contactInfo.email || !formData.driverAge}
                       className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3"
                     >
-                      Generate Quote
+                      <EditableText
+                        value={textConfig.generateQuoteButtonText || "Generate Quote"}
+                        onSave={(value) => updateTextContent('generateQuoteButtonText', value)}
+                        className="font-semibold"
+                        isPreview={isPreview}
+                      />
                       <Truck className="ml-2 h-4 w-4" />
                     </Button>
                   </div>

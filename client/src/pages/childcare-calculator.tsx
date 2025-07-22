@@ -123,27 +123,27 @@ interface ChildcareCalculatorProps {
   customConfig?: any;
   isPreview?: boolean;
   hideHeader?: boolean;
+  onConfigChange?: (config: any) => void;
 }
 
-export default function ChildcareCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: ChildcareCalculatorProps = {}) {
+export default function ChildcareCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false, onConfigChange }: ChildcareCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isCalculating, setIsCalculating] = useState(false);
   const [showQuote, setShowQuote] = useState(false);
   const [timeLeft, setTimeLeft] = useState(48 * 60 * 60); // 48 hours in seconds
   const [naturalLanguageInput, setNaturalLanguageInput] = useState("");
   const [isProcessingNL, setIsProcessingNL] = useState(false);
-  const [textConfig, setTextConfig] = useState<any>({});
+  const [textConfig, setTextConfig] = useState<any>(propConfig?.textContent || {});
   
   // Text customization functionality
   const updateTextContent = (key: string, value: string) => {
-    setTextConfig(prev => ({ ...prev, [key]: value }));
-    // Send update to parent if in preview mode
-    if (isPreview) {
-      window.parent?.postMessage({
-        type: 'TEXT_UPDATE',
-        key,
-        value
-      }, '*');
+    const updated = { ...textConfig, [key]: value };
+    setTextConfig(updated);
+    if (onConfigChange) {
+      onConfigChange({
+        ...propConfig,
+        textContent: updated
+      });
     }
   };
 

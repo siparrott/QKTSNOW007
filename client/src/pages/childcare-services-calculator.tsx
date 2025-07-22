@@ -41,6 +41,7 @@ import {
   Gift
 } from "lucide-react";
 import { QuoteKitHeader } from "@/components/calculator-header";
+import { EditableText } from "@/components/editable-text";
 
 // Childcare specific icons
 const TeddyBearIcon = () => (
@@ -122,15 +123,29 @@ interface ChildcareServicesCalculatorProps {
   customConfig?: any;
   isPreview?: boolean;
   hideHeader?: boolean;
+  onConfigChange?: (config: any) => void;
 }
 
-export default function ChildcareServicesCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: ChildcareServicesCalculatorProps = {}) {
+export default function ChildcareServicesCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false, onConfigChange }: ChildcareServicesCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isCalculating, setIsCalculating] = useState(false);
   const [showQuote, setShowQuote] = useState(false);
   const [timeLeft, setTimeLeft] = useState(5 * 24 * 60 * 60); // 5 days in seconds
   const [naturalLanguageInput, setNaturalLanguageInput] = useState("");
   const [isProcessingNL, setIsProcessingNL] = useState(false);
+  const [textConfig, setTextConfig] = useState<any>(propConfig?.textContent || {});
+  
+  // Text customization functionality
+  const updateTextContent = (key: string, value: string) => {
+    const updated = { ...textConfig, [key]: value };
+    setTextConfig(updated);
+    if (onConfigChange) {
+      onConfigChange({
+        ...propConfig,
+        textContent: updated
+      });
+    }
+  };
 
   const [formData, setFormData] = useState({
     ageGroup: "",
@@ -317,7 +332,14 @@ export default function ChildcareServicesCalculator({ customConfig: propConfig, 
         <CardContent className="pt-6">
           <div className="flex items-center gap-2 mb-3">
             <Zap className="w-5 h-5 text-emerald-600" />
-            <Label className="text-emerald-700 font-medium">Tell Us About Your Childcare Needs</Label>
+            <Label className="text-emerald-700 font-medium">
+              <EditableText
+                value={textConfig.naturalLanguageLabel || "Tell Us About Your Childcare Needs"}
+                onSave={(value) => updateTextContent('naturalLanguageLabel', value)}
+                className="text-emerald-700 font-medium"
+                isPreview={isPreview}
+              />
+            </Label>
           </div>
           <div className="flex gap-2">
             <Textarea
@@ -340,7 +362,12 @@ export default function ChildcareServicesCalculator({ customConfig: propConfig, 
                   <Zap className="w-4 h-4" />
                 </motion.div>
               ) : (
-                "Help Me"
+                <EditableText
+                  value={textConfig.helpMeButtonText || "Help Me"}
+                  onSave={(value) => updateTextContent('helpMeButtonText', value)}
+                  className="font-medium"
+                  isPreview={isPreview}
+                />
               )}
             </Button>
           </div>

@@ -34,6 +34,7 @@ import {
   Sparkles
 } from "lucide-react";
 import { QuoteKitHeader } from "@/components/calculator-header";
+import { EditableText } from "@/components/editable-text";
 
 // Plastic surgery specific icons
 const ScalpelIcon = () => (
@@ -112,9 +113,10 @@ interface PlasticSurgeryCalculatorProps {
   customConfig?: any;
   isPreview?: boolean;
   hideHeader?: boolean;
+  onConfigChange?: (config: any) => void;
 }
 
-export default function PlasticSurgeryCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: PlasticSurgeryCalculatorProps = {}) {
+export default function PlasticSurgeryCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false, onConfigChange }: PlasticSurgeryCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isCalculating, setIsCalculating] = useState(false);
   const [showQuote, setShowQuote] = useState(false);
@@ -122,6 +124,19 @@ export default function PlasticSurgeryCalculator({ customConfig: propConfig, isP
   const [naturalLanguageInput, setNaturalLanguageInput] = useState("");
   const [isProcessingNL, setIsProcessingNL] = useState(false);
   const [customConfig, setCustomConfig] = useState<any>(null);
+  const [textConfig, setTextConfig] = useState<any>(propConfig?.textContent || {});
+  
+  // Text customization functionality
+  const updateTextContent = (key: string, value: string) => {
+    const updated = { ...textConfig, [key]: value };
+    setTextConfig(updated);
+    if (onConfigChange) {
+      onConfigChange({
+        ...propConfig,
+        textContent: updated
+      });
+    }
+  };
 
   // Listen for configuration updates from parent dashboard
   useEffect(() => {
@@ -402,7 +417,12 @@ export default function PlasticSurgeryCalculator({ customConfig: propConfig, isP
                   <Zap className="w-4 h-4" />
                 </motion.div>
               ) : (
-                "Process"
+                <EditableText
+                  value={textConfig.processButtonText || "Process"}
+                  onSave={(value) => updateTextContent('processButtonText', value)}
+                  className="font-medium"
+                  isPreview={isPreview}
+                />
               )}
             </Button>
           </div>
@@ -684,7 +704,12 @@ export default function PlasticSurgeryCalculator({ customConfig: propConfig, isP
               onClick={() => window.open('mailto:consultations@plasticsurgery.com?subject=Surgery Consultation Request', '_blank')}
             >
               <Calendar className="w-4 h-4 mr-2" />
-              Request Consultation
+              <EditableText
+                value={textConfig.requestConsultationButtonText || "Request Consultation"}
+                onSave={(value) => updateTextContent('requestConsultationButtonText', value)}
+                className="font-medium"
+                isPreview={isPreview}
+              />
             </Button>
             <Button variant="outline" className="border-amber-600 text-amber-600 hover:bg-amber-50">
               <Download className="w-4 h-4 mr-2" />

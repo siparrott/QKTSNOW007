@@ -243,14 +243,14 @@ export default function ChauffeurLimoCalculator({ customConfig: propConfig, isPr
   };
 
   const calculatePricing = (): PricingBreakdown => {
-    const currency = customConfig?.currency || "EUR";
+    const currency = propConfig?.currency || "EUR";
     const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
     
     const selectedService = serviceTypeOptions.find(s => s.value === formData.serviceType);
     const selectedVehicle = vehicleTypeOptions.find(v => v.value === formData.vehicleType);
     const selectedDuration = durationOptions.find(d => d.value === formData.duration);
     
-    const basePrice = selectedService?.basePrice || customConfig?.basePrice || 0;
+    const basePrice = selectedService?.basePrice || propConfig?.basePrice || 0;
     const vehicleUpcharge = selectedVehicle?.upcharge || 0;
     const durationMultiplier = selectedDuration?.multiplier || 1;
     
@@ -357,10 +357,20 @@ export default function ChauffeurLimoCalculator({ customConfig: propConfig, isPr
         {/* Hero Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 mb-4">
-            Luxury Chauffeur Services
+            <EditableText
+              value={textConfig.heroTitle || "Luxury Chauffeur Services"}
+              onSave={(value) => updateTextContent('heroTitle', value)}
+              className="inline-block"
+              isPreview={isPreview}
+            />
           </h1>
           <p className="text-yellow-100 max-w-2xl mx-auto font-medium text-lg">
-            Premium transportation with professional chauffeurs. Elegant vehicles, impeccable service, unforgettable experiences.
+            <EditableText
+              value={textConfig.heroDescription || "Premium transportation with professional chauffeurs. Elegant vehicles, impeccable service, unforgettable experiences."}
+              onSave={(value) => updateTextContent('heroDescription', value)}
+              className="inline-block"
+              isPreview={isPreview}
+            />
           </p>
           <div className="flex items-center justify-center mt-6 space-x-8 text-sm text-yellow-300">
             <span className="flex items-center">
@@ -449,7 +459,12 @@ export default function ChauffeurLimoCalculator({ customConfig: propConfig, isPr
                   <div>
                     <h3 className="text-xl font-semibold text-yellow-300 mb-4 flex items-center">
                       <Crown className="h-5 w-5 mr-2" />
-                      Select Service Type
+                      <EditableText
+                        value={textConfig.serviceSelectionTitle || "Select Service Type"}
+                        onSave={(value) => updateTextContent('serviceSelectionTitle', value)}
+                        className="flex-1"
+                        isPreview={isPreview}
+                      />
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {serviceTypeOptions.map((option) => (
@@ -471,7 +486,12 @@ export default function ChauffeurLimoCalculator({ customConfig: propConfig, isPr
                       disabled={!formData.serviceType}
                       className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-8 py-3"
                     >
-                      Continue
+                      <EditableText
+                        value={textConfig.continueButtonText || "Continue"}
+                        onSave={(value) => updateTextContent('continueButtonText', value)}
+                        className="font-semibold"
+                        isPreview={isPreview}
+                      />
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
@@ -484,7 +504,12 @@ export default function ChauffeurLimoCalculator({ customConfig: propConfig, isPr
                   <div>
                     <h3 className="text-xl font-semibold text-yellow-300 mb-4 flex items-center">
                       <Car className="h-5 w-5 mr-2" />
-                      Choose Your Vehicle
+                      <EditableText
+                        value={textConfig.vehicleSelectionTitle || "Choose Your Vehicle"}
+                        onSave={(value) => updateTextContent('vehicleSelectionTitle', value)}
+                        className="flex-1"
+                        isPreview={isPreview}
+                      />
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {vehicleTypeOptions.map((option) => (
@@ -672,7 +697,12 @@ export default function ChauffeurLimoCalculator({ customConfig: propConfig, isPr
                       disabled={!formData.contactInfo.name || !formData.contactInfo.email}
                       className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-8 py-3"
                     >
-                      Generate Quote
+                      <EditableText
+                        value={textConfig.generateQuoteButtonText || "Generate Quote"}
+                        onSave={(value) => updateTextContent('generateQuoteButtonText', value)}
+                        className="font-semibold"
+                        isPreview={isPreview}
+                      />
                       <Crown className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
@@ -768,7 +798,12 @@ export default function ChauffeurLimoCalculator({ customConfig: propConfig, isPr
                   disabled={currentStep < 4 || !formData.contactInfo.email}
                 >
                   <Crown className="mr-2 h-5 w-5" />
-                  Reserve My Ride
+                  <EditableText
+                    value={textConfig.reserveButtonText || "Reserve My Ride"}
+                    onSave={(value) => updateTextContent('reserveButtonText', value)}
+                    className="font-bold text-lg"
+                    isPreview={isPreview}
+                  />
                 </Button>
 
                 <div className="mt-4 text-center">

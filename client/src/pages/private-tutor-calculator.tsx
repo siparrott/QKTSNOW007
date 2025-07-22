@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { QuoteKitHeader } from "@/components/calculator-header";
+import { EditableText } from "@/components/editable-text";
 import { 
   Heart, 
   Clock, 
@@ -60,11 +61,26 @@ interface PrivateTutorCalculatorProps {
   customConfig?: any;
   isPreview?: boolean;
   hideHeader?: boolean;
+  onConfigChange?: (config: any) => void;
 }
 
-export default function PrivateTutorCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: PrivateTutorCalculatorProps = {}) {
+export default function PrivateTutorCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false, onConfigChange }: PrivateTutorCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
+  const [textConfig, setTextConfig] = useState<any>(propConfig?.textContent || {});
+  
+  // Text customization functionality
+  const updateTextContent = (key: string, value: string) => {
+    const updated = { ...textConfig, [key]: value };
+    setTextConfig(updated);
+    if (onConfigChange) {
+      onConfigChange({
+        ...propConfig,
+        textContent: updated
+      });
+    }
+  };
+  
   const [formData, setFormData] = useState<PrivateTutorFormData>({
     subject: "",
     studentLevel: "",
@@ -338,13 +354,23 @@ export default function PrivateTutorCalculator({ customConfig: propConfig, isPre
                   <div>
                     <h2 className="text-2xl font-medium text-slate-800 mb-4 flex items-center">
                       <BookOpen className="h-6 w-6 mr-2 text-slate-600" />
-                      Subject and student level
+                      <EditableText
+                        value={textConfig.step1Title || "Subject and student level"}
+                        onSave={(value) => updateTextContent('step1Title', value)}
+                        className="text-2xl font-medium text-slate-800"
+                        isPreview={isPreview}
+                      />
                     </h2>
                     
                     {/* Natural Language Input */}
                     <div className="mb-6 p-4 bg-slate-50 rounded-2xl border border-slate-200">
                       <label className="block text-sm font-medium text-slate-700 mb-2">
-                        Describe your tutoring needs (optional)
+                        <EditableText
+                          value={textConfig.naturalLanguageLabel || "Describe your tutoring needs (optional)"}
+                          onSave={(value) => updateTextContent('naturalLanguageLabel', value)}
+                          className="text-sm font-medium text-slate-700"
+                          isPreview={isPreview}
+                        />
                       </label>
                       <Textarea
                         placeholder="e.g., I need weekly math help for my 14-year-old at home"
@@ -366,7 +392,14 @@ export default function PrivateTutorCalculator({ customConfig: propConfig, isPre
 
                     <div className="space-y-6">
                       <div>
-                        <h3 className="text-lg font-medium text-slate-700 mb-3">Subject</h3>
+                        <h3 className="text-lg font-medium text-slate-700 mb-3">
+                          <EditableText
+                            value={textConfig.subjectLabel || "Subject"}
+                            onSave={(value) => updateTextContent('subjectLabel', value)}
+                            className="text-lg font-medium text-slate-700"
+                            isPreview={isPreview}
+                          />
+                        </h3>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                           {subjects.map((subject) => (
                             <OptionCard
@@ -382,7 +415,14 @@ export default function PrivateTutorCalculator({ customConfig: propConfig, isPre
                       </div>
 
                       <div>
-                        <h3 className="text-lg font-medium text-slate-700 mb-3">Student Level</h3>
+                        <h3 className="text-lg font-medium text-slate-700 mb-3">
+                          <EditableText
+                            value={textConfig.studentLevelLabel || "Student Level"}
+                            onSave={(value) => updateTextContent('studentLevelLabel', value)}
+                            className="text-lg font-medium text-slate-700"
+                            isPreview={isPreview}
+                          />
+                        </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {studentLevels.map((level) => (
                             <OptionCard
@@ -405,7 +445,12 @@ export default function PrivateTutorCalculator({ customConfig: propConfig, isPre
                       disabled={!formData.subject || !formData.studentLevel}
                       className="bg-slate-600 hover:bg-slate-700 text-white px-8 font-medium rounded-xl"
                     >
-                      Next Step
+                      <EditableText
+                        value={textConfig.nextButtonText || "Next Step"}
+                        onSave={(value) => updateTextContent('nextButtonText', value)}
+                        className="font-medium"
+                        isPreview={isPreview}
+                      />
                     </Button>
                   </div>
                 </div>
@@ -659,7 +704,12 @@ export default function PrivateTutorCalculator({ customConfig: propConfig, isPre
                       disabled={!formData.contactInfo.email}
                       className="bg-slate-600 hover:bg-slate-700 text-white px-8 font-medium rounded-xl"
                     >
-                      Get Quote
+                      <EditableText
+                        value={textConfig.getQuoteButtonText || "Get Quote"}
+                        onSave={(value) => updateTextContent('getQuoteButtonText', value)}
+                        className="font-medium"
+                        isPreview={isPreview}
+                      />
                     </Button>
                   </div>
                 </div>
@@ -670,7 +720,14 @@ export default function PrivateTutorCalculator({ customConfig: propConfig, isPre
           {/* Pricing Sidebar */}
           <div className="lg:col-span-1">
             <Card className="p-6 bg-white/95 backdrop-blur-sm border-slate-200 rounded-3xl shadow-xl sticky top-8">
-              <h3 className="text-xl font-medium text-slate-800 mb-4">Your Tutoring Investment</h3>
+              <h3 className="text-xl font-medium text-slate-800 mb-4">
+                <EditableText
+                  value={textConfig.pricingSidebarTitle || "Your Tutoring Investment"}
+                  onSave={(value) => updateTextContent('pricingSidebarTitle', value)}
+                  className="text-xl font-medium text-slate-800"
+                  isPreview={isPreview}
+                />
+              </h3>
               
               <div className="space-y-3">
                 <div className="text-3xl font-medium text-slate-700">
@@ -697,9 +754,21 @@ export default function PrivateTutorCalculator({ customConfig: propConfig, isPre
                 {/* Ready to Start Section */}
                 <div className="mt-6 pt-6 border-t border-slate-200">
                   <div className="text-center space-y-4">
-                    <h3 className="text-lg font-medium text-slate-800">Start your learning journey</h3>
+                    <h3 className="text-lg font-medium text-slate-800">
+                      <EditableText
+                        value={textConfig.ctaTitle || "Start your learning journey"}
+                        onSave={(value) => updateTextContent('ctaTitle', value)}
+                        className="text-lg font-medium text-slate-800"
+                        isPreview={isPreview}
+                      />
+                    </h3>
                     <p className="text-sm text-slate-600 font-light">
-                      This quote is valid for 72 hours. Expert tutoring tailored to your academic goals.
+                      <EditableText
+                        value={textConfig.ctaDescription || "This quote is valid for 72 hours. Expert tutoring tailored to your academic goals."}
+                        onSave={(value) => updateTextContent('ctaDescription', value)}
+                        className="text-sm text-slate-600 font-light"
+                        isPreview={isPreview}
+                      />
                     </p>
                     
                     <Button 

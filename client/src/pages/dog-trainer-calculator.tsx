@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { QuoteKitHeader } from "@/components/calculator-header";
+import { EditableText } from "@/components/editable-text";
 import { 
   Heart, 
   Clock, 
@@ -61,11 +62,26 @@ interface DogTrainerCalculatorProps {
   customConfig?: any;
   isPreview?: boolean;
   hideHeader?: boolean;
+  onConfigChange?: (config: any) => void;
 }
 
-export default function DogTrainerCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: DogTrainerCalculatorProps = {}) {
+export default function DogTrainerCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false, onConfigChange }: DogTrainerCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
+  const [textConfig, setTextConfig] = useState<any>(propConfig?.textContent || {});
+  
+  // Text customization functionality
+  const updateTextContent = (key: string, value: string) => {
+    const updated = { ...textConfig, [key]: value };
+    setTextConfig(updated);
+    if (onConfigChange) {
+      onConfigChange({
+        ...propConfig,
+        textContent: updated
+      });
+    }
+  };
+  
   const [formData, setFormData] = useState<DogTrainerFormData>({
     dogAge: "",
     dogSize: "",
@@ -355,13 +371,23 @@ export default function DogTrainerCalculator({ customConfig: propConfig, isPrevi
                   <div>
                     <h2 className="text-2xl font-medium text-stone-800 mb-4 flex items-center">
                       <Heart className="h-6 w-6 mr-2 text-blue-500" />
-                      Tell us about your dog
+                      <EditableText
+                        value={textConfig.step1Title || "Tell us about your dog"}
+                        onSave={(value) => updateTextContent('step1Title', value)}
+                        className="text-2xl font-medium text-stone-800"
+                        isPreview={isPreview}
+                      />
                     </h2>
                     
                     {/* Natural Language Input */}
                     <div className="mb-6 p-4 bg-blue-50 rounded-2xl border border-blue-200">
                       <label className="block text-sm font-medium text-stone-700 mb-2">
-                        Describe your training needs (optional)
+                        <EditableText
+                          value={textConfig.naturalLanguageLabel || "Describe your training needs (optional)"}
+                          onSave={(value) => updateTextContent('naturalLanguageLabel', value)}
+                          className="text-sm font-medium text-stone-700"
+                          isPreview={isPreview}
+                        />
                       </label>
                       <Textarea
                         placeholder="e.g., I need help with leash pulling for my 2-year-old lab at home"
@@ -383,7 +409,14 @@ export default function DogTrainerCalculator({ customConfig: propConfig, isPrevi
 
                     <div className="space-y-6">
                       <div>
-                        <h3 className="text-lg font-medium text-stone-700 mb-3">Dog's Age</h3>
+                        <h3 className="text-lg font-medium text-stone-700 mb-3">
+                          <EditableText
+                            value={textConfig.dogAgeLabel || "Dog's Age"}
+                            onSave={(value) => updateTextContent('dogAgeLabel', value)}
+                            className="text-lg font-medium text-stone-700"
+                            isPreview={isPreview}
+                          />
+                        </h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           {dogAges.map((age) => (
                             <OptionCard
@@ -399,7 +432,14 @@ export default function DogTrainerCalculator({ customConfig: propConfig, isPrevi
                       </div>
 
                       <div>
-                        <h3 className="text-lg font-medium text-stone-700 mb-3">Dog's Size</h3>
+                        <h3 className="text-lg font-medium text-stone-700 mb-3">
+                          <EditableText
+                            value={textConfig.dogSizeLabel || "Dog's Size"}
+                            onSave={(value) => updateTextContent('dogSizeLabel', value)}
+                            className="text-lg font-medium text-stone-700"
+                            isPreview={isPreview}
+                          />
+                        </h3>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                           {dogSizes.map((size) => (
                             <OptionCard
@@ -422,7 +462,12 @@ export default function DogTrainerCalculator({ customConfig: propConfig, isPrevi
                       disabled={!formData.dogAge || !formData.dogSize}
                       className="bg-blue-500 hover:bg-blue-600 text-white px-8 font-medium rounded-xl"
                     >
-                      Next Step
+                      <EditableText
+                        value={textConfig.nextButtonText || "Next Step"}
+                        onSave={(value) => updateTextContent('nextButtonText', value)}
+                        className="font-medium"
+                        isPreview={isPreview}
+                      />
                     </Button>
                   </div>
                 </div>
@@ -676,7 +721,12 @@ export default function DogTrainerCalculator({ customConfig: propConfig, isPrevi
                       disabled={!formData.contactInfo.email}
                       className="bg-blue-500 hover:bg-blue-600 text-white px-8 font-medium rounded-xl"
                     >
-                      Get Quote
+                      <EditableText
+                        value={textConfig.getQuoteButtonText || "Get Quote"}
+                        onSave={(value) => updateTextContent('getQuoteButtonText', value)}
+                        className="font-medium"
+                        isPreview={isPreview}
+                      />
                     </Button>
                   </div>
                 </div>
@@ -687,7 +737,14 @@ export default function DogTrainerCalculator({ customConfig: propConfig, isPrevi
           {/* Pricing Sidebar */}
           <div className="lg:col-span-1">
             <Card className="p-6 bg-white/95 backdrop-blur-sm border-blue-200 rounded-3xl shadow-xl sticky top-8">
-              <h3 className="text-xl font-medium text-stone-800 mb-4">Your Training Investment</h3>
+              <h3 className="text-xl font-medium text-stone-800 mb-4">
+                <EditableText
+                  value={textConfig.pricingSidebarTitle || "Your Training Investment"}
+                  onSave={(value) => updateTextContent('pricingSidebarTitle', value)}
+                  className="text-xl font-medium text-stone-800"
+                  isPreview={isPreview}
+                />
+              </h3>
               
               <div className="space-y-3">
                 <div className="text-3xl font-medium text-blue-600">
@@ -714,9 +771,21 @@ export default function DogTrainerCalculator({ customConfig: propConfig, isPrevi
                 {/* Ready to Start Section */}
                 <div className="mt-6 pt-6 border-t border-stone-200">
                   <div className="text-center space-y-4">
-                    <h3 className="text-lg font-medium text-stone-800">Start your dog's journey</h3>
+                    <h3 className="text-lg font-medium text-stone-800">
+                      <EditableText
+                        value={textConfig.ctaTitle || "Start your dog's journey"}
+                        onSave={(value) => updateTextContent('ctaTitle', value)}
+                        className="text-lg font-medium text-stone-800"
+                        isPreview={isPreview}
+                      />
+                    </h3>
                     <p className="text-sm text-stone-600 font-light">
-                      This quote is valid for 48 hours. Professional training that builds confidence and bonds.
+                      <EditableText
+                        value={textConfig.ctaDescription || "This quote is valid for 48 hours. Professional training that builds confidence and bonds."}
+                        onSave={(value) => updateTextContent('ctaDescription', value)}
+                        className="text-sm text-slate-600 font-light"
+                        isPreview={isPreview}
+                      />
                     </p>
                     
                     <Button 

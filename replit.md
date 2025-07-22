@@ -158,22 +158,35 @@ npm run dev    # Development with hot reload
 
 ## Critical Issue Status Update
 
-**EDITABLETEXT IMPLEMENTATION MASSIVE COMPLETION**
-- **COMPLETED:** 36+ calculators now have comprehensive EditableText functionality (MAJOR MILESTONE)
-- **LATEST COMPLETION:** Wedding Photography Calculator fully implemented with comprehensive EditableText coverage
-- **TECHNICAL SUCCESS:** All calculators now feature proper EditableText imports, textConfig state management, updateTextContent functions, and onConfigChange callbacks
-- **WEDDING CALCULATOR COMPREHENSIVE:** Complete coverage including step navigation titles, main headers, form labels, pricing sidebar elements, and all user-facing text
-- **FONT READABILITY IMPROVED:** Enhanced contrast and typography in add-on options for better user experience
+**AUTHENTICATION SYSTEM FIXED - MAJOR MILESTONE**
+- **RESOLVED:** Critical authentication issue that prevented users from being remembered across sessions
+- **TECHNICAL SUCCESS:** Consolidated conflicting authentication systems (JWT vs Supabase) to use PostgreSQL-based JWT authentication
+- **IMPLEMENTATION COMPLETE:** Updated login/register pages, query client, and created proper useAuth hook
+- **USER VERIFICATION:** Account (siparrott@yahoeeo.co.uk) confirmed working with proper token persistence
+- **API ENDPOINTS:** All authentication routes (/api/auth/login, /api/auth/register, /api/auth/me) fully operational
+- **NEXT PRIORITY:** Continue EditableText implementation for remaining calculators
+
+**EDITABLETEXT IMPLEMENTATION STATUS**  
+- **COMPLETED:** 40+ calculators now have comprehensive EditableText functionality
+- **LATEST ADDITIONS:** Private Tutor, Dog Trainer, Tattoo Artist, and Hypnotherapist calculators now include EditableText infrastructure
+- **TECHNICAL SUCCESS:** All calculators feature proper EditableText imports, textConfig state management, updateTextContent functions, and onConfigChange callbacks
 - **SYSTEMATIC PATTERN CONFIRMED:** Consistent implementation approach proven across multiple calculator types and layouts
-- **COVERAGE EXPANSION:** Major service categories now fully supported including photography, home services, wellness, business services, automotive, transportation, legal, and financial services
-- **REMAINING:** Approximately 24-29 calculators still need EditableText implementation for complete platform coverage
+- **COVERAGE EXPANSION:** Major service categories now fully supported including photography, home services, wellness, business services, automotive, transportation, legal, financial services, education, and specialized services
+- **REMAINING:** Approximately 20-24 calculators still need EditableText implementation for complete platform coverage
 - **USER IMPACT:** Comprehensive text customization capabilities now available across majority of calculator templates
-- **NEXT PHASE:** Continue systematic implementation to achieve 100% platform coverage
 
 ## Changelog
 
 ```
 Changelog:
+- July 22, 2025. AUTHENTICATION SYSTEM FULLY RESOLVED: Complete fix for user session persistence
+  * CRITICAL FIX: Resolved conflicting authentication systems (custom JWT vs Supabase) causing users not to be remembered
+  * CONSOLIDATED APPROACH: Implemented single PostgreSQL-based JWT authentication system
+  * API UPDATES: Fixed login/register pages to use correct /api/auth endpoints with proper token handling
+  * QUERY CLIENT ENHANCED: Updated to include JWT tokens in all API requests for proper authentication
+  * USER VERIFICATION: Confirmed authentication working with existing user account (siparrott@yahoeeo.co.uk)
+  * TECHNICAL INFRASTRUCTURE: Created useAuth hook, /api/auth/me endpoint, and proper token verification middleware
+  * USER IMPACT: Users now properly authenticated and remembered across browser sessions and page refreshes
 - July 21, 2025. BOUDOIR CALCULATOR EDITABLETEXT COMPLETE: Comprehensive implementation with enhanced readability
   * COMPREHENSIVE COVERAGE: Added EditableText to ALL boudoir calculator text elements including step navigation, headers, session styles, add-on options, and form labels
   * SESSION STYLE CUSTOMIZATION: Classic, Lingerie, Nude, and Glamour session types now fully editable (titles, subtitles, and pricing)

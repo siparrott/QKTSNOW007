@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { QuoteKitHeader } from "@/components/calculator-header";
+import { EditableText } from "@/components/editable-text";
 import { 
   Heart, 
   Clock, 
@@ -57,11 +58,26 @@ interface HypnotherapistCalculatorProps {
   customConfig?: any;
   isPreview?: boolean;
   hideHeader?: boolean;
+  onConfigChange?: (config: any) => void;
 }
 
-export default function HypnotherapistCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false }: HypnotherapistCalculatorProps = {}) {
+export default function HypnotherapistCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false, onConfigChange }: HypnotherapistCalculatorProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isQuoteLocked, setIsQuoteLocked] = useState(false);
+  const [textConfig, setTextConfig] = useState<any>(propConfig?.textContent || {});
+  
+  // Text customization functionality
+  const updateTextContent = (key: string, value: string) => {
+    const updated = { ...textConfig, [key]: value };
+    setTextConfig(updated);
+    if (onConfigChange) {
+      onConfigChange({
+        ...propConfig,
+        textContent: updated
+      });
+    }
+  };
+  
   const [formData, setFormData] = useState<HypnotherapistFormData>({
     treatmentType: "",
     sessionFormat: "",

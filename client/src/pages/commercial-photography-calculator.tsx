@@ -420,12 +420,20 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-display text-slate-800 mb-2">
-            Commercial Photography Calculator
-          </h1>
-          <p className="text-slate-600 max-w-2xl mx-auto font-body">
-            Professional commercial photography with transparent pricing. Get your custom quote instantly.
-          </p>
+          <EditableText
+            value={textConfig.mainTitle || "Commercial Photography Calculator"}
+            onSave={(value) => updateTextContent('mainTitle', value)}
+            className="text-4xl font-display text-slate-800 mb-2 block"
+            isPreview={isPreview}
+            placeholder="Enter main title"
+          />
+          <EditableText
+            value={textConfig.mainSubtitle || "Professional commercial photography with transparent pricing. Get your custom quote instantly."}
+            onSave={(value) => updateTextContent('mainSubtitle', value)}
+            className="text-slate-600 max-w-2xl mx-auto font-body"
+            isPreview={isPreview}
+            placeholder="Enter subtitle"
+          />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -463,14 +471,24 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                   <div>
                     <h2 className="text-2xl font-display text-slate-800 mb-4 flex items-center">
                       <Briefcase className="h-6 w-6 mr-2 text-slate-700" />
-                      Tell us about your project
+                      <EditableText
+                        value={textConfig.step1Title || "Tell us about your project"}
+                        onSave={(value) => updateTextContent('step1Title', value)}
+                        className="text-2xl font-display text-slate-800"
+                        isPreview={isPreview}
+                        placeholder="Enter step 1 title"
+                      />
                     </h2>
                     
                     {/* Natural Language Input */}
                     <div className="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
-                      <label className="block text-sm font-body text-slate-700 mb-2">
-                        Describe your project (optional)
-                      </label>
+                      <EditableText
+                        value={textConfig.descriptionLabel || "Describe your project (optional)"}
+                        onSave={(value) => updateTextContent('descriptionLabel', value)}
+                        className="block text-sm font-body text-slate-700 mb-2"
+                        isPreview={isPreview}
+                        placeholder="Enter description label"
+                      />
                       <Textarea
                         placeholder="e.g., Lifestyle brand shoot, full day, with props and 20 final images"
                         value={formData.naturalLanguageInput}
@@ -485,13 +503,25 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                         disabled={!formData.naturalLanguageInput.trim()}
                       >
                         <Sparkles className="h-4 w-4 mr-2" />
-                        Calculate with AI
+                        <EditableText
+                          value={textConfig.aiButtonText || "Calculate with AI"}
+                          onSave={(value) => updateTextContent('aiButtonText', value)}
+                          className="font-body font-semibold"
+                          isPreview={isPreview}
+                          placeholder="Enter button text"
+                        />
                       </Button>
                     </div>
 
                     <div className="space-y-6">
                       <div>
-                        <h3 className="text-lg font-display text-slate-700 mb-3">Project Type</h3>
+                        <EditableText
+                          value={textConfig.projectTypeTitle || "Project Type"}
+                          onSave={(value) => updateTextContent('projectTypeTitle', value)}
+                          className="text-lg font-display text-slate-700 mb-3 block"
+                          isPreview={isPreview}
+                          placeholder="Enter project type title"
+                        />
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                           {projectTypes.map((project) => (
                             <OptionCard
@@ -507,7 +537,13 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                       </div>
 
                       <div>
-                        <h3 className="text-lg font-display text-slate-700 mb-3">Number of Final Images Required</h3>
+                        <EditableText
+                          value={textConfig.imageCountTitle || "Number of Final Images Required"}
+                          onSave={(value) => updateTextContent('imageCountTitle', value)}
+                          className="text-lg font-display text-slate-700 mb-3 block"
+                          isPreview={isPreview}
+                          placeholder="Enter image count title"
+                        />
                         <div className="grid grid-cols-2 gap-4">
                           {imageCounts.map((count) => (
                             <OptionCard
@@ -530,7 +566,13 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                       disabled={!formData.projectType || !formData.imageCount}
                       className="bg-slate-700 hover:bg-slate-800 text-white px-8 font-semibold"
                     >
-                      Next Step
+                      <EditableText
+                        value={textConfig.nextStepButton1 || "Next Step"}
+                        onSave={(value) => updateTextContent('nextStepButton1', value)}
+                        className="px-8 font-semibold"
+                        isPreview={isPreview}
+                        placeholder="Enter next step button text"
+                      />
                     </Button>
                   </div>
                 </div>
@@ -786,7 +828,13 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
           {/* Pricing Sidebar */}
           <div className="lg:col-span-1">
             <Card className="p-6 bg-white/95 backdrop-blur-sm border-slate-200 sticky top-8">
-              <h3 className="text-xl font-display text-slate-800 mb-4">Your Commercial Shoot Quote</h3>
+              <EditableText
+                value={textConfig.quoteTitle || "Your Commercial Shoot Quote"}
+                onSave={(value) => updateTextContent('quoteTitle', value)}
+                className="text-xl font-display text-slate-800 mb-4 block"
+                isPreview={isPreview}
+                placeholder="Enter quote title"
+              />
               
               <div className="space-y-3">
                 <div className="text-3xl font-bold text-slate-700">
@@ -817,10 +865,20 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                 {/* Ready to Book Section */}
                 <div className="mt-6 pt-6 border-t border-slate-200">
                   <div className="text-center space-y-4">
-                    <h3 className="text-lg font-display text-slate-800">Ready to Book This Shoot?</h3>
-                    <p className="text-sm text-slate-600">
-                      This quote is valid for 72 hours. Let's create stunning commercial photography together.
-                    </p>
+                    <EditableText
+                      value={textConfig.bookingTitle || "Ready to Book This Shoot?"}
+                      onSave={(value) => updateTextContent('bookingTitle', value)}
+                      className="text-lg font-display text-slate-800 block"
+                      isPreview={isPreview}
+                      placeholder="Enter booking title"
+                    />
+                    <EditableText
+                      value={textConfig.bookingDescription || "This quote is valid for 72 hours. Let's create stunning commercial photography together."}
+                      onSave={(value) => updateTextContent('bookingDescription', value)}
+                      className="text-sm text-slate-600"
+                      isPreview={isPreview}
+                      placeholder="Enter booking description"
+                    />
                     
                     <Button 
                       className="w-full bg-slate-700 hover:bg-slate-800 text-white py-3 font-semibold"
@@ -831,7 +889,13 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                         window.open(mailtoUrl, "_blank");
                       }}
                     >
-                      📸 Book This Shoot
+                      <EditableText
+                        value={textConfig.bookingButton || "📸 Book This Shoot"}
+                        onSave={(value) => updateTextContent('bookingButton', value)}
+                        className="w-full py-3 font-semibold"
+                        isPreview={isPreview}
+                        placeholder="Enter booking button text"
+                      />
                     </Button>
                     
                     <div className="flex items-center justify-center space-x-6 text-xs text-slate-500">

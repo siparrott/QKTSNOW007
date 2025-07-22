@@ -10,8 +10,7 @@ import { z } from "zod";
 import { Link, useLocation } from "wouter";
 import Header from "@/components/landing/header";
 import { useToast } from "@/hooks/use-toast";
-import { signUpWithEmail, loginWithEmail } from "@/lib/supabase";
-import { storeTempUser, createTempSession } from "@/lib/auth-bypass";
+import { apiRequest } from "@/lib/queryClient";
 import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
 
 const registerSchema = z.object({
@@ -63,115 +62,39 @@ export default function Register() {
     setIsLoading(true);
     
     try {
-      const { user, session, error } = await signUpWithEmail(data.email, data.password);
-
-      // If Supabase signup successful with session, use it
-      if (user && session) {
-        localStorage.setItem('user', JSON.stringify(user));
-        localStorage.setItem('supabase_session', JSON.stringify(session));
-        localStorage.setItem('new_account_created', 'true');
-        
-        toast({
-          title: "Registration successful!",
-          description: selectedPlan ? "Redirecting to checkout..." : "Welcome to QuoteKit!",
-        });
-        
-        // If a paid plan was selected, redirect to checkout
-        if (selectedPlan && selectedPlan !== 'free') {
-          await redirectToCheckout(selectedPlan, selectedPrice || '5');
-        } else {
-          setLocation('/dashboard');
-        }
-        return;
-      }
-
-      // If Supabase signup succeeded but no session (email confirmation required), create temp user
-      if (user && !session) {
-        const tempUser = storeTempUser(data.email, data.password);
-        createTempSession(tempUser);
-        localStorage.setItem('new_account_created', 'true');
-        
-        toast({
-          title: "Registration successful!",
-          description: selectedPlan ? "Redirecting to checkout..." : "Welcome to QuoteKit!",
-        });
-        
-        // If a paid plan was selected, redirect to checkout
-        if (selectedPlan && selectedPlan !== 'free') {
-          await redirectToCheckout(selectedPlan, selectedPrice || '5');
-        } else {
-          setLocation('/dashboard');
-        }
-        return;
-      }
-
-      // If signup failed, check if it's a rate limit or email issue (common with Supabase)
-      if (error) {
-        console.log('Signup failed, creating temporary account for user:', error.message);
-        
-        // For rate limits or email issues, create temporary user and continue smoothly
-        if (error.message?.includes('rate limit') || 
-            error.message?.includes('email') || 
-            error.message?.includes('confirmation')) {
-          
-          const tempUser = storeTempUser(data.email, data.password);
-          createTempSession(tempUser);
-          localStorage.setItem('new_account_created', 'true');
-          
-          toast({
-            title: "Welcome to QuoteKit!",
-            description: selectedPlan ? "Redirecting to checkout..." : "Your account has been created.",
-          });
-          
-          // If a paid plan was selected, redirect to checkout
-          if (selectedPlan && selectedPlan !== 'free') {
-            await redirectToCheckout(selectedPlan, selectedPrice || '5');
-          } else {
-            setLocation('/dashboard');
-          }
-          return;
-        }
-        
-        // For other errors, show appropriate message
-        throw new Error(error.message);
-      }
-      
-      // Fallback: create temporary user if no response
-      const tempUser = storeTempUser(data.email, data.password);
-      createTempSession(tempUser);
-      localStorage.setItem('new_account_created', 'true');
-      
-      toast({
-        title: "Welcome to QuoteKit!",
-        description: selectedPlan ? "Redirecting to checkout..." : "Your account has been created.",
+      // Use the PostgreSQL API endpoint for registration
+      const response = await apiRequest('/api/auth/register', {
+        method: 'POST',
+        body: JSON.stringify(data),
       });
-      
-      // If a paid plan was selected, redirect to checkout
-      if (selectedPlan && selectedPlan !== 'free') {
-        await redirectToCheckout(selectedPlan, selectedPrice || '5');
-      } else {
-        setLocation('/dashboard');
+
+      if (response.user && response.token) {
+        // Store authentication token and user data
+        localStorage.setItem('auth_token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+        localStorage.setItem('new_account_created', 'true');
+        
+        toast({
+          title: "Welcome to QuoteKit!",
+          description: selectedPlan ? "Redirecting to checkout..." : "Your account has been created.",
+        });
+        
+        // If a paid plan was selected, redirect to checkout
+        if (selectedPlan && selectedPlan !== 'free') {
+          await redirectToCheckout(selectedPlan, selectedPrice || '5');
+        } else {
+          setLocation('/dashboard');
+        }
+        return;
       }
-      
     } catch (error: any) {
       console.error('Registration error:', error);
       
-      // For any Supabase-related errors (rate limits, email issues), create temporary account
-      const tempUser = storeTempUser(data.email, data.password);
-      createTempSession(tempUser);
-      localStorage.setItem('new_account_created', 'true');
-      
       toast({
-        title: "Welcome to QuoteKit!",
-        description: selectedPlan ? "Redirecting to checkout..." : "Your account has been created.",
+        title: "Registration Failed",
+        description: error.message || "There was an error creating your account. Please try again.",
+        variant: "destructive",
       });
-      
-      // If a paid plan was selected, redirect to checkout
-      if (selectedPlan && selectedPlan !== 'free') {
-        await redirectToCheckout(selectedPlan, selectedPrice || '5');
-      } else {
-        setLocation('/dashboard');
-      }
     } finally {
       setIsLoading(false);
     }

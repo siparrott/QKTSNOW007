@@ -89,44 +89,158 @@ interface Ticket {
 }
 
 export default function AdminDashboard() {
-  const { user, isAuthenticated } = useAuth();
-  const queryClient = useQueryClient();
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
+  const [adminEmail, setAdminEmail] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
+  const [authError, setAuthError] = useState('');
   const [activeTab, setActiveTab] = useState("overview");
+  const queryClient = useQueryClient();
 
-  // Check admin access
+  // Check if already authenticated for admin
   useEffect(() => {
-    if (!isAuthenticated || user?.email !== 'admin@quotekit.ai') {
-      window.location.href = '/';
+    const adminAuth = localStorage.getItem('admin_authenticated');
+    if (adminAuth === 'true') {
+      setIsAdminAuthenticated(true);
     }
-  }, [isAuthenticated, user]);
+  }, []);
 
-  // Fetch admin stats
-  const { data: stats } = useQuery<AdminStats>({
-    queryKey: ['/api/admin/stats'],
-    enabled: isAuthenticated && user?.email === 'admin@quotekit.ai'
-  });
+  const handleAdminLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (adminEmail === 'admin@quotekit.ai' && adminPassword === 'admin123') {
+      setIsAdminAuthenticated(true);
+      localStorage.setItem('admin_authenticated', 'true');
+      setAuthError('');
+    } else {
+      setAuthError('Invalid credentials');
+    }
+  };
 
-  // Fetch users
-  const { data: users } = useQuery<User[]>({
-    queryKey: ['/api/admin/users'],
-    enabled: activeTab === 'users'
-  });
-
-  // Fetch calculators
-  const { data: calculators } = useQuery<Calculator[]>({
-    queryKey: ['/api/admin/calculators'],
-    enabled: activeTab === 'calculators'
-  });
-
-  // Fetch support tickets
-  const { data: tickets } = useQuery<Ticket[]>({
-    queryKey: ['/api/admin/tickets'],
-    enabled: activeTab === 'support'
-  });
-
-  if (!isAuthenticated || user?.email !== 'admin@quotekit.ai') {
-    return <div>Access denied</div>;
+  if (!isAdminAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Card className="w-full max-w-md p-6">
+          <h1 className="text-2xl font-bold text-center mb-6">Admin Login</h1>
+          <form onSubmit={handleAdminLogin} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">Email</label>
+              <input
+                type="email"
+                value={adminEmail}
+                onChange={(e) => setAdminEmail(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="admin@quotekit.ai"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Password</label>
+              <input
+                type="password"
+                value={adminPassword}
+                onChange={(e) => setAdminPassword(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="admin123"
+                required
+              />
+            </div>
+            {authError && (
+              <div className="text-red-500 text-sm">{authError}</div>
+            )}
+            <Button type="submit" className="w-full">
+              Login to Admin Dashboard
+            </Button>
+          </form>
+        </Card>
+      </div>
+    );
   }
+
+  // Mock data for demo
+  const stats: AdminStats = {
+    totalUsers: 1247,
+    activeSubscriptions: 892,
+    totalRevenue: 45670,
+    openTickets: 23,
+    totalCalculators: 67,
+    quotesGenerated: 15432,
+    conversionRate: 12.4,
+    churnRate: 3.2
+  };
+
+  const users: User[] = [
+    {
+      id: '1',
+      email: 'john@business.com',
+      fullName: 'John Smith',
+      subscriptionStatus: 'pro',
+      quotesUsedThisMonth: 18,
+      quotesLimit: 25,
+      createdAt: '2025-01-15T10:30:00Z'
+    },
+    {
+      id: '2',
+      email: 'sarah@studio.com',
+      fullName: 'Sarah Johnson',
+      subscriptionStatus: 'business',
+      quotesUsedThisMonth: 32,
+      quotesLimit: 50,
+      createdAt: '2025-01-10T14:20:00Z'
+    },
+    {
+      id: '3',
+      email: 'mike@services.com',
+      fullName: 'Mike Wilson',
+      subscriptionStatus: 'free',
+      quotesUsedThisMonth: 4,
+      quotesLimit: 5,
+      createdAt: '2025-01-20T09:15:00Z'
+    }
+  ];
+
+  const calculators: Calculator[] = [
+    {
+      id: 1,
+      name: 'Portrait Photography Calculator',
+      category: 'photography',
+      description: 'Professional portrait photography pricing calculator',
+      createdAt: '2025-01-01T00:00:00Z'
+    },
+    {
+      id: 2,
+      name: 'Wedding Photography Calculator',
+      category: 'photography',
+      description: 'Wedding photography pricing with packages',
+      createdAt: '2025-01-01T00:00:00Z'
+    },
+    {
+      id: 3,
+      name: 'Electrician Calculator',
+      category: 'home-services',
+      description: 'Electrical work pricing calculator',
+      createdAt: '2025-01-01T00:00:00Z'
+    }
+  ];
+
+  const tickets: Ticket[] = [
+    {
+      id: '1',
+      email: 'customer@example.com',
+      subject: 'Calculator not loading',
+      message: 'The portrait photography calculator is not loading on my website.',
+      priority: 'high',
+      status: 'open',
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: '2',
+      email: 'user@business.com',
+      subject: 'Billing question',
+      message: 'I need to upgrade my plan but cannot find the option.',
+      priority: 'normal',
+      status: 'in_progress',
+      createdAt: new Date(Date.now() - 86400000).toISOString()
+    }
+  ];
 
   const chartOptions = {
     responsive: true,

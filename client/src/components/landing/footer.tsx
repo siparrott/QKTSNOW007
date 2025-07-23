@@ -138,6 +138,15 @@ export default function Footer() {
                   Privacy Policy
                 </a>
               </li>
+              <li>
+                <Link href="/admin" className="text-neon-400 hover:text-neon-300 transition-colors font-medium">
+                  🔒 Admin Demo
+                </Link>
+                <div className="text-xs text-gray-500 mt-1">
+                  Email: admin@quotekit.ai<br/>
+                  Password: admin123
+                </div>
+              </li>
             </ul>
           </div>
         </div>

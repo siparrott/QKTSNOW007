@@ -86,6 +86,87 @@ export const calculatorVisits = pgTable("calculator_visits", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Admin-specific tables
+export const adminUsers = pgTable("admin_users", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: text("email").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  role: text("role").default("admin"), // admin, super_admin
+  isActive: boolean("is_active").default(true),
+  lastLogin: timestamp("last_login"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const supportTickets = pgTable("support_tickets", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
+  email: text("email").notNull(),
+  subject: text("subject").notNull(),
+  message: text("message").notNull(),
+  priority: text("priority").default("normal"), // normal, high, urgent
+  status: text("status").default("open"), // open, in_progress, resolved, closed
+  assignedTo: uuid("assigned_to").references(() => adminUsers.id),
+  adminReply: text("admin_reply"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  resolvedAt: timestamp("resolved_at"),
+});
+
+export const promoCodes = pgTable("promo_codes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  code: text("code").unique().notNull(),
+  discountValue: integer("discount_value").notNull(), // in cents
+  discountType: text("discount_type").default("percentage"), // percentage, fixed
+  maxUses: integer("max_uses"),
+  currentUses: integer("current_uses").default(0),
+  expiryDate: timestamp("expiry_date"),
+  isActive: boolean("is_active").default(true),
+  createdBy: uuid("created_by").references(() => adminUsers.id),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const adminLogs = pgTable("admin_logs", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  adminId: uuid("admin_id").references(() => adminUsers.id).notNull(),
+  action: text("action").notNull(),
+  resourceType: text("resource_type"), // user, calculator, promo_code, etc.
+  resourceId: text("resource_id"),
+  details: jsonb("details"),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const affiliates = pgTable("affiliates", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  referralCode: text("referral_code").unique().notNull(),
+  commissionRate: integer("commission_rate").default(30), // percentage
+  totalEarnings: integer("total_earnings").default(0), // in cents
+  pendingPayout: integer("pending_payout").default(0), // in cents
+  totalReferrals: integer("total_referrals").default(0),
+  paypalEmail: text("paypal_email"),
+  bankDetails: jsonb("bank_details"),
+  lastPayout: timestamp("last_payout"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const payments = pgTable("payments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  stripePaymentIntentId: text("stripe_payment_intent_id").unique(),
+  amount: integer("amount").notNull(), // in cents
+  currency: text("currency").default("eur"),
+  status: text("status").notNull(), // succeeded, pending, failed, refunded
+  subscriptionId: uuid("subscription_id").references(() => subscriptions.id),
+  affiliateId: uuid("affiliate_id").references(() => affiliates.id),
+  affiliateCommission: integer("affiliate_commission").default(0), // in cents
+  refundedAmount: integer("refunded_amount").default(0), // in cents
+  refundReason: text("refund_reason"),
+  createdAt: timestamp("created_at").defaultNow(),
+  refundedAt: timestamp("refunded_at"),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   email: true,
@@ -155,6 +236,59 @@ export const insertCalculatorVisitSchema = createInsertSchema(calculatorVisits).
   sessionDuration: true,
 });
 
+// Admin schema inserts
+export const insertAdminUserSchema = createInsertSchema(adminUsers).pick({
+  email: true,
+  passwordHash: true,
+  role: true,
+});
+
+export const insertSupportTicketSchema = createInsertSchema(supportTickets).pick({
+  userId: true,
+  email: true,
+  subject: true,
+  message: true,
+  priority: true,
+});
+
+export const insertPromoCodeSchema = createInsertSchema(promoCodes).pick({
+  code: true,
+  discountValue: true,
+  discountType: true,
+  maxUses: true,
+  expiryDate: true,
+  createdBy: true,
+});
+
+export const insertAdminLogSchema = createInsertSchema(adminLogs).pick({
+  adminId: true,
+  action: true,
+  resourceType: true,
+  resourceId: true,
+  details: true,
+  ipAddress: true,
+  userAgent: true,
+});
+
+export const insertAffiliateSchema = createInsertSchema(affiliates).pick({
+  userId: true,
+  referralCode: true,
+  commissionRate: true,
+  paypalEmail: true,
+  bankDetails: true,
+});
+
+export const insertPaymentSchema = createInsertSchema(payments).pick({
+  userId: true,
+  stripePaymentIntentId: true,
+  amount: true,
+  currency: true,
+  status: true,
+  subscriptionId: true,
+  affiliateId: true,
+  affiliateCommission: true,
+});
+
 // Select schemas
 export const selectUserSchema = createSelectSchema(users);
 export const selectCalculatorSchema = createSelectSchema(calculators);
@@ -163,6 +297,12 @@ export const selectLeadSchema = createSelectSchema(leads);
 export const selectSubscriptionSchema = createSelectSchema(subscriptions);
 export const selectSessionSchema = createSelectSchema(sessions);
 export const selectCalculatorVisitSchema = createSelectSchema(calculatorVisits);
+export const selectAdminUserSchema = createSelectSchema(adminUsers);
+export const selectSupportTicketSchema = createSelectSchema(supportTickets);
+export const selectPromoCodeSchema = createSelectSchema(promoCodes);
+export const selectAdminLogSchema = createSelectSchema(adminLogs);
+export const selectAffiliateSchema = createSelectSchema(affiliates);
+export const selectPaymentSchema = createSelectSchema(payments);
 
 // Type exports
 export type User = typeof users.$inferSelect;
@@ -172,6 +312,12 @@ export type Lead = typeof leads.$inferSelect;
 export type CalculatorVisit = typeof calculatorVisits.$inferSelect;
 export type Subscription = typeof subscriptions.$inferSelect;
 export type Session = typeof sessions.$inferSelect;
+export type AdminUser = typeof adminUsers.$inferSelect;
+export type SupportTicket = typeof supportTickets.$inferSelect;
+export type PromoCode = typeof promoCodes.$inferSelect;
+export type AdminLog = typeof adminLogs.$inferSelect;
+export type Affiliate = typeof affiliates.$inferSelect;
+export type Payment = typeof payments.$inferSelect;
 
 // Insert types
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -182,3 +328,9 @@ export type InsertUserCalculator = z.infer<typeof insertUserCalculatorSchema>;
 export type InsertLead = z.infer<typeof insertLeadSchema>;
 export type InsertSubscription = z.infer<typeof insertSubscriptionSchema>;
 export type InsertSession = z.infer<typeof insertSessionSchema>;
+export type InsertAdminUser = z.infer<typeof insertAdminUserSchema>;
+export type InsertSupportTicket = z.infer<typeof insertSupportTicketSchema>;
+export type InsertPromoCode = z.infer<typeof insertPromoCodeSchema>;
+export type InsertAdminLog = z.infer<typeof insertAdminLogSchema>;
+export type InsertAffiliate = z.infer<typeof insertAffiliateSchema>;
+export type InsertPayment = z.infer<typeof insertPaymentSchema>;

@@ -53,6 +53,13 @@ export interface IStorage {
   enableTwoFactor(userId: string, secret: string, backupCodes: string[]): Promise<User>;
   disableTwoFactor(userId: string): Promise<User>;
   updateUserBackupCodes(userId: string, backupCodes: string[]): Promise<User>;
+  
+  // Admin operations
+  getAllUsers(): Promise<User[]>;
+  getAllCalculators(): Promise<Calculator[]>;
+  getUserCount(): Promise<number>;
+  getCalculatorCount(): Promise<number>;
+  getActiveSubscriptionCount(): Promise<number>;
 }
 
 export class MemStorage implements IStorage {
@@ -1458,6 +1465,28 @@ export class MemStorage implements IStorage {
 
   async getUserById(userId: string): Promise<User | undefined> {
     return this.users.get(userId);
+  }
+
+  // Admin operations
+  async getAllUsers(): Promise<User[]> {
+    return Array.from(this.users.values());
+  }
+
+  async getAllCalculators(): Promise<Calculator[]> {
+    return Array.from(this.calculators.values());
+  }
+
+  async getUserCount(): Promise<number> {
+    return this.users.size;
+  }
+
+  async getCalculatorCount(): Promise<number> {
+    return this.calculators.size;
+  }
+
+  async getActiveSubscriptionCount(): Promise<number> {
+    const subscriptions = Array.from(this.subscriptions.values());
+    return subscriptions.filter(sub => sub.status === 'active').length;
   }
 }
 

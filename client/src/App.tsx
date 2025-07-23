@@ -73,6 +73,7 @@ import Subscribe from "@/pages/subscribe";
 import Checkout from "@/pages/checkout";
 import Dashboard from "@/pages/dashboard";
 import Upgrade from "@/pages/upgrade";
+import AdminDashboard from "@/pages/admin";
 import EmbedCalculator from "@/components/embed-calculator";
 import Profile from "@/pages/profile";
 import TwoFactorSetup from "@/pages/two-factor-setup";
@@ -228,6 +229,7 @@ function Router() {
       <Route path="/profile" component={Profile} />
       <Route path="/two-factor-setup" component={TwoFactorSetup} />
       <Route path="/two-factor-verify" component={TwoFactorVerify} />
+      <Route path="/admin" component={AdminDashboard} />
       <Route path="/niches/:niche" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

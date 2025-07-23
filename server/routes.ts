@@ -1457,6 +1457,131 @@ Allow: /*-calculator`;
     res.json({ status: "ok", timestamp: new Date().toISOString() });
   });
 
+  // Admin routes
+  app.get('/api/admin/stats', requireAuth, async (req: any, res) => {
+    try {
+      // Simple admin check - in production this should be more secure
+      const userEmail = req.user?.email;
+      if (userEmail !== 'admin@quotekit.ai') {
+        return res.status(403).json({ message: 'Access denied' });
+      }
+
+      // Get basic stats from existing data
+      const totalUsers = await storage.getUserCount();
+      const totalCalculators = await storage.getCalculatorCount();
+      const activeSubscriptions = await storage.getActiveSubscriptionCount();
+      
+      const stats = {
+        totalUsers: totalUsers || 0,
+        activeSubscriptions: activeSubscriptions || 0,
+        totalRevenue: 12500, // Mock data for now
+        openTickets: 3, // Mock data for now
+        totalCalculators: totalCalculators || 0,
+        quotesGenerated: 847, // Mock data for now
+        conversionRate: 24.5, // Mock data for now
+        churnRate: 3.2 // Mock data for now
+      };
+
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching admin stats:", error);
+      res.status(500).json({ message: "Failed to fetch admin stats" });
+    }
+  });
+
+  app.get('/api/admin/users', requireAuth, async (req: any, res) => {
+    try {
+      const userEmail = req.user?.email;
+      if (userEmail !== 'admin@quotekit.ai') {
+        return res.status(403).json({ message: 'Access denied' });
+      }
+
+      const users = await storage.getAllUsers();
+      res.json(users);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+
+  app.get('/api/admin/calculators', requireAuth, async (req: any, res) => {
+    try {
+      const userEmail = req.user?.email;
+      if (userEmail !== 'admin@quotekit.ai') {
+        return res.status(403).json({ message: 'Access denied' });
+      }
+
+      const calculators = await storage.getAllCalculators();
+      res.json(calculators);
+    } catch (error) {
+      console.error("Error fetching calculators:", error);
+      res.status(500).json({ message: "Failed to fetch calculators" });
+    }
+  });
+
+  app.get('/api/admin/tickets', requireAuth, async (req: any, res) => {
+    try {
+      const userEmail = req.user?.email;
+      if (userEmail !== 'admin@quotekit.ai') {
+        return res.status(403).json({ message: 'Access denied' });
+      }
+
+      // Mock support tickets for now
+      const tickets = [
+        {
+          id: '1',
+          email: 'customer@example.com',
+          subject: 'Calculator not loading',
+          message: 'The portrait photography calculator is not loading on my website.',
+          priority: 'high',
+          status: 'open',
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: '2',
+          email: 'user@business.com',
+          subject: 'Billing question',
+          message: 'I need to upgrade my plan but cannot find the option.',
+          priority: 'normal',
+          status: 'in_progress',
+          createdAt: new Date(Date.now() - 86400000).toISOString()
+        }
+      ];
+
+      res.json(tickets);
+    } catch (error) {
+      console.error("Error fetching tickets:", error);
+      res.status(500).json({ message: "Failed to fetch tickets" });
+    }
+  });
+
+  // CSV export endpoint
+  app.get('/api/admin/export/users.csv', requireAuth, async (req: any, res) => {
+    try {
+      const userEmail = req.user?.email;
+      if (userEmail !== 'admin@quotekit.ai') {
+        return res.status(403).json({ message: 'Access denied' });
+      }
+
+      const users = await storage.getAllUsers();
+      
+      // Create CSV content
+      const csvHeader = 'ID,Email,Full Name,Subscription Status,Quotes Used,Quotes Limit,Created At\n';
+      const csvRows = users.map(user => 
+        `${user.id},"${user.email}","${user.fullName || ''}","${user.subscriptionStatus}",${user.quotesUsedThisMonth},${user.quotesLimit},"${user.createdAt}"`
+      ).join('\n');
+      
+      const csvContent = csvHeader + csvRows;
+
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', 'attachment; filename="users-export.csv"');
+      res.send(csvContent);
+    } catch (error) {
+      console.error("Error exporting users:", error);
+      res.status(500).json({ message: "Failed to export users" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

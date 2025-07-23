@@ -185,4 +185,32 @@ export class PostgresStorage implements IStorage {
       .returning();
     return updatedUser;
   }
+
+  async getUserById(userId: string): Promise<User | undefined> {
+    return this.getUser(userId);
+  }
+
+  // Admin operations
+  async getAllUsers(): Promise<User[]> {
+    return await db.select().from(users);
+  }
+
+  async getAllCalculators(): Promise<Calculator[]> {
+    return await db.select().from(calculators);
+  }
+
+  async getUserCount(): Promise<number> {
+    const result = await db.select().from(users);
+    return result.length;
+  }
+
+  async getCalculatorCount(): Promise<number> {
+    const result = await db.select().from(calculators);
+    return result.length;
+  }
+
+  async getActiveSubscriptionCount(): Promise<number> {
+    const result = await db.select().from(subscriptions).where(eq(subscriptions.status, 'active'));
+    return result.length;
+  }
 }

@@ -106,6 +106,73 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
       }, '*');
     }
   };
+
+  // Handlers for editing project types, image counts, locations, and durations
+  const updateProjectType = (id: string, field: string, value: string | number) => {
+    if (isPreview) {
+      window.parent?.postMessage({
+        type: 'UPDATE_PROJECT_TYPE',
+        id,
+        field,
+        value
+      }, '*');
+    }
+  };
+
+  const updateImageCount = (id: string, field: string, value: string | number) => {
+    if (isPreview) {
+      window.parent?.postMessage({
+        type: 'UPDATE_IMAGE_COUNT',
+        id,
+        field,
+        value
+      }, '*');
+    }
+  };
+
+  const updateLocation = (id: string, field: string, value: string | number) => {
+    if (isPreview) {
+      window.parent?.postMessage({
+        type: 'UPDATE_LOCATION',
+        id,
+        field,
+        value
+      }, '*');
+    }
+  };
+
+  const updateDuration = (id: string, field: string, value: string | number) => {
+    if (isPreview) {
+      window.parent?.postMessage({
+        type: 'UPDATE_DURATION',
+        id,
+        field,
+        value
+      }, '*');
+    }
+  };
+
+  const updateAddOn = (id: string, field: string, value: string | number) => {
+    if (isPreview) {
+      window.parent?.postMessage({
+        type: 'UPDATE_ADDON',
+        id,
+        field,
+        value
+      }, '*');
+    }
+  };
+
+  const updateDeliverySpeed = (id: string, field: string, value: string | number) => {
+    if (isPreview) {
+      window.parent?.postMessage({
+        type: 'UPDATE_DELIVERY',
+        id,
+        field,
+        value
+      }, '*');
+    }
+  };
   const [formData, setFormData] = useState<CommercialFormData>({
     projectType: "",
     imageCount: "",
@@ -376,13 +443,17 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
     selected, 
     onClick, 
     icon, 
-    popular = false 
+    popular = false,
+    onLabelEdit,
+    onPriceEdit 
   }: { 
     option: any; 
     selected: boolean; 
     onClick: () => void; 
     icon?: string; 
     popular?: boolean;
+    onLabelEdit?: (newLabel: string) => void;
+    onPriceEdit?: (newPrice: number) => void;
   }) => (
     <div
       onClick={onClick}
@@ -394,14 +465,45 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
     >
       {popular && (
         <Badge className="absolute -top-2 -right-2 bg-slate-700 text-white text-xs font-semibold">
-          Popular
+          <EditableText
+            value={textConfig.popularBadge || "Popular"}
+            onSave={(value) => updateTextContent('popularBadge', value)}
+            className="text-xs font-semibold"
+            isPreview={isPreview}
+            placeholder="Enter badge text"
+          />
         </Badge>
       )}
       <div className="text-center">
         {icon && <div className="text-2xl mb-2">{icon}</div>}
-        <div className="font-semibold text-slate-800">{option.label}</div>
+        <div className="font-semibold text-slate-800">
+          {onLabelEdit ? (
+            <EditableText
+              value={option.label}
+              onSave={onLabelEdit}
+              className="font-semibold text-slate-800"
+              isPreview={isPreview}
+              placeholder="Enter option label"
+            />
+          ) : (
+            option.label
+          )}
+        </div>
         {option.price !== undefined && option.price > 0 && (
-          <div className="text-sm text-slate-600 mt-1">+€{option.price}</div>
+          <div className="text-sm text-slate-600 mt-1">
+            +€
+            {onPriceEdit ? (
+              <EditableText
+                value={option.price.toString()}
+                onSave={(value) => onPriceEdit(parseInt(value) || 0)}
+                className="text-sm text-slate-600 inline"
+                isPreview={isPreview}
+                placeholder="Enter price"
+              />
+            ) : (
+              option.price
+            )}
+          </div>
         )}
       </div>
     </div>
@@ -531,6 +633,7 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                               onClick={() => setFormData(prev => ({ ...prev, projectType: project.id }))}
                               icon={project.icon}
                               popular={project.popular}
+                              onLabelEdit={(newLabel) => updateProjectType(project.id, 'label', newLabel)}
                             />
                           ))}
                         </div>
@@ -553,6 +656,8 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                               onClick={() => setFormData(prev => ({ ...prev, imageCount: count.id }))}
                               icon={count.icon}
                               popular={count.popular}
+                              onLabelEdit={(newLabel) => updateImageCount(count.id, 'label', newLabel)}
+                              onPriceEdit={(newPrice) => updateImageCount(count.id, 'price', newPrice)}
                             />
                           ))}
                         </div>
@@ -584,12 +689,24 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                   <div>
                     <h2 className="text-2xl font-display text-slate-800 mb-4 flex items-center">
                       <MapPin className="h-6 w-6 mr-2 text-slate-700" />
-                      Location & shoot duration
+                      <EditableText
+                        value={textConfig.step2Title || "Location & shoot duration"}
+                        onSave={(value) => updateTextContent('step2Title', value)}
+                        className="text-2xl font-display text-slate-800"
+                        isPreview={isPreview}
+                        placeholder="Enter step 2 title"
+                      />
                     </h2>
                     
                     <div className="space-y-6">
                       <div>
-                        <h3 className="text-lg font-display text-slate-700 mb-3">Shooting Location</h3>
+                        <EditableText
+                          value={textConfig.locationTitle || "Shooting Location"}
+                          onSave={(value) => updateTextContent('locationTitle', value)}
+                          className="text-lg font-display text-slate-700 mb-3 block"
+                          isPreview={isPreview}
+                          placeholder="Enter location title"
+                        />
                         <div className="grid grid-cols-1 gap-4">
                           {locations.map((location) => (
                             <OptionCard
@@ -598,13 +715,21 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                               selected={formData.location === location.id}
                               onClick={() => setFormData(prev => ({ ...prev, location: location.id }))}
                               icon={location.icon}
+                              onLabelEdit={(newLabel) => updateLocation(location.id, 'label', newLabel)}
+                              onPriceEdit={(newPrice) => updateLocation(location.id, 'price', newPrice)}
                             />
                           ))}
                         </div>
                       </div>
 
                       <div>
-                        <h3 className="text-lg font-display text-slate-700 mb-3">Shoot Duration</h3>
+                        <EditableText
+                          value={textConfig.durationTitle || "Shoot Duration"}
+                          onSave={(value) => updateTextContent('durationTitle', value)}
+                          className="text-lg font-display text-slate-700 mb-3 block"
+                          isPreview={isPreview}
+                          placeholder="Enter duration title"
+                        />
                         <div className="grid grid-cols-2 gap-4">
                           {durations.map((duration) => (
                             <OptionCard
@@ -614,6 +739,8 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                               onClick={() => setFormData(prev => ({ ...prev, duration: duration.id }))}
                               icon={duration.icon}
                               popular={duration.popular}
+                              onLabelEdit={(newLabel) => updateDuration(duration.id, 'label', newLabel)}
+                              onPriceEdit={(newPrice) => updateDuration(duration.id, 'price', newPrice)}
                             />
                           ))}
                         </div>
@@ -627,14 +754,26 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                       variant="outline"
                       className="px-8 border-slate-300 text-slate-600 hover:bg-slate-50"
                     >
-                      Previous
+                      <EditableText
+                        value={textConfig.previousButton2 || "Previous"}
+                        onSave={(value) => updateTextContent('previousButton2', value)}
+                        className=""
+                        isPreview={isPreview}
+                        placeholder="Enter previous button text"
+                      />
                     </Button>
                     <Button
                       onClick={() => setCurrentStep(3)}
                       disabled={!formData.location || !formData.duration}
                       className="bg-slate-700 hover:bg-slate-800 text-white px-8 font-semibold"
                     >
-                      Next Step
+                      <EditableText
+                        value={textConfig.nextStepButton2 || "Next Step"}
+                        onSave={(value) => updateTextContent('nextStepButton2', value)}
+                        className="px-8 font-semibold"
+                        isPreview={isPreview}
+                        placeholder="Enter next step button text"
+                      />
                     </Button>
                   </div>
                 </div>
@@ -646,12 +785,24 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                   <div>
                     <h2 className="text-2xl font-display text-slate-800 mb-4 flex items-center">
                       <Image className="h-6 w-6 mr-2 text-slate-700" />
-                      Add-ons & delivery options
+                      <EditableText
+                        value={textConfig.step3Title || "Add-ons & delivery options"}
+                        onSave={(value) => updateTextContent('step3Title', value)}
+                        className="text-2xl font-display text-slate-800"
+                        isPreview={isPreview}
+                        placeholder="Enter step 3 title"
+                      />
                     </h2>
                     
                     <div className="space-y-6">
                       <div>
-                        <h3 className="text-lg font-display text-slate-700 mb-3">Add-ons (Optional)</h3>
+                        <EditableText
+                          value={textConfig.addOnsTitle || "Add-ons (Optional)"}
+                          onSave={(value) => updateTextContent('addOnsTitle', value)}
+                          className="text-lg font-display text-slate-700 mb-3 block"
+                          isPreview={isPreview}
+                          placeholder="Enter add-ons title"
+                        />
                         <div className="grid grid-cols-1 gap-3">
                           {addOnOptions.map((addOn) => (
                             <div
@@ -670,12 +821,34 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                             >
                               {addOn.popular && (
                                 <Badge className="absolute -top-2 -right-2 bg-slate-700 text-white text-xs font-semibold">
-                                  Popular
+                                  <EditableText
+                                    value={textConfig.popularBadge || "Popular"}
+                                    onSave={(value) => updateTextContent('popularBadge', value)}
+                                    className="text-xs font-semibold"
+                                    isPreview={isPreview}
+                                    placeholder="Enter badge text"
+                                  />
                                 </Badge>
                               )}
                               <div className="flex justify-between items-center">
-                                <div className="font-semibold text-slate-800">{addOn.label}</div>
-                                <div className="text-slate-600 font-semibold">+€{addOn.price}</div>
+                                <div className="font-semibold text-slate-800">
+                                  <EditableText
+                                    value={addOn.label}
+                                    onSave={(newLabel) => updateAddOn(addOn.id, 'label', newLabel)}
+                                    className="font-semibold text-slate-800"
+                                    isPreview={isPreview}
+                                    placeholder="Enter add-on label"
+                                  />
+                                </div>
+                                <div className="text-slate-600 font-semibold">
+                                  +€<EditableText
+                                    value={addOn.price.toString()}
+                                    onSave={(newPrice) => updateAddOn(addOn.id, 'price', parseInt(newPrice) || 0)}
+                                    className="text-slate-600 font-semibold inline"
+                                    isPreview={isPreview}
+                                    placeholder="Enter price"
+                                  />
+                                </div>
                               </div>
                             </div>
                           ))}
@@ -683,15 +856,25 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
 
                         {formData.addOns.length > 0 && (
                           <div className="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
-                            <div className="text-sm text-green-700">
-                              📸 Most booked: Full-day lifestyle + casting + creative director
-                            </div>
+                            <EditableText
+                              value={textConfig.mostBookedText || "📸 Most booked: Full-day lifestyle + casting + creative director"}
+                              onSave={(value) => updateTextContent('mostBookedText', value)}
+                              className="text-sm text-green-700"
+                              isPreview={isPreview}
+                              placeholder="Enter most booked text"
+                            />
                           </div>
                         )}
                       </div>
 
                       <div>
-                        <h3 className="text-lg font-display text-slate-700 mb-3">Delivery Speed</h3>
+                        <EditableText
+                          value={textConfig.deliveryTitle || "Delivery Speed"}
+                          onSave={(value) => updateTextContent('deliveryTitle', value)}
+                          className="text-lg font-display text-slate-700 mb-3 block"
+                          isPreview={isPreview}
+                          placeholder="Enter delivery title"
+                        />
                         <div className="grid grid-cols-1 gap-4">
                           {deliverySpeeds.map((speed) => (
                             <OptionCard
@@ -700,15 +883,23 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                               selected={formData.deliverySpeed === speed.id}
                               onClick={() => setFormData(prev => ({ ...prev, deliverySpeed: speed.id }))}
                               icon={speed.icon}
+                              onLabelEdit={(newLabel) => updateDeliverySpeed(speed.id, 'label', newLabel)}
+                              onPriceEdit={(newPrice) => updateDeliverySpeed(speed.id, 'price', newPrice)}
                             />
                           ))}
                         </div>
                       </div>
 
                       <div>
-                        <h3 className="text-lg font-display text-slate-700 mb-3">Promo Code (Optional)</h3>
+                        <EditableText
+                          value={textConfig.promoCodeTitle || "Promo Code (Optional)"}
+                          onSave={(value) => updateTextContent('promoCodeTitle', value)}
+                          className="text-lg font-display text-slate-700 mb-3 block"
+                          isPreview={isPreview}
+                          placeholder="Enter promo code title"
+                        />
                         <Input
-                          placeholder="Enter promo code (e.g., COMMERCIAL10)"
+                          placeholder={textConfig.promoCodePlaceholder || "Enter promo code (e.g., COMMERCIAL10)"}
                           value={formData.promoCode}
                           onChange={(e) => setFormData(prev => ({ ...prev, promoCode: e.target.value }))}
                           className="max-w-xs border-slate-300"
@@ -723,14 +914,26 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                       variant="outline"
                       className="px-8 border-slate-300 text-slate-600 hover:bg-slate-50"
                     >
-                      Previous
+                      <EditableText
+                        value={textConfig.previousButton3 || "Previous"}
+                        onSave={(value) => updateTextContent('previousButton3', value)}
+                        className=""
+                        isPreview={isPreview}
+                        placeholder="Enter previous button text"
+                      />
                     </Button>
                     <Button
                       onClick={() => setCurrentStep(4)}
                       disabled={!formData.deliverySpeed}
                       className="bg-slate-700 hover:bg-slate-800 text-white px-8 font-semibold"
                     >
-                      Next Step
+                      <EditableText
+                        value={textConfig.nextStepButton3 || "Next Step"}
+                        onSave={(value) => updateTextContent('nextStepButton3', value)}
+                        className="px-8 font-semibold"
+                        isPreview={isPreview}
+                        placeholder="Enter next step button text"
+                      />
                     </Button>
                   </div>
                 </div>
@@ -742,18 +945,28 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                   <div>
                     <h2 className="text-2xl font-display text-slate-800 mb-4 flex items-center">
                       <Mail className="h-6 w-6 mr-2 text-slate-700" />
-                      Get your detailed quote
+                      <EditableText
+                        value={textConfig.step4Title || "Get your detailed quote"}
+                        onSave={(value) => updateTextContent('step4Title', value)}
+                        className="text-2xl font-display text-slate-800"
+                        isPreview={isPreview}
+                        placeholder="Enter step 4 title"
+                      />
                     </h2>
                     
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">
-                          Full Name
-                        </label>
+                        <EditableText
+                          value={textConfig.fullNameLabel || "Full Name"}
+                          onSave={(value) => updateTextContent('fullNameLabel', value)}
+                          className="block text-sm font-medium text-slate-700 mb-2"
+                          isPreview={isPreview}
+                          placeholder="Enter full name label"
+                        />
                         <div className="relative">
                           <User className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
                           <Input
-                            placeholder="Your full name"
+                            placeholder={textConfig.fullNamePlaceholder || "Your full name"}
                             value={formData.contactInfo.name}
                             onChange={(e) => setFormData(prev => ({
                               ...prev,
@@ -765,14 +978,18 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">
-                          Email Address *
-                        </label>
+                        <EditableText
+                          value={textConfig.emailLabel || "Email Address *"}
+                          onSave={(value) => updateTextContent('emailLabel', value)}
+                          className="block text-sm font-medium text-slate-700 mb-2"
+                          isPreview={isPreview}
+                          placeholder="Enter email label"
+                        />
                         <div className="relative">
                           <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
                           <Input
                             type="email"
-                            placeholder="your.email@example.com"
+                            placeholder={textConfig.emailPlaceholder || "your.email@example.com"}
                             value={formData.contactInfo.email}
                             onChange={(e) => setFormData(prev => ({
                               ...prev,
@@ -785,13 +1002,17 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">
-                          Phone Number
-                        </label>
+                        <EditableText
+                          value={textConfig.phoneLabel || "Phone Number"}
+                          onSave={(value) => updateTextContent('phoneLabel', value)}
+                          className="block text-sm font-medium text-slate-700 mb-2"
+                          isPreview={isPreview}
+                          placeholder="Enter phone label"
+                        />
                         <div className="relative">
                           <Phone className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
                           <Input
-                            placeholder="+353 xxx xxx xxx"
+                            placeholder={textConfig.phonePlaceholder || "+353 xxx xxx xxx"}
                             value={formData.contactInfo.phone}
                             onChange={(e) => setFormData(prev => ({
                               ...prev,
@@ -810,14 +1031,26 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                       variant="outline"
                       className="px-8 border-slate-300 text-slate-600 hover:bg-slate-50"
                     >
-                      Previous
+                      <EditableText
+                        value={textConfig.previousButton4 || "Previous"}
+                        onSave={(value) => updateTextContent('previousButton4', value)}
+                        className=""
+                        isPreview={isPreview}
+                        placeholder="Enter previous button text"
+                      />
                     </Button>
                     <Button
                       onClick={() => setIsQuoteLocked(true)}
                       disabled={!formData.contactInfo.email}
                       className="bg-green-500 hover:bg-green-600 text-white px-8 font-semibold"
                     >
-                      Get Quote
+                      <EditableText
+                        value={textConfig.getQuoteButton || "Get Quote"}
+                        onSave={(value) => updateTextContent('getQuoteButton', value)}
+                        className="px-8 font-semibold"
+                        isPreview={isPreview}
+                        placeholder="Enter get quote button text"
+                      />
                     </Button>
                   </div>
                 </div>
@@ -901,11 +1134,23 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                     <div className="flex items-center justify-center space-x-6 text-xs text-slate-500">
                       <div className="flex items-center">
                         <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
-                        Professional Quality
+                        <EditableText
+                          value={textConfig.qualityIndicator1 || "Professional Quality"}
+                          onSave={(value) => updateTextContent('qualityIndicator1', value)}
+                          className="text-xs text-slate-500"
+                          isPreview={isPreview}
+                          placeholder="Enter quality indicator"
+                        />
                       </div>
                       <div className="flex items-center">
                         <div className="w-2 h-2 bg-slate-500 rounded-full mr-1"></div>
-                        Licensed & Insured
+                        <EditableText
+                          value={textConfig.qualityIndicator2 || "Licensed & Insured"}
+                          onSave={(value) => updateTextContent('qualityIndicator2', value)}
+                          className="text-xs text-slate-500"
+                          isPreview={isPreview}
+                          placeholder="Enter quality indicator"
+                        />
                       </div>
                     </div>
                   </div>
@@ -914,10 +1159,22 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                 {isQuoteLocked && (
                   <div className="space-y-3 pt-4 border-t border-slate-200 mt-4">
                     <div className="text-center">
-                      <div className="text-lg font-bold text-green-600 mb-2">Quote Locked!</div>
+                      <EditableText
+                        value={textConfig.quoteLocked || "Quote Locked!"}
+                        onSave={(value) => updateTextContent('quoteLocked', value)}
+                        className="text-lg font-bold text-green-600 mb-2 block"
+                        isPreview={isPreview}
+                        placeholder="Enter quote locked text"
+                      />
                       <div className="flex items-center justify-center text-sm text-slate-600">
                         <Clock className="h-4 w-4 mr-1" />
-                        Valid for 72 hours
+                        <EditableText
+                          value={textConfig.validityText || "Valid for 72 hours"}
+                          onSave={(value) => updateTextContent('validityText', value)}
+                          className="text-sm text-slate-600"
+                          isPreview={isPreview}
+                          placeholder="Enter validity text"
+                        />
                       </div>
                     </div>
                     
@@ -928,7 +1185,13 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                         onClick={downloadQuotePDF}
                       >
                         <Download className="h-4 w-4 mr-2" />
-                        Download Quote PDF
+                        <EditableText
+                          value={textConfig.downloadButton || "Download Quote PDF"}
+                          onSave={(value) => updateTextContent('downloadButton', value)}
+                          className=""
+                          isPreview={isPreview}
+                          placeholder="Enter download button text"
+                        />
                       </Button>
                     </div>
                   </div>

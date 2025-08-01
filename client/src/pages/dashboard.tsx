@@ -1637,6 +1637,250 @@ export default function Dashboard() {
                       </div>
                     </div>
 
+                    {/* Commercial Photography Pricing Controls */}
+                    {selectedCalculator.template_id === 'commercial-photography' && (
+                      <div>
+                        <h3 className="text-white font-medium mb-4 flex items-center">
+                          <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
+                          <Camera className="h-4 w-4 mr-2" />
+                          Commercial Photography Pricing Controls
+                        </h3>
+                        <div className="space-y-6">
+
+                          {/* Project Type Pricing */}
+                          <div className="border border-midnight-600 rounded-lg p-4">
+                            <h4 className="text-neon-400 font-medium mb-3 text-sm">Project Type Pricing</h4>
+                            <p className="text-xs text-gray-400 mb-3">Control base pricing for different project types</p>
+                            <div className="space-y-3">
+                              {(customConfig.projectTypePrices || [
+                                { id: "product", label: "Product Photography", price: 500, icon: "📦" },
+                                { id: "headshots", label: "Corporate Headshots", price: 800, icon: "👔" },
+                                { id: "branding", label: "Branding Session", price: 1200, icon: "💼" },
+                                { id: "event", label: "Event Photography", price: 1000, icon: "🎉" },
+                                { id: "advertising", label: "Advertising Campaign", price: 2000, icon: "📸" },
+                                { id: "architectural", label: "Architectural Photography", price: 1500, icon: "🏢" }
+                              ]).map((project, index) => (
+                                <div key={index} className="grid grid-cols-2 gap-2">
+                                  <Input
+                                    placeholder="Project Type"
+                                    value={project.label}
+                                    onChange={(e) => {
+                                      const newProjects = [...(customConfig.projectTypePrices || [])];
+                                      newProjects[index] = { ...project, label: e.target.value };
+                                      setCustomConfig({...customConfig, projectTypePrices: newProjects});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                  <Input
+                                    type="number"
+                                    placeholder="Base Price (€)"
+                                    value={project.price}
+                                    onChange={(e) => {
+                                      const newProjects = [...(customConfig.projectTypePrices || [])];
+                                      newProjects[index] = { ...project, price: Number(e.target.value) || 0 };
+                                      setCustomConfig({...customConfig, projectTypePrices: newProjects});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Image Count Pricing */}
+                          <div className="border border-midnight-600 rounded-lg p-4">
+                            <h4 className="text-neon-400 font-medium mb-3 text-sm">Image Count Pricing</h4>
+                            <p className="text-xs text-gray-400 mb-3">Control pricing for different image packages</p>
+                            <div className="space-y-3">
+                              {(customConfig.imageCountPrices || [
+                                { id: "basic", label: "Basic Package (10-15 images)", price: 0, icon: "📷" },
+                                { id: "standard", label: "Standard Package (20-30 images)", price: 300, icon: "📸" },
+                                { id: "premium", label: "Premium Package (40-50 images)", price: 600, icon: "🎯" },
+                                { id: "unlimited", label: "Unlimited Package (All edited)", price: 1000, icon: "♾️" }
+                              ]).map((package_, index) => (
+                                <div key={index} className="grid grid-cols-2 gap-2">
+                                  <Input
+                                    placeholder="Package Name"
+                                    value={package_.label}
+                                    onChange={(e) => {
+                                      const newPackages = [...(customConfig.imageCountPrices || [])];
+                                      newPackages[index] = { ...package_, label: e.target.value };
+                                      setCustomConfig({...customConfig, imageCountPrices: newPackages});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                  <Input
+                                    type="number"
+                                    placeholder="Extra Price (€)"
+                                    value={package_.price}
+                                    onChange={(e) => {
+                                      const newPackages = [...(customConfig.imageCountPrices || [])];
+                                      newPackages[index] = { ...package_, price: Number(e.target.value) || 0 };
+                                      setCustomConfig({...customConfig, imageCountPrices: newPackages});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Location Pricing */}
+                          <div className="border border-midnight-600 rounded-lg p-4">
+                            <h4 className="text-neon-400 font-medium mb-3 text-sm">Location Pricing</h4>
+                            <p className="text-xs text-gray-400 mb-3">Control pricing for different shoot locations</p>
+                            <div className="space-y-3">
+                              {(customConfig.commercialLocationPrices || [
+                                { id: "studio", label: "Studio Location", price: 0, icon: "🏢" },
+                                { id: "client", label: "Client Location", price: 200, icon: "🏠" },
+                                { id: "outdoor", label: "Outdoor Location", price: 150, icon: "🌳" }
+                              ]).map((location, index) => (
+                                <div key={index} className="grid grid-cols-2 gap-2">
+                                  <Input
+                                    placeholder="Location Type"
+                                    value={location.label}
+                                    onChange={(e) => {
+                                      const newLocations = [...(customConfig.commercialLocationPrices || [])];
+                                      newLocations[index] = { ...location, label: e.target.value };
+                                      setCustomConfig({...customConfig, commercialLocationPrices: newLocations});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                  <Input
+                                    type="number"
+                                    placeholder="Extra Price (€)"
+                                    value={location.price}
+                                    onChange={(e) => {
+                                      const newLocations = [...(customConfig.commercialLocationPrices || [])];
+                                      newLocations[index] = { ...location, price: Number(e.target.value) || 0 };
+                                      setCustomConfig({...customConfig, commercialLocationPrices: newLocations});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Duration Pricing */}
+                          <div className="border border-midnight-600 rounded-lg p-4">
+                            <h4 className="text-neon-400 font-medium mb-3 text-sm">Duration Pricing</h4>
+                            <p className="text-xs text-gray-400 mb-3">Control pricing for different shoot durations</p>
+                            <div className="space-y-3">
+                              {(customConfig.commercialDurationPrices || [
+                                { id: "half-day", label: "Half Day (4 hours)", price: 0, icon: "⏰" },
+                                { id: "full-day", label: "Full Day (8 hours)", price: 800, icon: "🕐" },
+                                { id: "multi-day", label: "Multi-Day Shoot", price: 1500, icon: "📅" },
+                                { id: "hourly", label: "Hourly Rate", price: 200, icon: "⏱️" }
+                              ]).map((duration, index) => (
+                                <div key={index} className="grid grid-cols-2 gap-2">
+                                  <Input
+                                    placeholder="Duration Option"
+                                    value={duration.label}
+                                    onChange={(e) => {
+                                      const newDurations = [...(customConfig.commercialDurationPrices || [])];
+                                      newDurations[index] = { ...duration, label: e.target.value };
+                                      setCustomConfig({...customConfig, commercialDurationPrices: newDurations});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                  <Input
+                                    type="number"
+                                    placeholder="Extra Price (€)"
+                                    value={duration.price}
+                                    onChange={(e) => {
+                                      const newDurations = [...(customConfig.commercialDurationPrices || [])];
+                                      newDurations[index] = { ...duration, price: Number(e.target.value) || 0 };
+                                      setCustomConfig({...customConfig, commercialDurationPrices: newDurations});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Add-on Services Pricing */}
+                          <div className="border border-midnight-600 rounded-lg p-4">
+                            <h4 className="text-neon-400 font-medium mb-3 text-sm">Add-on Services Pricing</h4>
+                            <p className="text-xs text-gray-400 mb-3">Control pricing for additional services</p>
+                            <div className="space-y-3">
+                              {(customConfig.commercialAddonPrices || [
+                                { id: "retouching", label: "Advanced Retouching", price: 300, icon: "✨" },
+                                { id: "rush", label: "Rush Delivery", price: 400, icon: "⚡" },
+                                { id: "prints", label: "Print Package", price: 250, icon: "🖨️" },
+                                { id: "social", label: "Social Media Package", price: 150, icon: "📱" },
+                                { id: "video", label: "Video Content", price: 800, icon: "🎥" },
+                                { id: "stylist", label: "Stylist Service", price: 500, icon: "💄" }
+                              ]).map((addon, index) => (
+                                <div key={index} className="grid grid-cols-2 gap-2">
+                                  <Input
+                                    placeholder="Add-on Service"
+                                    value={addon.label}
+                                    onChange={(e) => {
+                                      const newAddons = [...(customConfig.commercialAddonPrices || [])];
+                                      newAddons[index] = { ...addon, label: e.target.value };
+                                      setCustomConfig({...customConfig, commercialAddonPrices: newAddons});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                  <Input
+                                    type="number"
+                                    placeholder="Price (€)"
+                                    value={addon.price}
+                                    onChange={(e) => {
+                                      const newAddons = [...(customConfig.commercialAddonPrices || [])];
+                                      newAddons[index] = { ...addon, price: Number(e.target.value) || 0 };
+                                      setCustomConfig({...customConfig, commercialAddonPrices: newAddons});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Delivery Options Pricing */}
+                          <div className="border border-midnight-600 rounded-lg p-4">
+                            <h4 className="text-neon-400 font-medium mb-3 text-sm">Delivery Options Pricing</h4>
+                            <p className="text-xs text-gray-400 mb-3">Control pricing for different delivery timelines</p>
+                            <div className="space-y-3">
+                              {(customConfig.commercialDeliveryPrices || [
+                                { id: "standard", label: "Standard Delivery (7-10 days)", price: 0, icon: "📦" },
+                                { id: "expedited", label: "Expedited Delivery (3-5 days)", price: 200, icon: "📬" },
+                                { id: "rush", label: "Rush Delivery (24-48 hours)", price: 500, icon: "⚡" }
+                              ]).map((delivery, index) => (
+                                <div key={index} className="grid grid-cols-2 gap-2">
+                                  <Input
+                                    placeholder="Delivery Option"
+                                    value={delivery.label}
+                                    onChange={(e) => {
+                                      const newDelivery = [...(customConfig.commercialDeliveryPrices || [])];
+                                      newDelivery[index] = { ...delivery, label: e.target.value };
+                                      setCustomConfig({...customConfig, commercialDeliveryPrices: newDelivery});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                  <Input
+                                    type="number"
+                                    placeholder="Extra Price (€)"
+                                    value={delivery.price}
+                                    onChange={(e) => {
+                                      const newDelivery = [...(customConfig.commercialDeliveryPrices || [])];
+                                      newDelivery[index] = { ...delivery, price: Number(e.target.value) || 0 };
+                                      setCustomConfig({...customConfig, commercialDeliveryPrices: newDelivery});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                    )}
+
                     {/* Comprehensive Text Customization */}
                     <div>
                       <h3 className="text-white font-medium mb-4 flex items-center">
@@ -1844,6 +2088,66 @@ export default function Dashboard() {
                                       { key: 'outdoorSession', label: 'Outdoor Session', placeholder: 'Outdoor Portrait Session' },
                                       { key: 'extendedSession', label: 'Extended Session', placeholder: 'Extended Time' },
                                       { key: 'rushDelivery', label: 'Rush Delivery', placeholder: 'Same-Day Delivery' }
+                                    ]
+                                  }
+                                ]
+                              },
+                              'commercial-photography': {
+                                sections: [
+                                  {
+                                    title: 'Project Types',
+                                    fields: [
+                                      { key: 'productPhotography', label: 'Product Photography', placeholder: 'Product Photography' },
+                                      { key: 'corporateHeadshots', label: 'Corporate Headshots', placeholder: 'Corporate Headshots' },
+                                      { key: 'brandingSession', label: 'Branding Session', placeholder: 'Branding Session' },
+                                      { key: 'eventPhotography', label: 'Event Photography', placeholder: 'Event Photography' },
+                                      { key: 'advertisingCampaign', label: 'Advertising Campaign', placeholder: 'Advertising Campaign' },
+                                      { key: 'architecturalPhotography', label: 'Architectural Photography', placeholder: 'Architectural Photography' }
+                                    ]
+                                  },
+                                  {
+                                    title: 'Image Count Options',
+                                    fields: [
+                                      { key: 'basicPackage', label: 'Basic Package (10-15 images)', placeholder: 'Basic Package' },
+                                      { key: 'standardPackage', label: 'Standard Package (20-30 images)', placeholder: 'Standard Package' },
+                                      { key: 'premiumPackage', label: 'Premium Package (40-50 images)', placeholder: 'Premium Package' },
+                                      { key: 'unlimitedPackage', label: 'Unlimited Package (All edited)', placeholder: 'Unlimited Package' }
+                                    ]
+                                  },
+                                  {
+                                    title: 'Location Options',
+                                    fields: [
+                                      { key: 'studioLocation', label: 'Studio Location', placeholder: 'Studio Location' },
+                                      { key: 'clientLocation', label: 'Client Location', placeholder: 'Client Location' },
+                                      { key: 'outdoorLocation', label: 'Outdoor Location', placeholder: 'Outdoor Location' }
+                                    ]
+                                  },
+                                  {
+                                    title: 'Duration Options',
+                                    fields: [
+                                      { key: 'halfDay', label: 'Half Day (4 hours)', placeholder: 'Half Day' },
+                                      { key: 'fullDay', label: 'Full Day (8 hours)', placeholder: 'Full Day' },
+                                      { key: 'multiDay', label: 'Multi-Day Shoot', placeholder: 'Multi-Day' },
+                                      { key: 'hourlyRate', label: 'Hourly Rate', placeholder: 'Hourly Rate' }
+                                    ]
+                                  },
+                                  {
+                                    title: 'Add-on Services',
+                                    fields: [
+                                      { key: 'advancedRetouching', label: 'Advanced Retouching', placeholder: 'Advanced Retouching' },
+                                      { key: 'rushDelivery', label: 'Rush Delivery', placeholder: 'Rush Delivery' },
+                                      { key: 'printPackage', label: 'Print Package', placeholder: 'Print Package' },
+                                      { key: 'socialMediaPackage', label: 'Social Media Package', placeholder: 'Social Media Package' },
+                                      { key: 'videoContent', label: 'Video Content', placeholder: 'Video Content' },
+                                      { key: 'stylistService', label: 'Stylist Service', placeholder: 'Stylist Service' }
+                                    ]
+                                  },
+                                  {
+                                    title: 'Delivery Options',
+                                    fields: [
+                                      { key: 'standardDelivery', label: 'Standard Delivery (7-10 days)', placeholder: 'Standard Delivery' },
+                                      { key: 'expeditedDelivery', label: 'Expedited Delivery (3-5 days)', placeholder: 'Expedited Delivery' },
+                                      { key: 'rushDelivery24h', label: 'Rush Delivery (24-48 hours)', placeholder: 'Rush Delivery' }
                                     ]
                                   }
                                 ]

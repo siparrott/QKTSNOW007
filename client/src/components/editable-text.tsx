@@ -12,7 +12,7 @@ interface EditableTextProps {
   isPreview?: boolean;
 }
 
-export default function EditableText({
+export function EditableText({
   value,
   text,
   onSave,
@@ -118,5 +118,5 @@ export default function EditableText({
   );
 }
 
-// Named export for consistency
-export { EditableText };
+// Add default export for backwards compatibility
+export default EditableText;

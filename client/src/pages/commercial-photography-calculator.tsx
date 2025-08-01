@@ -535,10 +535,10 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
   );
 
   const steps = [
-    { number: 1, title: "Project & Images", completed: !!formData.projectType && !!formData.imageCount },
-    { number: 2, title: "Location & Duration", completed: !!formData.location && !!formData.duration },
-    { number: 3, title: "Add-ons & Delivery", completed: !!formData.deliverySpeed },
-    { number: 4, title: "Contact Details", completed: !!formData.contactInfo.email },
+    { number: 1, title: customConfig?.step1Label || textConfig.step1Label || "Project & Images", completed: !!formData.projectType && !!formData.imageCount },
+    { number: 2, title: customConfig?.step2Label || textConfig.step2Label || "Location & Duration", completed: !!formData.location && !!formData.duration },
+    { number: 3, title: customConfig?.step3Label || textConfig.step3Label || "Add-ons & Delivery", completed: !!formData.deliverySpeed },
+    { number: 4, title: customConfig?.step4Label || textConfig.step4Label || "Contact Details", completed: !!formData.contactInfo.email },
   ];
 
   return (

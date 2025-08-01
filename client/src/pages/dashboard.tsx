@@ -2166,6 +2166,49 @@ export default function Dashboard() {
                           </div>
                         </div>
 
+                        {/* Step Labels Section */}
+                        <div className="border border-midnight-600 rounded-lg p-4">
+                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Step Labels</h4>
+                          <div className="space-y-3">
+                            <div>
+                              <Label className="text-gray-300 text-xs">Step 1 Label</Label>
+                              <Input
+                                value={customConfig.step1Label || ''}
+                                onChange={(e) => setCustomConfig({...customConfig, step1Label: e.target.value})}
+                                placeholder="Project & Images"
+                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-gray-300 text-xs">Step 2 Label</Label>
+                              <Input
+                                value={customConfig.step2Label || ''}
+                                onChange={(e) => setCustomConfig({...customConfig, step2Label: e.target.value})}
+                                placeholder="Location & Duration"
+                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-gray-300 text-xs">Step 3 Label</Label>
+                              <Input
+                                value={customConfig.step3Label || ''}
+                                onChange={(e) => setCustomConfig({...customConfig, step3Label: e.target.value})}
+                                placeholder="Add-ons & Delivery"
+                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-gray-300 text-xs">Step 4 Label</Label>
+                              <Input
+                                value={customConfig.step4Label || ''}
+                                onChange={(e) => setCustomConfig({...customConfig, step4Label: e.target.value})}
+                                placeholder="Contact Details"
+                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
                         {/* Form Fields Section */}
                         <div className="border border-midnight-600 rounded-lg p-4">
                           <h4 className="text-neon-400 font-medium mb-3 text-sm">Form Field Labels</h4>

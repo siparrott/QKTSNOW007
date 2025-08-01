@@ -1652,38 +1652,72 @@ export default function Dashboard() {
                             <h4 className="text-neon-400 font-medium mb-3 text-sm">Project Type Pricing</h4>
                             <p className="text-xs text-gray-400 mb-3">Control base pricing for different project types</p>
                             <div className="space-y-3">
-                              {(customConfig.projectTypePrices || [
-                                { id: "product", label: "Product Photography", price: 500, icon: "📦" },
-                                { id: "headshots", label: "Corporate Headshots", price: 800, icon: "👔" },
-                                { id: "branding", label: "Branding Session", price: 1200, icon: "💼" },
-                                { id: "event", label: "Event Photography", price: 1000, icon: "🎉" },
-                                { id: "advertising", label: "Advertising Campaign", price: 2000, icon: "📸" },
-                                { id: "architectural", label: "Architectural Photography", price: 1500, icon: "🏢" }
-                              ]).map((project, index) => (
-                                <div key={index} className="grid grid-cols-2 gap-2">
-                                  <Input
-                                    placeholder="Project Type"
-                                    value={project.label}
-                                    onChange={(e) => {
-                                      const newProjects = [...(customConfig.projectTypePrices || [])];
-                                      newProjects[index] = { ...project, label: e.target.value };
-                                      setCustomConfig({...customConfig, projectTypePrices: newProjects});
-                                    }}
-                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
-                                  />
-                                  <Input
-                                    type="number"
-                                    placeholder="Base Price (€)"
-                                    value={project.price}
-                                    onChange={(e) => {
-                                      const newProjects = [...(customConfig.projectTypePrices || [])];
-                                      newProjects[index] = { ...project, price: Number(e.target.value) || 0 };
-                                      setCustomConfig({...customConfig, projectTypePrices: newProjects});
-                                    }}
-                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
-                                  />
-                                </div>
-                              ))}
+                              {(() => {
+                                const defaultProjects = [
+                                  { id: "product", label: "Product Photography", price: 500, icon: "📦" },
+                                  { id: "headshots", label: "Corporate Headshots", price: 800, icon: "👔" },
+                                  { id: "branding", label: "Branding Session", price: 1200, icon: "💼" },
+                                  { id: "event", label: "Event Photography", price: 1000, icon: "🎉" },
+                                  { id: "advertising", label: "Advertising Campaign", price: 2000, icon: "📸" },
+                                  { id: "architectural", label: "Architectural Photography", price: 1500, icon: "🏢" }
+                                ];
+                                const currentProjects = customConfig.projectTypePrices || defaultProjects;
+                                return currentProjects.map((project, index) => (
+                                  <div key={index} className="grid grid-cols-2 gap-2">
+                                    <Input
+                                      placeholder="Project Type"
+                                      value={project.label}
+                                      onChange={(e) => {
+                                        const baseProjects = customConfig.projectTypePrices || defaultProjects;
+                                        const newProjects = [...baseProjects];
+                                        newProjects[index] = { ...project, label: e.target.value };
+                                        setCustomConfig({...customConfig, projectTypePrices: newProjects});
+                                      }}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                    />
+                                    <Input
+                                      type="number"
+                                      placeholder="Base Price (€)"
+                                      value={project.price}
+                                      onChange={(e) => {
+                                        const baseProjects = customConfig.projectTypePrices || defaultProjects;
+                                        const newProjects = [...baseProjects];
+                                        newProjects[index] = { ...project, price: Number(e.target.value) || 0 };
+                                        setCustomConfig({...customConfig, projectTypePrices: newProjects});
+                                      }}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                    />
+                                  </div>
+                                ));
+                              })()}
+                              <Button
+                                onClick={() => {
+                                  const defaultProjects = [
+                                    { id: "product", label: "Product Photography", price: 500, icon: "📦" },
+                                    { id: "headshots", label: "Corporate Headshots", price: 800, icon: "👔" },
+                                    { id: "branding", label: "Branding Session", price: 1200, icon: "💼" },
+                                    { id: "event", label: "Event Photography", price: 1000, icon: "🎉" },
+                                    { id: "advertising", label: "Advertising Campaign", price: 2000, icon: "📸" },
+                                    { id: "architectural", label: "Architectural Photography", price: 1500, icon: "🏢" }
+                                  ];
+                                  const currentProjects = customConfig.projectTypePrices || defaultProjects;
+                                  const newProject = { 
+                                    id: `custom_${Date.now()}`, 
+                                    label: "Custom Project Type", 
+                                    price: 0, 
+                                    icon: "📷" 
+                                  };
+                                  setCustomConfig({
+                                    ...customConfig, 
+                                    projectTypePrices: [...currentProjects, newProject]
+                                  });
+                                }}
+                                className="w-full mt-3 bg-neon-500 hover:bg-neon-600 text-black text-xs"
+                                size="sm"
+                              >
+                                <Plus className="h-3 w-3 mr-1" />
+                                Add Project Type
+                              </Button>
                             </div>
                           </div>
 
@@ -1692,36 +1726,68 @@ export default function Dashboard() {
                             <h4 className="text-neon-400 font-medium mb-3 text-sm">Image Count Pricing</h4>
                             <p className="text-xs text-gray-400 mb-3">Control pricing for different image packages</p>
                             <div className="space-y-3">
-                              {(customConfig.imageCountPrices || [
-                                { id: "basic", label: "Basic Package (10-15 images)", price: 0, icon: "📷" },
-                                { id: "standard", label: "Standard Package (20-30 images)", price: 300, icon: "📸" },
-                                { id: "premium", label: "Premium Package (40-50 images)", price: 600, icon: "🎯" },
-                                { id: "unlimited", label: "Unlimited Package (All edited)", price: 1000, icon: "♾️" }
-                              ]).map((package_, index) => (
-                                <div key={index} className="grid grid-cols-2 gap-2">
-                                  <Input
-                                    placeholder="Package Name"
-                                    value={package_.label}
-                                    onChange={(e) => {
-                                      const newPackages = [...(customConfig.imageCountPrices || [])];
-                                      newPackages[index] = { ...package_, label: e.target.value };
-                                      setCustomConfig({...customConfig, imageCountPrices: newPackages});
-                                    }}
-                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
-                                  />
-                                  <Input
-                                    type="number"
-                                    placeholder="Extra Price (€)"
-                                    value={package_.price}
-                                    onChange={(e) => {
-                                      const newPackages = [...(customConfig.imageCountPrices || [])];
-                                      newPackages[index] = { ...package_, price: Number(e.target.value) || 0 };
-                                      setCustomConfig({...customConfig, imageCountPrices: newPackages});
-                                    }}
-                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
-                                  />
-                                </div>
-                              ))}
+                              {(() => {
+                                const defaultPackages = [
+                                  { id: "basic", label: "Basic Package (10-15 images)", price: 0, icon: "📷" },
+                                  { id: "standard", label: "Standard Package (20-30 images)", price: 300, icon: "📸" },
+                                  { id: "premium", label: "Premium Package (40-50 images)", price: 600, icon: "🎯" },
+                                  { id: "unlimited", label: "Unlimited Package (All edited)", price: 1000, icon: "♾️" }
+                                ];
+                                const currentPackages = customConfig.imageCountPrices || defaultPackages;
+                                return currentPackages.map((package_, index) => (
+                                  <div key={index} className="grid grid-cols-2 gap-2">
+                                    <Input
+                                      placeholder="Package Name"
+                                      value={package_.label}
+                                      onChange={(e) => {
+                                        const basePackages = customConfig.imageCountPrices || defaultPackages;
+                                        const newPackages = [...basePackages];
+                                        newPackages[index] = { ...package_, label: e.target.value };
+                                        setCustomConfig({...customConfig, imageCountPrices: newPackages});
+                                      }}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                    />
+                                    <Input
+                                      type="number"
+                                      placeholder="Extra Price (€)"
+                                      value={package_.price}
+                                      onChange={(e) => {
+                                        const basePackages = customConfig.imageCountPrices || defaultPackages;
+                                        const newPackages = [...basePackages];
+                                        newPackages[index] = { ...package_, price: Number(e.target.value) || 0 };
+                                        setCustomConfig({...customConfig, imageCountPrices: newPackages});
+                                      }}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                    />
+                                  </div>
+                                ));
+                              })()}
+                              <Button
+                                onClick={() => {
+                                  const defaultPackages = [
+                                    { id: "basic", label: "Basic Package (10-15 images)", price: 0, icon: "📷" },
+                                    { id: "standard", label: "Standard Package (20-30 images)", price: 300, icon: "📸" },
+                                    { id: "premium", label: "Premium Package (40-50 images)", price: 600, icon: "🎯" },
+                                    { id: "unlimited", label: "Unlimited Package (All edited)", price: 1000, icon: "♾️" }
+                                  ];
+                                  const currentPackages = customConfig.imageCountPrices || defaultPackages;
+                                  const newPackage = { 
+                                    id: `custom_${Date.now()}`, 
+                                    label: "Custom Package", 
+                                    price: 0, 
+                                    icon: "📷" 
+                                  };
+                                  setCustomConfig({
+                                    ...customConfig, 
+                                    imageCountPrices: [...currentPackages, newPackage]
+                                  });
+                                }}
+                                className="w-full mt-3 bg-neon-500 hover:bg-neon-600 text-black text-xs"
+                                size="sm"
+                              >
+                                <Plus className="h-3 w-3 mr-1" />
+                                Add Package
+                              </Button>
                             </div>
                           </div>
 
@@ -1730,35 +1796,66 @@ export default function Dashboard() {
                             <h4 className="text-neon-400 font-medium mb-3 text-sm">Location Pricing</h4>
                             <p className="text-xs text-gray-400 mb-3">Control pricing for different shoot locations</p>
                             <div className="space-y-3">
-                              {(customConfig.commercialLocationPrices || [
-                                { id: "studio", label: "Studio Location", price: 0, icon: "🏢" },
-                                { id: "client", label: "Client Location", price: 200, icon: "🏠" },
-                                { id: "outdoor", label: "Outdoor Location", price: 150, icon: "🌳" }
-                              ]).map((location, index) => (
-                                <div key={index} className="grid grid-cols-2 gap-2">
-                                  <Input
-                                    placeholder="Location Type"
-                                    value={location.label}
-                                    onChange={(e) => {
-                                      const newLocations = [...(customConfig.commercialLocationPrices || [])];
-                                      newLocations[index] = { ...location, label: e.target.value };
-                                      setCustomConfig({...customConfig, commercialLocationPrices: newLocations});
-                                    }}
-                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
-                                  />
-                                  <Input
-                                    type="number"
-                                    placeholder="Extra Price (€)"
-                                    value={location.price}
-                                    onChange={(e) => {
-                                      const newLocations = [...(customConfig.commercialLocationPrices || [])];
-                                      newLocations[index] = { ...location, price: Number(e.target.value) || 0 };
-                                      setCustomConfig({...customConfig, commercialLocationPrices: newLocations});
-                                    }}
-                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
-                                  />
-                                </div>
-                              ))}
+                              {(() => {
+                                const defaultLocations = [
+                                  { id: "studio", label: "Studio Location", price: 0, icon: "🏢" },
+                                  { id: "client", label: "Client Location", price: 200, icon: "🏠" },
+                                  { id: "outdoor", label: "Outdoor Location", price: 150, icon: "🌳" }
+                                ];
+                                const currentLocations = customConfig.commercialLocationPrices || defaultLocations;
+                                return currentLocations.map((location, index) => (
+                                  <div key={index} className="grid grid-cols-2 gap-2">
+                                    <Input
+                                      placeholder="Location Type"
+                                      value={location.label}
+                                      onChange={(e) => {
+                                        const baseLocations = customConfig.commercialLocationPrices || defaultLocations;
+                                        const newLocations = [...baseLocations];
+                                        newLocations[index] = { ...location, label: e.target.value };
+                                        setCustomConfig({...customConfig, commercialLocationPrices: newLocations});
+                                      }}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                    />
+                                    <Input
+                                      type="number"
+                                      placeholder="Extra Price (€)"
+                                      value={location.price}
+                                      onChange={(e) => {
+                                        const baseLocations = customConfig.commercialLocationPrices || defaultLocations;
+                                        const newLocations = [...baseLocations];
+                                        newLocations[index] = { ...location, price: Number(e.target.value) || 0 };
+                                        setCustomConfig({...customConfig, commercialLocationPrices: newLocations});
+                                      }}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                    />
+                                  </div>
+                                ));
+                              })()}
+                              <Button
+                                onClick={() => {
+                                  const defaultLocations = [
+                                    { id: "studio", label: "Studio Location", price: 0, icon: "🏢" },
+                                    { id: "client", label: "Client Location", price: 200, icon: "🏠" },
+                                    { id: "outdoor", label: "Outdoor Location", price: 150, icon: "🌳" }
+                                  ];
+                                  const currentLocations = customConfig.commercialLocationPrices || defaultLocations;
+                                  const newLocation = { 
+                                    id: `custom_${Date.now()}`, 
+                                    label: "Custom Location", 
+                                    price: 0, 
+                                    icon: "🏢" 
+                                  };
+                                  setCustomConfig({
+                                    ...customConfig, 
+                                    commercialLocationPrices: [...currentLocations, newLocation]
+                                  });
+                                }}
+                                className="w-full mt-3 bg-neon-500 hover:bg-neon-600 text-black text-xs"
+                                size="sm"
+                              >
+                                <Plus className="h-3 w-3 mr-1" />
+                                Add Location
+                              </Button>
                             </div>
                           </div>
 
@@ -1767,36 +1864,68 @@ export default function Dashboard() {
                             <h4 className="text-neon-400 font-medium mb-3 text-sm">Duration Pricing</h4>
                             <p className="text-xs text-gray-400 mb-3">Control pricing for different shoot durations</p>
                             <div className="space-y-3">
-                              {(customConfig.commercialDurationPrices || [
-                                { id: "half-day", label: "Half Day (4 hours)", price: 0, icon: "⏰" },
-                                { id: "full-day", label: "Full Day (8 hours)", price: 800, icon: "🕐" },
-                                { id: "multi-day", label: "Multi-Day Shoot", price: 1500, icon: "📅" },
-                                { id: "hourly", label: "Hourly Rate", price: 200, icon: "⏱️" }
-                              ]).map((duration, index) => (
-                                <div key={index} className="grid grid-cols-2 gap-2">
-                                  <Input
-                                    placeholder="Duration Option"
-                                    value={duration.label}
-                                    onChange={(e) => {
-                                      const newDurations = [...(customConfig.commercialDurationPrices || [])];
-                                      newDurations[index] = { ...duration, label: e.target.value };
-                                      setCustomConfig({...customConfig, commercialDurationPrices: newDurations});
-                                    }}
-                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
-                                  />
-                                  <Input
-                                    type="number"
-                                    placeholder="Extra Price (€)"
-                                    value={duration.price}
-                                    onChange={(e) => {
-                                      const newDurations = [...(customConfig.commercialDurationPrices || [])];
-                                      newDurations[index] = { ...duration, price: Number(e.target.value) || 0 };
-                                      setCustomConfig({...customConfig, commercialDurationPrices: newDurations});
-                                    }}
-                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
-                                  />
-                                </div>
-                              ))}
+                              {(() => {
+                                const defaultDurations = [
+                                  { id: "half-day", label: "Half Day (4 hours)", price: 0, icon: "⏰" },
+                                  { id: "full-day", label: "Full Day (8 hours)", price: 800, icon: "🕐" },
+                                  { id: "multi-day", label: "Multi-Day Shoot", price: 1500, icon: "📅" },
+                                  { id: "hourly", label: "Hourly Rate", price: 200, icon: "⏱️" }
+                                ];
+                                const currentDurations = customConfig.commercialDurationPrices || defaultDurations;
+                                return currentDurations.map((duration, index) => (
+                                  <div key={index} className="grid grid-cols-2 gap-2">
+                                    <Input
+                                      placeholder="Duration Option"
+                                      value={duration.label}
+                                      onChange={(e) => {
+                                        const baseDurations = customConfig.commercialDurationPrices || defaultDurations;
+                                        const newDurations = [...baseDurations];
+                                        newDurations[index] = { ...duration, label: e.target.value };
+                                        setCustomConfig({...customConfig, commercialDurationPrices: newDurations});
+                                      }}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                    />
+                                    <Input
+                                      type="number"
+                                      placeholder="Extra Price (€)"
+                                      value={duration.price}
+                                      onChange={(e) => {
+                                        const baseDurations = customConfig.commercialDurationPrices || defaultDurations;
+                                        const newDurations = [...baseDurations];
+                                        newDurations[index] = { ...duration, price: Number(e.target.value) || 0 };
+                                        setCustomConfig({...customConfig, commercialDurationPrices: newDurations});
+                                      }}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                    />
+                                  </div>
+                                ));
+                              })()}
+                              <Button
+                                onClick={() => {
+                                  const defaultDurations = [
+                                    { id: "half-day", label: "Half Day (4 hours)", price: 0, icon: "⏰" },
+                                    { id: "full-day", label: "Full Day (8 hours)", price: 800, icon: "🕐" },
+                                    { id: "multi-day", label: "Multi-Day Shoot", price: 1500, icon: "📅" },
+                                    { id: "hourly", label: "Hourly Rate", price: 200, icon: "⏱️" }
+                                  ];
+                                  const currentDurations = customConfig.commercialDurationPrices || defaultDurations;
+                                  const newDuration = { 
+                                    id: `custom_${Date.now()}`, 
+                                    label: "Custom Duration", 
+                                    price: 0, 
+                                    icon: "⏰" 
+                                  };
+                                  setCustomConfig({
+                                    ...customConfig, 
+                                    commercialDurationPrices: [...currentDurations, newDuration]
+                                  });
+                                }}
+                                className="w-full mt-3 bg-neon-500 hover:bg-neon-600 text-black text-xs"
+                                size="sm"
+                              >
+                                <Plus className="h-3 w-3 mr-1" />
+                                Add Duration
+                              </Button>
                             </div>
                           </div>
 
@@ -1805,38 +1934,72 @@ export default function Dashboard() {
                             <h4 className="text-neon-400 font-medium mb-3 text-sm">Add-on Services Pricing</h4>
                             <p className="text-xs text-gray-400 mb-3">Control pricing for additional services</p>
                             <div className="space-y-3">
-                              {(customConfig.commercialAddonPrices || [
-                                { id: "retouching", label: "Advanced Retouching", price: 300, icon: "✨" },
-                                { id: "rush", label: "Rush Delivery", price: 400, icon: "⚡" },
-                                { id: "prints", label: "Print Package", price: 250, icon: "🖨️" },
-                                { id: "social", label: "Social Media Package", price: 150, icon: "📱" },
-                                { id: "video", label: "Video Content", price: 800, icon: "🎥" },
-                                { id: "stylist", label: "Stylist Service", price: 500, icon: "💄" }
-                              ]).map((addon, index) => (
-                                <div key={index} className="grid grid-cols-2 gap-2">
-                                  <Input
-                                    placeholder="Add-on Service"
-                                    value={addon.label}
-                                    onChange={(e) => {
-                                      const newAddons = [...(customConfig.commercialAddonPrices || [])];
-                                      newAddons[index] = { ...addon, label: e.target.value };
-                                      setCustomConfig({...customConfig, commercialAddonPrices: newAddons});
-                                    }}
-                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
-                                  />
-                                  <Input
-                                    type="number"
-                                    placeholder="Price (€)"
-                                    value={addon.price}
-                                    onChange={(e) => {
-                                      const newAddons = [...(customConfig.commercialAddonPrices || [])];
-                                      newAddons[index] = { ...addon, price: Number(e.target.value) || 0 };
-                                      setCustomConfig({...customConfig, commercialAddonPrices: newAddons});
-                                    }}
-                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
-                                  />
-                                </div>
-                              ))}
+                              {(() => {
+                                const defaultAddons = [
+                                  { id: "retouching", label: "Advanced Retouching", price: 300, icon: "✨" },
+                                  { id: "rush", label: "Rush Delivery", price: 400, icon: "⚡" },
+                                  { id: "prints", label: "Print Package", price: 250, icon: "🖨️" },
+                                  { id: "social", label: "Social Media Package", price: 150, icon: "📱" },
+                                  { id: "video", label: "Video Content", price: 800, icon: "🎥" },
+                                  { id: "stylist", label: "Stylist Service", price: 500, icon: "💄" }
+                                ];
+                                const currentAddons = customConfig.commercialAddonPrices || defaultAddons;
+                                return currentAddons.map((addon, index) => (
+                                  <div key={index} className="grid grid-cols-2 gap-2">
+                                    <Input
+                                      placeholder="Add-on Service"
+                                      value={addon.label}
+                                      onChange={(e) => {
+                                        const baseAddons = customConfig.commercialAddonPrices || defaultAddons;
+                                        const newAddons = [...baseAddons];
+                                        newAddons[index] = { ...addon, label: e.target.value };
+                                        setCustomConfig({...customConfig, commercialAddonPrices: newAddons});
+                                      }}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                    />
+                                    <Input
+                                      type="number"
+                                      placeholder="Price (€)"
+                                      value={addon.price}
+                                      onChange={(e) => {
+                                        const baseAddons = customConfig.commercialAddonPrices || defaultAddons;
+                                        const newAddons = [...baseAddons];
+                                        newAddons[index] = { ...addon, price: Number(e.target.value) || 0 };
+                                        setCustomConfig({...customConfig, commercialAddonPrices: newAddons});
+                                      }}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                    />
+                                  </div>
+                                ));
+                              })()}
+                              <Button
+                                onClick={() => {
+                                  const defaultAddons = [
+                                    { id: "retouching", label: "Advanced Retouching", price: 300, icon: "✨" },
+                                    { id: "rush", label: "Rush Delivery", price: 400, icon: "⚡" },
+                                    { id: "prints", label: "Print Package", price: 250, icon: "🖨️" },
+                                    { id: "social", label: "Social Media Package", price: 150, icon: "📱" },
+                                    { id: "video", label: "Video Content", price: 800, icon: "🎥" },
+                                    { id: "stylist", label: "Stylist Service", price: 500, icon: "💄" }
+                                  ];
+                                  const currentAddons = customConfig.commercialAddonPrices || defaultAddons;
+                                  const newAddon = { 
+                                    id: `custom_${Date.now()}`, 
+                                    label: "Custom Service", 
+                                    price: 0, 
+                                    icon: "✨" 
+                                  };
+                                  setCustomConfig({
+                                    ...customConfig, 
+                                    commercialAddonPrices: [...currentAddons, newAddon]
+                                  });
+                                }}
+                                className="w-full mt-3 bg-neon-500 hover:bg-neon-600 text-black text-xs"
+                                size="sm"
+                              >
+                                <Plus className="h-3 w-3 mr-1" />
+                                Add Service
+                              </Button>
                             </div>
                           </div>
 
@@ -1845,35 +2008,66 @@ export default function Dashboard() {
                             <h4 className="text-neon-400 font-medium mb-3 text-sm">Delivery Options Pricing</h4>
                             <p className="text-xs text-gray-400 mb-3">Control pricing for different delivery timelines</p>
                             <div className="space-y-3">
-                              {(customConfig.commercialDeliveryPrices || [
-                                { id: "standard", label: "Standard Delivery (7-10 days)", price: 0, icon: "📦" },
-                                { id: "expedited", label: "Expedited Delivery (3-5 days)", price: 200, icon: "📬" },
-                                { id: "rush", label: "Rush Delivery (24-48 hours)", price: 500, icon: "⚡" }
-                              ]).map((delivery, index) => (
-                                <div key={index} className="grid grid-cols-2 gap-2">
-                                  <Input
-                                    placeholder="Delivery Option"
-                                    value={delivery.label}
-                                    onChange={(e) => {
-                                      const newDelivery = [...(customConfig.commercialDeliveryPrices || [])];
-                                      newDelivery[index] = { ...delivery, label: e.target.value };
-                                      setCustomConfig({...customConfig, commercialDeliveryPrices: newDelivery});
-                                    }}
-                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
-                                  />
-                                  <Input
-                                    type="number"
-                                    placeholder="Extra Price (€)"
-                                    value={delivery.price}
-                                    onChange={(e) => {
-                                      const newDelivery = [...(customConfig.commercialDeliveryPrices || [])];
-                                      newDelivery[index] = { ...delivery, price: Number(e.target.value) || 0 };
-                                      setCustomConfig({...customConfig, commercialDeliveryPrices: newDelivery});
-                                    }}
-                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
-                                  />
-                                </div>
-                              ))}
+                              {(() => {
+                                const defaultDelivery = [
+                                  { id: "standard", label: "Standard Delivery (7-10 days)", price: 0, icon: "📦" },
+                                  { id: "expedited", label: "Expedited Delivery (3-5 days)", price: 200, icon: "📬" },
+                                  { id: "rush", label: "Rush Delivery (24-48 hours)", price: 500, icon: "⚡" }
+                                ];
+                                const currentDelivery = customConfig.commercialDeliveryPrices || defaultDelivery;
+                                return currentDelivery.map((delivery, index) => (
+                                  <div key={index} className="grid grid-cols-2 gap-2">
+                                    <Input
+                                      placeholder="Delivery Option"
+                                      value={delivery.label}
+                                      onChange={(e) => {
+                                        const baseDelivery = customConfig.commercialDeliveryPrices || defaultDelivery;
+                                        const newDelivery = [...baseDelivery];
+                                        newDelivery[index] = { ...delivery, label: e.target.value };
+                                        setCustomConfig({...customConfig, commercialDeliveryPrices: newDelivery});
+                                      }}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                    />
+                                    <Input
+                                      type="number"
+                                      placeholder="Extra Price (€)"
+                                      value={delivery.price}
+                                      onChange={(e) => {
+                                        const baseDelivery = customConfig.commercialDeliveryPrices || defaultDelivery;
+                                        const newDelivery = [...baseDelivery];
+                                        newDelivery[index] = { ...delivery, price: Number(e.target.value) || 0 };
+                                        setCustomConfig({...customConfig, commercialDeliveryPrices: newDelivery});
+                                      }}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                    />
+                                  </div>
+                                ));
+                              })()}
+                              <Button
+                                onClick={() => {
+                                  const defaultDelivery = [
+                                    { id: "standard", label: "Standard Delivery (7-10 days)", price: 0, icon: "📦" },
+                                    { id: "expedited", label: "Expedited Delivery (3-5 days)", price: 200, icon: "📬" },
+                                    { id: "rush", label: "Rush Delivery (24-48 hours)", price: 500, icon: "⚡" }
+                                  ];
+                                  const currentDelivery = customConfig.commercialDeliveryPrices || defaultDelivery;
+                                  const newDelivery = { 
+                                    id: `custom_${Date.now()}`, 
+                                    label: "Custom Delivery", 
+                                    price: 0, 
+                                    icon: "📦" 
+                                  };
+                                  setCustomConfig({
+                                    ...customConfig, 
+                                    commercialDeliveryPrices: [...currentDelivery, newDelivery]
+                                  });
+                                }}
+                                className="w-full mt-3 bg-neon-500 hover:bg-neon-600 text-black text-xs"
+                                size="sm"
+                              >
+                                <Plus className="h-3 w-3 mr-1" />
+                                Add Delivery Option
+                              </Button>
                             </div>
                           </div>
 

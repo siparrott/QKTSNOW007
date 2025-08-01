@@ -97,6 +97,8 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
   // Text customization functionality
   const updateTextContent = (key: string, value: string) => {
     setTextConfig(prev => ({ ...prev, [key]: value }));
+    // Update the customConfig as well
+    setCustomConfig(prev => ({ ...prev, [key]: value }));
     // Send update to parent if in preview mode
     if (isPreview) {
       window.parent?.postMessage({
@@ -546,14 +548,14 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
         {/* Header */}
         <div className="text-center mb-8">
           <EditableText
-            value={textConfig.mainTitle || "Commercial Photography Calculator"}
+            value={customConfig?.mainTitle || textConfig.mainTitle || "Commercial Photography Calculator"}
             onSave={(value) => updateTextContent('mainTitle', value)}
             className="text-4xl font-display text-slate-800 mb-2 block"
             isPreview={isPreview}
             placeholder="Enter main title"
           />
           <EditableText
-            value={textConfig.mainSubtitle || "Professional commercial photography with transparent pricing. Get your custom quote instantly."}
+            value={customConfig?.subtitle || customConfig?.mainSubtitle || textConfig.mainSubtitle || "Professional commercial photography with transparent pricing. Get your custom quote instantly."}
             onSave={(value) => updateTextContent('mainSubtitle', value)}
             className="text-slate-600 max-w-2xl mx-auto font-body"
             isPreview={isPreview}
@@ -597,7 +599,7 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                     <h2 className="text-2xl font-display text-slate-800 mb-4 flex items-center">
                       <Briefcase className="h-6 w-6 mr-2 text-slate-700" />
                       <EditableText
-                        value={textConfig.step1Title || "Tell us about your project"}
+                        value={customConfig?.step1Title || textConfig.step1Title || "Tell us about your project"}
                         onSave={(value) => updateTextContent('step1Title', value)}
                         className="text-2xl font-display text-slate-800"
                         isPreview={isPreview}
@@ -608,7 +610,7 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                     {/* Natural Language Input */}
                     <div className="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
                       <EditableText
-                        value={textConfig.descriptionLabel || "Describe your project (optional)"}
+                        value={customConfig?.descriptionLabel || textConfig.descriptionLabel || "Describe your project (optional)"}
                         onSave={(value) => updateTextContent('descriptionLabel', value)}
                         className="block text-sm font-body text-slate-700 mb-2"
                         isPreview={isPreview}

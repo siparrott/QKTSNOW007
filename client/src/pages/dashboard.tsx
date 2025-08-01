@@ -253,6 +253,19 @@ export default function Dashboard() {
     };
   }, []);
 
+  // Listen for text updates from preview
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === 'TEXT_UPDATE') {
+        const { key, value } = event.data;
+        setCustomConfig(prev => ({ ...prev, [key]: value }));
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
   // Get current user email for session isolation
   const getCurrentUserEmail = () => {
     try {

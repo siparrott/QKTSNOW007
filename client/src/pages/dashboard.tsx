@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
-import { Calculator, Plus, Settings, Eye, Copy, ExternalLink, BarChart3, Users, TrendingUp, Activity, Calendar, DollarSign, Palette, Type, Layout, Zap, Bell, Smartphone, Monitor, Tablet, Trash2, Edit3 } from "lucide-react";
+import { Calculator, Plus, Settings, Eye, Copy, ExternalLink, BarChart3, Users, TrendingUp, Activity, Calendar, DollarSign, Palette, Type, Layout, Zap, Bell, Smartphone, Monitor, Tablet, Trash2, Edit3, Camera } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart as RechartsBarChart, Bar } from "recharts";
 import CalculatorPreview from "../components/calculator-preview";
 import { getQuoteStats, incrementQuoteUsage, canGenerateQuote, resetQuoteUsage } from "@/lib/quote-tracker";

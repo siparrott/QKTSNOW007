@@ -189,36 +189,51 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
     },
   });
 
-  const projectTypes = [
-    { id: "product", label: "Product Photography", icon: "📦", popular: true },
-    { id: "branding", label: "Branding & Lifestyle", icon: "✨", popular: true },
-    { id: "headshots", label: "Corporate Headshots", icon: "👤" },
-    { id: "editorial", label: "Editorial / Magazine", icon: "📰" },
-    { id: "advertising", label: "Advertising Campaign", icon: "🎯" },
-  ];
-
   // Use custom pricing configuration if available
-  const getImageCountPricing = () => {
-    if (customConfig?.groupPrices) {
-      return customConfig.groupPrices.map((group: any) => ({
-        id: group.id,
-        label: group.label,
-        price: group.price,
-        icon: group.icon || "📷",
-        popular: group.id === "6-15" || group.id === "16-30"
+  const getProjectTypePricing = () => {
+    if (customConfig?.projectTypePrices) {
+      return customConfig.projectTypePrices.map((project: any) => ({
+        id: project.id,
+        label: project.label,
+        price: project.price,
+        icon: project.icon || "📦",
+        popular: project.id === "product" || project.id === "branding"
       }));
     }
     return [
-      { id: "1-5", label: "1-5 images", price: 0, icon: "📷" },
-      { id: "6-15", label: "6-15 images", price: 300, icon: "📸", popular: true },
-      { id: "16-30", label: "16-30 images", price: 750, icon: "🎥", popular: true },
-      { id: "30+", label: "30+ images", price: 1200, icon: "🏢" },
+      { id: "product", label: "Product Photography", icon: "📦", popular: true, price: 500 },
+      { id: "headshots", label: "Corporate Headshots", icon: "👔", popular: false, price: 800 },
+      { id: "branding", label: "Branding Session", icon: "💼", popular: true, price: 1200 },
+      { id: "event", label: "Event Photography", icon: "🎉", popular: false, price: 1000 },
+      { id: "advertising", label: "Advertising Campaign", icon: "📸", popular: false, price: 2000 },
+      { id: "architectural", label: "Architectural Photography", icon: "🏢", popular: false, price: 1500 }
+    ];
+  };
+
+  const projectTypes = getProjectTypePricing();
+
+  // Use custom pricing configuration if available
+  const getImageCountPricing = () => {
+    if (customConfig?.imageCountPrices) {
+      return customConfig.imageCountPrices.map((count: any) => ({
+        id: count.id,
+        label: count.label,
+        price: count.price,
+        icon: count.icon || "📷",
+        popular: count.id === "standard" || count.id === "premium"
+      }));
+    }
+    return [
+      { id: "basic", label: "Basic Package (10-15 images)", price: 0, icon: "📷" },
+      { id: "standard", label: "Standard Package (20-30 images)", price: 300, icon: "📸", popular: true },
+      { id: "premium", label: "Premium Package (40-50 images)", price: 600, icon: "🎯", popular: true },
+      { id: "unlimited", label: "Unlimited Package (All edited)", price: 1000, icon: "♾️" },
     ];
   };
 
   const getLocationPricing = () => {
-    if (customConfig?.locationPrices) {
-      return customConfig.locationPrices.map((location: any) => ({
+    if (customConfig?.commercialLocationPrices) {
+      return customConfig.commercialLocationPrices.map((location: any) => ({
         id: location.id,
         label: location.label,
         price: location.price,
@@ -226,58 +241,63 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
       }));
     }
     return [
-      { id: "studio", label: "In-Studio", price: 0, icon: "🏢" },
-      { id: "on-location", label: "On-location (office, warehouse, outdoors)", price: 100, icon: "🌍" },
-      { id: "hybrid", label: "Hybrid (multiple locations)", price: 200, icon: "🔄" },
+      { id: "studio", label: "Studio Location", price: 0, icon: "🏢" },
+      { id: "client", label: "Client Location", price: 200, icon: "🏠" },
+      { id: "outdoor", label: "Outdoor Location", price: 150, icon: "🌳" },
     ];
   };
 
   const getDurationPricing = () => {
-    if (customConfig?.sessionDurations) {
-      return customConfig.sessionDurations.map((duration: any) => ({
+    if (customConfig?.commercialDurationPrices) {
+      return customConfig.commercialDurationPrices.map((duration: any) => ({
         id: duration.id,
         label: duration.label,
         price: duration.price,
         icon: duration.icon || "⏰",
-        popular: duration.id === "half-day" || duration.id === "full-day"
+        popular: duration.id === "full-day" || duration.id === "half-day"
       }));
     }
     return [
-      { id: "1-hour", label: "Up to 1 hour", price: 0, icon: "⏰" },
-      { id: "half-day", label: "Half-day (4 hours)", price: 250, icon: "🌅", popular: true },
-      { id: "full-day", label: "Full-day (8 hours)", price: 600, icon: "☀️", popular: true },
-      { id: "multi-day", label: "Multi-day", price: 1200, icon: "📅" },
+      { id: "half-day", label: "Half Day (4 hours)", price: 0, icon: "⏰" },
+      { id: "full-day", label: "Full Day (8 hours)", price: 800, icon: "🕐", popular: true },
+      { id: "multi-day", label: "Multi-Day Shoot", price: 1500, icon: "📅", popular: true },
+      { id: "hourly", label: "Hourly Rate", price: 200, icon: "⏱️" },
     ];
   };
 
   const getEnhancementPricing = () => {
-    if (customConfig?.enhancementPrices) {
-      return customConfig.enhancementPrices.map((addon: any) => ({
-        ...addon,
-        popular: addon.id === "creative-director" || addon.id === "advanced-retouching"
+    if (customConfig?.commercialAddonPrices) {
+      return customConfig.commercialAddonPrices.map((addon: any) => ({
+        id: addon.id,
+        label: addon.label,
+        price: addon.price,
+        icon: addon.icon,
+        popular: addon.id === "retouching" || addon.id === "rush"
       }));
     }
     return [
-      { id: "creative-director", label: "Creative Director / Art Direction", price: 200, popular: true },
-      { id: "stylist", label: "Wardrobe Stylist", price: 150 },
-      { id: "basic-retouching", label: "Basic Retouching", price: 50 },
-      { id: "advanced-retouching", label: "Advanced Retouching", price: 100, popular: true },
-      { id: "casting", label: "Model/Actor Casting", price: 300 },
-      { id: "set-design", label: "Set Design / Props", price: 180 },
-      { id: "local-rights", label: "Usage Rights: Local", price: 100 },
-      { id: "national-rights", label: "Usage Rights: National", price: 250 },
-      { id: "global-rights", label: "Usage Rights: Global", price: 500 },
+      { id: "retouching", label: "Advanced Retouching", price: 300, icon: "✨", popular: true },
+      { id: "rush", label: "Rush Delivery", price: 400, icon: "⚡", popular: true },
+      { id: "prints", label: "Print Package", price: 250, icon: "🖨️" },
+      { id: "social", label: "Social Media Package", price: 150, icon: "📱" },
+      { id: "video", label: "Video Content", price: 800, icon: "🎥" },
+      { id: "stylist", label: "Stylist Service", price: 500, icon: "💄" }
     ];
   };
 
   const getDeliveryPricing = () => {
-    if (customConfig?.deliveryPrices) {
-      return customConfig.deliveryPrices;
+    if (customConfig?.commercialDeliveryPrices) {
+      return customConfig.commercialDeliveryPrices.map((delivery: any) => ({
+        id: delivery.id,
+        label: delivery.label,
+        price: delivery.price,
+        icon: delivery.icon || "📅"
+      }));
     }
     return [
-      { id: "standard", label: "Standard (3-5 days)", price: 0, icon: "📅" },
-      { id: "rush", label: "Rush (48 hours)", price: 90, icon: "⚡" },
-      { id: "same-day", label: "Same-Day Preview", price: 150, icon: "🚨" },
+      { id: "standard", label: "Standard Delivery (7-10 days)", price: 0, icon: "📦" },
+      { id: "expedited", label: "Expedited Delivery (3-5 days)", price: 200, icon: "📬" },
+      { id: "rush", label: "Rush Delivery (24-48 hours)", price: 500, icon: "⚡" },
     ];
   };
 
@@ -290,14 +310,17 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
   const calculatePricing = (): PricingBreakdown => {
     const currency = customConfig?.currency || "EUR";
     const currencySymbol = currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "CHF" ? "CHF " : currency === "CAD" ? "C$" : currency === "AUD" ? "A$" : "€";
-    const baseStudio = customConfig?.basePrice || 350;
+    
+    // Get base price from selected project type
+    const selectedProject = projectTypes.find(p => p.id === formData.projectType);
+    const basePrice = selectedProject?.price || customConfig?.basePrice || 500;
     
     let imageAdd = 0;
     let durationAdd = 0;
     let locationAdd = 0;
     let addOnsTotal = 0;
     let deliveryAdd = 0;
-    const breakdown: string[] = [`Base package (product, 1hr, studio, 1-5 images): ${currencySymbol}${baseStudio}`];
+    const breakdown: string[] = [`Base package (${selectedProject?.label || 'Product Photography'}): ${currencySymbol}${basePrice}`];
 
     // Image count pricing
     const images = imageCounts.find(i => i.id === formData.imageCount);
@@ -336,7 +359,7 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
       breakdown.push(`${delivery.label}: ${currencySymbol}${deliveryAdd}`);
     }
 
-    const subtotal = baseStudio + imageAdd + durationAdd + locationAdd + addOnsTotal + deliveryAdd;
+    const subtotal = basePrice + imageAdd + durationAdd + locationAdd + addOnsTotal + deliveryAdd;
     
     // Promo code discount
     let discount = 0;
@@ -348,7 +371,7 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
     const total = subtotal - discount;
 
     return {
-      basePrice: baseStudio,
+      basePrice: basePrice,
       imageAdd,
       durationAdd,
       locationAdd,
@@ -852,6 +875,34 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
                               </div>
                             </div>
                           ))}
+                        </div>
+
+                        {/* Add Service Button */}
+                        <div className="mt-4">
+                          <Button
+                            onClick={() => {
+                              // Add a custom service - this could open a modal or add a new entry
+                              const newService = {
+                                id: `custom-${Date.now()}`,
+                                label: "Custom Service",
+                                price: 0
+                              };
+                              // For now, just add it to the add-ons list if not present
+                              if (!formData.addOns.includes(newService.id)) {
+                                setFormData(prev => ({ ...prev, addOns: [...prev.addOns, newService.id] }));
+                              }
+                            }}
+                            variant="outline"
+                            className="w-full border-dashed border-slate-300 text-slate-600 hover:border-slate-400 hover:bg-slate-50"
+                          >
+                            <EditableText
+                              value={textConfig.addServiceButton || "+ Add Service"}
+                              onSave={(value) => updateTextContent('addServiceButton', value)}
+                              className="font-medium"
+                              isPreview={isPreview}
+                              placeholder="Enter add service button text"
+                            />
+                          </Button>
                         </div>
 
                         {formData.addOns.length > 0 && (

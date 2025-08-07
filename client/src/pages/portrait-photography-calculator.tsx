@@ -502,107 +502,6 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
     console.log("Downloading PDF quote...");
   };
 
-  // Form behavior and analytics functionality
-  const realTimeUpdates = customConfig.realTimeUpdates !== false;
-  const showProgressBar = customConfig.showProgress || false;
-  const validationEnabled = customConfig.validation !== false;
-  const animationSpeed = customConfig.animationSpeed || 'normal';
-  const notificationEmail = customConfig.notificationEmail;
-  const trackConversions = customConfig.trackConversions !== false;
-  const captureLeads = customConfig.captureLeads || false;
-  const googleAnalyticsId = customConfig.googleAnalytics;
-
-  // Progress calculation
-  const calculateProgress = () => {
-    const totalSteps = 4;
-    let completedSteps = 0;
-    if (formData.portraitType && formData.duration) completedSteps++;
-    if (formData.location && formData.wardrobeChanges) completedSteps++;
-    if (formData.usageType) completedSteps++;
-    if (formData.contactInfo.email) completedSteps++;
-    return Math.round((completedSteps / totalSteps) * 100);
-  };
-
-  // Validation logic
-  const validateCurrentStep = () => {
-    const errors: string[] = [];
-    if (validationEnabled) {
-      if (currentStep === 1) {
-        if (!formData.portraitType) errors.push("Please select a portrait type");
-        if (!formData.duration) errors.push("Please select a session duration");
-      }
-      if (currentStep === 2) {
-        if (!formData.location) errors.push("Please select a location");
-        if (!formData.wardrobeChanges) errors.push("Please select wardrobe options");
-      }
-      if (currentStep === 3) {
-        if (!formData.usageType) errors.push("Please select usage type");
-      }
-      if (currentStep === 4) {
-        if (!formData.contactInfo.email) errors.push("Email is required");
-        if (!formData.contactInfo.name) errors.push("Name is required");
-      }
-    }
-    return errors;
-  };
-
-  // Animation classes based on speed setting
-  const getAnimationClass = () => {
-    switch (animationSpeed) {
-      case 'slow': return 'transition-all duration-1000 ease-in-out';
-      case 'fast': return 'transition-all duration-150 ease-in-out';
-      case 'none': return '';
-      default: return 'transition-all duration-300 ease-in-out';
-    }
-  };
-
-  // Analytics tracking
-  const trackEvent = (eventName: string, eventData?: any) => {
-    if (trackConversions && googleAnalyticsId) {
-      // Send event to Google Analytics
-      if (typeof window !== 'undefined' && (window as any).gtag) {
-        (window as any).gtag('event', eventName, {
-          custom_parameter: eventData,
-          send_to: googleAnalyticsId
-        });
-      }
-    }
-    
-    // Send notification email if configured
-    if (notificationEmail && eventName === 'quote_generated') {
-      console.log(`Sending notification to ${notificationEmail} for quote generation`);
-    }
-  };
-
-  // Lead capture functionality
-  const captureLeadInfo = (contactData: any) => {
-    if (captureLeads) {
-      console.log('Capturing lead info:', contactData);
-      trackEvent('lead_captured', contactData);
-    }
-  };
-
-  // Real-time update functionality
-  const handleFormChange = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    
-    if (realTimeUpdates) {
-      // Track field changes for analytics
-      trackEvent('field_changed', { field, value });
-    }
-  };
-
-  const handleContactChange = (field: string, value: string) => {
-    setFormData(prev => ({ 
-      ...prev, 
-      contactInfo: { ...prev.contactInfo, [field]: value }
-    }));
-    
-    if (realTimeUpdates) {
-      trackEvent('contact_field_changed', { field, value });
-    }
-  };
-
   const OptionCard = ({ 
     option, 
     selected, 
@@ -697,22 +596,6 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
             className="text-gray-600 max-w-2xl mx-auto font-body block"
           />
         </div>
-
-        {/* Progress Bar (if enabled) */}
-        {showProgressBar && (
-          <div className="max-w-2xl mx-auto mb-8">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700">Progress</span>
-              <span className="text-sm font-medium text-gray-700">{calculateProgress()}%</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div 
-                className={`bg-rose-500 h-2 rounded-full ${getAnimationClass()}`}
-                style={{ width: `${calculateProgress()}%` }}
-              ></div>
-            </div>
-          </div>
-        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Form */}
@@ -838,28 +721,11 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                     </div>
                   </div>
 
-                  {/* Validation errors */}
-                  {validationEnabled && validateCurrentStep().length > 0 && (
-                    <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                      <div className="text-sm text-red-600">
-                        {validateCurrentStep().map((error, index) => (
-                          <div key={index}>• {error}</div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
                   <div className="flex justify-end">
                     <Button
-                      onClick={() => {
-                        const errors = validateCurrentStep();
-                        if (errors.length === 0 || !validationEnabled) {
-                          setCurrentStep(2);
-                          trackEvent('step_completed', { step: 1 });
-                        }
-                      }}
-                      disabled={validationEnabled && (!formData.portraitType || !formData.duration)}
-                      className={`bg-rose-500 hover:bg-rose-600 text-white px-8 font-semibold rounded-lg ${getAnimationClass()}`}
+                      onClick={() => setCurrentStep(2)}
+                      disabled={!formData.portraitType || !formData.duration}
+                      className="bg-rose-500 hover:bg-rose-600 text-white px-8 font-semibold rounded-lg"
                     >
                       <EditableText
                         value={propConfig?.nextStepButton || "Next Step"}
@@ -1056,35 +922,18 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                     </div>
                   </div>
 
-                  {/* Validation errors */}
-                  {validationEnabled && validateCurrentStep().length > 0 && (
-                    <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                      <div className="text-sm text-red-600">
-                        {validateCurrentStep().map((error, index) => (
-                          <div key={index}>• {error}</div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
                   <div className="flex justify-between">
                     <Button
                       onClick={() => setCurrentStep(2)}
                       variant="outline"
-                      className={`px-8 border-gray-300 text-gray-600 hover:bg-gray-50 rounded-lg ${getAnimationClass()}`}
+                      className="px-8 border-gray-300 text-gray-600 hover:bg-gray-50 rounded-lg"
                     >
                       Previous
                     </Button>
                     <Button
-                      onClick={() => {
-                        const errors = validateCurrentStep();
-                        if (errors.length === 0 || !validationEnabled) {
-                          setCurrentStep(4);
-                          trackEvent('step_completed', { step: 3 });
-                        }
-                      }}
-                      disabled={validationEnabled && !formData.usageType}
-                      className={`bg-rose-500 hover:bg-rose-600 text-white px-8 font-semibold rounded-lg ${getAnimationClass()}`}
+                      onClick={() => setCurrentStep(4)}
+                      disabled={!formData.usageType}
+                      className="bg-rose-500 hover:bg-rose-600 text-white px-8 font-semibold rounded-lg"
                     >
                       Next Step
                     </Button>
@@ -1198,16 +1047,9 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                       />
                     </Button>
                     <Button
-                      onClick={() => {
-                        const errors = validateCurrentStep();
-                        if (errors.length === 0 || !validationEnabled) {
-                          setIsQuoteLocked(true);
-                          trackEvent('quote_generated', { pricing: pricing.total });
-                          captureLeadInfo(formData.contactInfo);
-                        }
-                      }}
-                      disabled={validationEnabled && !formData.contactInfo.email}
-                      className={`bg-green-500 hover:bg-green-600 text-white px-8 font-semibold rounded-lg ${getAnimationClass()}`}
+                      onClick={() => setIsQuoteLocked(true)}
+                      disabled={!formData.contactInfo.email}
+                      className="bg-green-500 hover:bg-green-600 text-white px-8 font-semibold rounded-lg"
                     >
                       <EditableText
                         value={textConfig?.getQuoteButton || "Get Quote"}

@@ -2589,6 +2589,134 @@ export default function Dashboard() {
                       </div>
                     </div>
 
+                    {/* Device Optimization */}
+                    <div>
+                      <h3 className="text-white font-medium mb-4 flex items-center">
+                        <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
+                        <Smartphone className="h-4 w-4 mr-2" />
+                        Device Optimization
+                      </h3>
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <Label className="text-gray-300">Mobile Optimized</Label>
+                          <Switch
+                            checked={customConfig.mobileOptimized !== false}
+                            onCheckedChange={(checked) => setCustomConfig({...customConfig, mobileOptimized: checked})}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Responsive Breakpoint</Label>
+                          <Select value={customConfig.breakpoint || 'md'} onValueChange={(value) => setCustomConfig({...customConfig, breakpoint: value})}>
+                            <SelectTrigger className="bg-midnight-900 border-midnight-600 text-white">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="sm">Small (640px)</SelectItem>
+                              <SelectItem value="md">Medium (768px)</SelectItem>
+                              <SelectItem value="lg">Large (1024px)</SelectItem>
+                              <SelectItem value="xl">Extra Large (1280px)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Font Size: {customConfig.fontSize || 16}px</Label>
+                          <Slider
+                            value={[customConfig.fontSize || 16]}
+                            onValueChange={(value) => setCustomConfig({...customConfig, fontSize: value[0]})}
+                            max={24}
+                            min={12}
+                            step={1}
+                            className="mt-2"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Advanced Styling */}
+                    <div>
+                      <h3 className="text-white font-medium mb-4 flex items-center">
+                        <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
+                        <Palette className="h-4 w-4 mr-2" />
+                        Advanced Styling
+                      </h3>
+                      <div className="space-y-4">
+                        <div>
+                          <Label className="text-gray-300">Background Color</Label>
+                          <Input
+                            type="color"
+                            value={customConfig.backgroundColor || '#ffffff'}
+                            onChange={(e) => setCustomConfig({...customConfig, backgroundColor: e.target.value})}
+                            className="h-12 bg-midnight-900 border-midnight-600"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Text Color</Label>
+                          <Input
+                            type="color"
+                            value={customConfig.textColor || '#000000'}
+                            onChange={(e) => setCustomConfig({...customConfig, textColor: e.target.value})}
+                            className="h-12 bg-midnight-900 border-midnight-600"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Font Family</Label>
+                          <Select value={customConfig.fontFamily || 'Inter'} onValueChange={(value) => setCustomConfig({...customConfig, fontFamily: value})}>
+                            <SelectTrigger className="bg-midnight-900 border-midnight-600 text-white">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Inter">Inter (Modern Sans)</SelectItem>
+                              <SelectItem value="Poppins">Poppins (Friendly)</SelectItem>
+                              <SelectItem value="Montserrat">Montserrat (Clean)</SelectItem>
+                              <SelectItem value="Roboto">Roboto (Technical)</SelectItem>
+                              <SelectItem value="Open Sans">Open Sans (Readable)</SelectItem>
+                              <SelectItem value="Playfair Display">Playfair Display (Elegant)</SelectItem>
+                              <SelectItem value="Lora">Lora (Serif Classic)</SelectItem>
+                              <SelectItem value="Source Sans Pro">Source Sans Pro (Professional)</SelectItem>
+                              <SelectItem value="Nunito">Nunito (Rounded)</SelectItem>
+                              <SelectItem value="Crimson Text">Crimson Text (Traditional)</SelectItem>
+                              <SelectItem value="Oswald">Oswald (Bold Headers)</SelectItem>
+                              <SelectItem value="Dancing Script">Dancing Script (Handwritten)</SelectItem>
+                              <SelectItem value="Raleway">Raleway (Sophisticated)</SelectItem>
+                              <SelectItem value="Merriweather">Merriweather (Blog Style)</SelectItem>
+                              <SelectItem value="Fira Sans">Fira Sans (Tech Modern)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Border Radius: {customConfig.borderRadius || 8}px</Label>
+                          <Slider
+                            value={[customConfig.borderRadius || 8]}
+                            onValueChange={(value) => setCustomConfig({...customConfig, borderRadius: value[0]})}
+                            max={50}
+                            min={0}
+                            step={1}
+                            className="mt-2"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Shadow Intensity: {customConfig.shadowIntensity || 10}%</Label>
+                          <Slider
+                            value={[customConfig.shadowIntensity || 10]}
+                            onValueChange={(value) => setCustomConfig({...customConfig, shadowIntensity: value[0]})}
+                            max={100}
+                            min={0}
+                            step={5}
+                            className="mt-2"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Custom CSS</Label>
+                          <Textarea
+                            value={customConfig.customCSS || ''}
+                            onChange={(e) => setCustomConfig({...customConfig, customCSS: e.target.value})}
+                            placeholder="/* Custom CSS styles */\n.calculator-form {\n  /* your styles here */\n}"
+                            className="bg-midnight-900 border-midnight-600 text-white font-mono text-sm"
+                            rows={6}
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 

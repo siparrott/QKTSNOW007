@@ -1,0 +1,52 @@
+Wedding-Wizard Plan & SEO Blueprint – feature roadmap + keyword universe so the product ranks for “AI wedding planner” and “AI wedding timeline”.
+
+Drop-in System Prompt – tells your assistant exactly how to digest context (SEO thread + uploaded images) and spit out founder-tone, Yoast-perfect blog posts for the Wedding Wizard brand.
+
+1 Wedding-Wizard Plan ＋ SEO Blueprint
+A. Product Roadmap (90-day sprint)
+Phase	What to ship	Dev hints
+0	MVP audit of current Replit app (routing, auth, DB schema)	Verify file-upload endpoint for images; stub /api/timeline
+1	AI Timeline Generator	• Endpoint /api/timeline → POST {date, location, events[]}
+• Uses OpenAI function‐calling to return hour-by-hour JSON
+• Factor local sunset time via [Sunrise-Sunset.org API]
+2	AI Wedding Planner Chat	• Finetune system prompt (see below)
+• Long-term memory: Supabase table planner_context keyed by user ID
+3	Drag-n-Drop Editor	• Front-end: React DnD → reorder timeline blocks
+• Auto-save to Supabase row timelines
+4	Share & Export	• Generate PDF itinerary via pdf-make
+• 1-click iCal file export
+5	Upsells	• Stripe Checkout Session for “Premium Timeline Pack” (vendor list, SMS reminders)
+• Cross-sell to TogNinja CRM
+
+B. Keyword Universe
+Tier	Search phrases	Intent / note
+Primary	ai wedding planner, ai wedding timeline generator, wedding timeline generator	High-buying intent 
+nupt.ai
+Wedmatch
+Celebrateally
+Secondary	online wedding day planner, interactive wedding schedule, automated wedding itinerary, wedding planning chatbot	Research stage 
+Hochzeitsplaner
++1
+Long-tail	free ai wedding timeline, wedding photography timeline generator, diy wedding schedule tool, sunset-aware wedding planner	Great for blog FAQs & pillar pages 
+Geoff Shaw Hochzeitsfotograf
+New York Post
+Synonyms	marriage day schedule, nuptial itinerary, bridal day timeline, ceremony schedule maker	Sprinkle to avoid stuffing
+
+C. Topic Clusters
+Pillar (H1)	Supporting posts
+“AI Wedding Planner: From Zero to ‘I Do’ in 10 Clicks”	• “ChatGPT vs. Human Planner: Cost Showdown” • “Top 5 AI Tools Brides Swear By”
+“Perfect Wedding Day Timeline: Hour-by-Hour Guide”	• “Photography-First Timeline Template” • “How to Pad for Rain, Delays, & Sunset”
+“Free Wedding Timeline Generator (Try It Live)”	• “DIY vs. Premium Timeline Pack – What You Get” • “Exporting to iCal & Google Calendar”
+
+D. On-Page & LLM Checklist
+Primary keyphrase in title, H1, slug, intro (<100 words), one H2, meta description.
+
+Internal links → /features, /pricing, /demo, /blog/ai-wedding-tools.
+
+External links → at least one authority (e.g. Zola survey or Knot AI article) 
+New York Post
+.
+
+Schema: Event, FAQPage, and SoftwareApplication.
+
+Flesch > 60, passive < 10 %, long sentences < 25 %, transition words > 30 %

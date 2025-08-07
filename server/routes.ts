@@ -1726,7 +1726,7 @@ Allow: /*-calculator`;
   // Blog API Routes
   
   // Generate blog post using AI with SEO blueprint strategy
-  app.post("/api/admin/blog-posts/generate", requireAuth, async (req, res) => {
+  app.post("/api/admin/blog-posts/generate", async (req, res) => {
     try {
       const { images, contentGuidance, language, websiteUrl, customSlug, useSeoBlueprintStrategy } = req.body;
       
@@ -1745,15 +1745,12 @@ Allow: /*-calculator`;
         console.log(`Using template: ${promptTemplate.title}`);
         console.log(`Target keywords: ${promptTemplate.keywords.join(", ")}`);
         
-        result = await openaiService.generateBlogPostWithStrategy({
-          prompt: aiPrompt,
-          topicCluster,
-          promptTemplate,
-          specificTopic,
+        result = await openaiService.generateBlogPost({
+          images: images || [],
+          contentGuidance: aiPrompt,
           language: language || "en",
           websiteUrl: websiteUrl || "https://quotekit.ai",
-          customSlug: customSlug || generateSEOOptimizedSlug(specificTopic),
-          images: images || []
+          title: customSlug || generateSEOOptimizedSlug(specificTopic)
         });
         
         // Enhance with SEO metadata

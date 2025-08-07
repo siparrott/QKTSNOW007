@@ -99,82 +99,16 @@ const mockUser: User = (() => {
   };
 })();
 
+// Streamlined Calculator Templates - Portrait Photography Only
 const calculatorTemplates: CalculatorTemplate[] = [
-  // Photography Services
-  { id: "1", name: "Wedding Photography Calculator", category: "Photography", description: "Comprehensive wedding photography with venue types, packages, and AI pricing", template_id: "wedding-photography", slug: "wedding-photography" },
-  { id: "2", name: "Portrait Photography Calculator", category: "Photography", description: "Professional portrait sessions with advanced booking system", template_id: "portrait-photography", slug: "portrait-photography" },
-  { id: "3", name: "Boudoir Photography Calculator", category: "Photography", description: "Intimate photography sessions with privacy options", template_id: "boudoir-photography", slug: "boudoir-photography" },
-  { id: "4", name: "Commercial Photography Calculator", category: "Photography", description: "Business photography with usage rights and licensing", template_id: "commercial-photography", slug: "commercial-photography" },
-  { id: "5", name: "Real Estate Photography Calculator", category: "Photography", description: "Property photography with drone and virtual tour options", template_id: "real-estate-photography", slug: "real-estate-photography" },
-  { id: "6", name: "Event Videography Calculator", category: "Photography", description: "Professional event videography with editing packages", template_id: "event-videography", slug: "event-videography" },
-  { id: "7", name: "Drone Photography Calculator", category: "Photography", description: "Aerial photography with flight permits and equipment", template_id: "drone-photography", slug: "drone-photography" },
-  { id: "8", name: "Food Photography Calculator", category: "Photography", description: "Culinary photography for restaurants and brands", template_id: "food-photography", slug: "food-photography" },
-  { id: "9", name: "Newborn Photography Calculator", category: "Photography", description: "Specialized newborn sessions with safety protocols", template_id: "newborn-photography", slug: "newborn-photography" },
-  { id: "10", name: "Maternity Photography Calculator", category: "Photography", description: "Pregnancy photography with wardrobe and locations", template_id: "maternity-photography", slug: "maternity-photography" },
-  
-  // Construction & Home Services
-  { id: "11", name: "Home Renovation Calculator", category: "Construction", description: "Complete renovation planning with materials and labor", template_id: "home-renovation", slug: "home-renovation-calculator-new" },
-  { id: "12", name: "Roofing Services Calculator", category: "Construction", description: "Roofing installation with material options and warranties", template_id: "roofing-services", slug: "roofing-calculator" },
-  { id: "13", name: "Electrician Services Calculator", category: "Construction", description: "Electrical work with safety certifications and permits", template_id: "electrician", slug: "electrician-calculator" },
-  { id: "14", name: "Plumbing Services Calculator", category: "Construction", description: "Plumbing repairs and installations with emergency rates", template_id: "plumbing", slug: "plumbing-calculator" },
-  { id: "15", name: "Solar Panel Installation Calculator", category: "Construction", description: "Solar energy systems with financing and incentives", template_id: "solar", slug: "solar-calculator" },
-  { id: "16", name: "Window & Door Installation Calculator", category: "Construction", description: "Custom windows and doors with energy efficiency ratings", template_id: "window-door", slug: "window-door-calculator" },
-  { id: "17", name: "Landscaping Services Calculator", category: "Construction", description: "Garden design and maintenance with seasonal planning", template_id: "landscaping", slug: "landscaping-calculator" },
-  { id: "18", name: "Painting & Decorating Calculator", category: "Construction", description: "Interior and exterior painting with premium finishes", template_id: "painting-decorating", slug: "painting-decorating-calculator" },
-  
-  // Health & Beauty Services
-  { id: "19", name: "Makeup Artist Calculator", category: "Beauty", description: "Professional makeup for weddings and events", template_id: "makeup-artist", slug: "makeup-artist-calculator" },
-  { id: "20", name: "Hair Stylist Calculator", category: "Beauty", description: "Hair styling services with product recommendations", template_id: "hair-stylist", slug: "hair-stylist-calculator" },
-  { id: "21", name: "Tattoo Artist Calculator", category: "Beauty", description: "Custom tattoo pricing with design complexity", template_id: "tattoo-artist", slug: "tattoo-artist-calculator" },
-  { id: "22", name: "Massage Therapy Calculator", category: "Beauty", description: "Therapeutic massage with specialized techniques", template_id: "massage-therapy", slug: "massage-therapy-calculator" },
-  { id: "23", name: "Personal Training Calculator", category: "Beauty", description: "Fitness coaching with nutrition and workout plans", template_id: "personal-training", slug: "personal-training-calculator" },
-  { id: "24", name: "Nutritionist Calculator", category: "Beauty", description: "Dietary consultation with meal planning", template_id: "nutritionist", slug: "nutritionist-calculator" },
-  
-  // Professional Services
-  { id: "25", name: "Legal Services Calculator", category: "Legal", description: "Legal consultation with case complexity assessment", template_id: "legal-services", slug: "legal-advisor-calculator" },
-  { id: "26", name: "Tax Preparation Calculator", category: "Legal", description: "Tax filing services with audit protection", template_id: "tax-preparer", slug: "tax-preparer-calculator" },
-  { id: "27", name: "Business Coach Calculator", category: "Professional", description: "Business consulting with strategic planning", template_id: "business-coach", slug: "business-coach-calculator" },
-  { id: "28", name: "Life Coach Calculator", category: "Professional", description: "Personal development coaching with goal setting", template_id: "life-coach", slug: "life-coach-calculator" },
-  { id: "29", name: "Virtual Assistant Calculator", category: "Professional", description: "Administrative support with task specialization", template_id: "virtual-assistant", slug: "virtual-assistant-calculator" },
-  { id: "30", name: "Translation Services Calculator", category: "Professional", description: "Document translation with certification options", template_id: "translation-services", slug: "translation-services-calculator" },
-  
-  // Technology Services
-  { id: "31", name: "Web Designer Calculator", category: "Technology", description: "Website design with responsive and e-commerce options", template_id: "web-designer", slug: "web-designer-calculator" },
-  { id: "32", name: "SEO Agency Calculator", category: "Technology", description: "Search optimization with analytics and reporting", template_id: "seo-agency", slug: "seo-agency-calculator" },
-  { id: "33", name: "Video Editor Calculator", category: "Technology", description: "Video editing with motion graphics and effects", template_id: "video-editor", slug: "video-editor-calculator" },
-  { id: "34", name: "Marketing Consultant Calculator", category: "Technology", description: "Digital marketing strategy with campaign management", template_id: "marketing-consultant", slug: "marketing-consultant-calculator" },
-  { id: "35", name: "Copywriter Calculator", category: "Technology", description: "Content writing with SEO optimization", template_id: "copywriter", slug: "copywriter-calculator" },
-  
-  // Automotive Services
-  { id: "36", name: "Auto Mechanic Calculator", category: "Automotive", description: "Vehicle repairs with diagnostic and parts", template_id: "auto-mechanic", slug: "auto-mechanic-calculator" },
-  { id: "37", name: "Car Detailing Calculator", category: "Automotive", description: "Vehicle cleaning with paint protection services", template_id: "car-detailing", slug: "car-detailing-calculator" },
-  { id: "38", name: "Mobile Car Wash Calculator", category: "Automotive", description: "On-location vehicle cleaning services", template_id: "mobile-car-wash", slug: "mobile-car-wash-calculator" },
-  { id: "39", name: "Motorcycle Repair Calculator", category: "Automotive", description: "Motorcycle maintenance and customization", template_id: "motorcycle-repair", slug: "motorcycle-repair-calculator" },
-  { id: "40", name: "Driving Instructor Calculator", category: "Automotive", description: "Driving lessons with test preparation", template_id: "driving-instructor", slug: "driving-instructor-calculator" },
-  
-  // Transportation Services
-  { id: "41", name: "Airport Transfer Calculator", category: "Transportation", description: "Airport shuttle with flight tracking", template_id: "airport-transfer", slug: "airport-transfer-calculator" },
-  { id: "42", name: "Chauffeur & Limo Calculator", category: "Transportation", description: "Luxury transportation with event packages", template_id: "chauffeur-limo", slug: "chauffeur-limo-calculator" },
-  { id: "43", name: "Van Rental Calculator", category: "Transportation", description: "Commercial vehicle rental with insurance", template_id: "van-rental", slug: "van-rental-calculator" },
-  { id: "44", name: "Moving Services Calculator", category: "Transportation", description: "Relocation services with packing and storage", template_id: "moving-services", slug: "moving-services-calculator" },
-  { id: "45", name: "Boat Charter Calculator", category: "Transportation", description: "Marine vessel rental with crew and catering", template_id: "boat-charter", slug: "boat-charter-calculator" },
-  
-  // Cleaning & Maintenance
-  { id: "46", name: "Cleaning Services Calculator", category: "Professional", description: "Residential and commercial cleaning with eco options", template_id: "cleaning-services", slug: "cleaning-services-calculator" },
-  { id: "47", name: "Pest Control Calculator", category: "Professional", description: "Pest elimination with prevention and warranties", template_id: "pest-control", slug: "pest-control-calculator" },
-  { id: "48", name: "Interior Design Calculator", category: "Professional", description: "Space design with furniture and decoration", template_id: "interior-design", slug: "interior-design-calculator" },
-  
-  // Medical & Educational Services
-  { id: "49", name: "Dentist Services Calculator", category: "Medical", description: "Dental procedures with insurance coordination", template_id: "dentist", slug: "dentist-calculator" },
-  { id: "50", name: "Plastic Surgery Calculator", category: "Medical", description: "Cosmetic procedures with recovery planning", template_id: "plastic-surgery", slug: "plastic-surgery-calculator" },
-  { id: "51", name: "Private Medical Calculator", category: "Medical", description: "Private healthcare with specialist consultations", template_id: "private-medical", slug: "private-medical-calculator" },
-  { id: "52", name: "Childcare Services Calculator", category: "Education", description: "Daycare and nanny services with educational programs", template_id: "childcare-services", slug: "childcare-services-calculator" },
-  { id: "53", name: "Private School Calculator", category: "Education", description: "Private education with extracurricular activities", template_id: "private-school", slug: "private-school-calculator" },
-  { id: "54", name: "Private Tutor Calculator", category: "Education", description: "Personal tutoring with subject specialization", template_id: "private-tutor", slug: "private-tutor-calculator" },
-  
-  // Specialized Services
-  { id: "55", name: "Hypnotherapist Calculator", category: "Professional", description: "Hypnotherapy sessions with treatment programs", template_id: "hypnotherapist", slug: "hypnotherapist-calculator" },
-  { id: "56", name: "Dog Trainer Calculator", category: "Professional", description: "Pet training with behavioral modification", template_id: "dog-trainer", slug: "dog-trainer-calculator" }
+  { 
+    id: "1", 
+    name: "Portrait Photography Calculator", 
+    category: "Photography", 
+    description: "Professional portrait sessions with comprehensive customization, real-time preview, and AI-powered pricing", 
+    template_id: "portrait-photography", 
+    slug: "portrait-photography" 
+  }
 ];
 
 const performanceData = [

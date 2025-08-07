@@ -2295,28 +2295,7 @@ export default function Dashboard() {
                                   }
                                 ]
                               },
-                              'portrait-photography': {
-                                sections: [
-                                  {
-                                    title: 'Portrait Types',
-                                    fields: [
-                                      { key: 'familyPortrait', label: 'Family Portrait', placeholder: 'Family Portrait Session' },
-                                      { key: 'individualPortrait', label: 'Individual Portrait', placeholder: 'Individual Portrait' },
-                                      { key: 'businessHeadshots', label: 'Business Headshots', placeholder: 'Professional Headshots' },
-                                      { key: 'seniorPortraits', label: 'Senior Portraits', placeholder: 'Senior Graduation Photos' }
-                                    ]
-                                  },
-                                  {
-                                    title: 'Session Options',
-                                    fields: [
-                                      { key: 'studioSession', label: 'Studio Session', placeholder: 'Studio Portrait Session' },
-                                      { key: 'outdoorSession', label: 'Outdoor Session', placeholder: 'Outdoor Portrait Session' },
-                                      { key: 'extendedSession', label: 'Extended Session', placeholder: 'Extended Time' },
-                                      { key: 'rushDelivery', label: 'Rush Delivery', placeholder: 'Same-Day Delivery' }
-                                    ]
-                                  }
-                                ]
-                              },
+                              'portrait-photography': null,
                               'commercial-photography': {
                                 sections: [
                                   {

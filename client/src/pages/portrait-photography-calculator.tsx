@@ -64,6 +64,161 @@ interface PortraitPhotographyCalculatorProps {
 export default function PortraitPhotographyCalculator({ customConfig: propConfig, isPreview = false, hideHeader = false, onConfigChange }: PortraitPhotographyCalculatorProps = {}) {
   const [textConfig, setTextConfig] = useState(propConfig || {});
   const [customConfig, setCustomConfig] = useState(propConfig || {});
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  
+  // Validation functions
+  const validateField = (field: string, value: any): string => {
+    if (customConfig?.validation === false) return '';
+    
+    switch (field) {
+      case 'portraitType':
+        return !value ? 'Please select a portrait type' : '';
+      case 'duration':
+        return !value ? 'Please select a session duration' : '';
+      case 'location':
+        return !value ? 'Please choose a location' : '';
+      case 'wardrobeChanges':
+        return !value ? 'Please select wardrobe options' : '';
+      case 'usageType':
+        return !value ? 'Please select usage type' : '';
+      case 'email':
+        if (!value) return 'Email is required';
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return !emailRegex.test(value) ? 'Please enter a valid email address' : '';
+      case 'name':
+        return !value ? 'Name is required' : '';
+      default:
+        return '';
+    }
+  };
+
+  const validateStep = (stepNumber: number): boolean => {
+    if (customConfig?.validation === false) return true;
+    
+    const errors: Record<string, string> = {};
+    
+    switch (stepNumber) {
+      case 1:
+        errors.portraitType = validateField('portraitType', formData.portraitType);
+        errors.duration = validateField('duration', formData.duration);
+        break;
+      case 2:
+        errors.location = validateField('location', formData.location);
+        errors.wardrobeChanges = validateField('wardrobeChanges', formData.wardrobeChanges);
+        break;
+      case 3:
+        errors.usageType = validateField('usageType', formData.usageType);
+        break;
+      case 4:
+        errors.email = validateField('email', formData.contactInfo.email);
+        errors.name = validateField('name', formData.contactInfo.name);
+        break;
+    }
+    
+    const stepErrors = Object.fromEntries(Object.entries(errors).filter(([_, v]) => v !== ''));
+    setValidationErrors(prev => ({ ...prev, ...stepErrors }));
+    
+    return Object.keys(stepErrors).length === 0;
+  };
+
+  // Real-time validation when fields change
+  const handleFieldChange = (field: string, value: any, callback: () => void) => {
+    callback();
+    
+    if (customConfig?.realTimeUpdates !== false) {
+      const error = validateField(field, value);
+      setValidationErrors(prev => ({
+        ...prev,
+        [field]: error
+      }));
+    }
+  };
+
+  // Email notification system
+  const sendQuoteEmail = async (quoteData: any) => {
+    if (customConfig?.emailNotifications === false) return;
+    
+    try {
+      const response = await fetch('/api/send-quote-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.contactInfo.email,
+          name: formData.contactInfo.name,
+          quote: quoteData,
+          calculatorType: 'portrait-photography'
+        }),
+      });
+      
+      if (response.ok) {
+        console.log('Quote email sent successfully');
+      }
+    } catch (error) {
+      console.error('Failed to send quote email:', error);
+    }
+  };
+
+  // Handle quote generation
+  const handleGetQuote = async () => {
+    if (customConfig?.validation !== false && !validateStep(4)) {
+      return;
+    }
+    
+    const quoteData = {
+      ...formData,
+      pricing,
+      timestamp: new Date().toISOString()
+    };
+    
+    setIsQuoteLocked(true);
+    
+    // Send email if enabled
+    if (customConfig?.emailNotifications !== false) {
+      await sendQuoteEmail(quoteData);
+    }
+    
+    // Track analytics if enabled
+    if (customConfig?.analytics !== false) {
+      trackQuoteGeneration(quoteData);
+    }
+  };
+
+  // Analytics tracking
+  const trackQuoteGeneration = (quoteData: any) => {
+    if (customConfig?.analytics === false) return;
+    
+    try {
+      // Track quote generation event
+      const analyticsData = {
+        event: 'quote_generated',
+        calculator_type: 'portrait_photography',
+        quote_value: pricing.total,
+        currency: pricing.currency,
+        timestamp: new Date().toISOString(),
+        fields_completed: {
+          portraitType: !!formData.portraitType,
+          duration: !!formData.duration,
+          location: !!formData.location,
+          wardrobeChanges: !!formData.wardrobeChanges,
+          addOns: formData.addOns.length > 0,
+          usageType: !!formData.usageType,
+          contact_provided: !!(formData.contactInfo.name && formData.contactInfo.email)
+        }
+      };
+      
+      // Send to analytics endpoint
+      fetch('/api/track-analytics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(analyticsData)
+      }).catch(error => console.log('Analytics tracking failed:', error));
+      
+    } catch (error) {
+      console.log('Analytics error:', error);
+    }
+  };
   
   // Apply custom configuration (colors, styling, etc.)
   const applyCustomConfig = (config: any) => {
@@ -155,6 +310,57 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
       /* Border radius customization */
       .portrait-calculator [class*="rounded"] {
         border-radius: ${borderRadius} !important;
+      }
+      
+      /* Layout style implementations */
+      .portrait-calculator.layout-horizontal .calculator-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+      }
+      
+      .portrait-calculator.layout-wizard .step-container {
+        display: none;
+      }
+      
+      .portrait-calculator.layout-wizard .step-container.active {
+        display: block;
+      }
+      
+      /* Padding customization */
+      .portrait-calculator .main-container {
+        padding: ${customConfig?.padding || 20}px !important;
+      }
+      
+      /* Font size customization */
+      .portrait-calculator {
+        font-size: ${customConfig?.fontSize || 16}px !important;
+      }
+      
+      /* Animation speed customization */
+      .portrait-calculator * {
+        transition-duration: ${
+          customConfig?.animationSpeed === 'slow' ? '0.5s' :
+          customConfig?.animationSpeed === 'fast' ? '0.1s' :
+          customConfig?.animationSpeed === 'none' ? '0s' : '0.3s'
+        } !important;
+      }
+      
+      /* Mobile optimization */
+      @media (max-width: ${
+        customConfig?.breakpoint === 'sm' ? '640px' :
+        customConfig?.breakpoint === 'lg' ? '1024px' :
+        customConfig?.breakpoint === 'xl' ? '1280px' : '768px'
+      }) {
+        .portrait-calculator.mobile-optimized .calculator-grid {
+          grid-template-columns: 1fr;
+        }
+        .portrait-calculator.mobile-optimized .text-2xl {
+          font-size: 1.5rem !important;
+        }
+        .portrait-calculator.mobile-optimized .p-6 {
+          padding: 1rem !important;
+        }
       }
     `;
     
@@ -545,8 +751,12 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
     { number: 4, title: textConfig?.stepTitle4 || "Contact Details", completed: !!formData.contactInfo.email },
   ];
 
+  // Layout configuration
+  const layoutClass = `layout-${customConfig?.layout || 'vertical'}`;
+  const mobileOptimizedClass = customConfig?.mobileOptimized !== false ? 'mobile-optimized' : '';
+  
   return (
-    <div className="min-h-screen portrait-calculator">
+    <div className={`min-h-screen portrait-calculator ${layoutClass} ${mobileOptimizedClass}`}>
       <SEOHead 
         title="Portrait Photography Quote Calculator | AI-Powered Pricing | QuoteKit.ai"
         description="Get instant portrait photography quotes with our AI calculator. Professional pricing for individual, couple, family & business portraits. Custom quotes in 30 seconds."
@@ -554,7 +764,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
         url="https://quotekit.ai/portrait-photography-calculator"
       />
       {!hideHeader && <QuoteKitHeader />}
-      <div className="max-w-7xl mx-auto px-4">
+      <div className={`max-w-7xl mx-auto main-container`}>
         {/* Header */}
         <div className="text-center mb-8">
           {/* Business Branding Section */}
@@ -597,44 +807,88 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className={`${customConfig?.layout === 'horizontal' ? 'calculator-grid' : 'grid grid-cols-1 lg:grid-cols-3'} gap-8`}>
           {/* Main Form */}
-          <div className="lg:col-span-2">
+          <div className={customConfig?.layout === 'horizontal' ? '' : 'lg:col-span-2'}>
             <Card className="p-8 bg-white/90 backdrop-blur-sm border-gray-200 rounded-2xl shadow-xl">
-              {/* Progress Steps */}
-              <div className="flex items-center justify-between mb-8">
-                {steps.map((step, index) => (
-                  <div key={step.number} className="flex items-center">
-                    <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
-                        step.completed
-                          ? "bg-green-500 text-white"
-                          : currentStep === step.number
-                          ? "bg-rose-500 text-white"
-                          : "bg-gray-200 text-gray-600"
-                      }`}
-                    >
-                      {step.completed ? <CheckCircle className="h-4 w-4" /> : step.number}
-                    </div>
-                    <span className="ml-2 text-sm font-medium text-gray-700">
-                      <EditableText
-                        value={step.title}
-                        onSave={(value) => updateTextContent(`stepTitle${step.number}`, value)}
-                        isPreview={isPreview}
-                        placeholder={step.title}
-                        className="text-sm font-medium text-gray-700"
-                      />
-                    </span>
-                    {index < steps.length - 1 && (
-                      <div className="w-8 h-px bg-gray-300 mx-4"></div>
-                    )}
+              {/* Progress Bar */}
+              {customConfig?.layout === 'wizard' && customConfig?.showProgressBar !== false && (
+                <div className="mb-8">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm font-medium text-gray-600">Step {currentStep} of {steps.length}</span>
+                    <span className="text-sm font-medium text-gray-600">{Math.round((currentStep / steps.length) * 100)}% Complete</span>
                   </div>
-                ))}
-              </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-rose-500 h-2 rounded-full transition-all duration-300 ease-out"
+                      style={{ width: `${(currentStep / steps.length) * 100}%` }}
+                    ></div>
+                  </div>
+                </div>
+              )}
+
+              {/* Progress Steps - Show different for wizard layout */}
+              {customConfig?.showProgress !== false && (
+                <div className="flex items-center justify-between mb-8">
+                  {steps.map((step, index) => (
+                    <div key={step.number} className="flex items-center">
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold cursor-pointer transition-all ${
+                          step.completed
+                            ? "bg-green-500 text-white"
+                            : currentStep === step.number
+                            ? "bg-rose-500 text-white"
+                            : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                        }`}
+                        onClick={() => customConfig?.layout === 'wizard' && setCurrentStep(step.number)}
+                      >
+                        {step.completed ? <CheckCircle className="h-4 w-4" /> : step.number}
+                      </div>
+                      <span className="ml-2 text-sm font-medium text-gray-700">
+                        <EditableText
+                          value={step.title}
+                          onSave={(value) => updateTextContent(`stepTitle${step.number}`, value)}
+                          isPreview={isPreview}
+                          placeholder={step.title}
+                          className="text-sm font-medium text-gray-700"
+                        />
+                      </span>
+                      {index < steps.length - 1 && (
+                        <div className="w-8 h-px bg-gray-300 mx-4"></div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {/* Wizard Navigation */}
+              {customConfig?.layout === 'wizard' && (
+                <div className="flex justify-between mb-6">
+                  <Button 
+                    onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
+                    disabled={currentStep === 1}
+                    variant="outline"
+                    className="border-gray-300 text-gray-700"
+                  >
+                    Previous
+                  </Button>
+                  <Button 
+                    onClick={() => {
+                      if (customConfig?.validation !== false && !validateStep(currentStep)) {
+                        return;
+                      }
+                      setCurrentStep(Math.min(4, currentStep + 1));
+                    }}
+                    disabled={currentStep === 4}
+                    className="bg-rose-500 hover:bg-rose-600 text-white"
+                  >
+                    Next
+                  </Button>
+                </div>
+              )}
 
               {/* Step 1: Portrait & Duration */}
-              {currentStep === 1 && (
-                <div className="space-y-6">
+              <div className={`step-container ${currentStep === 1 || customConfig?.layout !== 'wizard' ? 'active' : ''} space-y-6`}>
                   <div>
                     <div className="text-2xl font-display text-gray-800 mb-4 flex items-center">
                       <Heart className="h-6 w-6 mr-2 text-rose-500" />
@@ -689,12 +943,17 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                               key={type.id}
                               option={type}
                               selected={formData.portraitType === type.id}
-                              onClick={() => setFormData(prev => ({ ...prev, portraitType: type.id }))}
+                              onClick={() => handleFieldChange('portraitType', type.id, () => 
+                                setFormData(prev => ({ ...prev, portraitType: type.id }))
+                              )}
                               icon={type.icon}
                               popular={type.popular}
                             />
                           ))}
                         </div>
+                        {validationErrors.portraitType && (
+                          <div className="text-red-500 text-sm mt-1">{validationErrors.portraitType}</div>
+                        )}
                       </div>
 
                       <div>
@@ -711,12 +970,17 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                               key={duration.id}
                               option={duration}
                               selected={formData.duration === duration.id}
-                              onClick={() => setFormData(prev => ({ ...prev, duration: duration.id }))}
+                              onClick={() => handleFieldChange('duration', duration.id, () => 
+                                setFormData(prev => ({ ...prev, duration: duration.id }))
+                              )}
                               icon={duration.icon}
                               popular={duration.popular}
                             />
                           ))}
                         </div>
+                        {validationErrors.duration && (
+                          <div className="text-red-500 text-sm mt-1">{validationErrors.duration}</div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -736,11 +1000,9 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                     </Button>
                   </div>
                 </div>
-              )}
 
               {/* Step 2: Location & Wardrobe */}
-              {currentStep === 2 && (
-                <div className="space-y-6">
+              <div className={`step-container ${currentStep === 2 || customConfig?.layout !== 'wizard' ? 'active' : ''} space-y-6`}>
                   <div>
                     <h2 className="text-2xl font-display text-gray-800 mb-4 flex items-center">
                       <MapPin className="h-6 w-6 mr-2 text-rose-500" />
@@ -768,12 +1030,17 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                               key={location.id}
                               option={location}
                               selected={formData.location === location.id}
-                              onClick={() => setFormData(prev => ({ ...prev, location: location.id }))}
+                              onClick={() => handleFieldChange('location', location.id, () => 
+                                setFormData(prev => ({ ...prev, location: location.id }))
+                              )}
                               icon={location.icon}
                               popular={location.popular}
                             />
                           ))}
                         </div>
+                        {validationErrors.location && (
+                          <div className="text-red-500 text-sm mt-1">{validationErrors.location}</div>
+                        )}
                       </div>
 
                       <div>
@@ -790,12 +1057,17 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                               key={wardrobe.id}
                               option={wardrobe}
                               selected={formData.wardrobeChanges === wardrobe.id}
-                              onClick={() => setFormData(prev => ({ ...prev, wardrobeChanges: wardrobe.id }))}
+                              onClick={() => handleFieldChange('wardrobeChanges', wardrobe.id, () => 
+                                setFormData(prev => ({ ...prev, wardrobeChanges: wardrobe.id }))
+                              )}
                               icon={wardrobe.icon}
                               popular={wardrobe.popular}
                             />
                           ))}
                         </div>
+                        {validationErrors.wardrobeChanges && (
+                          <div className="text-red-500 text-sm mt-1">{validationErrors.wardrobeChanges}</div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -817,11 +1089,9 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                     </Button>
                   </div>
                 </div>
-              )}
 
               {/* Step 3: Add-ons & Usage */}
-              {currentStep === 3 && (
-                <div className="space-y-6">
+              <div className={`step-container ${currentStep === 3 || customConfig?.layout !== 'wizard' ? 'active' : ''} space-y-6`}>
                   <div>
                     <h2 className="text-2xl font-display text-gray-800 mb-4 flex items-center">
                       <Palette className="h-6 w-6 mr-2 text-rose-500" />
@@ -939,11 +1209,9 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                     </Button>
                   </div>
                 </div>
-              )}
 
               {/* Step 4: Contact Details */}
-              {currentStep === 4 && (
-                <div className="space-y-6">
+              <div className={`step-container ${currentStep === 4 || customConfig?.layout !== 'wizard' ? 'active' : ''} space-y-6`}>
                   <div>
                     <h2 className="text-2xl font-display text-gray-800 mb-4 flex items-center">
                       <Mail className="h-6 w-6 mr-2 text-rose-500" />
@@ -972,13 +1240,18 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                           <Input
                             placeholder={textConfig?.fullNamePlaceholder || "Your full name"}
                             value={formData.contactInfo.name}
-                            onChange={(e) => setFormData(prev => ({
-                              ...prev,
-                              contactInfo: { ...prev.contactInfo, name: e.target.value }
-                            }))}
+                            onChange={(e) => handleFieldChange('name', e.target.value, () =>
+                              setFormData(prev => ({
+                                ...prev,
+                                contactInfo: { ...prev.contactInfo, name: e.target.value }
+                              }))
+                            )}
                             className="pl-10 border-gray-300 rounded-lg"
                           />
                         </div>
+                        {validationErrors.name && (
+                          <div className="text-red-500 text-sm mt-1">{validationErrors.name}</div>
+                        )}
                       </div>
 
                       <div>
@@ -997,14 +1270,19 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                             type="email"
                             placeholder={textConfig?.emailPlaceholder || "your.email@example.com"}
                             value={formData.contactInfo.email}
-                            onChange={(e) => setFormData(prev => ({
-                              ...prev,
-                              contactInfo: { ...prev.contactInfo, email: e.target.value }
-                            }))}
+                            onChange={(e) => handleFieldChange('email', e.target.value, () =>
+                              setFormData(prev => ({
+                                ...prev,
+                                contactInfo: { ...prev.contactInfo, email: e.target.value }
+                              }))
+                            )}
                             className="pl-10 border-gray-300 rounded-lg"
                             required
                           />
                         </div>
+                        {validationErrors.email && (
+                          <div className="text-red-500 text-sm mt-1">{validationErrors.email}</div>
+                        )}
                       </div>
 
                       <div>
@@ -1047,7 +1325,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                       />
                     </Button>
                     <Button
-                      onClick={() => setIsQuoteLocked(true)}
+                      onClick={handleGetQuote}
                       disabled={!formData.contactInfo.email}
                       className="bg-green-500 hover:bg-green-600 text-white px-8 font-semibold rounded-lg"
                     >
@@ -1060,7 +1338,6 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                     </Button>
                   </div>
                 </div>
-              )}
             </Card>
           </div>
 

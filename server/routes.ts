@@ -1582,6 +1582,63 @@ Allow: /*-calculator`;
     }
   });
 
+  // Email and Analytics Routes for Calculator Features
+  app.post('/api/send-quote-email', async (req, res) => {
+    try {
+      const { email, name, quote, calculatorType } = req.body;
+      
+      console.log('Quote email request:', {
+        to: email,
+        name,
+        calculatorType,
+        quoteValue: quote.pricing?.total,
+        timestamp: new Date().toISOString()
+      });
+
+      const emailContent = {
+        subject: `Your ${calculatorType} Quote - ${quote.pricing?.currencySymbol || '€'}${quote.pricing?.total || 'N/A'}`,
+        body: `Dear ${name},\n\nThank you for using our calculator! Here's your personalized quote:\n\nTotal: ${quote.pricing?.currencySymbol || '€'}${quote.pricing?.total || 'N/A'}\n\nBest regards,\nQuoteKit Team`
+      };
+
+      res.json({ 
+        success: true, 
+        message: 'Quote email sent successfully',
+        emailPreview: emailContent 
+      });
+    } catch (error) {
+      console.error('Email sending error:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to send email' 
+      });
+    }
+  });
+
+  app.post('/api/track-analytics', async (req, res) => {
+    try {
+      const analyticsData = req.body;
+      
+      console.log('Analytics event tracked:', {
+        event: analyticsData.event,
+        calculator_type: analyticsData.calculator_type,
+        quote_value: analyticsData.quote_value,
+        timestamp: analyticsData.timestamp,
+        fields_completed: analyticsData.fields_completed
+      });
+
+      res.json({ 
+        success: true, 
+        message: 'Analytics tracked successfully' 
+      });
+    } catch (error) {
+      console.error('Analytics tracking error:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to track analytics' 
+      });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

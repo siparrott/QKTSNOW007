@@ -844,6 +844,26 @@ export default function Dashboard() {
       const newDurations = [...(customConfig.durationPrices || [])];
       newDurations[index] = { ...newDurations[index], icon };
       setCustomConfig({...customConfig, durationPrices: newDurations});
+    } else if (type === 'group') {
+      const newGroups = [...(customConfig.groupPrices || [])];
+      newGroups[index] = { ...newGroups[index], icon };
+      setCustomConfig({...customConfig, groupPrices: newGroups});
+    } else if (type === 'location') {
+      const newLocations = [...(customConfig.locationPrices || [])];
+      newLocations[index] = { ...newLocations[index], icon };
+      setCustomConfig({...customConfig, locationPrices: newLocations});
+    } else if (type === 'wardrobe') {
+      const newWardrobe = [...(customConfig.wardrobePrices || [])];
+      newWardrobe[index] = { ...newWardrobe[index], icon };
+      setCustomConfig({...customConfig, wardrobePrices: newWardrobe});
+    } else if (type === 'usage') {
+      const newUsage = [...(customConfig.usagePrices || [])];
+      newUsage[index] = { ...newUsage[index], icon };
+      setCustomConfig({...customConfig, usagePrices: newUsage});
+    } else if (type === 'sessionDuration') {
+      const newSessionDurations = [...(customConfig.sessionDurations || [])];
+      newSessionDurations[index] = { ...newSessionDurations[index], icon };
+      setCustomConfig({...customConfig, sessionDurations: newSessionDurations});
     }
     
     setShowIconGallery(false);
@@ -1479,28 +1499,44 @@ export default function Dashboard() {
                               { id: "1-hour", label: "1 hour", price: 75, icon: "🕐" },
                               { id: "2-hours", label: "2 hours", price: 150, icon: "⏱️" }
                             ]).map((duration, index) => (
-                              <div key={index} className="grid grid-cols-2 gap-2">
-                                <Input
-                                  placeholder="Duration Label"
-                                  value={duration.label}
-                                  onChange={(e) => {
-                                    const newDurations = [...(customConfig.sessionDurations || [])];
-                                    newDurations[index] = { ...duration, label: e.target.value };
-                                    setCustomConfig({...customConfig, sessionDurations: newDurations});
+                              <div key={index} className="flex gap-2 items-center">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setIconEditingIndex({type: 'sessionDuration', index});
+                                    setShowIconGallery(true);
                                   }}
-                                  className="bg-midnight-900 border-midnight-600 text-white text-xs"
-                                />
-                                <Input
-                                  type="number"
-                                  placeholder="Extra Price (€)"
-                                  value={duration.price}
-                                  onChange={(e) => {
-                                    const newDurations = [...(customConfig.sessionDurations || [])];
-                                    newDurations[index] = { ...duration, price: Number(e.target.value) || 0 };
-                                    setCustomConfig({...customConfig, sessionDurations: newDurations});
-                                  }}
-                                  className="bg-midnight-900 border-midnight-600 text-white text-xs"
-                                />
+                                  className="w-8 h-8 p-0 text-lg hover:bg-midnight-700 border border-midnight-600"
+                                  title="Change icon"
+                                >
+                                  {duration.icon || "⏰"}
+                                </Button>
+                                <div className="flex-1">
+                                  <Input
+                                    placeholder="Duration Label"
+                                    value={duration.label}
+                                    onChange={(e) => {
+                                      const newDurations = [...(customConfig.sessionDurations || [])];
+                                      newDurations[index] = { ...duration, label: e.target.value };
+                                      setCustomConfig({...customConfig, sessionDurations: newDurations});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                                <div className="w-20">
+                                  <Input
+                                    type="number"
+                                    placeholder="Extra Price (€)"
+                                    value={duration.price}
+                                    onChange={(e) => {
+                                      const newDurations = [...(customConfig.sessionDurations || [])];
+                                      newDurations[index] = { ...duration, price: Number(e.target.value) || 0 };
+                                      setCustomConfig({...customConfig, sessionDurations: newDurations});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
                               </div>
                             ))}
                           </div>
@@ -1518,28 +1554,44 @@ export default function Dashboard() {
                               { id: "senior", label: "Senior / Graduation", price: 0, icon: "🎓" },
                               { id: "branding", label: "Branding / Business", price: 80, icon: "💼" }
                             ]).map((group, index) => (
-                              <div key={index} className="grid grid-cols-2 gap-2">
-                                <Input
-                                  placeholder="Group Type"
-                                  value={group.label}
-                                  onChange={(e) => {
-                                    const newGroups = [...(customConfig.groupPrices || [])];
-                                    newGroups[index] = { ...group, label: e.target.value };
-                                    setCustomConfig({...customConfig, groupPrices: newGroups});
+                              <div key={index} className="flex gap-2 items-center">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setIconEditingIndex({type: 'group', index});
+                                    setShowIconGallery(true);
                                   }}
-                                  className="bg-midnight-900 border-midnight-600 text-white text-xs"
-                                />
-                                <Input
-                                  type="number"
-                                  placeholder="Extra Price (€)"
-                                  value={group.price}
-                                  onChange={(e) => {
-                                    const newGroups = [...(customConfig.groupPrices || [])];
-                                    newGroups[index] = { ...group, price: Number(e.target.value) || 0 };
-                                    setCustomConfig({...customConfig, groupPrices: newGroups});
-                                  }}
-                                  className="bg-midnight-900 border-midnight-600 text-white text-xs"
-                                />
+                                  className="w-8 h-8 p-0 text-lg hover:bg-midnight-700 border border-midnight-600"
+                                  title="Change icon"
+                                >
+                                  {group.icon || "👤"}
+                                </Button>
+                                <div className="flex-1">
+                                  <Input
+                                    placeholder="Group Type"
+                                    value={group.label}
+                                    onChange={(e) => {
+                                      const newGroups = [...(customConfig.groupPrices || [])];
+                                      newGroups[index] = { ...group, label: e.target.value };
+                                      setCustomConfig({...customConfig, groupPrices: newGroups});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                                <div className="w-20">
+                                  <Input
+                                    type="number"
+                                    placeholder="Extra Price (€)"
+                                    value={group.price}
+                                    onChange={(e) => {
+                                      const newGroups = [...(customConfig.groupPrices || [])];
+                                      newGroups[index] = { ...group, price: Number(e.target.value) || 0 };
+                                      setCustomConfig({...customConfig, groupPrices: newGroups});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
                               </div>
                             ))}
                           </div>
@@ -1555,28 +1607,44 @@ export default function Dashboard() {
                               { id: "outdoor", label: "Outdoor", price: 60, icon: "🌳" },
                               { id: "client-location", label: "Client's Home / Office", price: 60, icon: "🏠" }
                             ]).map((location, index) => (
-                              <div key={index} className="grid grid-cols-2 gap-2">
-                                <Input
-                                  placeholder="Location Type"
-                                  value={location.label}
-                                  onChange={(e) => {
-                                    const newLocations = [...(customConfig.locationPrices || [])];
-                                    newLocations[index] = { ...location, label: e.target.value };
-                                    setCustomConfig({...customConfig, locationPrices: newLocations});
+                              <div key={index} className="flex gap-2 items-center">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setIconEditingIndex({type: 'location', index});
+                                    setShowIconGallery(true);
                                   }}
-                                  className="bg-midnight-900 border-midnight-600 text-white text-xs"
-                                />
-                                <Input
-                                  type="number"
-                                  placeholder="Extra Price (€)"
-                                  value={location.price}
-                                  onChange={(e) => {
-                                    const newLocations = [...(customConfig.locationPrices || [])];
-                                    newLocations[index] = { ...location, price: Number(e.target.value) || 0 };
-                                    setCustomConfig({...customConfig, locationPrices: newLocations});
-                                  }}
-                                  className="bg-midnight-900 border-midnight-600 text-white text-xs"
-                                />
+                                  className="w-8 h-8 p-0 text-lg hover:bg-midnight-700 border border-midnight-600"
+                                  title="Change icon"
+                                >
+                                  {location.icon || "🏢"}
+                                </Button>
+                                <div className="flex-1">
+                                  <Input
+                                    placeholder="Location Type"
+                                    value={location.label}
+                                    onChange={(e) => {
+                                      const newLocations = [...(customConfig.locationPrices || [])];
+                                      newLocations[index] = { ...location, label: e.target.value };
+                                      setCustomConfig({...customConfig, locationPrices: newLocations});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                                <div className="w-20">
+                                  <Input
+                                    type="number"
+                                    placeholder="Extra Price (€)"
+                                    value={location.price}
+                                    onChange={(e) => {
+                                      const newLocations = [...(customConfig.locationPrices || [])];
+                                      newLocations[index] = { ...location, price: Number(e.target.value) || 0 };
+                                      setCustomConfig({...customConfig, locationPrices: newLocations});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
                               </div>
                             ))}
                           </div>
@@ -1592,28 +1660,44 @@ export default function Dashboard() {
                               { id: "2", label: "2 Outfits", price: 40, icon: "👔" },
                               { id: "3+", label: "3+ Outfits", price: 80, icon: "👗" }
                             ]).map((wardrobe, index) => (
-                              <div key={index} className="grid grid-cols-2 gap-2">
-                                <Input
-                                  placeholder="Outfit Option"
-                                  value={wardrobe.label}
-                                  onChange={(e) => {
-                                    const newWardrobe = [...(customConfig.wardrobePrices || [])];
-                                    newWardrobe[index] = { ...wardrobe, label: e.target.value };
-                                    setCustomConfig({...customConfig, wardrobePrices: newWardrobe});
+                              <div key={index} className="flex gap-2 items-center">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setIconEditingIndex({type: 'wardrobe', index});
+                                    setShowIconGallery(true);
                                   }}
-                                  className="bg-midnight-900 border-midnight-600 text-white text-xs"
-                                />
-                                <Input
-                                  type="number"
-                                  placeholder="Extra Price (€)"
-                                  value={wardrobe.price}
-                                  onChange={(e) => {
-                                    const newWardrobe = [...(customConfig.wardrobePrices || [])];
-                                    newWardrobe[index] = { ...wardrobe, price: Number(e.target.value) || 0 };
-                                    setCustomConfig({...customConfig, wardrobePrices: newWardrobe});
-                                  }}
-                                  className="bg-midnight-900 border-midnight-600 text-white text-xs"
-                                />
+                                  className="w-8 h-8 p-0 text-lg hover:bg-midnight-700 border border-midnight-600"
+                                  title="Change icon"
+                                >
+                                  {wardrobe.icon || "👕"}
+                                </Button>
+                                <div className="flex-1">
+                                  <Input
+                                    placeholder="Outfit Option"
+                                    value={wardrobe.label}
+                                    onChange={(e) => {
+                                      const newWardrobe = [...(customConfig.wardrobePrices || [])];
+                                      newWardrobe[index] = { ...wardrobe, label: e.target.value };
+                                      setCustomConfig({...customConfig, wardrobePrices: newWardrobe});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                                <div className="w-20">
+                                  <Input
+                                    type="number"
+                                    placeholder="Extra Price (€)"
+                                    value={wardrobe.price}
+                                    onChange={(e) => {
+                                      const newWardrobe = [...(customConfig.wardrobePrices || [])];
+                                      newWardrobe[index] = { ...wardrobe, price: Number(e.target.value) || 0 };
+                                      setCustomConfig({...customConfig, wardrobePrices: newWardrobe});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
                               </div>
                             ))}
                           </div>
@@ -1668,28 +1752,44 @@ export default function Dashboard() {
                               { id: "personal", label: "Personal Use", price: 0, icon: "🏠" },
                               { id: "commercial", label: "Commercial / Branding", price: 120, icon: "💼" }
                             ]).map((usage, index) => (
-                              <div key={index} className="grid grid-cols-2 gap-2">
-                                <Input
-                                  placeholder="Usage Type"
-                                  value={usage.label}
-                                  onChange={(e) => {
-                                    const newUsage = [...(customConfig.usagePrices || [])];
-                                    newUsage[index] = { ...usage, label: e.target.value };
-                                    setCustomConfig({...customConfig, usagePrices: newUsage});
+                              <div key={index} className="flex gap-2 items-center">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setIconEditingIndex({type: 'usage', index});
+                                    setShowIconGallery(true);
                                   }}
-                                  className="bg-midnight-900 border-midnight-600 text-white text-xs"
-                                />
-                                <Input
-                                  type="number"
-                                  placeholder="Extra Price (€)"
-                                  value={usage.price}
-                                  onChange={(e) => {
-                                    const newUsage = [...(customConfig.usagePrices || [])];
-                                    newUsage[index] = { ...usage, price: Number(e.target.value) || 0 };
-                                    setCustomConfig({...customConfig, usagePrices: newUsage});
-                                  }}
-                                  className="bg-midnight-900 border-midnight-600 text-white text-xs"
-                                />
+                                  className="w-8 h-8 p-0 text-lg hover:bg-midnight-700 border border-midnight-600"
+                                  title="Change icon"
+                                >
+                                  {usage.icon || "🏠"}
+                                </Button>
+                                <div className="flex-1">
+                                  <Input
+                                    placeholder="Usage Type"
+                                    value={usage.label}
+                                    onChange={(e) => {
+                                      const newUsage = [...(customConfig.usagePrices || [])];
+                                      newUsage[index] = { ...usage, label: e.target.value };
+                                      setCustomConfig({...customConfig, usagePrices: newUsage});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                                <div className="w-20">
+                                  <Input
+                                    type="number"
+                                    placeholder="Extra Price (€)"
+                                    value={usage.price}
+                                    onChange={(e) => {
+                                      const newUsage = [...(customConfig.usagePrices || [])];
+                                      newUsage[index] = { ...usage, price: Number(e.target.value) || 0 };
+                                      setCustomConfig({...customConfig, usagePrices: newUsage});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
                               </div>
                             ))}
                           </div>
@@ -3318,6 +3418,16 @@ export default function Dashboard() {
                 ? customConfig.addOnPrices?.[iconEditingIndex.index]?.icon 
                 : iconEditingIndex.type === 'duration'
                 ? customConfig.durationPrices?.[iconEditingIndex.index]?.icon
+                : iconEditingIndex.type === 'group'
+                ? customConfig.groupPrices?.[iconEditingIndex.index]?.icon
+                : iconEditingIndex.type === 'location'
+                ? customConfig.locationPrices?.[iconEditingIndex.index]?.icon
+                : iconEditingIndex.type === 'wardrobe'
+                ? customConfig.wardrobePrices?.[iconEditingIndex.index]?.icon
+                : iconEditingIndex.type === 'usage'
+                ? customConfig.usagePrices?.[iconEditingIndex.index]?.icon
+                : iconEditingIndex.type === 'sessionDuration'
+                ? customConfig.sessionDurations?.[iconEditingIndex.index]?.icon
                 : undefined)
             : undefined
         }

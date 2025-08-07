@@ -385,8 +385,36 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
     }
     
     // Apply border radius
-    if (config.styling?.borderRadius) {
-      document.documentElement.style.setProperty('--radius', config.styling.borderRadius);
+    if (config.borderRadius !== undefined) {
+      document.documentElement.style.setProperty('--radius', `${config.borderRadius}px`);
+      // Apply to cards and buttons
+      const cards = document.querySelectorAll('.card, .calculator-card');
+      cards.forEach(card => {
+        (card as HTMLElement).style.borderRadius = `${config.borderRadius}px`;
+      });
+    }
+    
+    // Apply shadow intensity
+    if (config.shadowIntensity !== undefined) {
+      const shadowValue = config.shadowIntensity / 100; // Convert percentage to opacity
+      document.documentElement.style.setProperty('--shadow-intensity', shadowValue.toString());
+      
+      // Apply dynamic shadow to cards
+      const cards = document.querySelectorAll('.card, .calculator-card');
+      cards.forEach(card => {
+        (card as HTMLElement).style.boxShadow = `0 ${Math.round(shadowValue * 25)}px ${Math.round(shadowValue * 50)}px rgba(0, 0, 0, ${shadowValue * 0.1})`;
+      });
+    }
+    
+    // Apply custom CSS
+    if (config.customCSS) {
+      let styleElement = document.getElementById('calculator-custom-css');
+      if (!styleElement) {
+        styleElement = document.createElement('style');
+        styleElement.id = 'calculator-custom-css';
+        document.head.appendChild(styleElement);
+      }
+      styleElement.textContent = config.customCSS;
     }
     
     // Update text config
@@ -723,11 +751,14 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
   }) => (
     <div
       onClick={onClick}
-      className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all hover:shadow-lg ${
+      className={`relative p-4 border-2 cursor-pointer transition-all hover:shadow-lg ${
         selected 
           ? "border-rose-400 bg-gradient-to-br from-rose-50 to-pink-50 shadow-lg" 
           : "border-gray-200 hover:border-rose-300 bg-white"
       }`}
+      style={{
+        borderRadius: `${customConfig?.borderRadius || 12}px`
+      }}
     >
       {popular && (
         <Badge className="absolute -top-2 -right-2 bg-rose-500 text-white text-xs font-semibold">
@@ -810,7 +841,15 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
         <div className={`${customConfig?.layout === 'horizontal' ? 'calculator-grid' : 'grid grid-cols-1 lg:grid-cols-3'} gap-8`}>
           {/* Main Form */}
           <div className={customConfig?.layout === 'horizontal' ? '' : 'lg:col-span-2'}>
-            <Card className="p-8 bg-white/90 backdrop-blur-sm border-gray-200 rounded-2xl shadow-xl">
+            <Card 
+              className="calculator-card p-8 bg-white/90 backdrop-blur-sm border-gray-200 shadow-xl"
+              style={{
+                borderRadius: `${customConfig?.borderRadius || 16}px`,
+                boxShadow: customConfig?.shadowIntensity !== undefined 
+                  ? `0 ${Math.round((customConfig.shadowIntensity / 100) * 25)}px ${Math.round((customConfig.shadowIntensity / 100) * 50)}px rgba(0, 0, 0, ${(customConfig.shadowIntensity / 100) * 0.1})`
+                  : undefined
+              }}
+            >
               {/* Progress Bar */}
               {customConfig?.layout === 'wizard' && customConfig?.showProgressBar !== false && (
                 <div className="mb-8">
@@ -1343,7 +1382,15 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
 
           {/* Pricing Sidebar */}
           <div className="lg:col-span-1">
-            <Card className="p-6 bg-white/95 backdrop-blur-sm border-gray-200 rounded-2xl shadow-xl sticky top-8">
+            <Card 
+              className="calculator-card p-6 bg-white/95 backdrop-blur-sm border-gray-200 shadow-xl sticky top-8"
+              style={{
+                borderRadius: `${customConfig?.borderRadius || 16}px`,
+                boxShadow: customConfig?.shadowIntensity !== undefined 
+                  ? `0 ${Math.round((customConfig.shadowIntensity / 100) * 20)}px ${Math.round((customConfig.shadowIntensity / 100) * 40)}px rgba(0, 0, 0, ${(customConfig.shadowIntensity / 100) * 0.08})`
+                  : undefined
+              }}
+            >
               <h3 className="text-xl font-display text-gray-800 mb-4">
                 <EditableText
                   value={textConfig?.priceCardTitle || "Your Portrait Session"}

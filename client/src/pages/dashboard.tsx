@@ -2499,8 +2499,95 @@ export default function Dashboard() {
                       </div>
                     </div>
 
+                    {/* Form Behavior */}
+                    <div>
+                      <h3 className="text-white font-medium mb-4 flex items-center">
+                        <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
+                        <Zap className="h-4 w-4 mr-2" />
+                        Form Behavior
+                      </h3>
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <Label className="text-gray-300">Real-time Updates</Label>
+                          <Switch
+                            checked={customConfig.realTimeUpdates !== false}
+                            onCheckedChange={(checked) => setCustomConfig({...customConfig, realTimeUpdates: checked})}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Label className="text-gray-300">Show Progress Bar</Label>
+                          <Switch
+                            checked={customConfig.showProgress || false}
+                            onCheckedChange={(checked) => setCustomConfig({...customConfig, showProgress: checked})}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Label className="text-gray-300">Required Field Validation</Label>
+                          <Switch
+                            checked={customConfig.validation !== false}
+                            onCheckedChange={(checked) => setCustomConfig({...customConfig, validation: checked})}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Animation Speed</Label>
+                          <Select value={customConfig.animationSpeed || 'normal'} onValueChange={(value) => setCustomConfig({...customConfig, animationSpeed: value})}>
+                            <SelectTrigger className="bg-midnight-900 border-midnight-600 text-white">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="slow">Slow</SelectItem>
+                              <SelectItem value="normal">Normal</SelectItem>
+                              <SelectItem value="fast">Fast</SelectItem>
+                              <SelectItem value="none">No Animation</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
 
-
+                    {/* Notifications & Analytics */}
+                    <div>
+                      <h3 className="text-white font-medium mb-4 flex items-center">
+                        <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
+                        <Bell className="h-4 w-4 mr-2" />
+                        Notifications & Analytics
+                      </h3>
+                      <div className="space-y-4">
+                        <div>
+                          <Label className="text-gray-300">Email Notifications</Label>
+                          <Input
+                            value={customConfig.notificationEmail || ''}
+                            onChange={(e) => setCustomConfig({...customConfig, notificationEmail: e.target.value})}
+                            placeholder="your@email.com"
+                            type="email"
+                            className="bg-midnight-900 border-midnight-600 text-white"
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Label className="text-gray-300">Track Conversions</Label>
+                          <Switch
+                            checked={customConfig.trackConversions !== false}
+                            onCheckedChange={(checked) => setCustomConfig({...customConfig, trackConversions: checked})}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Label className="text-gray-300">Capture Lead Info</Label>
+                          <Switch
+                            checked={customConfig.captureLeads || false}
+                            onCheckedChange={(checked) => setCustomConfig({...customConfig, captureLeads: checked})}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Google Analytics ID</Label>
+                          <Input
+                            value={customConfig.googleAnalytics || ''}
+                            onChange={(e) => setCustomConfig({...customConfig, googleAnalytics: e.target.value})}
+                            placeholder="GA4-XXXXXXXXXX"
+                            className="bg-midnight-900 border-midnight-600 text-white"
+                          />
+                        </div>
+                      </div>
+                    </div>
 
                   </div>
                 </div>

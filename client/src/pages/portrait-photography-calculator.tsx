@@ -920,12 +920,18 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Full Name
+                          <EditableText
+                            value={textConfig?.fullNameLabel || "Full Name"}
+                            onSave={(value) => updateTextContent('fullNameLabel', value)}
+                            isPreview={isPreview}
+                            placeholder="Full Name"
+                            className="text-sm font-medium text-gray-700"
+                          />
                         </label>
                         <div className="relative">
                           <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                           <Input
-                            placeholder="Your full name"
+                            placeholder={textConfig?.fullNamePlaceholder || "Your full name"}
                             value={formData.contactInfo.name}
                             onChange={(e) => setFormData(prev => ({
                               ...prev,
@@ -938,13 +944,19 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Email Address *
+                          <EditableText
+                            value={textConfig?.emailLabel || "Email Address *"}
+                            onSave={(value) => updateTextContent('emailLabel', value)}
+                            isPreview={isPreview}
+                            placeholder="Email Address *"
+                            className="text-sm font-medium text-gray-700"
+                          />
                         </label>
                         <div className="relative">
                           <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                           <Input
                             type="email"
-                            placeholder="your.email@example.com"
+                            placeholder={textConfig?.emailPlaceholder || "your.email@example.com"}
                             value={formData.contactInfo.email}
                             onChange={(e) => setFormData(prev => ({
                               ...prev,
@@ -958,12 +970,18 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Phone Number
+                          <EditableText
+                            value={textConfig?.phoneLabel || "Phone Number"}
+                            onSave={(value) => updateTextContent('phoneLabel', value)}
+                            isPreview={isPreview}
+                            placeholder="Phone Number"
+                            className="text-sm font-medium text-gray-700"
+                          />
                         </label>
                         <div className="relative">
                           <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                           <Input
-                            placeholder="+353 xxx xxx xxx"
+                            placeholder={textConfig?.phonePlaceholder || "+353 xxx xxx xxx"}
                             value={formData.contactInfo.phone}
                             onChange={(e) => setFormData(prev => ({
                               ...prev,
@@ -982,14 +1000,24 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                       variant="outline"
                       className="px-8 border-gray-300 text-gray-600 hover:bg-gray-50 rounded-lg"
                     >
-                      Previous
+                      <EditableText
+                        value={textConfig?.previousButton || "Previous"}
+                        onSave={(value) => updateTextContent('previousButton', value)}
+                        isPreview={isPreview}
+                        placeholder="Previous"
+                      />
                     </Button>
                     <Button
                       onClick={() => setIsQuoteLocked(true)}
                       disabled={!formData.contactInfo.email}
                       className="bg-green-500 hover:bg-green-600 text-white px-8 font-semibold rounded-lg"
                     >
-                      Get Quote
+                      <EditableText
+                        value={textConfig?.getQuoteButton || "Get Quote"}
+                        onSave={(value) => updateTextContent('getQuoteButton', value)}
+                        isPreview={isPreview}
+                        placeholder="Get Quote"
+                      />
                     </Button>
                   </div>
                 </div>
@@ -1002,7 +1030,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
             <Card className="p-6 bg-white/95 backdrop-blur-sm border-gray-200 rounded-2xl shadow-xl sticky top-8">
               <h3 className="text-xl font-display text-gray-800 mb-4">
                 <EditableText
-                  text={textConfig?.priceCardTitle || "Your Portrait Session"}
+                  value={textConfig?.priceCardTitle || "Your Portrait Session"}
                   onSave={(value) => updateTextContent('priceCardTitle', value)}
                   isPreview={isPreview}
                   placeholder="Your Portrait Session"
@@ -1040,7 +1068,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                 <div className="mt-6 pt-6 border-t border-gray-200">
                   <div className="text-center space-y-4">
                     <EditableText
-                      text={textConfig?.bookingTitle || "Ready to Book Your Portrait?"}
+                      value={textConfig?.bookingTitle || "Ready to Book Your Portrait?"}
                       onSave={(value) => updateTextContent('bookingTitle', value)}
                       isPreview={isPreview}
                       placeholder="Ready to Book Your Portrait?"
@@ -1048,7 +1076,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                     />
                     <p className="text-sm text-gray-600">
                       <EditableText
-                        text={textConfig?.bookingDescription || "This quote is valid for 72 hours. Let's create beautiful portraits that capture your essence."}
+                        value={textConfig?.bookingDescription || "This quote is valid for 72 hours. Let's create beautiful portraits that capture your essence."}
                         onSave={(value) => updateTextContent('bookingDescription', value)}
                         isPreview={isPreview}
                         placeholder="This quote is valid for 72 hours. Let's create beautiful portraits that capture your essence."
@@ -1067,7 +1095,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                       }}
                     >
                       <EditableText
-                        text={textConfig?.bookingButtonText || "📸 Book My Portrait"}
+                        value={textConfig?.bookingButtonText || "📸 Book My Portrait"}
                         onSave={(value) => updateTextContent('bookingButtonText', value)}
                         isPreview={isPreview}
                         placeholder="📸 Book My Portrait"
@@ -1079,7 +1107,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                       <div className="flex items-center">
                         <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
                         <EditableText
-                          text={textConfig?.qualityBadge || "Professional Quality"}
+                          value={textConfig?.qualityBadge || "Professional Quality"}
                           onSave={(value) => updateTextContent('qualityBadge', value)}
                           isPreview={isPreview}
                           placeholder="Professional Quality"
@@ -1089,7 +1117,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                       <div className="flex items-center">
                         <div className="w-2 h-2 bg-rose-500 rounded-full mr-1"></div>
                         <EditableText
-                          text={textConfig?.previewBadge || "Same-Day Preview"}
+                          value={textConfig?.previewBadge || "Same-Day Preview"}
                           onSave={(value) => updateTextContent('previewBadge', value)}
                           isPreview={isPreview}
                           placeholder="Same-Day Preview"

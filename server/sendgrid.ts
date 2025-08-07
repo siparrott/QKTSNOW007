@@ -1,12 +1,11 @@
-import { MailService } from '@sendgrid/mail';
+import sgMail from '@sendgrid/mail';
 
 if (!process.env.SENDGRID_API_KEY) {
   console.warn("SENDGRID_API_KEY environment variable not set - emails will be logged to console only");
 }
 
-const mailService = new MailService();
 if (process.env.SENDGRID_API_KEY) {
-  mailService.setApiKey(process.env.SENDGRID_API_KEY);
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 }
 
 interface EmailParams {
@@ -29,7 +28,7 @@ export async function sendEmail(params: EmailParams): Promise<boolean> {
   }
 
   try {
-    await mailService.send({
+    await sgMail.send({
       to: params.to,
       from: params.from,
       subject: params.subject,
@@ -48,7 +47,7 @@ export async function sendEmail(params: EmailParams): Promise<boolean> {
 export function generateQuoteEmailHTML(
   customerName: string,
   quoteDetails: any,
-  businessName: string = "Portrait Photography Studio"
+  businessName = "Portrait Photography Studio"
 ): string {
   return `
     <!DOCTYPE html>

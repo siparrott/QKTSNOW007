@@ -21,7 +21,9 @@ import {
   Eye,
   Edit,
   Trash2,
-  RefreshCw
+  RefreshCw,
+  Wand2,
+  BookOpen
 } from "lucide-react";
 import {
   Chart as ChartJS,
@@ -36,6 +38,7 @@ import {
   ArcElement,
 } from 'chart.js';
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
+import AdminAutoBlog from '@/pages/admin-autoblog';
 
 ChartJS.register(
   CategoryScale,
@@ -313,7 +316,7 @@ export default function AdminDashboard() {
       {/* Content */}
       <div className="p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="overview" className="flex items-center space-x-2">
               <BarChart3 className="h-4 w-4" />
               <span>Overview</span>
@@ -325,6 +328,10 @@ export default function AdminDashboard() {
             <TabsTrigger value="calculators" className="flex items-center space-x-2">
               <Calculator className="h-4 w-4" />
               <span>Calculators</span>
+            </TabsTrigger>
+            <TabsTrigger value="autoblog" className="flex items-center space-x-2">
+              <Wand2 className="h-4 w-4" />
+              <span>AutoBlog</span>
             </TabsTrigger>
             <TabsTrigger value="revenue" className="flex items-center space-x-2">
               <DollarSign className="h-4 w-4" />
@@ -521,6 +528,10 @@ export default function AdminDashboard() {
               <h3 className="text-lg font-medium text-gray-900 mb-2">Support Tickets</h3>
               <p className="text-gray-500">Manage customer support and tickets</p>
             </div>
+          </TabsContent>
+
+          <TabsContent value="autoblog">
+            <AdminAutoBlog />
           </TabsContent>
 
           <TabsContent value="settings">

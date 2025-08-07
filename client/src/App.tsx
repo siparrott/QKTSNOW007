@@ -21,6 +21,8 @@ import EmbedCalculator from "@/components/embed-calculator";
 import Profile from "@/pages/profile";
 import TwoFactorSetup from "@/pages/two-factor-setup";
 import TwoFactorVerify from "@/pages/two-factor-verify";
+import Blogs from "@/pages/blogs";
+import BlogPost from "@/pages/blog-post";
 import { useEffect } from "react";
 import { initGA } from "./lib/analytics";
 import { useAnalytics } from "./hooks/use-analytics";
@@ -71,6 +73,10 @@ function Router() {
       <Route path="/two-factor-setup" component={TwoFactorSetup} />
       <Route path="/two-factor-verify" component={TwoFactorVerify} />
       <Route path="/admin" component={AdminDashboard} />
+      
+      {/* Blog pages */}
+      <Route path="/blogs" component={Blogs} />
+      <Route path="/blog/:slug" component={BlogPost} />
       
       {/* Fallback routes */}
       <Route path="/niches/:niche" component={NotFound} />

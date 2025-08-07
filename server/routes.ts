@@ -12,12 +12,15 @@ import { processChildcareRequest } from "./childcare-ai";
 import { processPlasticSurgeryRequest } from "./plastic-surgery-ai";
 import { processChildcareServicesRequest } from "./childcare-services-ai";
 import { processPrivateMedicalRequest } from "./private-medical-ai";
+import { openaiService } from "./openai-service";
 import { 
   insertUserSchema, 
   insertLeadSchema,
   insertUserCalculatorSchema,
   registerUserSchema,
-  loginUserSchema
+  loginUserSchema,
+  insertBlogPostSchema,
+  updateBlogPostSchema
 } from "@shared/schema";
 import { sql } from "@shared/supabase";
 import Stripe from 'stripe';
@@ -1654,6 +1657,106 @@ Allow: /*-calculator`;
         success: false, 
         error: 'Failed to track analytics' 
       });
+    }
+  });
+
+  // Blog API Routes
+  
+  // Generate blog post using AI
+  app.post("/api/admin/blog-posts/generate", requireAuth, async (req, res) => {
+    try {
+      const { images, contentGuidance, language, websiteUrl, customSlug } = req.body;
+      
+      if (!images || !Array.isArray(images) || images.length === 0) {
+        return res.status(400).json({ error: "At least one image is required" });
+      }
+
+      const result = await openaiService.generateBlogPost({
+        images,
+        contentGuidance: contentGuidance || "",
+        language: language || "en",
+        websiteUrl: websiteUrl || "",
+        customSlug,
+      });
+
+      res.json(result);
+    } catch (error) {
+      console.error("Blog generation error:", error);
+      res.status(500).json({ error: "Failed to generate blog post" });
+    }
+  });
+
+  // Get all blog posts (admin)
+  app.get("/api/admin/blog-posts", requireAuth, async (req, res) => {
+    try {
+      const posts = await storage.getAllBlogPosts();
+      res.json(posts);
+    } catch (error) {
+      console.error("Blog posts fetch error:", error);
+      res.status(500).json({ error: "Failed to fetch blog posts" });
+    }
+  });
+
+  // Get published blog posts (public)
+  app.get("/api/blog-posts", async (req, res) => {
+    try {
+      const posts = await storage.getPublishedBlogPosts();
+      res.json(posts);
+    } catch (error) {
+      console.error("Blog posts fetch error:", error);
+      res.status(500).json({ error: "Failed to fetch blog posts" });
+    }
+  });
+
+  // Get blog post by slug (public)
+  app.get("/api/blog-posts/:slug", async (req, res) => {
+    try {
+      const { slug } = req.params;
+      const post = await storage.getBlogPostBySlug(slug);
+      if (!post || post.status !== "published") {
+        return res.status(404).json({ error: "Blog post not found" });
+      }
+      res.json(post);
+    } catch (error) {
+      console.error("Blog post fetch error:", error);
+      res.status(500).json({ error: "Failed to fetch blog post" });
+    }
+  });
+
+  // Create blog post
+  app.post("/api/admin/blog-posts", requireAuth, async (req, res) => {
+    try {
+      const blogPostData = insertBlogPostSchema.parse(req.body);
+      const post = await storage.createBlogPost(blogPostData);
+      res.status(201).json(post);
+    } catch (error) {
+      console.error("Blog post creation error:", error);
+      res.status(500).json({ error: "Failed to create blog post" });
+    }
+  });
+
+  // Update blog post
+  app.patch("/api/admin/blog-posts/:id", requireAuth, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updateData = updateBlogPostSchema.parse(req.body);
+      const post = await storage.updateBlogPost(id, updateData);
+      res.json(post);
+    } catch (error) {
+      console.error("Blog post update error:", error);
+      res.status(500).json({ error: "Failed to update blog post" });
+    }
+  });
+
+  // Delete blog post
+  app.delete("/api/admin/blog-posts/:id", requireAuth, async (req, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deleteBlogPost(id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Blog post deletion error:", error);
+      res.status(500).json({ error: "Failed to delete blog post" });
     }
   });
 

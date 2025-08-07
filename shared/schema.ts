@@ -137,6 +137,30 @@ export const adminLogs = pgTable("admin_logs", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Blog Posts Table - AI Auto-Blogging System
+export const blogPosts = pgTable("blog_posts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  title: text("title").notNull(),
+  slug: text("slug").notNull().unique(),
+  content: text("content").notNull(),
+  excerpt: text("excerpt"),
+  featuredImage: text("featured_image"),
+  images: jsonb("images").default([]), // Array of image URLs used in the post
+  contentGuidance: text("content_guidance"), // User input for content direction
+  language: text("language").default("en"),
+  websiteUrl: text("website_url"),
+  customSlug: text("custom_slug"),
+  status: text("status").default("draft"), // draft, published, scheduled
+  publishedAt: timestamp("published_at"),
+  scheduledFor: timestamp("scheduled_for"),
+  seoTitle: text("seo_title"),
+  seoDescription: text("seo_description"),
+  tags: jsonb("tags").default([]),
+  readTime: integer("read_time"), // estimated reading time in minutes
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const affiliates = pgTable("affiliates", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
@@ -303,6 +327,30 @@ export const selectPromoCodeSchema = createSelectSchema(promoCodes);
 export const selectAdminLogSchema = createSelectSchema(adminLogs);
 export const selectAffiliateSchema = createSelectSchema(affiliates);
 export const selectPaymentSchema = createSelectSchema(payments);
+export const selectBlogPostSchema = createSelectSchema(blogPosts);
+
+// Blog post schemas
+export const insertBlogPostSchema = createInsertSchema(blogPosts).pick({
+  title: true,
+  slug: true,
+  content: true,
+  excerpt: true,
+  featuredImage: true,
+  images: true,
+  contentGuidance: true,
+  language: true,
+  websiteUrl: true,
+  customSlug: true,
+  status: true,
+  publishedAt: true,
+  scheduledFor: true,
+  seoTitle: true,
+  seoDescription: true,
+  tags: true,
+  readTime: true,
+});
+
+export const updateBlogPostSchema = insertBlogPostSchema.partial();
 
 // Type exports
 export type User = typeof users.$inferSelect;
@@ -318,6 +366,9 @@ export type PromoCode = typeof promoCodes.$inferSelect;
 export type AdminLog = typeof adminLogs.$inferSelect;
 export type Affiliate = typeof affiliates.$inferSelect;
 export type Payment = typeof payments.$inferSelect;
+export type BlogPost = typeof blogPosts.$inferSelect;
+export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;
+export type UpdateBlogPost = z.infer<typeof updateBlogPostSchema>;
 
 // Insert types
 export type InsertUser = z.infer<typeof insertUserSchema>;

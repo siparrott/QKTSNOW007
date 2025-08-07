@@ -6,12 +6,15 @@ import type {
   Lead, 
   Session,
   Subscription,
+  BlogPost,
   InsertUser, 
   InsertCalculator, 
   InsertUserCalculator, 
   InsertLead,
   InsertSession,
-  InsertSubscription
+  InsertSubscription,
+  InsertBlogPost,
+  UpdateBlogPost
 } from "@shared/schema";
 
 export interface IStorage {
@@ -55,6 +58,15 @@ export interface IStorage {
   disableTwoFactor(userId: string): Promise<User>;
   updateUserBackupCodes(userId: string, backupCodes: string[]): Promise<User>;
   
+  // Blog Posts
+  getAllBlogPosts(): Promise<BlogPost[]>;
+  getPublishedBlogPosts(): Promise<BlogPost[]>;
+  getBlogPostBySlug(slug: string): Promise<BlogPost | undefined>;
+  getBlogPost(id: string): Promise<BlogPost | undefined>;
+  createBlogPost(blogPost: InsertBlogPost): Promise<BlogPost>;
+  updateBlogPost(id: string, data: UpdateBlogPost): Promise<BlogPost>;
+  deleteBlogPost(id: string): Promise<void>;
+  
   // Admin operations
   getAllUsers(): Promise<User[]>;
   getAllCalculators(): Promise<Calculator[]>;
@@ -70,6 +82,7 @@ export class MemStorage implements IStorage {
   private leads: Map<string, Lead>;
   private sessions: Map<string, Session>;
   private subscriptions: Map<string, Subscription>;
+  private blogPosts: Map<string, BlogPost>;
   private currentCalculatorId: number;
 
   constructor() {
@@ -79,6 +92,7 @@ export class MemStorage implements IStorage {
     this.leads = new Map();
     this.sessions = new Map();
     this.subscriptions = new Map();
+    this.blogPosts = new Map();
     this.currentCalculatorId = 1;
     this.seedCalculators();
   }
@@ -1498,6 +1512,82 @@ export class MemStorage implements IStorage {
   async getActiveSubscriptionCount(): Promise<number> {
     const subscriptions = Array.from(this.subscriptions.values());
     return subscriptions.filter(sub => sub.status === 'active').length;
+  }
+
+  // Blog Posts implementation
+  async getAllBlogPosts(): Promise<BlogPost[]> {
+    return Array.from(this.blogPosts.values()).sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }
+
+  async getPublishedBlogPosts(): Promise<BlogPost[]> {
+    const allPosts = await this.getAllBlogPosts();
+    return allPosts.filter(post => post.status === "published");
+  }
+
+  async getBlogPostBySlug(slug: string): Promise<BlogPost | undefined> {
+    for (const post of this.blogPosts.values()) {
+      if (post.slug === slug) {
+        return post;
+      }
+    }
+    return undefined;
+  }
+
+  async getBlogPost(id: string): Promise<BlogPost | undefined> {
+    return this.blogPosts.get(id);
+  }
+
+  async createBlogPost(insertBlogPost: InsertBlogPost): Promise<BlogPost> {
+    const blogPost: BlogPost = {
+      id: crypto.randomUUID(),
+      title: insertBlogPost.title,
+      slug: insertBlogPost.slug,
+      content: insertBlogPost.content,
+      excerpt: insertBlogPost.excerpt || null,
+      featuredImage: insertBlogPost.featuredImage || null,
+      images: insertBlogPost.images || [],
+      contentGuidance: insertBlogPost.contentGuidance || null,
+      language: insertBlogPost.language || "en",
+      websiteUrl: insertBlogPost.websiteUrl || null,
+      customSlug: insertBlogPost.customSlug || null,
+      status: insertBlogPost.status || "draft",
+      publishedAt: insertBlogPost.publishedAt || null,
+      scheduledFor: insertBlogPost.scheduledFor || null,
+      seoTitle: insertBlogPost.seoTitle || null,
+      seoDescription: insertBlogPost.seoDescription || null,
+      tags: insertBlogPost.tags || [],
+      readTime: insertBlogPost.readTime || null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    
+    this.blogPosts.set(blogPost.id, blogPost);
+    return blogPost;
+  }
+
+  async updateBlogPost(id: string, data: UpdateBlogPost): Promise<BlogPost> {
+    const blogPost = this.blogPosts.get(id);
+    if (!blogPost) {
+      throw new Error('Blog post not found');
+    }
+    
+    const updated: BlogPost = {
+      ...blogPost,
+      ...data,
+      updatedAt: new Date(),
+      publishedAt: data.status === "published" && !blogPost.publishedAt 
+        ? new Date() 
+        : blogPost.publishedAt,
+    };
+    
+    this.blogPosts.set(id, updated);
+    return updated;
+  }
+
+  async deleteBlogPost(id: string): Promise<void> {
+    this.blogPosts.delete(id);
   }
 }
 

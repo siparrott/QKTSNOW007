@@ -1,0 +1,38 @@
+You are my Replit AI assistant. I have two GitHub repos:
+1. My front-end/demo Repl: https://github.com/siparrott/EasyOTPAuth  
+2. The open-source passwordless core: https://github.com/florianheinemann/passwordless  
+
+Your task is to merge, extend, and package them into a polished, market-ready OTP SaaS that any customer can clone, add secrets, and run in minutes. Follow these steps, generating commits, tests, docs, and CI/CD as you go:
+
+1. **Clone both repos** into this workspace and set up a monorepo structure under `/apps/frontend` and `/packages/core`.
+2. **Integrate the passwordless core** into our API:
+   - Wire `passwordless` + `passwordless-redisstore` in an Express server at `/apps/frontend/index.js`.
+   - Replace any in-memory stores with Redis (use `REDIS_URL` env).
+   - Hook up email delivery via Resend or SMTP (use `.env` placeholders).
+   - Expose `/api/sendtoken`, `/api/accepttoken`, and a protected `/api/dashboard` endpoint.
+3. **Refactor our React/HTML forms** in `/apps/frontend` to point to the new `/api/*` routes, preserving the exact UI you built.
+4. **Extract the API logic** as a reusable package in `/packages/core` with `initEasyOtp(app, opts)` so we can publish it to npm as `@easyotpauth/core`.
+5. **Build a CLI** in `/packages/cli` named `easyotpauth` that scaffolds a new project:
+   - `npx easyotpauth init <project-name>` clones `/packages/core`, creates `.env.example`, `index.js`, `package.json`, and installs deps.
+6. **Add tests**:
+   - Jest unit tests for Redis client, mailer, and core functions.
+   - Cypress e2e test in `/apps/frontend` that runs a MailHog container, requests a token, reads the email, verifies the code, and checks the protected route.
+7. **Write comprehensive docs**:
+   - Root `README.md` with architecture diagram (Mermaid), quick-start for both template and CLI.
+   - `docs/onboarding.md` walking through clone, secret setup, and “Run → live” steps.
+   - `docs/secrets.md` explaining Replit/Vercel secrets and key-rotation best practices.
+8. **Configure CI/CD**:
+   - Add GitHub Actions workflows for lint → test → build → publish (npm & Docker).
+   - Set up `releaseCheck.js` that verifies env vars, connectivity to Redis/Resend, and then opens a PR to tag `v1.0.0`.
+9. **Containerize**:
+   - Add `Dockerfile` and `docker-compose.yml` at the monorepo root to spin up Redis, the API, and MailHog for local dev.
+10. **Finalize**:
+   - Commit each logical change with clear message scope (e.g., “feat: add Redis OTP store”, “test: add Cypress auth flow”).
+   - When all passes, bump to `v1.0.0`, push tags, and print “✅ EasyOTPAuth v1.0.0 — ready for market!”
+
+At the end, your workspace should contain:
+- A `/apps/frontend` folder with a working (and styled) OTP demo
+- A `/packages/core` npm-publishable module
+- A `/packages/cli` scaffolding CLI
+- Full test coverage, Docker setup, CI/CD, and docs  
+Make it so we can on-board a paying customer by sending them a single link or an `npx easyotpauth init` command.

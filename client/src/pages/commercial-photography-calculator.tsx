@@ -92,6 +92,96 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
     if (config.textContent) {
       setTextConfig(config.textContent);
     }
+    
+    // Apply dynamic color theming and font styling
+    const styleId = 'commercial-calculator-custom-styles';
+    let existingStyle = document.getElementById(styleId);
+    if (existingStyle) {
+      existingStyle.remove();
+    }
+    
+    const style = document.createElement('style');
+    style.id = styleId;
+    
+    // Handle multiple config format variations
+    const primaryColor = config.brandColors?.primary || config.primaryColor || config.backgroundColor || '#10b981';
+    const secondaryColor = config.brandColors?.secondary || config.secondaryColor || config.textColor || '#6b7280';
+    const accentColor = config.brandColors?.accent || config.accentColor || '#3b82f6';
+    const fontFamily = config.styling?.fontFamily || config.fontFamily || 'Inter';
+    const borderRadius = config.styling?.borderRadius || config.borderRadius || '0.5rem';
+    
+    console.log('Commercial calculator applying font:', fontFamily);
+    
+    style.textContent = `
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Open+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Source+Sans+Pro:wght@300;400;600;700&family=Nunito:wght@300;400;500;600;700&family=Crimson+Text:wght@400;600&family=Oswald:wght@300;400;500;600;700&family=Dancing+Script:wght@400;500;600;700&family=Raleway:wght@300;400;500;600;700&family=Merriweather:wght@300;400;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap');
+      
+      :root {
+        --custom-primary: ${primaryColor};
+        --custom-secondary: ${secondaryColor};
+        --custom-accent: ${accentColor};
+        --custom-font: '${fontFamily}', sans-serif;
+        --custom-radius: ${borderRadius};
+      }
+      
+      .commercial-calculator {
+        font-family: var(--custom-font) !important;
+      }
+      
+      .commercial-calculator *,
+      .commercial-calculator h1,
+      .commercial-calculator h2,
+      .commercial-calculator h3,
+      .commercial-calculator h4,
+      .commercial-calculator p,
+      .commercial-calculator span,
+      .commercial-calculator div,
+      .commercial-calculator button,
+      .commercial-calculator input,
+      .commercial-calculator label {
+        font-family: var(--custom-font) !important;
+      }
+      
+      /* Primary color applications - Override all green colors */
+      .commercial-calculator .bg-green-500,
+      .commercial-calculator .bg-green-400,
+      .commercial-calculator .bg-green-600,
+      .commercial-calculator .hover\\:bg-green-600:hover,
+      .commercial-calculator .bg-emerald-500,
+      .commercial-calculator .hover\\:bg-emerald-600:hover {
+        background-color: ${primaryColor} !important;
+        color: white !important;
+      }
+      
+      .commercial-calculator .text-green-500,
+      .commercial-calculator .text-green-400,
+      .commercial-calculator .text-green-600 {
+        color: ${primaryColor} !important;
+      }
+      
+      .commercial-calculator .border-green-400,
+      .commercial-calculator .border-green-300,
+      .commercial-calculator .border-green-200,
+      .commercial-calculator .hover\\:border-green-300:hover {
+        border-color: ${primaryColor} !important;
+      }
+      
+      .commercial-calculator .bg-green-50,
+      .commercial-calculator .from-green-50,
+      .commercial-calculator .to-emerald-50 {
+        background-color: ${primaryColor}15 !important;
+      }
+      
+      .commercial-calculator .bg-gradient-to-br.from-green-50.to-emerald-50 {
+        background: linear-gradient(to bottom right, ${primaryColor}15, ${primaryColor}10) !important;
+      }
+      
+      /* Border radius customization */
+      .commercial-calculator [class*="rounded"] {
+        border-radius: ${borderRadius} !important;
+      }
+    `;
+    
+    document.head.appendChild(style);
   };
   
   // Text customization functionality

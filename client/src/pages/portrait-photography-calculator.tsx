@@ -86,12 +86,16 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
     const fontFamily = config.styling?.fontFamily || config.fontFamily || 'Inter';
     const borderRadius = config.styling?.borderRadius || config.borderRadius || '0.5rem';
     
+    console.log('Portrait calculator applying font:', fontFamily);
+    
     style.textContent = `
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Open+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Source+Sans+Pro:wght@300;400;600;700&family=Nunito:wght@300;400;500;600;700&family=Crimson+Text:wght@400;600&family=Oswald:wght@300;400;500;600;700&family=Dancing+Script:wght@400;500;600;700&family=Raleway:wght@300;400;500;600;700&family=Merriweather:wght@300;400;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap');
+      
       :root {
         --custom-primary: ${primaryColor};
         --custom-secondary: ${secondaryColor};
         --custom-accent: ${accentColor};
-        --custom-font: ${fontFamily};
+        --custom-font: '${fontFamily}', sans-serif;
         --custom-radius: ${borderRadius};
       }
       
@@ -99,8 +103,18 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
         font-family: var(--custom-font) !important;
       }
       
-      .portrait-calculator * {
-        font-family: inherit !important;
+      .portrait-calculator *,
+      .portrait-calculator h1,
+      .portrait-calculator h2,
+      .portrait-calculator h3,
+      .portrait-calculator h4,
+      .portrait-calculator p,
+      .portrait-calculator span,
+      .portrait-calculator div,
+      .portrait-calculator button,
+      .portrait-calculator input,
+      .portrait-calculator label {
+        font-family: var(--custom-font) !important;
       }
       
       /* Primary color applications - Override all rose/pink colors */

@@ -2738,16 +2738,21 @@ export default function Dashboard() {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="Inter">Inter</SelectItem>
-                              <SelectItem value="Roboto">Roboto</SelectItem>
-                              <SelectItem value="Open Sans">Open Sans</SelectItem>
-                              <SelectItem value="Poppins">Poppins</SelectItem>
-                              <SelectItem value="Montserrat">Montserrat</SelectItem>
-                              <SelectItem value="Playfair Display">Playfair Display</SelectItem>
-                              <SelectItem value="Arial">Arial</SelectItem>
-                              <SelectItem value="Helvetica">Helvetica</SelectItem>
-                              <SelectItem value="Georgia">Georgia</SelectItem>
-                              <SelectItem value="Times New Roman">Times New Roman</SelectItem>
+                              <SelectItem value="Inter">Inter (Modern Sans)</SelectItem>
+                              <SelectItem value="Poppins">Poppins (Friendly)</SelectItem>
+                              <SelectItem value="Montserrat">Montserrat (Clean)</SelectItem>
+                              <SelectItem value="Roboto">Roboto (Technical)</SelectItem>
+                              <SelectItem value="Open Sans">Open Sans (Readable)</SelectItem>
+                              <SelectItem value="Playfair Display">Playfair Display (Elegant)</SelectItem>
+                              <SelectItem value="Lora">Lora (Serif Classic)</SelectItem>
+                              <SelectItem value="Source Sans Pro">Source Sans Pro (Professional)</SelectItem>
+                              <SelectItem value="Nunito">Nunito (Rounded)</SelectItem>
+                              <SelectItem value="Crimson Text">Crimson Text (Traditional)</SelectItem>
+                              <SelectItem value="Oswald">Oswald (Bold Headers)</SelectItem>
+                              <SelectItem value="Dancing Script">Dancing Script (Handwritten)</SelectItem>
+                              <SelectItem value="Raleway">Raleway (Sophisticated)</SelectItem>
+                              <SelectItem value="Merriweather">Merriweather (Blog Style)</SelectItem>
+                              <SelectItem value="Fira Sans">Fira Sans (Tech Modern)</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>

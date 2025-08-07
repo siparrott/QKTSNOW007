@@ -198,6 +198,22 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
   
   // Handle text content updates from customConfig
   const updateTextContent = (key: string, value: string) => {
+    // Special handling for business name to update both text config and custom config
+    if (key === 'businessName') {
+      setCustomConfig(prev => ({
+        ...prev,
+        businessName: value
+      }));
+      
+      if (onConfigChange) {
+        onConfigChange({
+          ...customConfig,
+          businessName: value
+        });
+      }
+      return;
+    }
+    
     const newConfig = {
       ...textConfig,
       [key]: value
@@ -541,6 +557,29 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">
+          {/* Business Branding Section */}
+          {(customConfig.businessName || customConfig.logoUrl) && (
+            <div className="flex items-center justify-center mb-6 space-x-4">
+              {customConfig.logoUrl && (
+                <img 
+                  src={customConfig.logoUrl} 
+                  alt="Business Logo" 
+                  className="h-12 w-auto"
+                  style={{ height: `${customConfig.logoSize || 60}px` }}
+                />
+              )}
+              {customConfig.businessName && (
+                <EditableText
+                  value={customConfig.businessName}
+                  onSave={(value) => updateTextContent('businessName', value)}
+                  isPreview={isPreview}
+                  placeholder="Business Name"
+                  className="text-2xl font-semibold text-gray-800"
+                />
+              )}
+            </div>
+          )}
+          
           <EditableText
             value={textConfig?.mainTitle || "Portrait Photography Calculator"}
             onSave={(value) => updateTextContent('mainTitle', value)}

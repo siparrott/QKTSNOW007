@@ -43,6 +43,7 @@ interface PricingBreakdown {
   durationAdd: number;
   locationAdd: number;
   wardrobeAdd: number;
+  portraitTypeAdd: number;
   addOnsTotal: number;
   usageAdd: number;
   subtotal: number;
@@ -541,14 +542,14 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
         {/* Header */}
         <div className="text-center mb-8">
           <EditableText
-            text={textConfig?.mainTitle || "Portrait Photography Calculator"}
+            value={textConfig?.mainTitle || "Portrait Photography Calculator"}
             onSave={(value) => updateTextContent('mainTitle', value)}
             isPreview={isPreview}
             placeholder="Portrait Photography Calculator"
             className="text-4xl font-display text-gray-800 mb-2 block"
           />
           <EditableText
-            text={textConfig?.subtitle || "Beautiful portraits that capture your authentic self. Get your personalized quote instantly."}
+            value={textConfig?.subtitle || "Beautiful portraits that capture your authentic self. Get your personalized quote instantly."}
             onSave={(value) => updateTextContent('subtitle', value)}
             isPreview={isPreview}
             placeholder="Beautiful portraits that capture your authentic self. Get your personalized quote instantly."
@@ -578,7 +579,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                     </div>
                     <span className="ml-2 text-sm font-medium text-gray-700">
                       <EditableText
-                        text={step.title}
+                        value={step.title}
                         onSave={(value) => updateTextContent(`stepTitle${step.number}`, value)}
                         isPreview={isPreview}
                         placeholder={step.title}
@@ -599,7 +600,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                     <div className="text-2xl font-display text-gray-800 mb-4 flex items-center">
                       <Heart className="h-6 w-6 mr-2 text-rose-500" />
                       <EditableText
-                        text={textConfig?.step1Title || "Tell us about your portrait session"}
+                        value={textConfig?.step1Title || "Tell us about your portrait session"}
                         onSave={(value) => updateTextContent('step1Title', value)}
                         isPreview={isPreview}
                         placeholder="Tell us about your portrait session"
@@ -610,7 +611,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                     {/* Natural Language Input */}
                     <div className="mb-6 p-4 bg-rose-50 rounded-xl border border-rose-200">
                       <EditableText
-                        text={textConfig?.visionLabel || "Describe your vision (optional)"}
+                        value={textConfig?.visionLabel || "Describe your vision (optional)"}
                         onSave={(value) => updateTextContent('visionLabel', value)}
                         isPreview={isPreview}
                         placeholder="Describe your vision (optional)"
@@ -637,7 +638,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                     <div className="space-y-6">
                       <div>
                         <EditableText
-                          text={textConfig?.portraitTypeLabel || "Portrait Type"}
+                          value={textConfig?.portraitTypeLabel || "Portrait Type"}
                           onSave={(value) => updateTextContent('portraitTypeLabel', value)}
                           isPreview={isPreview}
                           placeholder="Portrait Type"
@@ -659,7 +660,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
 
                       <div>
                         <EditableText
-                          text={textConfig?.durationLabel || "Session Duration"}
+                          value={textConfig?.durationLabel || "Session Duration"}
                           onSave={(value) => updateTextContent('durationLabel', value)}
                           isPreview={isPreview}
                           placeholder="Session Duration"
@@ -688,7 +689,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                       className="bg-rose-500 hover:bg-rose-600 text-white px-8 font-semibold rounded-lg"
                     >
                       <EditableText
-                        text={propConfig?.nextStepButton || "Next Step"}
+                        value={propConfig?.nextStepButton || "Next Step"}
                         onSave={(value) => updateTextContent('nextStepButton', value)}
                         isPreview={isPreview}
                         placeholder="Next Step"
@@ -705,7 +706,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                     <h2 className="text-2xl font-display text-gray-800 mb-4 flex items-center">
                       <MapPin className="h-6 w-6 mr-2 text-rose-500" />
                       <EditableText
-                        text={textConfig?.step2Title || "Location & styling details"}
+                        value={textConfig?.step2Title || "Location & styling details"}
                         onSave={(value) => updateTextContent('step2Title', value)}
                         isPreview={isPreview}
                         placeholder="Location & styling details"
@@ -716,7 +717,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                     <div className="space-y-6">
                       <div>
                         <EditableText
-                          text={textConfig?.locationLabel || "Shooting Location"}
+                          value={textConfig?.locationLabel || "Shooting Location"}
                           onSave={(value) => updateTextContent('locationLabel', value)}
                           isPreview={isPreview}
                           placeholder="Shooting Location"
@@ -738,7 +739,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
 
                       <div>
                         <EditableText
-                          text={textConfig?.wardrobeLabel || "Wardrobe Changes"}
+                          value={textConfig?.wardrobeLabel || "Wardrobe Changes"}
                           onSave={(value) => updateTextContent('wardrobeLabel', value)}
                           isPreview={isPreview}
                           placeholder="Wardrobe Changes"
@@ -786,7 +787,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                     <h2 className="text-2xl font-display text-gray-800 mb-4 flex items-center">
                       <Palette className="h-6 w-6 mr-2 text-rose-500" />
                       <EditableText
-                        text={textConfig?.step3Title || "Enhance your session"}
+                        value={textConfig?.step3Title || "Enhance your session"}
                         onSave={(value) => updateTextContent('step3Title', value)}
                         isPreview={isPreview}
                         placeholder="Enhance your session"
@@ -797,7 +798,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                     <div className="space-y-6">
                       <div>
                         <EditableText
-                          text={textConfig?.addOnsLabel || "Add-ons (Optional)"}
+                          value={textConfig?.addOnsLabel || "Add-ons (Optional)"}
                           onSave={(value) => updateTextContent('addOnsLabel', value)}
                           isPreview={isPreview}
                           placeholder="Add-ons (Optional)"
@@ -845,7 +846,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
 
                       <div>
                         <EditableText
-                          text={textConfig?.usageTypeLabel || "Usage Type"}
+                          value={textConfig?.usageTypeLabel || "Usage Type"}
                           onSave={(value) => updateTextContent('usageTypeLabel', value)}
                           isPreview={isPreview}
                           placeholder="Usage Type"
@@ -866,7 +867,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
 
                       <div>
                         <EditableText
-                          text={textConfig?.promoCodeLabel || "Promo Code (Optional)"}
+                          value={textConfig?.promoCodeLabel || "Promo Code (Optional)"}
                           onSave={(value) => updateTextContent('promoCodeLabel', value)}
                           isPreview={isPreview}
                           placeholder="Promo Code (Optional)"
@@ -908,7 +909,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                     <h2 className="text-2xl font-display text-gray-800 mb-4 flex items-center">
                       <Mail className="h-6 w-6 mr-2 text-rose-500" />
                       <EditableText
-                        text={textConfig?.step4Title || "Get your personalized quote"}
+                        value={textConfig?.step4Title || "Get your personalized quote"}
                         onSave={(value) => updateTextContent('step4Title', value)}
                         isPreview={isPreview}
                         placeholder="Get your personalized quote"

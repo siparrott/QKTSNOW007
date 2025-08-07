@@ -2235,182 +2235,10 @@ export default function Dashboard() {
                       </div>
                     )}
 
-                    {/* Comprehensive Text Customization */}
-                    <div>
-                      <h3 className="text-white font-medium mb-4 flex items-center">
-                        <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
-                        <Type className="h-4 w-4 mr-2" />
-                        Text Customization
-                      </h3>
-                      <div className="space-y-6">
-                        
-                        {/* Headers Section */}
-                        <div className="border border-midnight-600 rounded-lg p-4">
-                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Headers & Titles</h4>
-                          <div className="space-y-3">
-                            <div>
-                              <Label className="text-gray-300 text-xs">Main Title</Label>
-                              <Input
-                                value={customConfig.mainTitle || ''}
-                                onChange={(e) => setCustomConfig({...customConfig, mainTitle: e.target.value})}
-                                placeholder={selectedCalculator.name}
-                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
-                              />
-                            </div>
-                            <div>
-                              <Label className="text-gray-300 text-xs">Subtitle</Label>
-                              <Input
-                                value={customConfig.subtitle || ''}
-                                onChange={(e) => setCustomConfig({...customConfig, subtitle: e.target.value})}
-                                placeholder="Get your personalized quote"
-                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
-                              />
-                            </div>
-                            <div>
-                              <Label className="text-gray-300 text-xs">Description</Label>
-                              <Textarea
-                                value={customConfig.description || ''}
-                                onChange={(e) => setCustomConfig({...customConfig, description: e.target.value})}
-                                placeholder="Brief description of your service"
-                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
-                                rows={2}
-                              />
-                            </div>
-                          </div>
-                        </div>
 
-                        {/* Button Text Section */}
-                        <div className="border border-midnight-600 rounded-lg p-4">
-                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Button Text</h4>
-                          <div className="space-y-3">
-                            <div>
-                              <Label className="text-gray-300 text-xs">Submit Button</Label>
-                              <Input
-                                value={customConfig.submitButtonText || ''}
-                                onChange={(e) => setCustomConfig({...customConfig, submitButtonText: e.target.value})}
-                                placeholder="Get My Quote"
-                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
-                              />
-                            </div>
-                            <div>
-                              <Label className="text-gray-300 text-xs">Next Step Button</Label>
-                              <Input
-                                value={customConfig.nextStepButton || ''}
-                                onChange={(e) => setCustomConfig({...customConfig, nextStepButton: e.target.value})}
-                                placeholder="Continue"
-                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
-                              />
-                            </div>
-                            <div>
-                              <Label className="text-gray-300 text-xs">Back Button</Label>
-                              <Input
-                                value={customConfig.backStepButton || ''}
-                                onChange={(e) => setCustomConfig({...customConfig, backStepButton: e.target.value})}
-                                placeholder="Back"
-                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
-                              />
-                            </div>
-                          </div>
-                        </div>
 
-                        {/* Step Labels Section */}
-                        <div className="border border-midnight-600 rounded-lg p-4">
-                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Step Labels</h4>
-                          <div className="space-y-3">
-                            <div>
-                              <Label className="text-gray-300 text-xs">Step 1 Label</Label>
-                              <Input
-                                value={customConfig.step1Label || ''}
-                                onChange={(e) => setCustomConfig({...customConfig, step1Label: e.target.value})}
-                                placeholder="Project & Images"
-                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
-                              />
-                            </div>
-                            <div>
-                              <Label className="text-gray-300 text-xs">Step 2 Label</Label>
-                              <Input
-                                value={customConfig.step2Label || ''}
-                                onChange={(e) => setCustomConfig({...customConfig, step2Label: e.target.value})}
-                                placeholder="Location & Duration"
-                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
-                              />
-                            </div>
-                            <div>
-                              <Label className="text-gray-300 text-xs">Step 3 Label</Label>
-                              <Input
-                                value={customConfig.step3Label || ''}
-                                onChange={(e) => setCustomConfig({...customConfig, step3Label: e.target.value})}
-                                placeholder="Add-ons & Delivery"
-                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
-                              />
-                            </div>
-                            <div>
-                              <Label className="text-gray-300 text-xs">Step 4 Label</Label>
-                              <Input
-                                value={customConfig.step4Label || ''}
-                                onChange={(e) => setCustomConfig({...customConfig, step4Label: e.target.value})}
-                                placeholder="Contact Details"
-                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
-                              />
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Form Fields Section */}
-                        <div className="border border-midnight-600 rounded-lg p-4">
-                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Form Field Labels</h4>
-                          <div className="space-y-3">
-                            <div>
-                              <Label className="text-gray-300 text-xs">Name Field Label</Label>
-                              <Input
-                                value={customConfig.nameLabel || ''}
-                                onChange={(e) => setCustomConfig({...customConfig, nameLabel: e.target.value})}
-                                placeholder="Your Name"
-                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
-                              />
-                            </div>
-                            <div>
-                              <Label className="text-gray-300 text-xs">Email Field Label</Label>
-                              <Input
-                                value={customConfig.emailLabel || ''}
-                                onChange={(e) => setCustomConfig({...customConfig, emailLabel: e.target.value})}
-                                placeholder="Email Address"
-                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
-                              />
-                            </div>
-                            <div>
-                              <Label className="text-gray-300 text-xs">Phone Field Label</Label>
-                              <Input
-                                value={customConfig.phoneLabel || ''}
-                                onChange={(e) => setCustomConfig({...customConfig, phoneLabel: e.target.value})}
-                                placeholder="Phone Number"
-                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
-                              />
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Inline Editing Info */}
-                        <div className="border border-neon-500/30 rounded-lg p-4 bg-neon-500/5">
-                          <h4 className="text-neon-400 font-medium mb-3 text-sm flex items-center">
-                            <Edit3 className="h-4 w-4 mr-2" />
-                            Live Preview Editing
-                          </h4>
-                          <p className="text-gray-300 text-xs mb-3">
-                            Click any text in the live preview to edit it directly. Changes will be saved automatically.
-                          </p>
-                          <div className="bg-midnight-900 border border-midnight-600 rounded p-3">
-                            <div className="text-xs text-gray-400 mb-2">Preview shows:</div>
-                            <div className="text-xs text-gray-300 space-y-1">
-                              <div>• Click-to-edit titles and descriptions</div>
-                              <div>• Hover hints for editable content</div>
-                              <div>• Real-time text updates</div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Calculator-Specific Fields */}
-                        {(() => {
+                    {/* Calculator-Specific Fields */}
+                    {(() => {
                           const getCalculatorSpecificFields = () => {
                             const calculatorConfigs = {
                               'wedding-photography': {
@@ -2645,33 +2473,6 @@ export default function Dashboard() {
                             </div>
                           ));
                         })()}
-
-                        {/* Footer Section */}
-                        <div className="border border-midnight-600 rounded-lg p-4">
-                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Footer & Privacy</h4>
-                          <div className="space-y-3">
-                            <div>
-                              <Label className="text-gray-300 text-xs">Footer Text</Label>
-                              <Input
-                                value={customConfig.footerText || ''}
-                                onChange={(e) => setCustomConfig({...customConfig, footerText: e.target.value})}
-                                placeholder="Powered by YourBusiness"
-                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
-                              />
-                            </div>
-                            <div>
-                              <Label className="text-gray-300 text-xs">Privacy Text</Label>
-                              <Input
-                                value={customConfig.privacyText || ''}
-                                onChange={(e) => setCustomConfig({...customConfig, privacyText: e.target.value})}
-                                placeholder="Your information is secure"
-                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
 
                     {/* Layout & Spacing */}
                     <div>
@@ -3412,25 +3213,21 @@ export default function Dashboard() {
           setIconEditingIndex(null);
         }}
         onSelectIcon={handleIconSelect}
-        currentIcon={
-          iconEditingIndex 
-            ? (iconEditingIndex.type === 'addon' 
-                ? customConfig.addOnPrices?.[iconEditingIndex.index]?.icon 
-                : iconEditingIndex.type === 'duration'
-                ? customConfig.durationPrices?.[iconEditingIndex.index]?.icon
-                : iconEditingIndex.type === 'group'
-                ? customConfig.groupPrices?.[iconEditingIndex.index]?.icon
-                : iconEditingIndex.type === 'location'
-                ? customConfig.locationPrices?.[iconEditingIndex.index]?.icon
-                : iconEditingIndex.type === 'wardrobe'
-                ? customConfig.wardrobePrices?.[iconEditingIndex.index]?.icon
-                : iconEditingIndex.type === 'usage'
-                ? customConfig.usagePrices?.[iconEditingIndex.index]?.icon
-                : iconEditingIndex.type === 'sessionDuration'
-                ? customConfig.sessionDurations?.[iconEditingIndex.index]?.icon
-                : undefined)
-            : undefined
-        }
+        currentIcon={(() => {
+          if (!iconEditingIndex) return undefined;
+          
+          const { type, index } = iconEditingIndex;
+          switch (type) {
+            case 'addon': return customConfig.addOnPrices?.[index]?.icon;
+            case 'duration': return customConfig.durationPrices?.[index]?.icon;
+            case 'group': return customConfig.groupPrices?.[index]?.icon;
+            case 'location': return customConfig.locationPrices?.[index]?.icon;
+            case 'wardrobe': return customConfig.wardrobePrices?.[index]?.icon;
+            case 'usage': return customConfig.usagePrices?.[index]?.icon;
+            case 'sessionDuration': return customConfig.sessionDurations?.[index]?.icon;
+            default: return undefined;
+          }
+        })()}
       />
     </div>
   );

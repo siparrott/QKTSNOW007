@@ -36,7 +36,7 @@ export default function Blogs() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [mounted, setMounted] = useState(false);
 
-  const { data: blogPosts = [], isLoading } = useQuery({
+  const { data: blogPosts = [], isLoading } = useQuery<BlogPost[]>({
     queryKey: ["/api/blog-posts"],
   });
 
@@ -50,14 +50,14 @@ export default function Blogs() {
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.excerpt?.toLowerCase().includes(searchQuery.toLowerCase());
     
-    const matchesTag = !selectedTag || post.tags.includes(selectedTag);
+    const matchesTag = !selectedTag || (post.tags && post.tags.includes(selectedTag));
     
     return matchesSearch && matchesTag;
   });
 
   // Get all unique tags
   const allTags = Array.from(
-    new Set(blogPosts.flatMap((post: BlogPost) => post.tags))
+    new Set(blogPosts.flatMap((post: BlogPost) => post.tags || []))
   ).sort();
 
   const formatDate = (dateString: string) => {

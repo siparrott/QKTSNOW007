@@ -1,0 +1,114 @@
+Below is a hands-on SEO blueprint for QuoteKits / TogNinja that you can hand straight to your content & dev teams.
+It’s broken into nine action blocks so you can cherry-pick or run it end-to-end.
+
+1. Market snapshot
+Demand for “AI quote generators” and “instant price calculators” has spiked over the last 12 months, thanks to low-code widgets like Involve.me and Elfsight, plus high-profile launches (e.g. Oracle adding quote-bot features in NetSuite). 
+Involve.me
+Elfsight
+Reuters
+
+2. Keyword universe
+Tier	Keywords & phrases	Notes / intent
+Primary (money)	ai quote generator, ai price estimator, online quote calculator, instant quote tool	Transactional; people ready to embed/buy 
+GetDevDone
+Involve.me
+Inoxoft |
+Secondary (support)	quote builder app, pricing calculator, service quote generator, quotation software, cost estimate app	Comparison / research stage 
+Calconic
+Makeform
+Long-tail / vertical	photography pricing calculator, wedding photography quote calculator, SaaS cost estimator AI, website quote form builder, embed quote widget no-code	Perfect for pillar pages & blog FAQs 
+Cradoc fotoSoftware
+Convert Calculator
+Calconic
+Synonyms to sprinkle	estimate generator, price quote software, interactive calculator, cost calculator, quotation form	Keeps copy natural & avoids keyword stuffing
+
+Rule of thumb: Hit a primary term in title/H1/slug + 2–3 times in body. Blend secondaries/long-tails naturally in sub-heads.
+
+3. Topic clusters & pillar pages
+Pillar page (H1)	Why it matters	Supporting cluster articles
+AI Quote Generator: How It Works & Why It Beats Spreadsheets	Core explainer + “buy” page	• “5 Industries Winning With Instant Quotes” • “Calculator vs. Webform: Conversion Showdown”
+Embed a Price Calculator in < 5 Minutes (No-Code Guide)	Captures DIY intent	• “Best No-Code Platforms for Calculators” • “Embed on WordPress/Wix/Squarespace”
+Photography Pricing Calculator Toolkit	Leverages QuoteKits’ photo niche	• “Wedding Quote Template Walk-through” • “Boudoir Package Estimator”
+AI Cost Estimator API for Devs	Hooks TogNinja’s SaaS crowd	• “React Hook Example” • “Securing API Keys & Webhooks”
+
+Each pillar should internally link to /features, /pricing, /demo, plus any live calculator demos.
+
+4. On-page optimisation checklist
+Element	Rule
+Title tag	≤ 60 chars, primary keyphrase first (“AI Quote Generator
+Slug	kebab-case, primary term (“/ai-quote-generator”)
+H1	Mirrors title but human-friendly
+Intro (first 100 words)	Repeat primary term once, add emotional hook
+One H2	Must contain primary or synonym
+Meta description	120–156 chars, KPI + CTA + primary term
+Image SEO	File-name: ai-quote-calculator-demo.png • Alt text ≤ 125 chars including keyphrase
+Internal links	At least 3 (features, pricing, demo)
+External	1–2 authority links (e.g. HubSpot calculator study, Stripe docs)
+
+5. Technical & LLM optimisation
+Schema: SoftwareApplication, FAQPage, and per-calculator Product schema.
+
+Core Web Vitals: LCP < 2.5 s, CLS < 0.1, FID < 100 ms.
+
+FAQ blocks: Add collapsible Q&A to each pillar (feeds Google & LLMs).
+
+Robots / XML sitemap: Re-generate weekly; include new calculators.
+
+Alt-text discipline: Helps vision-enabled LLMs understand context.
+
+6. Image & media blueprint
+Asset	Purpose	Alt-text formula
+Calculator GIF	Show real-time quote generation	“Live demo of AI quote generator producing cost estimate”
+Industry mock-ups	Build trust	“Wedding photography price calculator on smartphone”
+Infographic	Summarise benefits	“Steps to embed AI price estimator on website”
+
+Compress with AVIF/WebP; lazy-load below the fold.
+
+7. Authority & link-building
+Integrations outreach – guest posts on no-code blogs (Makerpad, NoCodeDevs).
+
+Template marketplaces – submit free “starter calculators” with back-links.
+
+Podcast circuit – interview niche pros on how instant quoting boosts conversions.
+
+Case-study swap – partner with platforms like Elfsight/Involve.me for joint studies.
+
+“Calculator teardowns” – analyse competitor widgets, cite them, earn shares.
+
+Aim: 5–8 quality backlinks/mo, DR 40+.
+
+8. Content cadence (first 90 days)
+Week	Main piece	Purpose
+1	Pillar: AI Quote Generator 101	Cornerstone authority
+2	Blog: “Top 7 Quote Builder Apps Compared”	Comparison traffic
+3	Blog: “Photography Pricing Calculator: Complete Setup Guide”	Niche long-tail
+4	Case study: “+43 % Lead-to-Sale After Embedded Calculator”	Social proof
+5	Dev doc: “AI Estimator API with React Example”	Link magnet on GitHub
+6	Webinar replay blog + transcript	Video SEO
+7	Blog: “How to Price Custom Services Without Scope Creep”	Pain point
+8	Guest post published → internal follow-up	Back-link juice
+9	Refresh Pillar with new data & link from all new posts	Content hub strengthening
+10–12	Repeat cycle, refresh internal links	
+
+9. Measurement & iteration
+KPI	Target	Tool
+Organic clicks to calculators	+30 % in 90 d	Search Console
+Demo-signup conversion	≥ 8 %	GA4 goals
+Avg. position for “AI quote generator”	Top 5 in 6 mo	Ahrefs / SERPWatcher
+Backlinks acquired	5-8 / mo, DR 40+	Ahrefs
+Core Web Vitals	All “Good”	PageSpeed Insights
+
+Review monthly → prune cannibalising pages, update keywords, add fresh FAQs.
+
+How to use this blueprint
+Feed section 2 (keyword universe) + section 3 (topics) into your content calendar.
+
+Share on-page checklist (section 4) with your writers & CMS builders.
+
+Hand technical tasks (section 5) to dev-ops.
+
+Kick-off link-building (section 7) with outreach templates.
+
+Track KPIs (section 9) in a shared dashboard.
+
+Run the loop, iterate every quarter, and you’ll own the “AI quote calculator” SERPs.

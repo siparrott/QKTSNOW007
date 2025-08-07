@@ -340,7 +340,7 @@ export default function Blogs() {
                         <div className="flex items-center gap-4 text-sm text-gray-400 mb-4">
                           <div className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
-                            {formatDate(post.publishedAt || post.createdAt)}
+                            {formatDate(post.publishedAt || post.createdAt || '')}
                           </div>
                           {post.readTime && (
                             <div className="flex items-center gap-1">
@@ -365,9 +365,9 @@ export default function Blogs() {
                         </p>
 
                         {/* Tags */}
-                        {post.tags.length > 0 && (
+                        {post.tags && post.tags.length > 0 && (
                           <div className="flex flex-wrap gap-2 mb-6">
-                            {post.tags.slice(0, viewMode === 'grid' ? 3 : 5).map((tag, tagIndex) => (
+                            {(post.tags || []).slice(0, viewMode === 'grid' ? 3 : 5).map((tag, tagIndex) => (
                               <Badge 
                                 key={tagIndex} 
                                 variant="secondary" 
@@ -376,9 +376,9 @@ export default function Blogs() {
                                 {tag}
                               </Badge>
                             ))}
-                            {post.tags.length > (viewMode === 'grid' ? 3 : 5) && (
+                            {(post.tags || []).length > (viewMode === 'grid' ? 3 : 5) && (
                               <Badge variant="outline" className="text-xs border-white/20 text-gray-400">
-                                +{post.tags.length - (viewMode === 'grid' ? 3 : 5)} more
+                                +{(post.tags || []).length - (viewMode === 'grid' ? 3 : 5)} more
                               </Badge>
                             )}
                           </div>

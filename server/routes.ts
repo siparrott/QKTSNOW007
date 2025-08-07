@@ -22,6 +22,69 @@ import {
   insertBlogPostSchema,
   updateBlogPostSchema
 } from "@shared/schema";
+import { 
+  generateAIPrompt, 
+  getRandomTopicCluster, 
+  getRandomPromptTemplate,
+  generateSEOOptimizedSlug,
+  extractKeywordsFromContent,
+  generateMetaDescription,
+  TOPIC_CLUSTERS,
+  BLOG_PROMPT_TEMPLATES
+} from "./seo-blueprint";
+
+// SEO Score calculation function
+function calculateSEOScore(blogPost: any): number {
+  let score = 0;
+  const maxScore = 100;
+  
+  // Title optimization (20 points)
+  if (blogPost.title && blogPost.title.length <= 60 && blogPost.title.length >= 30) {
+    score += 10;
+  }
+  if (blogPost.keywords && blogPost.keywords.some((k: string) => blogPost.title?.toLowerCase().includes(k.toLowerCase()))) {
+    score += 10;
+  }
+  
+  // Content length (20 points)
+  const wordCount = blogPost.content ? blogPost.content.split(/\s+/).length : 0;
+  if (wordCount >= 1500 && wordCount <= 2500) {
+    score += 20;
+  } else if (wordCount >= 1000) {
+    score += 10;
+  }
+  
+  // Meta description (15 points)
+  if (blogPost.metaDescription && blogPost.metaDescription.length >= 120 && blogPost.metaDescription.length <= 156) {
+    score += 15;
+  }
+  
+  // Keywords presence (25 points)
+  if (blogPost.keywords && blogPost.keywords.length >= 3) {
+    score += 15;
+  }
+  if (blogPost.content && blogPost.keywords) {
+    const keywordDensity = blogPost.keywords.reduce((acc: number, keyword: string) => {
+      const matches = (blogPost.content.toLowerCase().match(new RegExp(keyword.toLowerCase(), 'g')) || []).length;
+      return acc + matches;
+    }, 0);
+    if (keywordDensity >= 3 && keywordDensity <= 8) {
+      score += 10;
+    }
+  }
+  
+  // URL slug (10 points)
+  if (blogPost.slug && blogPost.slug.length <= 60 && blogPost.slug.includes('-')) {
+    score += 10;
+  }
+  
+  // Excerpt/Description (10 points)
+  if (blogPost.excerpt && blogPost.excerpt.length >= 120 && blogPost.excerpt.length <= 200) {
+    score += 10;
+  }
+  
+  return Math.min(score, maxScore);
+}
 import { sql } from "@shared/supabase";
 import Stripe from 'stripe';
 
@@ -1662,27 +1725,79 @@ Allow: /*-calculator`;
 
   // Blog API Routes
   
-  // Generate blog post using AI
+  // Generate blog post using AI with SEO blueprint strategy
   app.post("/api/admin/blog-posts/generate", requireAuth, async (req, res) => {
     try {
-      const { images, contentGuidance, language, websiteUrl, customSlug } = req.body;
+      const { images, contentGuidance, language, websiteUrl, customSlug, useSeoBlueprintStrategy } = req.body;
       
-      if (!images || !Array.isArray(images) || images.length === 0) {
-        return res.status(400).json({ error: "At least one image is required" });
-      }
+      let result;
+      
+      if (useSeoBlueprintStrategy) {
+        // Use SEO blueprint strategy for content generation
+        const topicCluster = getRandomTopicCluster();
+        const promptTemplate = getRandomPromptTemplate();
+        
+        // Generate specific topic based on content guidance or use cluster default
+        const specificTopic = contentGuidance || topicCluster.supportingArticles[0];
+        const aiPrompt = generateAIPrompt(promptTemplate, specificTopic);
+        
+        console.log(`Generating SEO-optimized content for: ${specificTopic}`);
+        console.log(`Using template: ${promptTemplate.title}`);
+        console.log(`Target keywords: ${promptTemplate.keywords.join(", ")}`);
+        
+        result = await openaiService.generateBlogPostWithStrategy({
+          prompt: aiPrompt,
+          topicCluster,
+          promptTemplate,
+          specificTopic,
+          language: language || "en",
+          websiteUrl: websiteUrl || "https://quotekit.ai",
+          customSlug: customSlug || generateSEOOptimizedSlug(specificTopic),
+          images: images || []
+        });
+        
+        // Enhance with SEO metadata
+        result.keywords = extractKeywordsFromContent(result.content || '');
+        result.metaDescription = generateMetaDescription(result.title || '', result.excerpt || '');
+        result.seoScore = calculateSEOScore(result);
+        
+      } else {
+        // Original image-based generation
+        if (!images || !Array.isArray(images) || images.length === 0) {
+          return res.status(400).json({ error: "At least one image is required for image-based generation" });
+        }
 
-      const result = await openaiService.generateBlogPost({
-        images,
-        contentGuidance: contentGuidance || "",
-        language: language || "en",
-        websiteUrl: websiteUrl || "",
-        customSlug,
-      });
+        result = await openaiService.generateBlogPost({
+          images,
+          contentGuidance: contentGuidance || "",
+          language: language || "en",
+          websiteUrl: websiteUrl || "",
+          title: customSlug
+        });
+      }
 
       res.json(result);
     } catch (error) {
       console.error("Blog generation error:", error);
       res.status(500).json({ error: "Failed to generate blog post" });
+    }
+  });
+
+  // Get SEO strategy suggestions
+  app.get("/api/admin/seo-strategy", requireAuth, async (req, res) => {
+    try {
+      res.json({
+        topicClusters: TOPIC_CLUSTERS,
+        promptTemplates: BLOG_PROMPT_TEMPLATES,
+        upcomingTopics: TOPIC_CLUSTERS.map(cluster => ({
+          pillar: cluster.pillarPage,
+          articles: cluster.supportingArticles,
+          keywords: cluster.targetKeywords
+        }))
+      });
+    } catch (error) {
+      console.error("SEO strategy fetch error:", error);
+      res.status(500).json({ error: "Failed to fetch SEO strategy" });
     }
   });
 

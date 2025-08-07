@@ -24,7 +24,8 @@ import {
   XCircle,
   BookOpen,
   Edit3,
-  Zap
+  Zap,
+  Target
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
@@ -54,7 +55,7 @@ export default function AdminAutoBlog() {
   const queryClient = useQueryClient();
 
   // Fetch all blog posts
-  const { data: blogPosts = [], isLoading: isLoadingPosts } = useQuery({
+  const { data: blogPosts = [], isLoading: isLoadingPosts } = useQuery<BlogPost[]>({
     queryKey: ["/api/admin/blog-posts"],
   });
 
@@ -77,7 +78,8 @@ export default function AdminAutoBlog() {
           contentGuidance: request.contentGuidance,
           language: request.language,
           websiteUrl: request.websiteUrl,
-          customSlug: request.customSlug
+          customSlug: request.customSlug,
+          useSeoBlueprintStrategy: false // Add option for SEO strategy
         }),
         headers: {
           'Content-Type': 'application/json'
@@ -449,25 +451,83 @@ export default function AdminAutoBlog() {
                   </div>
                 </div>
 
-                {/* Generate Button */}
-                <Button
-                  onClick={handleGenerate}
-                  disabled={isGenerating || selectedFiles.length === 0}
-                  className="w-full"
-                  size="lg"
-                >
-                  {isGenerating ? (
-                    <>
-                      <Wand2 className="w-4 h-4 mr-2 animate-spin" />
-                      Generating Blog Post...
-                    </>
-                  ) : (
-                    <>
-                      <Wand2 className="w-4 h-4 mr-2" />
-                      Generate Blog Post
-                    </>
-                  )}
-                </Button>
+                {/* Generate Buttons */}
+                <div className="space-y-3">
+                  <Button
+                    onClick={handleGenerate}
+                    disabled={isGenerating || selectedFiles.length === 0}
+                    className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                    size="lg"
+                  >
+                    {isGenerating ? (
+                      <>
+                        <Wand2 className="w-4 h-4 mr-2 animate-spin" />
+                        Generating Blog Post...
+                      </>
+                    ) : (
+                      <>
+                        <Wand2 className="w-4 h-4 mr-2" />
+                        Generate From Images
+                      </>
+                    )}
+                  </Button>
+                  
+                  <Button
+                    onClick={async () => {
+                      setIsGenerating(true);
+                      try {
+                        const response = await fetch('/api/admin/blog-posts/generate', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({
+                            images: [],
+                            contentGuidance: contentGuidance || "AI quote generator comparison guide",
+                            language: language,
+                            websiteUrl: websiteUrl,
+                            customSlug: customSlug,
+                            useSeoBlueprintStrategy: true
+                          }),
+                        });
+                        
+                        if (!response.ok) {
+                          throw new Error('Failed to generate blog post');
+                        }
+                        
+                        const data = await response.json();
+                        setPreviewPost(data);
+                        toast({
+                          title: "SEO Blog post generated!",
+                          description: `Generated with SEO score: ${data.seoScore || 'N/A'}/100`,
+                        });
+                      } catch (error: any) {
+                        toast({
+                          title: "Generation failed",
+                          description: error.message || "Failed to generate blog post",
+                          variant: "destructive",
+                        });
+                      } finally {
+                        setIsGenerating(false);
+                      }
+                    }}
+                    disabled={isGenerating}
+                    className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600"
+                    size="lg"
+                  >
+                    {isGenerating ? (
+                      <>
+                        <Target className="w-4 h-4 mr-2 animate-spin" />
+                        Generating SEO Content...
+                      </>
+                    ) : (
+                      <>
+                        <Target className="w-4 h-4 mr-2" />
+                        Generate SEO Blog Post
+                      </>
+                    )}
+                  </Button>
+                </div>
               </CardContent>
             </Card>
 
@@ -588,13 +648,13 @@ export default function AdminAutoBlog() {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           <h3 className="font-medium">{post.title}</h3>
-                          {getStatusBadge(post.status)}
+                          {getStatusBadge(post.status || 'draft')}
                         </div>
                         <p className="text-sm text-muted-foreground mb-2">{post.excerpt}</p>
                         <div className="flex items-center gap-4 text-xs text-muted-foreground">
                           <span>
                             <Calendar className="w-3 h-3 inline mr-1" />
-                            {new Date(post.createdAt).toLocaleDateString()}
+                            {new Date(post.createdAt || '').toLocaleDateString()}
                           </span>
                           <span>
                             <Clock className="w-3 h-3 inline mr-1" />

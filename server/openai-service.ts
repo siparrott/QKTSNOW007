@@ -35,6 +35,20 @@ export interface BlogGenerationResult {
   tags: string[];
   readTime: number;
   slug: string;
+  keywords?: string[];
+  metaDescription?: string;
+  seoScore?: number;
+}
+
+export interface BlogGenerationWithStrategyRequest {
+  prompt: string;
+  topicCluster: any;
+  promptTemplate: any;
+  specificTopic: string;
+  language: string;
+  websiteUrl: string;
+  customSlug: string;
+  images: string[];
 }
 
 export class OpenAIService {
@@ -192,6 +206,49 @@ Make sure the content naturally incorporates the image analyses and follows the 
       .trim()
       .replace(/[\s-]+/g, "-")
       .replace(/^-+|-+$/g, "");
+  }
+
+  /**
+   * Generates SEO-optimized blog content using the blueprint strategy
+   */
+  async generateBlogPostWithStrategy(request: BlogGenerationWithStrategyRequest): Promise<BlogGenerationResult> {
+    try {
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+        messages: [
+          {
+            role: "system",
+            content: "You are a senior content strategist for QuoteKit.ai with expertise in SEO and conversion optimization. You create high-ranking blog content that drives qualified traffic and signups. Always respond in valid JSON format.",
+          },
+          {
+            role: "user",
+            content: request.prompt,
+          },
+        ],
+        response_format: { type: "json_object" },
+        max_tokens: 4000,
+      });
+
+      const result = JSON.parse(response.choices[0].message.content || "{}");
+      
+      // Calculate estimated read time (average 200 words per minute)
+      const wordCount = result.content ? result.content.split(/\s+/).length : 0;
+      const readTime = Math.max(1, Math.ceil(wordCount / 200));
+
+      return {
+        title: result.title || `${request.specificTopic} - QuoteKit.ai`,
+        content: result.content || "",
+        excerpt: result.excerpt || result.metaDescription || "",
+        seoTitle: result.seoTitle || result.title || request.specificTopic,
+        seoDescription: result.seoDescription || result.metaDescription || "",
+        tags: Array.isArray(result.tags) ? result.tags : request.promptTemplate.keywords || [],
+        readTime,
+        slug: request.customSlug || this.generateSlug(result.title || request.specificTopic),
+      };
+    } catch (error) {
+      console.error("Error generating SEO-optimized blog post:", error);
+      throw new Error("Failed to generate SEO-optimized blog post");
+    }
   }
 
   /**

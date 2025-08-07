@@ -22,7 +22,7 @@ import Profile from "@/pages/profile";
 import TwoFactorSetup from "@/pages/two-factor-setup";
 import TwoFactorVerify from "@/pages/two-factor-verify";
 import Blogs from "@/pages/blogs";
-import BlogPost from "@/pages/blog-post";
+import BlogPost from "@/pages/blog-post-new";
 import { useEffect } from "react";
 import { initGA } from "./lib/analytics";
 import { useAnalytics } from "./hooks/use-analytics";

@@ -11,8 +11,25 @@ import {
   Share2, 
   BookOpen, 
   Tag,
-  ExternalLink
+  ExternalLink,
+  Sparkles,
+  Brain,
+  Eye,
+  Zap,
+  Layers,
+  ChevronLeft,
+  ChevronRight,
+  Copy,
+  Twitter,
+  Facebook,
+  Linkedin,
+  Heart,
+  MessageCircle,
+  Bookmark,
+  TrendingUp,
+  Cpu
 } from "lucide-react";
+import { motion } from "framer-motion";
 import type { BlogPost } from "@shared/schema";
 
 export default function BlogPostPage() {
@@ -51,19 +68,31 @@ export default function BlogPostPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="animate-pulse">
-            <div className="h-4 bg-gray-200 rounded w-24 mb-6"></div>
-            <div className="h-8 bg-gray-200 rounded w-3/4 mb-4"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/2 mb-8"></div>
-            <div className="aspect-video bg-gray-200 rounded-lg mb-8"></div>
-            <div className="space-y-4">
-              <div className="h-4 bg-gray-200 rounded"></div>
-              <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-              <div className="h-4 bg-gray-200 rounded w-4/5"></div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-gradient-to-br from-blue-500/30 to-purple-600/30 blur-3xl animate-pulse"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full bg-gradient-to-br from-cyan-500/30 to-blue-600/30 blur-3xl animate-pulse delay-1000"></div>
+        </div>
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-12"
+          >
+            <div className="animate-pulse space-y-8">
+              <div className="h-6 bg-gradient-to-r from-white/20 to-white/10 rounded-full w-32"></div>
+              <div className="h-12 bg-gradient-to-r from-white/20 to-white/10 rounded-2xl w-3/4"></div>
+              <div className="h-6 bg-gradient-to-r from-white/20 to-white/10 rounded-full w-1/2"></div>
+              <div className="aspect-video bg-gradient-to-br from-blue-500/20 to-purple-600/20 rounded-3xl"></div>
+              <div className="space-y-4">
+                <div className="h-4 bg-gradient-to-r from-white/20 to-white/10 rounded-full"></div>
+                <div className="h-4 bg-gradient-to-r from-white/20 to-white/10 rounded-full w-5/6"></div>
+                <div className="h-4 bg-gradient-to-r from-white/20 to-white/10 rounded-full w-4/5"></div>
+              </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     );
@@ -76,23 +105,41 @@ export default function BlogPostPage() {
           title="Blog Post Not Found | QuoteKit"
           description="The requested blog post could not be found."
         />
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div className="text-center">
-              <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                Blog Post Not Found
-              </h1>
-              <p className="text-gray-600 mb-8">
-                The blog post you're looking for doesn't exist or has been removed.
-              </p>
-              <Link href="/blogs">
-                <Button>
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Blog
-                </Button>
-              </Link>
-            </div>
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+          {/* Animated Background */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-gradient-to-br from-blue-500/30 to-purple-600/30 blur-3xl animate-pulse"></div>
+            <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full bg-gradient-to-br from-cyan-500/30 to-blue-600/30 blur-3xl animate-pulse delay-1000"></div>
+          </div>
+
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-center"
+            >
+              <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-16 max-w-2xl mx-auto">
+                <div className="relative mb-8">
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-pink-600/20 rounded-full blur-3xl"></div>
+                  <div className="relative bg-gradient-to-r from-red-500/10 to-pink-600/10 backdrop-blur-2xl rounded-3xl p-8">
+                    <Brain className="w-20 h-20 text-gray-400 mx-auto" />
+                  </div>
+                </div>
+                <h1 className="text-3xl font-bold text-white mb-4">
+                  AI Article Not Found
+                </h1>
+                <p className="text-gray-300 mb-10 leading-relaxed">
+                  The AI-generated blog post you're looking for doesn't exist in our neural network or may have been archived.
+                </p>
+                <Link href="/blogs">
+                  <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 border-0 rounded-full px-8 py-4 text-white">
+                    <ChevronLeft className="w-4 h-4 mr-2" />
+                    Back to AI Blog
+                  </Button>
+                </Link>
+              </div>
+            </motion.div>
           </div>
         </div>
       </>

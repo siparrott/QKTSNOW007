@@ -1697,6 +1697,18 @@ Allow: /*-calculator`;
     }
   });
 
+  // Get recent blog posts for homepage (public)
+  app.get("/api/blog-posts/recent", async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 3;
+      const posts = await storage.getRecentBlogPosts(limit);
+      res.json(posts);
+    } catch (error) {
+      console.error("Recent blog posts fetch error:", error);
+      res.status(500).json({ error: "Failed to fetch recent blog posts" });
+    }
+  });
+
   // Get published blog posts (public)
   app.get("/api/blog-posts", async (req, res) => {
     try {

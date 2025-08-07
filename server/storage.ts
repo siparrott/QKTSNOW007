@@ -66,6 +66,7 @@ export interface IStorage {
   createBlogPost(blogPost: InsertBlogPost): Promise<BlogPost>;
   updateBlogPost(id: string, data: UpdateBlogPost): Promise<BlogPost>;
   deleteBlogPost(id: string): Promise<void>;
+  getRecentBlogPosts(limit?: number): Promise<BlogPost[]>;
   
   // Admin operations
   getAllUsers(): Promise<User[]>;
@@ -95,6 +96,7 @@ export class MemStorage implements IStorage {
     this.blogPosts = new Map();
     this.currentCalculatorId = 1;
     this.seedCalculators();
+    this.seedBlogPosts();
   }
 
   private seedCalculators() {
@@ -1522,8 +1524,26 @@ export class MemStorage implements IStorage {
   }
 
   async getPublishedBlogPosts(): Promise<BlogPost[]> {
+    const now = new Date();
     const allPosts = await this.getAllBlogPosts();
-    return allPosts.filter(post => post.status === "published");
+    
+    // Check for scheduled posts that should be published
+    for (const post of allPosts) {
+      if (post.status === 'scheduled' && post.scheduledFor && new Date(post.scheduledFor) <= now) {
+        // Auto-publish scheduled posts
+        post.status = 'published';
+        post.publishedAt = new Date();
+        this.blogPosts.set(post.id, post);
+      }
+    }
+    
+    return allPosts
+      .filter(post => post.status === "published")
+      .sort((a, b) => {
+        const aDate = new Date(a.publishedAt || a.createdAt);
+        const bDate = new Date(b.publishedAt || b.createdAt);
+        return bDate.getTime() - aDate.getTime();
+      });
   }
 
   async getBlogPostBySlug(slug: string): Promise<BlogPost | undefined> {
@@ -1540,6 +1560,23 @@ export class MemStorage implements IStorage {
   }
 
   async createBlogPost(insertBlogPost: InsertBlogPost): Promise<BlogPost> {
+    const now = new Date();
+    
+    // Handle scheduling logic
+    let status = insertBlogPost.status || 'draft';
+    let publishedAt = null;
+    
+    if (status === 'published') {
+      publishedAt = now;
+    } else if (status === 'scheduled' && insertBlogPost.scheduledFor) {
+      const scheduledDate = new Date(insertBlogPost.scheduledFor);
+      if (scheduledDate <= now) {
+        // If scheduled time is in the past, publish immediately
+        status = 'published';
+        publishedAt = now;
+      }
+    }
+    
     const blogPost: BlogPost = {
       id: crypto.randomUUID(),
       title: insertBlogPost.title,
@@ -1552,15 +1589,15 @@ export class MemStorage implements IStorage {
       language: insertBlogPost.language || "en",
       websiteUrl: insertBlogPost.websiteUrl || null,
       customSlug: insertBlogPost.customSlug || null,
-      status: insertBlogPost.status || "draft",
-      publishedAt: insertBlogPost.publishedAt || null,
+      status,
+      publishedAt,
       scheduledFor: insertBlogPost.scheduledFor || null,
       seoTitle: insertBlogPost.seoTitle || null,
       seoDescription: insertBlogPost.seoDescription || null,
       tags: insertBlogPost.tags || [],
       readTime: insertBlogPost.readTime || null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: now,
+      updatedAt: now,
     };
     
     this.blogPosts.set(blogPost.id, blogPost);
@@ -1573,21 +1610,169 @@ export class MemStorage implements IStorage {
       throw new Error('Blog post not found');
     }
     
+    const now = new Date();
+    let updatedData = { ...data };
+    
+    // Handle status changes and scheduling
+    if (data.status === 'published' && blogPost.status !== 'published') {
+      updatedData.publishedAt = now;
+    } else if (data.status === 'scheduled' && data.scheduledFor) {
+      const scheduledDate = new Date(data.scheduledFor);
+      if (scheduledDate <= now) {
+        // If scheduled time is in the past, publish immediately
+        updatedData.status = 'published';
+        updatedData.publishedAt = now;
+      }
+    }
+    
     const updated: BlogPost = {
       ...blogPost,
-      ...data,
-      updatedAt: new Date(),
-      publishedAt: data.status === "published" && !blogPost.publishedAt 
-        ? new Date() 
-        : blogPost.publishedAt,
+      ...updatedData,
+      updatedAt: now,
     };
     
     this.blogPosts.set(id, updated);
     return updated;
   }
 
+  // Get recent blog posts for homepage
+  async getRecentBlogPosts(limit: number = 3): Promise<BlogPost[]> {
+    const publishedPosts = await this.getPublishedBlogPosts();
+    return publishedPosts.slice(0, limit);
+  }
+
   async deleteBlogPost(id: string): Promise<void> {
     this.blogPosts.delete(id);
+  }
+
+  // Initialize sample blog posts for demonstration
+  private seedBlogPosts(): void {
+    const samplePosts: BlogPost[] = [
+      {
+        id: '1',
+        title: 'How AI-Powered Quote Calculators Are Transforming Service Businesses',
+        slug: 'ai-quote-calculators-transforming-businesses',
+        excerpt: 'Discover how artificial intelligence is revolutionizing the way service businesses generate quotes and convert leads into customers.',
+        content: `# How AI-Powered Quote Calculators Are Transforming Service Businesses
+
+Service businesses are experiencing a revolutionary shift in how they generate quotes and convert leads. Traditional manual quoting processes are being replaced by intelligent, AI-powered calculators that deliver instant, accurate estimates while capturing valuable lead information.
+
+## The Evolution of Service Pricing
+
+Gone are the days when potential customers had to wait days for a quote or schedule multiple consultations before getting pricing information. Modern consumers expect instant gratification, and AI-powered quote calculators deliver exactly that.
+
+### Key Benefits of AI-Powered Quoting
+
+1. **Instant Gratification**: Customers receive immediate pricing estimates
+2. **Lead Capture**: Automated collection of customer information
+3. **Consistency**: Standardized pricing across all channels
+4. **Scalability**: Handle unlimited quote requests simultaneously
+
+## Industry Impact
+
+From photography studios to home renovation companies, businesses across industries are seeing dramatic improvements in conversion rates and customer satisfaction. The ability to provide instant, transparent pricing builds trust and accelerates the decision-making process.
+
+The future of service business quoting is here, and it's powered by artificial intelligence.`,
+        featuredImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=400&fit=crop',
+        tags: ['AI', 'Business', 'Technology', 'Automation'],
+        status: 'published',
+        language: 'en',
+        readTime: 4,
+        publishedAt: new Date(Date.now() - 86400000), // 1 day ago
+        createdAt: new Date(Date.now() - 86400000),
+        updatedAt: new Date(Date.now() - 86400000),
+        scheduledFor: null,
+      },
+      {
+        id: '2',
+        title: 'The Psychology Behind Instant Pricing: Why Transparency Wins',
+        slug: 'psychology-instant-pricing-transparency',
+        excerpt: 'Explore the psychological factors that make instant pricing so effective in converting website visitors into paying customers.',
+        content: `# The Psychology Behind Instant Pricing: Why Transparency Wins
+
+Understanding consumer psychology is crucial for service businesses looking to optimize their conversion rates. When it comes to pricing, transparency and immediacy play vital roles in building trust and encouraging action.
+
+## The Trust Factor
+
+When potential customers can see pricing immediately, without having to provide personal information first, it creates an immediate sense of trust. This transparency signals that the business has nothing to hide and is confident in their value proposition.
+
+### Cognitive Biases at Play
+
+Several psychological principles make instant pricing particularly effective:
+
+- **Loss Aversion**: Fear of missing out on immediate pricing information
+- **Anchoring Effect**: The first price seen becomes a reference point
+- **Cognitive Ease**: Simple, clear pricing reduces mental friction
+
+## Implementation Strategies
+
+Successful businesses implement instant pricing by:
+
+1. Making calculators prominent on their website
+2. Requiring minimal information upfront
+3. Providing clear pricing breakdowns
+4. Offering immediate next steps
+
+The result? Higher conversion rates and better customer satisfaction.`,
+        featuredImage: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=800&h=400&fit=crop',
+        tags: ['Psychology', 'Pricing', 'Conversion', 'Customer Experience'],
+        status: 'published',
+        language: 'en',
+        readTime: 3,
+        publishedAt: new Date(Date.now() - 172800000), // 2 days ago
+        createdAt: new Date(Date.now() - 172800000),
+        updatedAt: new Date(Date.now() - 172800000),
+        scheduledFor: null,
+      },
+      {
+        id: '3',
+        title: 'Building High-Converting Landing Pages for Service Businesses',
+        slug: 'high-converting-landing-pages-service-businesses',
+        excerpt: 'Learn the essential elements and strategies for creating landing pages that turn visitors into leads and customers.',
+        content: `# Building High-Converting Landing Pages for Service Businesses
+
+A well-designed landing page can make the difference between a visitor and a customer. For service businesses, the challenge lies in communicating value quickly while building trust and encouraging action.
+
+## Essential Elements of High-Converting Pages
+
+Every successful service business landing page includes these key components:
+
+### 1. Clear Value Proposition
+Your headline should immediately communicate what you do and why it matters to your visitor.
+
+### 2. Social Proof
+Testimonials, reviews, and case studies build credibility and trust.
+
+### 3. Interactive Elements
+Quote calculators, assessments, or demos engage visitors and provide immediate value.
+
+### 4. Strong Call-to-Action
+Make it crystal clear what you want visitors to do next.
+
+## Optimization Strategies
+
+- Use A/B testing to refine messaging
+- Optimize for mobile experiences
+- Implement exit-intent popups
+- Track user behavior with analytics
+
+The goal is to create a seamless journey from curiosity to conversion, guiding visitors naturally toward becoming customers.`,
+        featuredImage: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=400&fit=crop',
+        tags: ['Landing Pages', 'Conversion', 'Web Design', 'Marketing'],
+        status: 'published',
+        language: 'en',
+        readTime: 5,
+        publishedAt: new Date(Date.now() - 259200000), // 3 days ago
+        createdAt: new Date(Date.now() - 259200000),
+        updatedAt: new Date(Date.now() - 259200000),
+        scheduledFor: null,
+      }
+    ];
+
+    // Add sample posts to the map
+    samplePosts.forEach(post => {
+      this.blogPosts.set(post.id, post);
+    });
   }
 }
 

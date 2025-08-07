@@ -6,18 +6,21 @@ import {
   leads, 
   sessions, 
   subscriptions,
+  blogPosts,
   type User,
   type Calculator,
   type UserCalculator,
   type Lead,
   type Session,
   type Subscription,
+  type BlogPost,
   type InsertUser,
   type InsertCalculator,
   type InsertUserCalculator,
   type InsertLead,
   type InsertSession,
-  type InsertSubscription
+  type InsertSubscription,
+  type InsertBlogPost
 } from "@shared/schema";
 import { eq, and } from "drizzle-orm";
 import { IStorage } from "./storage";
@@ -212,5 +215,50 @@ export class PostgresStorage implements IStorage {
   async getActiveSubscriptionCount(): Promise<number> {
     const result = await db.select().from(subscriptions).where(eq(subscriptions.status, 'active'));
     return result.length;
+  }
+
+  // Missing methods that need to be implemented
+  async updateUser(userId: string, data: Partial<User>): Promise<User> {
+    const [updatedUser] = await db.update(users)
+      .set(data)
+      .where(eq(users.id, userId))
+      .returning();
+    return updatedUser;
+  }
+
+  // Blog post methods
+  async getAllBlogPosts(): Promise<BlogPost[]> {
+    return await db.select().from(blogPosts);
+  }
+
+  async getPublishedBlogPosts(): Promise<BlogPost[]> {
+    return await db.select().from(blogPosts).where(eq(blogPosts.status, 'published'));
+  }
+
+  async getBlogPostBySlug(slug: string): Promise<BlogPost | undefined> {
+    const [post] = await db.select().from(blogPosts).where(eq(blogPosts.slug, slug));
+    return post;
+  }
+
+  async createBlogPost(data: InsertBlogPost): Promise<BlogPost> {
+    const [newPost] = await db.insert(blogPosts).values(data).returning();
+    return newPost;
+  }
+
+  async updateBlogPost(id: string, data: Partial<BlogPost>): Promise<BlogPost> {
+    const [updatedPost] = await db.update(blogPosts)
+      .set(data)
+      .where(eq(blogPosts.id, id))
+      .returning();
+    return updatedPost;
+  }
+
+  async getRecentBlogPosts(limit: number = 3): Promise<BlogPost[]> {
+    const publishedPosts = await this.getPublishedBlogPosts();
+    return publishedPosts.slice(0, limit);
+  }
+
+  async deleteBlogPost(id: string): Promise<void> {
+    await db.delete(blogPosts).where(eq(blogPosts.id, id));
   }
 }

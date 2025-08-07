@@ -6,6 +6,7 @@ import NichesGrid from "@/components/landing/niches-grid";
 import LiveDemo from "@/components/landing/live-demo";
 import Testimonials from "@/components/landing/testimonials";
 import Pricing from "@/components/landing/pricing";
+import BlogPreview from "@/components/landing/blog-preview";
 import FinalCTA from "@/components/landing/final-cta";
 import Footer from "@/components/landing/footer";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,7 @@ export default function Home() {
       <NichesGrid />
       <LiveDemo />
       <Testimonials />
+      <BlogPreview />
       <Pricing />
       <FinalCTA />
       <Footer />

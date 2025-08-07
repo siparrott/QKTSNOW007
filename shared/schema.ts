@@ -139,7 +139,7 @@ export const adminLogs = pgTable("admin_logs", {
 
 // Blog Posts Table - AI Auto-Blogging System
 export const blogPosts = pgTable("blog_posts", {
-  id: uuid("id").primaryKey().defaultRandom(),
+  id: text("id").primaryKey(),
   title: text("title").notNull(),
   slug: text("slug").notNull().unique(),
   content: text("content").notNull(),
@@ -155,7 +155,7 @@ export const blogPosts = pgTable("blog_posts", {
   scheduledFor: timestamp("scheduled_for"),
   seoTitle: text("seo_title"),
   seoDescription: text("seo_description"),
-  tags: jsonb("tags").default([]),
+  tags: text("tags").array(),
   readTime: integer("read_time"), // estimated reading time in minutes
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

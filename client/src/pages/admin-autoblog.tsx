@@ -22,8 +22,11 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  BookOpen
+  BookOpen,
+  Edit3,
+  Zap
 } from "lucide-react";
+import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import type { BlogPost } from "@shared/schema";
@@ -42,7 +45,7 @@ export default function AdminAutoBlog() {
   const [language, setLanguage] = useState("en");
   const [websiteUrl, setWebsiteUrl] = useState("https://quotekit.ai");
   const [customSlug, setCustomSlug] = useState("");
-  const [publishingOption, setPublishingOption] = useState("draft");
+  const [publishOption, setPublishOption] = useState("draft");
   const [scheduledDate, setScheduledDate] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [previewPost, setPreviewPost] = useState<BlogPost | null>(null);
@@ -69,13 +72,16 @@ export default function AdminAutoBlog() {
 
       return apiRequest("/api/admin/blog-posts/generate", {
         method: "POST",
-        body: {
+        body: JSON.stringify({
           images: base64Images,
           contentGuidance: request.contentGuidance,
           language: request.language,
           websiteUrl: request.websiteUrl,
-          customSlug: request.customSlug,
-        },
+          customSlug: request.customSlug
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
     },
     onSuccess: (data) => {
@@ -108,12 +114,15 @@ export default function AdminAutoBlog() {
       
       return apiRequest("/api/admin/blog-posts", {
         method: "POST",
-        body: {
+        body: JSON.stringify({
           ...data.blogPost,
           status,
-          scheduledFor: data.scheduledDate ? new Date(data.scheduledDate) : null,
-          publishedAt: status === "published" ? new Date() : null,
-        },
+          scheduledFor: data.scheduledDate ? new Date(data.scheduledDate).toISOString() : null,
+          publishedAt: status === "published" ? new Date().toISOString() : null,
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
     },
     onSuccess: () => {
@@ -139,7 +148,10 @@ export default function AdminAutoBlog() {
     mutationFn: async ({ id, data }: { id: string; data: Partial<BlogPost> }) => {
       return apiRequest(`/api/admin/blog-posts/${id}`, {
         method: "PATCH",
-        body: data,
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
     },
     onSuccess: () => {
@@ -180,7 +192,7 @@ export default function AdminAutoBlog() {
     setSelectedFiles([]);
     setContentGuidance("");
     setCustomSlug("");
-    setPublishingOption("draft");
+    setPublishOption("draft");
     setScheduledDate("");
   };
 
@@ -217,7 +229,7 @@ export default function AdminAutoBlog() {
 
     publishBlogMutation.mutate({
       blogPost: previewPost,
-      publishingOption,
+      publishingOption: publishOption,
       scheduledDate,
     });
   };
@@ -352,6 +364,91 @@ export default function AdminAutoBlog() {
                   </p>
                 </div>
 
+                {/* Publishing Options */}
+                <div className="space-y-4 border-t pt-4">
+                  <Label className="text-base font-semibold flex items-center gap-2">
+                    <Clock className="w-4 h-4" />
+                    Publishing Options
+                  </Label>
+                  
+                  <div className="space-y-3">
+                    <Label className="text-sm font-medium">Publication Status</Label>
+                    <div className="grid grid-cols-3 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setPublishOption('draft')}
+                        className={`p-3 rounded-lg border-2 transition-all ${
+                          publishOption === 'draft'
+                            ? 'border-blue-500 bg-blue-50 text-blue-700'
+                            : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <Edit3 className="w-4 h-4" />
+                          <span className="font-medium">Draft</span>
+                        </div>
+                        <p className="text-xs opacity-70">Save for later</p>
+                      </button>
+                      
+                      <button
+                        type="button"
+                        onClick={() => setPublishOption('publish')}
+                        className={`p-3 rounded-lg border-2 transition-all ${
+                          publishOption === 'publish'
+                            ? 'border-green-500 bg-green-50 text-green-700'
+                            : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <Zap className="w-4 h-4" />
+                          <span className="font-medium">Publish Now</span>
+                        </div>
+                        <p className="text-xs opacity-70">Go live immediately</p>
+                      </button>
+                      
+                      <button
+                        type="button"
+                        onClick={() => setPublishOption('schedule')}
+                        className={`p-3 rounded-lg border-2 transition-all ${
+                          publishOption === 'schedule'
+                            ? 'border-purple-500 bg-purple-50 text-purple-700'
+                            : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <Calendar className="w-4 h-4" />
+                          <span className="font-medium">Schedule</span>
+                        </div>
+                        <p className="text-xs opacity-70">Set future date</p>
+                      </button>
+                    </div>
+
+                    {publishOption === 'schedule' && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="space-y-2 bg-purple-50 border border-purple-200 rounded-lg p-4"
+                      >
+                        <Label htmlFor="scheduledDate" className="text-sm font-medium">
+                          Schedule Publication
+                        </Label>
+                        <Input
+                          id="scheduledDate"
+                          type="datetime-local"
+                          value={scheduledDate}
+                          onChange={(e) => setScheduledDate(e.target.value)}
+                          min={new Date().toISOString().slice(0, 16)}
+                          className="mt-1"
+                        />
+                        <p className="text-xs text-purple-600">
+                          The blog post will automatically be published at this date and time
+                        </p>
+                      </motion.div>
+                    )}
+                  </div>
+                </div>
+
                 {/* Generate Button */}
                 <Button
                   onClick={handleGenerate}
@@ -394,7 +491,7 @@ export default function AdminAutoBlog() {
                     </div>
                     
                     <div className="flex flex-wrap gap-1">
-                      {previewPost.tags.map((tag, index) => (
+                      {Array.isArray(previewPost.tags) && previewPost.tags.map((tag: string, index: number) => (
                         <Badge key={index} variant="secondary" className="text-xs">
                           <Hash className="w-3 h-3 mr-1" />{tag}
                         </Badge>
@@ -413,7 +510,7 @@ export default function AdminAutoBlog() {
                       <Label htmlFor="publishing" className="text-sm font-medium">
                         Publishing Options
                       </Label>
-                      <Select value={publishingOption} onValueChange={setPublishingOption}>
+                      <Select value={publishOption} onValueChange={setPublishOption}>
                         <SelectTrigger className="mt-1">
                           <SelectValue />
                         </SelectTrigger>
@@ -425,7 +522,7 @@ export default function AdminAutoBlog() {
                       </Select>
                     </div>
 
-                    {publishingOption === "schedule" && (
+                    {publishOption === "schedule" && (
                       <div>
                         <Label htmlFor="scheduled" className="text-sm font-medium">
                           Schedule Date & Time
@@ -447,9 +544,9 @@ export default function AdminAutoBlog() {
                     >
                       {publishBlogMutation.isPending ? (
                         "Saving..."
-                      ) : publishingOption === "publish" ? (
+                      ) : publishOption === "publish" ? (
                         "Publish Blog Post"
-                      ) : publishingOption === "schedule" ? (
+                      ) : publishOption === "schedule" ? (
                         "Schedule Blog Post"
                       ) : (
                         "Save as Draft"

@@ -21,6 +21,9 @@ import EmbedCalculator from "@/components/embed-calculator";
 import Profile from "@/pages/profile";
 import TwoFactorSetup from "@/pages/two-factor-setup";
 import TwoFactorVerify from "@/pages/two-factor-verify";
+import { useEffect } from "react";
+import { initGA } from "./lib/analytics";
+import { useAnalytics } from "./hooks/use-analytics";
 
 // Check if this is an embed route at startup
 function EmbedHandler() {
@@ -40,6 +43,9 @@ function EmbedHandler() {
 }
 
 function Router() {
+  // Track page views when routes change
+  useAnalytics();
+  
   return (
     <Switch>
       <Route path="/" component={Home} />
@@ -74,6 +80,17 @@ function Router() {
 }
 
 function App() {
+  // Initialize Google Analytics when app loads
+  useEffect(() => {
+    // Verify required environment variable is present
+    if (!import.meta.env.VITE_GA_MEASUREMENT_ID) {
+      console.warn('Missing required Google Analytics key: VITE_GA_MEASUREMENT_ID');
+    } else {
+      initGA();
+      console.log('Google Analytics initialized with ID:', import.meta.env.VITE_GA_MEASUREMENT_ID);
+    }
+  }, []);
+
   // Check if this is an embed page
   const embedConfig = (window as any).__EMBED_CONFIG__;
   

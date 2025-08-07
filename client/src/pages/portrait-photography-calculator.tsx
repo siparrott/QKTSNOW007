@@ -21,6 +21,7 @@ import {
   Users,
   Palette
 } from "lucide-react";
+import { trackCalculatorEvent } from "@/lib/analytics";
 
 interface PortraitFormData {
   portraitType: string;

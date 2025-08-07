@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { authService } from "./auth";
 import { stripeService } from "./stripe";
 import { emailService } from "./email";
+import { sendEmail, generateQuoteEmailHTML } from "./sendgrid";
 import { TwoFactorAuth } from "./two-factor";
 import { processCarWashRequest, processChauffeurRequest, processAirportTransferRequest, processVanRentalRequest, processBoatCharterRequest, processMovingServicesRequest, processMotorcycleRepairRequest, processDrivingInstructorRequest, processWebDesignerRequest, processMarketingConsultantRequest, processSEOAgencyRequest, processVideoEditorRequest, processCopywriterRequest, processLegalAdvisorRequest, processTaxPreparerRequest, processTranslationServicesRequest, processCleaningServicesRequest, processPrivateSchoolRequest } from "./ai";
 import { processDentistRequest } from "./dental-ai";
@@ -686,6 +687,23 @@ Allow: /*-calculator`;
       });
 
       const lead = await storage.createLead(leadData);
+
+      // Send quote email if email provided
+      if (leadData.email) {
+        const quoteData = leadData.quoteData as any;
+        const emailSuccess = await sendEmail({
+          to: leadData.email,
+          from: 'quotes@quotekit.ai', // Change to your verified sender email
+          subject: `Your Quote - ${quoteData?.currencySymbol || '$'}${quoteData?.total || 'N/A'}`,
+          html: generateQuoteEmailHTML(
+            leadData.name || 'Customer',
+            quoteData || { breakdown: [], total: 0, currencySymbol: '$' }
+          ),
+          text: `Dear ${leadData.name}, your quote is ${quoteData?.currencySymbol || '$'}${quoteData?.total || 'N/A'}.`
+        });
+        console.log("Quote email sent:", emailSuccess);
+      }
+
       res.status(201).json(lead);
     } catch (error) {
       res.status(400).json({ error: "Invalid lead data" });

@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { QuoteKitHeader } from "@/components/calculator-header";
 import { EditableText } from "@/components/editable-text";
+import SEOHead from "@/components/seo-head";
 import { 
   Camera, 
   Clock, 
@@ -474,7 +475,7 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
       total,
       breakdown,
       currency,
-      currencySymbol,
+
     };
   };
 
@@ -632,7 +633,13 @@ export default function CommercialPhotographyCalculator({ customConfig: propConf
   ];
 
   return (
-    <div className="min-h-screen&">
+    <div className="commercial-calculator min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
+      <SEOHead 
+        title="Commercial Photography Quote Calculator | AI-Powered Pricing | QuoteKit.ai"
+        description="Get instant commercial photography quotes with our AI calculator. Professional pricing for product, headshots, branding & event photography. Custom quotes in 30 seconds."
+        keywords="commercial photography quotes, photography pricing calculator, product photography pricing, corporate headshot pricing, photographer quote tool"
+        url="https://quotekit.ai/commercial-photography-calculator"
+      />
       {!hideHeader && <QuoteKitHeader />}
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}

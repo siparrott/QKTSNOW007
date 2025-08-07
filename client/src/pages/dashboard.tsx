@@ -10,11 +10,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
-import { Calculator, Plus, Settings, Eye, Copy, ExternalLink, BarChart3, Users, TrendingUp, Activity, Calendar, DollarSign, Palette, Type, Layout, Zap, Bell, Smartphone, Monitor, Tablet, Trash2, Edit3, Camera } from "lucide-react";
+import { Calculator, Plus, Settings, Eye, Copy, ExternalLink, BarChart3, Users, TrendingUp, Activity, Calendar, DollarSign, Palette, Type, Layout, Zap, Bell, Smartphone, Monitor, Tablet, Trash2, Edit3, Camera, Smile } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart as RechartsBarChart, Bar } from "recharts";
 import CalculatorPreview from "../components/calculator-preview";
 import { getQuoteStats, incrementQuoteUsage, canGenerateQuote, resetQuoteUsage } from "@/lib/quote-tracker";
 import { EditableText } from "@/components/editable-text";
+import IconGallery from "@/components/icon-gallery";
 
 interface User {
   id: string;
@@ -195,6 +196,8 @@ export default function Dashboard() {
   const [showEmbedModal, setShowEmbedModal] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [showIconGallery, setShowIconGallery] = useState(false);
+  const [iconEditingIndex, setIconEditingIndex] = useState<{type: string, index: number} | null>(null);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [checkoutUrl, setCheckoutUrl] = useState("");
   
@@ -827,6 +830,26 @@ export default function Dashboard() {
     setShowEmbedModal(true);
   };
 
+  // Icon selection handler
+  const handleIconSelect = (icon: string) => {
+    if (!iconEditingIndex) return;
+    
+    const { type, index } = iconEditingIndex;
+    
+    if (type === 'addon') {
+      const newAddOns = [...(customConfig.addOnPrices || [])];
+      newAddOns[index] = { ...newAddOns[index], icon };
+      setCustomConfig({...customConfig, addOnPrices: newAddOns});
+    } else if (type === 'duration') {
+      const newDurations = [...(customConfig.durationPrices || [])];
+      newDurations[index] = { ...newDurations[index], icon };
+      setCustomConfig({...customConfig, durationPrices: newDurations});
+    }
+    
+    setShowIconGallery(false);
+    setIconEditingIndex(null);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-midnight-950 via-midnight-900 to-midnight-800">
       <div className="container mx-auto px-6 py-8">
@@ -1319,11 +1342,23 @@ export default function Dashboard() {
                           <h4 className="text-neon-400 font-medium mb-3 text-sm">Add-on Services</h4>
                           <div className="space-y-3">
                             {(customConfig.addOnPrices || [
-                              { name: "Rush delivery", price: 100 },
-                              { name: "Print package", price: 150 },
-                              { name: "Social media package", price: 75 }
+                              { name: "Rush delivery", price: 100, icon: "⚡" },
+                              { name: "Print package", price: 150, icon: "📦" },
+                              { name: "Social media package", price: 75, icon: "📱" }
                             ]).map((addon, index) => (
-                              <div key={index} className="flex gap-2">
+                              <div key={index} className="flex gap-2 items-center">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setIconEditingIndex({type: 'addon', index});
+                                    setShowIconGallery(true);
+                                  }}
+                                  className="w-8 h-8 p-0 text-lg hover:bg-midnight-700 border border-midnight-600"
+                                  title="Change icon"
+                                >
+                                  {addon.icon || "🎯"}
+                                </Button>
                                 <div className="flex-1">
                                   <Input
                                     value={addon.name}
@@ -1367,7 +1402,7 @@ export default function Dashboard() {
                               size="sm"
                               variant="ghost"
                               onClick={() => {
-                                const newAddOns = [...(customConfig.addOnPrices || []), { name: "", price: 0 }];
+                                const newAddOns = [...(customConfig.addOnPrices || []), { name: "", price: 0, icon: "🎯" }];
                                 setCustomConfig({...customConfig, addOnPrices: newAddOns});
                               }}
                               className="text-neon-400 hover:text-neon-300 hover:bg-neon-500/20 text-xs"
@@ -1381,12 +1416,24 @@ export default function Dashboard() {
                           <h4 className="text-neon-400 font-medium mb-3 text-sm">Duration Pricing</h4>
                           <div className="space-y-2">
                             {(customConfig.durationPrices || [
-                              { duration: "30 minutes", multiplier: 0.5 },
-                              { duration: "1 hour", multiplier: 1 },
-                              { duration: "2 hours", multiplier: 1.8 },
-                              { duration: "Half day", multiplier: 3 }
+                              { duration: "30 minutes", multiplier: 0.5, icon: "⏰" },
+                              { duration: "1 hour", multiplier: 1, icon: "🕐" },
+                              { duration: "2 hours", multiplier: 1.8, icon: "⏱️" },
+                              { duration: "Half day", multiplier: 3, icon: "☀️" }
                             ]).map((duration, index) => (
                               <div key={index} className="flex gap-2 items-center">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setIconEditingIndex({type: 'duration', index});
+                                    setShowIconGallery(true);
+                                  }}
+                                  className="w-8 h-8 p-0 text-lg hover:bg-midnight-700 border border-midnight-600"
+                                  title="Change icon"
+                                >
+                                  {duration.icon || "🕐"}
+                                </Button>
                                 <div className="flex-1">
                                   <Input
                                     value={duration.duration}
@@ -3256,6 +3303,25 @@ export default function Dashboard() {
           </Dialog>
         )}
       </div>
+
+      {/* Icon Gallery */}
+      <IconGallery
+        isOpen={showIconGallery}
+        onClose={() => {
+          setShowIconGallery(false);
+          setIconEditingIndex(null);
+        }}
+        onSelectIcon={handleIconSelect}
+        currentIcon={
+          iconEditingIndex 
+            ? (iconEditingIndex.type === 'addon' 
+                ? customConfig.addOnPrices?.[iconEditingIndex.index]?.icon 
+                : iconEditingIndex.type === 'duration'
+                ? customConfig.durationPrices?.[iconEditingIndex.index]?.icon
+                : undefined)
+            : undefined
+        }
+      />
     </div>
   );
 }

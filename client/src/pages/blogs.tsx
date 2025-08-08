@@ -42,11 +42,12 @@ export default function Blogs() {
   });
 
   // Debug logging
-  console.log('Blog query state:', { 
+  console.log('Blog query debug:', { 
     isLoading, 
-    postsCount: blogPosts.length, 
+    postsCount: blogPosts?.length || 0, 
     error: error?.message,
-    posts: blogPosts.slice(0, 2).map(p => ({ id: p.id, title: p.title }))
+    hasData: !!blogPosts,
+    firstPost: blogPosts?.[0]?.title || 'No posts'
   });
 
   useEffect(() => {
@@ -54,7 +55,7 @@ export default function Blogs() {
   }, []);
 
   // Filter blog posts based on search and tag
-  const filteredPosts = blogPosts.filter((post: BlogPost) => {
+  const filteredPosts = blogPosts ? blogPosts.filter((post: BlogPost) => {
     const matchesSearch = !searchQuery || 
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.excerpt?.toLowerCase().includes(searchQuery.toLowerCase());
@@ -62,7 +63,9 @@ export default function Blogs() {
     const matchesTag = !selectedTag || (post.tags && post.tags.includes(selectedTag));
     
     return matchesSearch && matchesTag;
-  });
+  }) : [];
+
+  console.log('Filtered posts count:', filteredPosts.length);
 
   // Get all unique tags
   const allTags = Array.from(

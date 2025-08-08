@@ -348,6 +348,9 @@ export const insertBlogPostSchema = createInsertSchema(blogPosts).pick({
   seoDescription: true,
   tags: true,
   readTime: true,
+}).extend({
+  publishedAt: z.string().optional().nullable().transform(val => val ? new Date(val) : null),
+  scheduledFor: z.string().optional().nullable().transform(val => val ? new Date(val) : null),
 });
 
 export const updateBlogPostSchema = insertBlogPostSchema.partial();

@@ -119,7 +119,7 @@ export default function AdminAutoBlog() {
         body: JSON.stringify({
           ...data.blogPost,
           status,
-          scheduledFor: data.scheduledDate ? new Date(data.scheduledDate).toISOString() : null,
+          scheduledFor: data.scheduledDate || null,
           publishedAt: status === "published" ? new Date().toISOString() : null,
         }),
         headers: {
@@ -311,7 +311,7 @@ export default function AdminAutoBlog() {
                     value={contentGuidance}
                     onChange={(e) => setContentGuidance(e.target.value)}
                     rows={3}
-                    className="mt-1"
+                    className="mt-1 bg-white border-gray-300 text-gray-900"
                   />
                 </div>
 
@@ -321,10 +321,10 @@ export default function AdminAutoBlog() {
                     Content Language
                   </Label>
                   <Select value={language} onValueChange={setLanguage}>
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger className="mt-1 bg-white border-gray-300 text-gray-900">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white border-gray-300">
                       <SelectItem value="en">English</SelectItem>
                       <SelectItem value="de">Deutsch (German)</SelectItem>
                       <SelectItem value="es">Español (Spanish)</SelectItem>
@@ -345,7 +345,7 @@ export default function AdminAutoBlog() {
                     value={websiteUrl}
                     onChange={(e) => setWebsiteUrl(e.target.value)}
                     placeholder="https://www.newagefotografie.com"
-                    className="mt-1"
+                    className="mt-1 bg-white border-gray-300 text-gray-900"
                   />
                 </div>
 
@@ -359,7 +359,7 @@ export default function AdminAutoBlog() {
                     value={customSlug}
                     onChange={(e) => setCustomSlug(e.target.value)}
                     placeholder="e.g., my-custom-blog-post-url"
-                    className="mt-1"
+                    className="mt-1 bg-white border-gray-300 text-gray-900"
                   />
                   <p className="text-xs text-muted-foreground mt-1">
                     * If specified, this exact slug will be used instead of auto-generating one from the title
@@ -441,7 +441,7 @@ export default function AdminAutoBlog() {
                           value={scheduledDate}
                           onChange={(e) => setScheduledDate(e.target.value)}
                           min={new Date().toISOString().slice(0, 16)}
-                          className="mt-1"
+                          className="mt-1 bg-white border-gray-300 text-gray-900"
                         />
                         <p className="text-xs text-purple-600">
                           The blog post will automatically be published at this date and time

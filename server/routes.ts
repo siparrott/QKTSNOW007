@@ -1855,7 +1855,11 @@ Allow: /*-calculator`;
       res.status(201).json(post);
     } catch (error) {
       console.error("Blog post creation error:", error);
-      res.status(500).json({ error: "Failed to create blog post" });
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ error: "Validation error", details: error.errors });
+      } else {
+        res.status(500).json({ error: "Failed to create blog post" });
+      }
     }
   });
 

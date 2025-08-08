@@ -23,6 +23,7 @@ import TwoFactorSetup from "@/pages/two-factor-setup";
 import TwoFactorVerify from "@/pages/two-factor-verify";
 import Blogs from "@/pages/blogs";
 import BlogPost from "@/pages/blog-post-new";
+import AdminBlogEditor from "@/pages/admin-blog-editor";
 import { useEffect } from "react";
 import { initGA } from "./lib/analytics";
 import { useAnalytics } from "./hooks/use-analytics";
@@ -77,6 +78,7 @@ function Router() {
       {/* Blog pages */}
       <Route path="/blogs" component={Blogs} />
       <Route path="/blog/:slug" component={BlogPost} />
+      <Route path="/admin/blog/new" component={AdminBlogEditor} />
       
       {/* Fallback routes */}
       <Route path="/niches/:niche" component={NotFound} />

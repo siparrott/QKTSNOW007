@@ -23,8 +23,13 @@ import {
   Trash2,
   RefreshCw,
   Wand2,
-  BookOpen
+  BookOpen,
+  FileText,
+  Plus,
+  Upload,
+  Image
 } from "lucide-react";
+import { Link } from "wouter";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -333,6 +338,10 @@ export default function AdminDashboard() {
               <Wand2 className="h-4 w-4" />
               <span>AutoBlog</span>
             </TabsTrigger>
+            <TabsTrigger value="blog-management" className="flex items-center space-x-2">
+              <FileText className="h-4 w-4" />
+              <span>Blog Management</span>
+            </TabsTrigger>
             <TabsTrigger value="revenue" className="flex items-center space-x-2">
               <DollarSign className="h-4 w-4" />
               <span>Revenue</span>
@@ -532,6 +541,178 @@ export default function AdminDashboard() {
 
           <TabsContent value="autoblog">
             <AdminAutoBlog />
+          </TabsContent>
+
+          <TabsContent value="blog-management" className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-semibold">Blog Management</h2>
+                <p className="text-gray-600">Manage blog posts, create new content, and handle image uploads</p>
+              </div>
+              <Link href="/admin/blog/new">
+                <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white border-0">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create New Blog Post
+                </Button>
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Object Storage Status Card */}
+              <Card className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Object Storage</p>
+                    <p className="text-2xl font-bold text-green-600">Active</p>
+                    <p className="text-sm text-gray-500 mt-1">Ready for image uploads</p>
+                  </div>
+                  <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <Upload className="h-6 w-6 text-green-600" />
+                  </div>
+                </div>
+              </Card>
+
+              {/* Blog Stats */}
+              <Card className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Published Posts</p>
+                    <p className="text-2xl font-bold text-gray-900">3</p>
+                    <p className="text-sm text-blue-600 mt-1">AI-generated content</p>
+                  </div>
+                  <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <FileText className="h-6 w-6 text-blue-600" />
+                  </div>
+                </div>
+              </Card>
+
+              {/* Image Gallery */}
+              <Card className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Image Gallery</p>
+                    <p className="text-2xl font-bold text-gray-900">Ready</p>
+                    <p className="text-sm text-purple-600 mt-1">Upload & manage images</p>
+                  </div>
+                  <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <Image className="h-6 w-6 text-purple-600" />
+                  </div>
+                </div>
+              </Card>
+            </div>
+
+            {/* Recent Blog Posts */}
+            <Card className="overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-200">
+                <h3 className="text-lg font-medium">Recent Blog Posts</h3>
+                <p className="text-sm text-gray-500">Manage your blog content and view analytics</p>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Read Time</th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    <tr className="hover:bg-gray-50">
+                      <td className="px-6 py-4">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">How AI-Powered Quote Calculators Boost Conversion Rates</div>
+                          <div className="text-sm text-gray-500">Complete guide to implementing AI-driven pricing...</div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <Badge className="bg-green-100 text-green-800">Published</Badge>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-500">
+                        Jan 8, 2025
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-500">
+                        8 min read
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end space-x-2">
+                          <Button variant="ghost" size="sm">
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-gray-50">
+                      <td className="px-6 py-4">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">The Future of Digital Service Pricing</div>
+                          <div className="text-sm text-gray-500">Exploring trends in automated pricing systems...</div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <Badge className="bg-green-100 text-green-800">Published</Badge>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-500">
+                        Jan 7, 2025
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-500">
+                        6 min read
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end space-x-2">
+                          <Button variant="ghost" size="sm">
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-gray-50">
+                      <td className="px-6 py-4">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">Maximizing ROI with Smart Quote Tools</div>
+                          <div className="text-sm text-gray-500">Data-driven insights on pricing optimization...</div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <Badge className="bg-green-100 text-green-800">Published</Badge>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-500">
+                        Jan 6, 2025
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-500">
+                        7 min read
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end space-x-2">
+                          <Button variant="ghost" size="sm">
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </Card>
           </TabsContent>
 
           <TabsContent value="settings">

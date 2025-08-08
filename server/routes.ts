@@ -33,6 +33,11 @@ import {
   TOPIC_CLUSTERS,
   BLOG_PROMPT_TEMPLATES
 } from "./seo-blueprint";
+import {
+  ObjectStorageService,
+  ObjectNotFoundError,
+} from "./objectStorage";
+import { ObjectPermission } from "./objectAcl";
 
 // SEO Score calculation function
 function calculateSEOScore(blogPost: any): number {
@@ -1886,6 +1891,89 @@ Allow: /*-calculator`;
     } catch (error) {
       console.error("Blog post deletion error:", error);
       res.status(500).json({ error: "Failed to delete blog post" });
+    }
+  });
+
+  // Object Storage Routes for Blog Images
+  
+  // Endpoint for serving public objects.
+  app.get("/public-objects/:filePath(*)", async (req, res) => {
+    const filePath = req.params.filePath;
+    const objectStorageService = new ObjectStorageService();
+    try {
+      const file = await objectStorageService.searchPublicObject(filePath);
+      if (!file) {
+        return res.status(404).json({ error: "File not found" });
+      }
+      objectStorageService.downloadObject(file, res);
+    } catch (error) {
+      console.error("Error searching for public object:", error);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Endpoint for serving blog images (public access)
+  app.get("/objects/:objectPath(*)", async (req, res) => {
+    const objectStorageService = new ObjectStorageService();
+    try {
+      const objectFile = await objectStorageService.getObjectEntityFile(
+        req.path,
+      );
+      objectStorageService.downloadObject(objectFile, res);
+    } catch (error) {
+      console.error("Error checking object access:", error);
+      if (error instanceof ObjectNotFoundError) {
+        return res.sendStatus(404);
+      }
+      return res.sendStatus(500);
+    }
+  });
+
+  // Endpoint for getting upload URL for blog images
+  app.post("/api/blog-images/upload", requireAuth, async (req, res) => {
+    try {
+      const { filename } = req.body;
+      if (!filename) {
+        return res.status(400).json({ error: "Filename is required" });
+      }
+      
+      const objectStorageService = new ObjectStorageService();
+      const { uploadURL, objectPath } = await objectStorageService.getBlogImageUploadURL(filename);
+      
+      res.json({ uploadURL, objectPath });
+    } catch (error) {
+      console.error("Error getting upload URL:", error);
+      res.status(500).json({ error: "Failed to get upload URL" });
+    }
+  });
+
+  // Endpoint for setting blog image as public after upload
+  app.put("/api/blog-images/finalize", requireAuth, async (req, res) => {
+    try {
+      const { objectPath } = req.body;
+      if (!objectPath) {
+        return res.status(400).json({ error: "objectPath is required" });
+      }
+
+      const user = (req as any).user;
+      const objectStorageService = new ObjectStorageService();
+      
+      // Set the image as public since blog images should be publicly accessible
+      const finalizedPath = await objectStorageService.trySetObjectEntityAclPolicy(
+        objectPath,
+        {
+          owner: user.id,
+          visibility: "public",
+        },
+      );
+
+      res.status(200).json({
+        objectPath: finalizedPath,
+        publicURL: `${req.protocol}://${req.get('host')}${finalizedPath}`
+      });
+    } catch (error) {
+      console.error("Error finalizing blog image:", error);
+      res.status(500).json({ error: "Internal server error" });
     }
   });
 

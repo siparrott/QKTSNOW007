@@ -557,9 +557,17 @@ Allow: /*-calculator`;
         subscriptionStatus: 'pending'
       });
 
+      const latestInvoice = subscription.latest_invoice;
+      const paymentIntent = typeof latestInvoice === 'object' && latestInvoice 
+        ? (latestInvoice as any).payment_intent 
+        : null;
+      const clientSecret = typeof paymentIntent === 'object' && paymentIntent
+        ? paymentIntent.client_secret 
+        : null;
+      
       res.json({
         subscriptionId: subscription.id,
-        clientSecret: subscription.latest_invoice?.payment_intent?.client_secret
+        clientSecret
       });
     } catch (error) {
       console.error("Subscription creation error:", error);
@@ -788,7 +796,7 @@ Allow: /*-calculator`;
             <p><strong>Email:</strong> ${leadData.email}</p>
             <p><strong>Phone:</strong> ${leadData.phone || 'Not provided'}</p>
             <p><strong>Quote Total:</strong> ${quoteData?.currencySymbol || '$'}${quoteData?.total || 'N/A'}</p>
-            <p><strong>Calculator Used:</strong> ${userCalculator.templateId}</p>
+            <p><strong>Calculator Used:</strong> ${(userCalculator as any).templateId || 'Portrait Photography'}</p>
             <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
             <hr>
             <p>Please follow up with this lead as soon as possible.</p>
@@ -1570,7 +1578,7 @@ Allow: /*-calculator`;
   });
 
   // Admin routes
-  app.get('/api/admin/stats', requireAuth, async (req: any, res) => {
+  app.get('/api/admin/dashboard/stats', requireAuth, async (req: any, res) => {
     try {
       // Simple admin check - in production this should be more secure
       const userEmail = req.user?.email;

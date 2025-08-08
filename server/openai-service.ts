@@ -115,26 +115,26 @@ export class OpenAIService {
   }
 
   /**
-   * Generates blog content based on image analyses and content guidance
+   * Enhanced blog generation with Assistant-first approach
    */
   async generateBlogPost(request: BlogGenerationRequest): Promise<BlogGenerationResult> {
-    try {
-      // First, analyze all the images
-      const imageAnalyses = await this.analyzeImages(request.images);
+    return await this.generateContentWithAssistant(request);
+  }
 
-      // Create a comprehensive prompt for blog generation
-      const systemPrompt = `You are an expert content creator and SEO specialist. You create engaging, professional blog posts that are optimized for search engines and social media sharing. 
+  /**
+   * Stronger Assistant-first with strict JSON + safe fallback
+   */
+  private async generateContentWithAssistant(request: BlogGenerationRequest): Promise<BlogGenerationResult> {
+    const assistantId = process.env.OPENAI_ASSISTANT_ID;
+    const haveAssistant = Boolean(assistantId && assistantId.trim().length > 0);
 
-Your writing style is:
-- Engaging and conversational yet professional
-- SEO-optimized with natural keyword integration
-- Structured with clear headings and subheadings
-- Informative and valuable to readers
-- Appropriate length (800-1500 words)
+    console.log("Using Assistant:", haveAssistant, "ID:", assistantId?.substring(0, 10) + "...");
 
-Always respond in valid JSON format with the exact structure requested.`;
+    // First, analyze all the images
+    const imageAnalyses = await this.analyzeImages(request.images);
 
-      const userPrompt = `Create a comprehensive blog post based on the following information:
+    // Build comprehensive prompt
+    const prompt = `Create a comprehensive blog post based on the following information:
 
 **Content Guidance:** ${request.contentGuidance}
 **Language:** ${request.language}
@@ -163,23 +163,103 @@ Please generate a blog post in JSON format with:
   "tags": ["array", "of", "relevant", "tags"],
   "readTime": "estimated reading time in minutes (number)",
   "slug": "url-friendly-slug"
-}
+}`;
 
-Make sure the content naturally incorporates the image analyses and follows the content guidance. The blog should be engaging, informative, and optimized for SEO.`;
+    // Build one consolidated user message with optional inline images
+    const contentParts: any[] = [{ type: "text", text: prompt }];
 
+    for (const imageBase64 of request.images ?? []) {
+      // Add images directly to the Assistant thread
+      contentParts.push({ 
+        type: "image_url", 
+        image_url: { url: `data:image/jpeg;base64,${imageBase64}` } 
+      });
+    }
+
+    // Prefer Assistant API if configured
+    if (haveAssistant) {
+      try {
+        const thread = await openai.beta.threads.create();
+
+        await openai.beta.threads.messages.create(thread.id, {
+          role: "user",
+          content: contentParts,
+        });
+
+        // **Key change**: inject your stricter blog spec as run-time instructions too
+        const run = await openai.beta.threads.runs.create(thread.id, {
+          assistant_id: assistantId!,
+          instructions: `${prompt}\n\nReturn a SINGLE JSON object only. No prose before/after.`,
+        });
+
+        // Poll until it completes (more defensive)
+        let attempts = 0;
+        const maxAttempts = 60;
+        let runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
+
+        while ((runStatus.status === "queued" || runStatus.status === "in_progress") && attempts < maxAttempts) {
+          await new Promise(r => setTimeout(r, 1000));
+          runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
+          attempts++;
+          if (attempts % 10 === 0) console.log(`Run status: ${runStatus.status} (attempt ${attempts})`);
+        }
+
+        if (runStatus.status === "completed") {
+          const messages = await openai.beta.threads.messages.list(thread.id, { order: "desc", limit: 10 });
+          const assistantMessage = messages.data.find(m => m.role === "assistant");
+
+          if (assistantMessage?.content?.[0]?.type === "text") {
+            const content = assistantMessage.content[0].text.value;
+            console.log("✅ Assistant generated content successfully");
+            return this.parseAndValidateBlogResult(content);
+          }
+
+          console.warn("Assistant returned no text block — falling back to chat.");
+        } else {
+          console.warn(`Assistant run ended with status ${runStatus.status} — falling back to chat.`);
+        }
+      } catch (err: any) {
+        console.warn("Assistant API failed — falling back to chat completions:", err?.message || err);
+      }
+    } else {
+      console.warn("OPENAI_ASSISTANT_ID not set — using chat completion fallback.");
+    }
+
+    // Fallback: force JSON output using chat completions with strict formatting
+    try {
       const response = await openai.chat.completions.create({
-        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+        model: "gpt-4o",
         messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
+          {
+            role: "system",
+            content: "You generate ONLY a single valid JSON object with fields: title, content (HTML), excerpt, seoTitle, seoDescription, tags, readTime, slug. No prose before/after.",
+          },
+          { role: "user", content: prompt }
         ],
         response_format: { type: "json_object" },
-        max_tokens: 4000,
+        temperature: 0.2
       });
 
-      const result = JSON.parse(response.choices[0].message.content || "{}");
+      const content = response.choices?.[0]?.message?.content ?? "{}";
+      console.log("🔄 Used chat completions fallback");
+      return this.parseAndValidateBlogResult(content);
+    } catch (error) {
+      console.error("All generation methods failed:", error);
+      throw new Error("Failed to generate blog post");
+    }
+  }
 
-      // Validate and structure the response
+  /**
+   * Parse and validate blog generation result
+   */
+  private parseAndValidateBlogResult(content: string): BlogGenerationResult {
+    try {
+      const result = JSON.parse(content);
+
+      // Calculate read time if not provided
+      const wordCount = result.content ? result.content.replace(/<[^>]*>/g, '').split(/\s+/).length : 0;
+      const readTime = Math.max(1, Math.ceil(wordCount / 200));
+
       return {
         title: result.title || "Generated Blog Post",
         content: result.content || "",
@@ -187,12 +267,21 @@ Make sure the content naturally incorporates the image analyses and follows the 
         seoTitle: result.seoTitle || result.title || "Generated Blog Post",
         seoDescription: result.seoDescription || result.excerpt || "",
         tags: Array.isArray(result.tags) ? result.tags : [],
-        readTime: typeof result.readTime === "number" ? result.readTime : 5,
+        readTime: typeof result.readTime === "number" ? result.readTime : readTime,
         slug: result.slug || this.generateSlug(result.title || "generated-blog-post"),
       };
-    } catch (error) {
-      console.error("Error generating blog post:", error);
-      throw new Error("Failed to generate blog post");
+    } catch (parseError) {
+      console.error("Failed to parse blog result:", parseError);
+      return {
+        title: "Generated Blog Post",
+        content: "<p>Content generation failed. Please try again.</p>",
+        excerpt: "Blog post generation encountered an error.",
+        seoTitle: "Generated Blog Post",
+        seoDescription: "Blog post generation encountered an error.",
+        tags: [],
+        readTime: 1,
+        slug: "generated-blog-post",
+      };
     }
   }
 

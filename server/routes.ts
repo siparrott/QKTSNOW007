@@ -1718,7 +1718,7 @@ Allow: /*-calculator`;
       // Format calculator type for display
       const calculatorDisplayName = calculatorType
         .split('-')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
 
       // Send email using SendGrid
@@ -1809,6 +1809,8 @@ Allow: /*-calculator`;
           title: customSlug || generateSEOOptimizedSlug(specificTopic)
         });
         
+        console.log("✅ Assistant-enhanced blog generation completed:", { title: result.title, contentLength: result.content?.length });
+        
         // Enhance with SEO metadata
         result.keywords = extractKeywordsFromContent(result.content || '');
         result.metaDescription = generateMetaDescription(result.title || '', result.excerpt || '');
@@ -1827,6 +1829,8 @@ Allow: /*-calculator`;
           websiteUrl: websiteUrl || "",
           title: customSlug
         });
+        
+        console.log("✅ Assistant-enhanced image-based blog generation completed:", { title: result.title, contentLength: result.content?.length });
       }
 
       res.json(result);

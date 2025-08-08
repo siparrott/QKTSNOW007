@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,10 +12,13 @@ import Header from "@/components/landing/header";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { setAuthData } from "@/lib/auth-utils";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(1, "Password is required"),
+  rememberMe: z.boolean().default(false),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
@@ -31,8 +34,23 @@ export default function Login() {
     defaultValues: {
       email: "",
       password: "",
+      rememberMe: false,
     },
   });
+
+  // Pre-fill email if user was previously remembered
+  useEffect(() => {
+    const rememberedUser = localStorage.getItem('user');
+    if (rememberedUser && localStorage.getItem('remember_me') === 'true') {
+      try {
+        const user = JSON.parse(rememberedUser);
+        form.setValue('email', user.email);
+        form.setValue('rememberMe', true);
+      } catch (error) {
+        console.error('Error parsing remembered user data:', error);
+      }
+    }
+  }, [form]);
 
   const onSubmit = async (data: LoginForm) => {
     setIsLoading(true);
@@ -44,13 +62,12 @@ export default function Login() {
       });
 
       if (response.user && response.token) {
-        // Store authentication token and user data
-        localStorage.setItem('auth_token', response.token);
-        localStorage.setItem('user', JSON.stringify(response.user));
+        // Store authentication data using utility function
+        setAuthData(response.token, response.user, data.rememberMe);
         
         toast({
           title: "Welcome back!",
-          description: "You've been successfully logged in.",
+          description: data.rememberMe ? "You've been logged in and will be remembered for 30 days." : "You've been successfully logged in.",
         });
         
         setLocation('/dashboard');
@@ -144,6 +161,27 @@ export default function Login() {
                             </div>
                           </FormControl>
                           <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="rememberMe"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                              className="border-midnight-600 data-[state=checked]:bg-neon-500 data-[state=checked]:border-neon-500"
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel className="text-white text-sm font-normal cursor-pointer">
+                              Remember me for 30 days
+                            </FormLabel>
+                          </div>
                         </FormItem>
                       )}
                     />

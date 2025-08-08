@@ -207,6 +207,7 @@ export const registerUserSchema = z.object({
 export const loginUserSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1),
+  rememberMe: z.boolean().default(false),
 });
 
 export const insertCalculatorSchema = createInsertSchema(calculators).pick({

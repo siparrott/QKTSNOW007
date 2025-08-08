@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
+import { isTokenExpired, clearAuthData } from "@/lib/auth-utils";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -13,18 +14,29 @@ export function AuthGuard({ children }: AuthGuardProps) {
   useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem('auth_token');
+      
+      // If no token exists, redirect to login
       if (!token) {
         setIsAuthenticated(false);
         setLocation('/login');
         return;
       }
 
+      // Check if token is expired based on stored expiration date
+      if (isTokenExpired()) {
+        clearAuthData();
+        setIsAuthenticated(false);
+        setLocation('/login');
+        return;
+      }
+
       try {
+        // Verify token with server
         await apiRequest('/api/auth/me');
         setIsAuthenticated(true);
       } catch (error) {
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('user');
+        // If server verification fails, clear all auth data
+        clearAuthData();
         setIsAuthenticated(false);
         setLocation('/login');
       }

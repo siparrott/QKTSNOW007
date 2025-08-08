@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { apiRequest } from "@/lib/queryClient";
+import { clearAuthData, isTokenExpired } from "@/lib/auth-utils";
 
 interface User {
   id: string;
@@ -27,15 +28,23 @@ export function useAuth() {
         return;
       }
 
+      // Check if token is expired
+      if (isTokenExpired()) {
+        clearAuthData();
+        setUser(null);
+        setIsAuthenticated(false);
+        setIsLoading(false);
+        return;
+      }
+
       // Verify token with backend
       const userData = await apiRequest('/api/auth/me');
       setUser(userData);
       setIsAuthenticated(true);
     } catch (error) {
       console.error('Auth check failed:', error);
-      // Clear invalid token
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('user');
+      // Clear invalid token data
+      clearAuthData();
       setUser(null);
       setIsAuthenticated(false);
     } finally {
@@ -49,8 +58,7 @@ export function useAuth() {
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('user');
+      clearAuthData();
       setUser(null);
       setIsAuthenticated(false);
     }

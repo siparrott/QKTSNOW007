@@ -13,6 +13,7 @@ import { storage } from './storage';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
 const SESSION_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 days
+const REMEMBER_SESSION_DURATION = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 export interface AuthResult {
   user: User;
@@ -32,9 +33,10 @@ export class AuthService {
     return bcrypt.compare(password, hash);
   }
 
-  // Generate JWT token
-  private generateToken(userId: string): string {
-    return jwt.sign({ userId }, JWT_SECRET, { expiresIn: '7d' });
+  // Generate JWT token with configurable expiration
+  private generateToken(userId: string, rememberMe: boolean = false): string {
+    const expiresIn = rememberMe ? '30d' : '7d';
+    return jwt.sign({ userId }, JWT_SECRET, { expiresIn });
   }
 
   // Generate session token
@@ -74,8 +76,8 @@ export class AuthService {
 
     const session = await storage.createSession(sessionData);
 
-    // Generate JWT
-    const token = this.generateToken(user.id);
+    // Generate JWT (default 7 days for registration)
+    const token = this.generateToken(user.id, false);
 
     return { user, token, session };
   }
@@ -98,9 +100,10 @@ export class AuthService {
       throw new Error('Invalid email or password');
     }
 
-    // Create new session
+    // Create new session with appropriate duration
     const sessionToken = this.generateSessionToken();
-    const expiresAt = new Date(Date.now() + SESSION_DURATION);
+    const sessionDuration = credentials.rememberMe ? REMEMBER_SESSION_DURATION : SESSION_DURATION;
+    const expiresAt = new Date(Date.now() + sessionDuration);
     
     const sessionData: InsertSession = {
       userId: user.id,
@@ -110,8 +113,8 @@ export class AuthService {
 
     const session = await storage.createSession(sessionData);
 
-    // Generate JWT
-    const token = this.generateToken(user.id);
+    // Generate JWT with appropriate expiration
+    const token = this.generateToken(user.id, credentials.rememberMe);
 
     return { user, token, session };
   }

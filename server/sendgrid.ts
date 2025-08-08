@@ -2,6 +2,8 @@ import sgMail from '@sendgrid/mail';
 
 if (!process.env.SENDGRID_API_KEY) {
   console.warn("SENDGRID_API_KEY environment variable not set - emails will be logged to console only");
+} else {
+  console.log("✅ SendGrid API key configured");
 }
 
 if (process.env.SENDGRID_API_KEY) {

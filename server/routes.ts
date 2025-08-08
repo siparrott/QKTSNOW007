@@ -766,7 +766,7 @@ Allow: /*-calculator`;
         const quoteData = leadData.quoteData as any;
         const emailSuccess = await sendEmail({
           to: leadData.email,
-          from: 'quotes@quotekit.ai', // Verified sender email
+          from: 'noreply@quotekit.com', // Use a generic noreply address that's more likely to be accepted
           subject: `Your Quote - ${quoteData?.currencySymbol || '$'}${quoteData?.total || 'N/A'}`,
           html: generateQuoteEmailHTML(
             leadData.name || 'Customer',
@@ -779,8 +779,8 @@ Allow: /*-calculator`;
         
         // Also send notification to business owner/admin
         const adminEmailSuccess = await sendEmail({
-          to: 'quotes@quotekit.ai', // Business owner email
-          from: 'system@quotekit.ai',
+          to: 'admin@quotekit.com', // Business owner email
+          from: 'noreply@quotekit.com',
           subject: `🔔 New Lead: ${leadData.name || 'Customer'} - ${quoteData?.currencySymbol || '$'}${quoteData?.total || 'N/A'}`,
           html: `
             <h2>New Lead Notification</h2>
@@ -1724,7 +1724,7 @@ Allow: /*-calculator`;
       // Send email using SendGrid
       const emailSuccess = await sendEmail({
         to: email,
-        from: 'quotes@quotekit.ai', // Verified sender email
+        from: 'noreply@quotekit.com', // Use a generic noreply address that's more likely to be accepted
         subject: `Your ${calculatorDisplayName} Quote - ${quote.pricing?.currencySymbol || '€'}${quote.pricing?.total || 'N/A'}`,
         html: generateQuoteEmailHTML(
           name,

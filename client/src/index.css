@@ -16,8 +16,8 @@
 }
 
 :root {
-  --background: #060517;
-  --foreground: hsl(0, 0%, 100%);
+  --background: #ffffff;
+  --foreground: hsl(20, 14.3%, 4.1%);
   --muted: hsl(60, 4.8%, 95.9%);
   --muted-foreground: hsl(25, 5.3%, 44.7%);
   --popover: hsl(0, 0%, 100%);
@@ -25,7 +25,7 @@
   --card: hsl(0, 0%, 100%);
   --card-foreground: hsl(20, 14.3%, 4.1%);
   --border: hsl(20, 5.9%, 90%);
-  --input: hsl(20, 5.9%, 90%);
+  --input: hsl(0, 0%, 100%);
   --primary: hsl(207, 90%, 54%);
   --primary-foreground: hsl(211, 100%, 99%);
   --secondary: hsl(60, 4.8%, 95.9%);
@@ -173,4 +173,27 @@
 @keyframes glow {
   from { box-shadow: 0 0 20px hsla(159, 80%, 45%, 0.5); }
   to { box-shadow: 0 0 30px hsla(159, 80%, 45%, 0.8); }
+}
+
+/* Fix for input field visibility */
+.portrait-calculator input,
+.portrait-calculator textarea,
+.portrait-calculator select {
+  background-color: white !important;
+  color: #374151 !important;
+  border: 1px solid #d1d5db !important;
+}
+
+.portrait-calculator input:focus,
+.portrait-calculator textarea:focus,
+.portrait-calculator select:focus {
+  background-color: white !important;
+  color: #374151 !important;
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+}
+
+.portrait-calculator input::placeholder,
+.portrait-calculator textarea::placeholder {
+  color: #9ca3af !important;
 }

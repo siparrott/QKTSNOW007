@@ -37,8 +37,16 @@ export default function Blogs() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [mounted, setMounted] = useState(false);
 
-  const { data: blogPosts = [], isLoading } = useQuery<BlogPost[]>({
+  const { data: blogPosts = [], isLoading, error } = useQuery<BlogPost[]>({
     queryKey: ["/api/blog-posts"],
+  });
+
+  // Debug logging
+  console.log('Blog query state:', { 
+    isLoading, 
+    postsCount: blogPosts.length, 
+    error: error?.message,
+    posts: blogPosts.slice(0, 2).map(p => ({ id: p.id, title: p.title }))
   });
 
   useEffect(() => {

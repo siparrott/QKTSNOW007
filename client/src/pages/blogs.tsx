@@ -41,14 +41,7 @@ export default function Blogs() {
     queryKey: ["/api/blog-posts"],
   });
 
-  // Debug logging
-  console.log('Blog query debug:', { 
-    isLoading, 
-    postsCount: blogPosts?.length || 0, 
-    error: error?.message,
-    hasData: !!blogPosts,
-    firstPost: blogPosts?.[0]?.title || 'No posts'
-  });
+
 
   useEffect(() => {
     setMounted(true);
@@ -64,8 +57,6 @@ export default function Blogs() {
     
     return matchesSearch && matchesTag;
   }) : [];
-
-  console.log('Filtered posts count:', filteredPosts.length);
 
   // Get all unique tags
   const allTags = Array.from(

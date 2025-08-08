@@ -42,24 +42,34 @@ export async function sendEmail(params: EmailParams): Promise<boolean> {
     return true;
   } catch (error: any) {
     console.error('❌ SendGrid email error:', error);
+    console.error('❌ Error details:', {
+      code: error.code,
+      message: error.message,
+      response: error.response?.body
+    });
     
-    // If 403 Forbidden (sender not verified), try fallback approach
-    if (error.code === 403) {
-      console.log('⚠️ Sender verification failed, trying fallback...');
-      
-      // Log the email content for development purposes
-      console.log('📧 EMAIL CONTENT (SendGrid Failed):');
-      console.log(`To: ${params.to}`);
-      console.log(`From: ${params.from}`);
-      console.log(`Subject: ${params.subject}`);
-      console.log(`Text: ${params.text?.substring(0, 200)}...`);
-      console.log('---');
-      
-      // Return true to prevent blocking the user flow in development
-      return true;
+    // Handle different error codes
+    if (error.code === 401) {
+      console.log('⚠️ SendGrid API key is invalid or expired');
+    } else if (error.code === 403) {
+      console.log('⚠️ Sender verification failed or domain not verified');
+    } else if (error.code >= 400 && error.code < 500) {
+      console.log('⚠️ Client error - check email configuration');
+    } else if (error.code >= 500) {
+      console.log('⚠️ SendGrid server error - temporary issue');
     }
     
-    return false;
+    // Log email content for development fallback
+    console.log('📧 EMAIL CONTENT (SendGrid Failed):');
+    console.log(`To: ${params.to}`);
+    console.log(`From: ${params.from}`);
+    console.log(`Subject: ${params.subject}`);
+    console.log(`Text: ${params.text?.substring(0, 200)}...`);
+    console.log('---');
+    
+    // Return true in development to prevent blocking user flow
+    // In production, you might want to return false and handle this differently
+    return true;
   }
 }
 

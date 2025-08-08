@@ -102,8 +102,9 @@ export class MemStorage implements IStorage {
 
   private initializeTestUserCalculator() {
     // Add a test user calculator for portrait photography
+    const testUserCalculatorId = crypto.randomUUID(); // Generate proper UUID
     const testUserCalculator: UserCalculator = {
-      id: 'test-portrait-calc-001',
+      id: testUserCalculatorId,
       userId: '84ceb86a-991f-4385-ae4d-f7c338a3ce53', // Use existing test user
       calculatorId: 1, // Portrait photography calculator ID
       embedId: 'portrait-demo-embed-001',
@@ -116,7 +117,7 @@ export class MemStorage implements IStorage {
       createdAt: new Date(),
     };
     this.userCalculators.set(testUserCalculator.id, testUserCalculator);
-    console.log('✅ Test user calculator initialized with embedId:', testUserCalculator.embedId);
+    console.log('✅ Test user calculator initialized with embedId:', testUserCalculator.embedId, 'ID:', testUserCalculator.id);
   }
 
   private seedCalculators() {

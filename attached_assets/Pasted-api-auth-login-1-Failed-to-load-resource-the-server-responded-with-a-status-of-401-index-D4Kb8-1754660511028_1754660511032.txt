@@ -1,0 +1,173 @@
+api/auth/login:1  Failed to load resource: the server responded with a status of 401 ()
+index-D4Kb8Uz6.js:745 Login error: Error: 401: {"error":"Invalid email or password"}
+    at aU (index-D4Kb8Uz6.js:48:42812)
+    at async as (index-D4Kb8Uz6.js:48:43160)
+    at async o (index-D4Kb8Uz6.js:745:102532)
+    at async index-D4Kb8Uz6.js:745:32747
+o @ index-D4Kb8Uz6.js:745
+index-D4Kb8Uz6.js:745 Registration page loaded with plan: null price: null
+index-D4Kb8Uz6.js:745 Registration page loaded with plan: null price: null
+index-D4Kb8Uz6.js:745 Registration page loaded with plan: null price: null
+index-D4Kb8Uz6.js:745 Registration page loaded with plan: null price: null
+index-D4Kb8Uz6.js:745 Registration page loaded with plan: null price: null
+index-D4Kb8Uz6.js:745 Registration page loaded with plan: null price: null
+index-D4Kb8Uz6.js:745 Registration page loaded with plan: null price: null
+index-D4Kb8Uz6.js:745 Registration page loaded with plan: null price: null
+index-D4Kb8Uz6.js:745 Registration page loaded with plan: null price: null
+index-D4Kb8Uz6.js:745 Registration page loaded with plan: null price: null
+index-D4Kb8Uz6.js:745 Registration page loaded with plan: null price: null
+index-D4Kb8Uz6.js:818 Applying config to portrait-photography calculator: Object
+index-D4Kb8Uz6.js:633 Applying config to portrait-photography calculator: Object
+index-D4Kb8Uz6.js:633 Portrait calculator applying font: Inter
+index-D4Kb8Uz6.js:633 📤 Submitting quote as lead for: hello@quotekits.com
+lead:1  Failed to load resource: the server responded with a status of 400 ()
+index-D4Kb8Uz6.js:633 ❌ Failed to create lead: Invalid lead data
+p @ index-D4Kb8Uz6.js:633
+index-D4Kb8Uz6.js:633 📤 Using fallback email system for: hello@quotekits.com
+send-quote-email:1  Failed to load resource: the server responded with a status of 500 ()
+index-D4Kb8Uz6.js:633 ❌ Fallback email also failed: Failed to send email via SendGrid
+y @ index-D4Kb8Uz6.js:633
+index-D4Kb8Uz6.js:633 📤 Submitting quote as lead for: hello@quotekits.com
+lead:1  Failed to load resource: the server responded with a status of 500 ()
+index-D4Kb8Uz6.js:633 ❌ Network error creating lead: SyntaxError: Unexpected token 'I', "Internal S"... is not valid JSON
+p @ index-D4Kb8Uz6.js:633
+index-D4Kb8Uz6.js:633 📤 Using fallback email system for: hello@quotekits.com
+send-quote-email:1  Failed to load resource: the server responded with a status of 500 ()
+index-D4Kb8Uz6.js:633 ❌ Fallback email also failed: Failed to send email via SendGrid
+y @ index-D4Kb8Uz6.js:633
+index-D4Kb8Uz6.js:633 📤 Submitting quote as lead for: hello@quotekits.com
+lead:1  Failed to load resource: the server responded with a status of 400 ()
+index-D4Kb8Uz6.js:633 ❌ Failed to create lead: Invalid lead data
+p @ index-D4Kb8Uz6.js:633
+index-D4Kb8Uz6.js:633 📤 Using fallback email system for: hello@quotekits.com
+send-quote-email:1  Failed to load resource: the server responded with a status of 500 ()
+index-D4Kb8Uz6.js:633 ❌ Fallback email also failed: Failed to send email via SendGrid
+y @ index-D4Kb8Uz6.js:633
+index-D4Kb8Uz6.js:633 📤 Submitting quote as lead for: hello@quotekits.com
+index-D4Kb8Uz6.js:633  POST https://modern-landing-page-mattpantling.replit.app/api/embed/portrait-demo-embed-001/lead 400 (Bad Request)
+p @ index-D4Kb8Uz6.js:633
+m @ index-D4Kb8Uz6.js:633
+XQ @ index-D4Kb8Uz6.js:37
+ZQ @ index-D4Kb8Uz6.js:37
+JQ @ index-D4Kb8Uz6.js:37
+TM @ index-D4Kb8Uz6.js:37
+T8 @ index-D4Kb8Uz6.js:37
+(anonymous) @ index-D4Kb8Uz6.js:37
+NT @ index-D4Kb8Uz6.js:40
+J6 @ index-D4Kb8Uz6.js:37
+yS @ index-D4Kb8Uz6.js:37
+eT @ index-D4Kb8Uz6.js:37
+mZ @ index-D4Kb8Uz6.js:37
+index-D4Kb8Uz6.js:633 ❌ Failed to create lead: Invalid lead data
+p @ index-D4Kb8Uz6.js:633
+await in p
+m @ index-D4Kb8Uz6.js:633
+XQ @ index-D4Kb8Uz6.js:37
+ZQ @ index-D4Kb8Uz6.js:37
+JQ @ index-D4Kb8Uz6.js:37
+TM @ index-D4Kb8Uz6.js:37
+T8 @ index-D4Kb8Uz6.js:37
+(anonymous) @ index-D4Kb8Uz6.js:37
+NT @ index-D4Kb8Uz6.js:40
+J6 @ index-D4Kb8Uz6.js:37
+yS @ index-D4Kb8Uz6.js:37
+eT @ index-D4Kb8Uz6.js:37
+mZ @ index-D4Kb8Uz6.js:37
+index-D4Kb8Uz6.js:633 📤 Using fallback email system for: hello@quotekits.com
+index-D4Kb8Uz6.js:633  POST https://modern-landing-page-mattpantling.replit.app/api/send-quote-email 500 (Internal Server Error)
+y @ index-D4Kb8Uz6.js:633
+p @ index-D4Kb8Uz6.js:633
+await in p
+m @ index-D4Kb8Uz6.js:633
+XQ @ index-D4Kb8Uz6.js:37
+ZQ @ index-D4Kb8Uz6.js:37
+JQ @ index-D4Kb8Uz6.js:37
+TM @ index-D4Kb8Uz6.js:37
+T8 @ index-D4Kb8Uz6.js:37
+(anonymous) @ index-D4Kb8Uz6.js:37
+NT @ index-D4Kb8Uz6.js:40
+J6 @ index-D4Kb8Uz6.js:37
+yS @ index-D4Kb8Uz6.js:37
+eT @ index-D4Kb8Uz6.js:37
+mZ @ index-D4Kb8Uz6.js:37
+index-D4Kb8Uz6.js:633 ❌ Fallback email also failed: Failed to send email via SendGrid
+y @ index-D4Kb8Uz6.js:633
+await in y
+p @ index-D4Kb8Uz6.js:633
+await in p
+m @ index-D4Kb8Uz6.js:633
+XQ @ index-D4Kb8Uz6.js:37
+ZQ @ index-D4Kb8Uz6.js:37
+JQ @ index-D4Kb8Uz6.js:37
+TM @ index-D4Kb8Uz6.js:37
+T8 @ index-D4Kb8Uz6.js:37
+(anonymous) @ index-D4Kb8Uz6.js:37
+NT @ index-D4Kb8Uz6.js:40
+J6 @ index-D4Kb8Uz6.js:37
+yS @ index-D4Kb8Uz6.js:37
+eT @ index-D4Kb8Uz6.js:37
+mZ @ index-D4Kb8Uz6.js:37
+index-D4Kb8Uz6.js:633 📤 Submitting quote as lead for: hello@quotekits.com
+index-D4Kb8Uz6.js:633  POST https://modern-landing-page-mattpantling.replit.app/api/embed/portrait-demo-embed-001/lead 400 (Bad Request)
+p @ index-D4Kb8Uz6.js:633
+m @ index-D4Kb8Uz6.js:633
+XQ @ index-D4Kb8Uz6.js:37
+ZQ @ index-D4Kb8Uz6.js:37
+JQ @ index-D4Kb8Uz6.js:37
+TM @ index-D4Kb8Uz6.js:37
+T8 @ index-D4Kb8Uz6.js:37
+(anonymous) @ index-D4Kb8Uz6.js:37
+NT @ index-D4Kb8Uz6.js:40
+J6 @ index-D4Kb8Uz6.js:37
+yS @ index-D4Kb8Uz6.js:37
+eT @ index-D4Kb8Uz6.js:37
+mZ @ index-D4Kb8Uz6.js:37
+index-D4Kb8Uz6.js:633 ❌ Failed to create lead: Invalid lead data
+p @ index-D4Kb8Uz6.js:633
+await in p
+m @ index-D4Kb8Uz6.js:633
+XQ @ index-D4Kb8Uz6.js:37
+ZQ @ index-D4Kb8Uz6.js:37
+JQ @ index-D4Kb8Uz6.js:37
+TM @ index-D4Kb8Uz6.js:37
+T8 @ index-D4Kb8Uz6.js:37
+(anonymous) @ index-D4Kb8Uz6.js:37
+NT @ index-D4Kb8Uz6.js:40
+J6 @ index-D4Kb8Uz6.js:37
+yS @ index-D4Kb8Uz6.js:37
+eT @ index-D4Kb8Uz6.js:37
+mZ @ index-D4Kb8Uz6.js:37
+index-D4Kb8Uz6.js:633 📤 Using fallback email system for: hello@quotekits.com
+index-D4Kb8Uz6.js:633  POST https://modern-landing-page-mattpantling.replit.app/api/send-quote-email 500 (Internal Server Error)
+y @ index-D4Kb8Uz6.js:633
+p @ index-D4Kb8Uz6.js:633
+await in p
+m @ index-D4Kb8Uz6.js:633
+XQ @ index-D4Kb8Uz6.js:37
+ZQ @ index-D4Kb8Uz6.js:37
+JQ @ index-D4Kb8Uz6.js:37
+TM @ index-D4Kb8Uz6.js:37
+T8 @ index-D4Kb8Uz6.js:37
+(anonymous) @ index-D4Kb8Uz6.js:37
+NT @ index-D4Kb8Uz6.js:40
+J6 @ index-D4Kb8Uz6.js:37
+yS @ index-D4Kb8Uz6.js:37
+eT @ index-D4Kb8Uz6.js:37
+mZ @ index-D4Kb8Uz6.js:37
+index-D4Kb8Uz6.js:633 ❌ Fallback email also failed: Failed to send email via SendGrid
+y @ index-D4Kb8Uz6.js:633
+await in y
+p @ index-D4Kb8Uz6.js:633
+await in p
+m @ index-D4Kb8Uz6.js:633
+XQ @ index-D4Kb8Uz6.js:37
+ZQ @ index-D4Kb8Uz6.js:37
+JQ @ index-D4Kb8Uz6.js:37
+TM @ index-D4Kb8Uz6.js:37
+T8 @ index-D4Kb8Uz6.js:37
+(anonymous) @ index-D4Kb8Uz6.js:37
+NT @ index-D4Kb8Uz6.js:40
+J6 @ index-D4Kb8Uz6.js:37
+yS @ index-D4Kb8Uz6.js:37
+eT @ index-D4Kb8Uz6.js:37
+mZ @ index-D4Kb8Uz6.js:37

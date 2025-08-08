@@ -1206,7 +1206,7 @@ export class MemStorage implements IStorage {
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    for (const user of this.users.values()) {
+    for (const user of Array.from(this.users.values())) {
       if (user.email === email) {
         return user;
       }
@@ -1240,7 +1240,7 @@ export class MemStorage implements IStorage {
   }
 
   async getCalculatorBySlug(slug: string): Promise<Calculator | undefined> {
-    for (const calculator of this.calculators.values()) {
+    for (const calculator of Array.from(this.calculators.values())) {
       if (calculator.slug === slug) {
         return calculator;
       }
@@ -1274,7 +1274,7 @@ export class MemStorage implements IStorage {
 
   async getUserCalculators(userId: string): Promise<UserCalculator[]> {
     const result: UserCalculator[] = [];
-    for (const userCalculator of this.userCalculators.values()) {
+    for (const userCalculator of Array.from(this.userCalculators.values())) {
       if (userCalculator.userId === userId) {
         result.push(userCalculator);
       }
@@ -1283,7 +1283,7 @@ export class MemStorage implements IStorage {
   }
 
   async getUserCalculatorByEmbedId(embedId: string): Promise<UserCalculator | undefined> {
-    for (const userCalculator of this.userCalculators.values()) {
+    for (const userCalculator of Array.from(this.userCalculators.values())) {
       if (userCalculator.embedId === embedId) {
         return userCalculator;
       }
@@ -1296,8 +1296,13 @@ export class MemStorage implements IStorage {
       id: crypto.randomUUID(),
       userId: insertUserCalculator.userId,
       calculatorId: insertUserCalculator.calculatorId,
-      customConfig: insertUserCalculator.customConfig || {},
-      embedId: insertUserCalculator.embedId || crypto.randomUUID(),
+      embedId: insertUserCalculator.embedId,
+      config: insertUserCalculator.config || null,
+      customBranding: insertUserCalculator.customBranding || null,
+      embedUrl: insertUserCalculator.embedUrl,
+      adminUrl: insertUserCalculator.adminUrl,
+      isActive: true,
+      lastUpdated: new Date(),
       createdAt: new Date(),
     };
     this.userCalculators.set(userCalculator.id, userCalculator);
@@ -1306,7 +1311,7 @@ export class MemStorage implements IStorage {
 
   async getLeadsByUserCalculator(userCalculatorId: string): Promise<Lead[]> {
     const result: Lead[] = [];
-    for (const lead of this.leads.values()) {
+    for (const lead of Array.from(this.leads.values())) {
       if (lead.userCalculatorId === userCalculatorId) {
         result.push(lead);
       }
@@ -1348,7 +1353,7 @@ export class MemStorage implements IStorage {
   }
 
   async deleteSession(sessionId: string): Promise<void> {
-    for (const [token, session] of this.sessions.entries()) {
+    for (const [token, session] of Array.from(this.sessions.entries())) {
       if (session.id === sessionId) {
         this.sessions.delete(token);
         break;
@@ -1373,7 +1378,7 @@ export class MemStorage implements IStorage {
   }
 
   async getSubscriptionByUserId(userId: string): Promise<Subscription | undefined> {
-    for (const subscription of this.subscriptions.values()) {
+    for (const subscription of Array.from(this.subscriptions.values())) {
       if (subscription.userId === userId) {
         return subscription;
       }

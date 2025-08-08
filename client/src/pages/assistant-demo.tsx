@@ -236,7 +236,7 @@ export default function AssistantDemo() {
                 <h4 className="font-semibold mb-2">User Experience</h4>
                 <div className="space-y-2 text-sm">
                   <div><strong>Help Text:</strong> {calculatorConfig.userExperience.helpText}</div>
-                  <div><strong>Flow:</strong> {calculatorConfig.userExperience.onboardingFlow.join(' → ')}</div>
+                  <div><strong>Flow:</strong> {calculatorConfig.userExperience.onboardingFlow?.join(' → ') || 'Not specified'}</div>
                 </div>
               </div>
             </div>
@@ -251,9 +251,9 @@ export default function AssistantDemo() {
             <div>
               <h4 className="font-semibold mb-2">Setup Instructions</h4>
               <ul className="list-disc list-inside text-sm space-y-1">
-                {calculatorConfig.implementation.setupInstructions.map((instruction, index) => (
+                {calculatorConfig.implementation.setupInstructions?.map((instruction, index) => (
                   <li key={index}>{instruction}</li>
-                ))}
+                )) || <li>No setup instructions available</li>}
               </ul>
             </div>
           </CardContent>

@@ -140,6 +140,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
     if (customConfig?.emailNotifications === false) return;
     
     try {
+      console.log('📤 Sending quote email to:', formData.contactInfo.email);
       const response = await fetch('/api/send-quote-email', {
         method: 'POST',
         headers: {
@@ -153,11 +154,14 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
         }),
       });
       
+      const result = await response.json();
       if (response.ok) {
-        console.log('Quote email sent successfully');
+        console.log('✅ Quote email sent successfully:', result.message);
+      } else {
+        console.error('❌ Failed to send quote email:', result.error);
       }
     } catch (error) {
-      console.error('Failed to send quote email:', error);
+      console.error('❌ Network error sending quote email:', error);
     }
   };
 
@@ -175,9 +179,10 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
     
     setIsQuoteLocked(true);
     
-    // Send email if enabled
+    // Send email notification (enabled by default)
     if (customConfig?.emailNotifications !== false) {
       await sendQuoteEmail(quoteData);
+      console.log('📧 Quote email notification triggered');
     }
     
     // Track analytics if enabled

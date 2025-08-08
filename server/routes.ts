@@ -766,15 +766,36 @@ Allow: /*-calculator`;
         const quoteData = leadData.quoteData as any;
         const emailSuccess = await sendEmail({
           to: leadData.email,
-          from: 'quotes@quotekit.ai', // Change to your verified sender email
+          from: 'quotes@quotekit.ai', // Verified sender email
           subject: `Your Quote - ${quoteData?.currencySymbol || '$'}${quoteData?.total || 'N/A'}`,
           html: generateQuoteEmailHTML(
             leadData.name || 'Customer',
-            quoteData || { breakdown: [], total: 0, currencySymbol: '$' }
+            quoteData || { breakdown: [], total: 0, currencySymbol: '$' },
+            'QuoteKit.ai Calculator'
           ),
-          text: `Dear ${leadData.name}, your quote is ${quoteData?.currencySymbol || '$'}${quoteData?.total || 'N/A'}.`
+          text: `Dear ${leadData.name || 'Customer'},\n\nThank you for using our quote calculator! Here's your personalized quote:\n\nTotal: ${quoteData?.currencySymbol || '$'}${quoteData?.total || 'N/A'}\n\nWe'll be in touch soon to discuss your requirements.\n\nBest regards,\nQuoteKit Team`
         });
-        console.log("Quote email sent:", emailSuccess);
+        console.log("✅ Quote email sent to customer:", emailSuccess ? "Success" : "Failed");
+        
+        // Also send notification to business owner/admin
+        const adminEmailSuccess = await sendEmail({
+          to: 'quotes@quotekit.ai', // Business owner email
+          from: 'system@quotekit.ai',
+          subject: `🔔 New Lead: ${leadData.name || 'Customer'} - ${quoteData?.currencySymbol || '$'}${quoteData?.total || 'N/A'}`,
+          html: `
+            <h2>New Lead Notification</h2>
+            <p><strong>Customer:</strong> ${leadData.name || 'Customer'}</p>
+            <p><strong>Email:</strong> ${leadData.email}</p>
+            <p><strong>Phone:</strong> ${leadData.phone || 'Not provided'}</p>
+            <p><strong>Quote Total:</strong> ${quoteData?.currencySymbol || '$'}${quoteData?.total || 'N/A'}</p>
+            <p><strong>Calculator Used:</strong> ${userCalculator.templateId}</p>
+            <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
+            <hr>
+            <p>Please follow up with this lead as soon as possible.</p>
+          `,
+          text: `New Lead: ${leadData.name || 'Customer'} (${leadData.email}) - Quote: ${quoteData?.currencySymbol || '$'}${quoteData?.total || 'N/A'}`
+        });
+        console.log("📧 Admin notification sent:", adminEmailSuccess ? "Success" : "Failed");
       }
 
       res.status(201).json(lead);
@@ -1686,16 +1707,44 @@ Allow: /*-calculator`;
         timestamp: new Date().toISOString()
       });
 
-      const emailContent = {
-        subject: `Your ${calculatorType} Quote - ${quote.pricing?.currencySymbol || '€'}${quote.pricing?.total || 'N/A'}`,
-        body: `Dear ${name},\n\nThank you for using our calculator! Here's your personalized quote:\n\nTotal: ${quote.pricing?.currencySymbol || '€'}${quote.pricing?.total || 'N/A'}\n\nBest regards,\nQuoteKit Team`
-      };
+      // Validate required fields
+      if (!email || !name || !quote?.pricing) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Missing required fields: email, name, or quote data' 
+        });
+      }
 
-      res.json({ 
-        success: true, 
-        message: 'Quote email sent successfully',
-        emailPreview: emailContent 
+      // Format calculator type for display
+      const calculatorDisplayName = calculatorType
+        .split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+
+      // Send email using SendGrid
+      const emailSuccess = await sendEmail({
+        to: email,
+        from: 'quotes@quotekit.ai', // Verified sender email
+        subject: `Your ${calculatorDisplayName} Quote - ${quote.pricing?.currencySymbol || '€'}${quote.pricing?.total || 'N/A'}`,
+        html: generateQuoteEmailHTML(
+          name,
+          quote.pricing,
+          `QuoteKit.ai ${calculatorDisplayName}`
+        ),
+        text: `Dear ${name},\n\nThank you for using our ${calculatorDisplayName} calculator! Here's your personalized quote:\n\nTotal: ${quote.pricing?.currencySymbol || '€'}${quote.pricing?.total || 'N/A'}\n\nWe'll be in touch soon to discuss your requirements.\n\nBest regards,\nQuoteKit Team`
       });
+
+      if (emailSuccess) {
+        res.json({ 
+          success: true, 
+          message: 'Quote email sent successfully' 
+        });
+      } else {
+        res.status(500).json({ 
+          success: false, 
+          error: 'Failed to send email via SendGrid' 
+        });
+      }
     } catch (error) {
       console.error('Email sending error:', error);
       res.status(500).json({ 

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import SeoHead from "@/components/seo-head";
+import SharedHeader from "@/components/shared-header";
 import { 
   Calendar, 
   Clock, 
@@ -70,10 +71,11 @@ export default function Blogs() {
 
   return (
     <>
+      <SharedHeader />
       <SeoHead
-        title="Photography Blog | QuoteKit"
-        description="Discover the latest insights, tips, and stories from the photography world. Professional photography tips, behind-the-scenes content, and industry insights."
-        keywords="photography blog, photography tips, portrait photography, professional photography, QuoteKit blog"
+        title="AI Quote Calculator Blog | QuoteKit"
+        description="Discover the latest insights on AI-powered pricing tools, quote generators, and business automation. Expert tips for photographers, contractors, and service professionals."
+        keywords="ai quote calculator blog, pricing tools, quote generators, business automation, service professionals"
         url="https://quotekit.ai/blogs"
       />
       
@@ -94,7 +96,7 @@ export default function Blogs() {
         ></div>
         {/* Header Section */}
         <div className="relative z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 pt-32">
             <motion.div 
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -340,7 +342,9 @@ export default function Blogs() {
                         <div className="flex items-center gap-4 text-sm text-gray-400 mb-4">
                           <div className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
-                            {formatDate(post.publishedAt || post.createdAt || '')}
+                            {post.publishedAt ? formatDate(typeof post.publishedAt === 'string' ? post.publishedAt : post.publishedAt.toISOString()) : 
+                             post.createdAt ? formatDate(typeof post.createdAt === 'string' ? post.createdAt : post.createdAt.toISOString()) : 
+                             formatDate(new Date().toISOString())}
                           </div>
                           {post.readTime && (
                             <div className="flex items-center gap-1">

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import Header from "@/components/landing/header";
+import SharedHeader from "@/components/shared-header";
 import Hero from "@/components/landing/hero";
 import HowItWorks from "@/components/landing/how-it-works";
 import NichesGrid from "@/components/landing/niches-grid";
@@ -22,7 +22,7 @@ export default function Home() {
         keywords="quote calculator, AI quotes, service pricing, automated quotes, pricing calculator, lead generation, business quotes, instant pricing"
         url="https://www.quotekits.com/"
       />
-      <Header />
+      <SharedHeader />
       <Hero />
       <HowItWorks />
       <NichesGrid />

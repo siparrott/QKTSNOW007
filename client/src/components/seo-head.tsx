@@ -68,6 +68,9 @@ export default function SEOHead({
     updateMetaTag('language', 'en');
     updateMetaTag('theme-color', '#06D6A0');
     
+    // Mobile web app capability (updated from deprecated apple-mobile-web-app-capable)
+    updateMetaTag('mobile-web-app-capable', 'yes');
+    
     // Update canonical URL
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) {

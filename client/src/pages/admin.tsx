@@ -163,92 +163,23 @@ export default function AdminDashboard() {
     );
   }
 
-  // Mock data for demo
+  // Reset all dashboard data to zero
   const stats: AdminStats = {
-    totalUsers: 1247,
-    activeSubscriptions: 892,
-    totalRevenue: 45670,
-    openTickets: 23,
-    totalCalculators: 67,
-    quotesGenerated: 15432,
-    conversionRate: 12.4,
-    churnRate: 3.2
+    totalUsers: 0,
+    activeSubscriptions: 0,
+    totalRevenue: 0,
+    openTickets: 0,
+    totalCalculators: 0,
+    quotesGenerated: 0,
+    conversionRate: 0,
+    churnRate: 0
   };
 
-  const users: User[] = [
-    {
-      id: '1',
-      email: 'john@business.com',
-      fullName: 'John Smith',
-      subscriptionStatus: 'pro',
-      quotesUsedThisMonth: 18,
-      quotesLimit: 25,
-      createdAt: '2025-01-15T10:30:00Z'
-    },
-    {
-      id: '2',
-      email: 'sarah@studio.com',
-      fullName: 'Sarah Johnson',
-      subscriptionStatus: 'business',
-      quotesUsedThisMonth: 32,
-      quotesLimit: 50,
-      createdAt: '2025-01-10T14:20:00Z'
-    },
-    {
-      id: '3',
-      email: 'mike@services.com',
-      fullName: 'Mike Wilson',
-      subscriptionStatus: 'free',
-      quotesUsedThisMonth: 4,
-      quotesLimit: 5,
-      createdAt: '2025-01-20T09:15:00Z'
-    }
-  ];
+  const users: User[] = [];
 
-  const calculators: Calculator[] = [
-    {
-      id: 1,
-      name: 'Portrait Photography Calculator',
-      category: 'photography',
-      description: 'Professional portrait photography pricing calculator',
-      createdAt: '2025-01-01T00:00:00Z'
-    },
-    {
-      id: 2,
-      name: 'Wedding Photography Calculator',
-      category: 'photography',
-      description: 'Wedding photography pricing with packages',
-      createdAt: '2025-01-01T00:00:00Z'
-    },
-    {
-      id: 3,
-      name: 'Electrician Calculator',
-      category: 'home-services',
-      description: 'Electrical work pricing calculator',
-      createdAt: '2025-01-01T00:00:00Z'
-    }
-  ];
+  const calculators: Calculator[] = [];
 
-  const tickets: Ticket[] = [
-    {
-      id: '1',
-      email: 'customer@example.com',
-      subject: 'Calculator not loading',
-      message: 'The portrait photography calculator is not loading on my website.',
-      priority: 'high',
-      status: 'open',
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: '2',
-      email: 'user@business.com',
-      subject: 'Billing question',
-      message: 'I need to upgrade my plan but cannot find the option.',
-      priority: 'normal',
-      status: 'in_progress',
-      createdAt: new Date(Date.now() - 86400000).toISOString()
-    }
-  ];
+  const tickets: Ticket[] = [];
 
   const chartOptions = {
     responsive: true,
@@ -272,7 +203,7 @@ export default function AdminDashboard() {
     datasets: [
       {
         label: 'Revenue (€)',
-        data: Array.from({ length: 30 }, () => Math.floor(Math.random() * 1000) + 200),
+        data: Array.from({ length: 30 }, () => 0),
         borderColor: 'rgb(59, 130, 246)',
         backgroundColor: 'rgba(59, 130, 246, 0.1)',
         tension: 0.4,
@@ -284,7 +215,7 @@ export default function AdminDashboard() {
     labels: ['Free Plan', 'Pro Plan', 'Business Plan', 'Enterprise'],
     datasets: [
       {
-        data: [65, 25, 8, 2],
+        data: [0, 0, 0, 0],
         backgroundColor: [
           '#ef4444',
           '#f59e0b',

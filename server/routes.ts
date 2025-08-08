@@ -1941,8 +1941,8 @@ Allow: /*-calculator`;
     }
   });
 
-  // Endpoint for getting upload URL for blog images
-  app.post("/api/blog-images/upload", requireAuth, async (req, res) => {
+  // Endpoint for getting upload URL for blog images (public access for admin)
+  app.post("/api/blog-images/upload", async (req, res) => {
     try {
       const { filename } = req.body;
       if (!filename) {
@@ -1959,8 +1959,8 @@ Allow: /*-calculator`;
     }
   });
 
-  // Endpoint for setting blog image as public after upload
-  app.put("/api/blog-images/finalize", requireAuth, async (req, res) => {
+  // Endpoint for setting blog image as public after upload (public access for admin)
+  app.put("/api/blog-images/finalize", async (req, res) => {
     try {
       const { objectPath } = req.body;
       if (!objectPath) {

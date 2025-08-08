@@ -24,6 +24,7 @@ import TwoFactorVerify from "@/pages/two-factor-verify";
 import Blogs from "@/pages/blogs";
 import BlogPost from "@/pages/blog-post-new";
 import AdminBlogEditor from "@/pages/admin-blog-editor";
+import AssistantDemo from "@/pages/assistant-demo";
 import { useEffect } from "react";
 import { initGA } from "./lib/analytics";
 import { useAnalytics } from "./hooks/use-analytics";
@@ -79,6 +80,9 @@ function Router() {
       <Route path="/blogs" component={Blogs} />
       <Route path="/blog/:slug" component={BlogPost} />
       <Route path="/admin/blog/new" component={AdminBlogEditor} />
+      
+      {/* Assistant Demo */}
+      <Route path="/assistant-demo" component={AssistantDemo} />
       
       {/* Fallback routes */}
       <Route path="/niches/:niche" component={NotFound} />

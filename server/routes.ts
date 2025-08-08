@@ -1989,6 +1989,93 @@ Allow: /*-calculator`;
     }
   });
 
+  // OpenAI Assistant API Routes (separate from existing calculator AI)
+  
+  // Test assistant connection and get info
+  app.get("/api/assistant/info", async (req, res) => {
+    try {
+      const { assistantService } = await import("./openai-assistant-service");
+      const info = await assistantService.getAssistantInfo();
+      res.json({
+        success: true,
+        assistant: info,
+        message: "Assistant connection successful"
+      });
+    } catch (error) {
+      console.error("Error getting assistant info:", error);
+      res.status(500).json({
+        success: false,
+        error: "Failed to connect to OpenAI Assistant",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  // Create calculator using OpenAI Assistant (separate from existing calculator logic)
+  app.post("/api/assistant/create-calculator", async (req, res) => {
+    try {
+      const { assistantService } = await import("./openai-assistant-service");
+      const { businessType, serviceName, requirements, customization } = req.body;
+
+      if (!businessType || !serviceName || !requirements) {
+        return res.status(400).json({
+          success: false,
+          error: "businessType, serviceName, and requirements are required"
+        });
+      }
+
+      const calculatorConfig = await assistantService.createCalculator({
+        businessType,
+        serviceName,
+        requirements,
+        customization
+      });
+
+      res.json({
+        success: true,
+        calculator: calculatorConfig,
+        message: "Calculator created successfully using OpenAI Assistant"
+      });
+    } catch (error) {
+      console.error("Error creating calculator with assistant:", error);
+      res.status(500).json({
+        success: false,
+        error: "Failed to create calculator",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  // Enhance user experience using OpenAI Assistant
+  app.post("/api/assistant/enhance-ux", async (req, res) => {
+    try {
+      const { assistantService } = await import("./openai-assistant-service");
+      const { calculatorType, currentUX } = req.body;
+
+      if (!calculatorType) {
+        return res.status(400).json({
+          success: false,
+          error: "calculatorType is required"
+        });
+      }
+
+      const enhancedUX = await assistantService.enhanceUserExperience(calculatorType, currentUX);
+
+      res.json({
+        success: true,
+        enhancedUX,
+        message: "User experience enhanced successfully"
+      });
+    } catch (error) {
+      console.error("Error enhancing UX with assistant:", error);
+      res.status(500).json({
+        success: false,
+        error: "Failed to enhance user experience",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

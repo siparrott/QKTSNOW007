@@ -20,7 +20,8 @@ import {
   type InsertLead,
   type InsertSession,
   type InsertSubscription,
-  type InsertBlogPost
+  type InsertBlogPost,
+  type UpdateBlogPost
 } from "@shared/schema";
 import { eq, and } from "drizzle-orm";
 import { IStorage } from "./storage";
@@ -241,11 +242,19 @@ export class PostgresStorage implements IStorage {
   }
 
   async createBlogPost(data: InsertBlogPost): Promise<BlogPost> {
-    const [newPost] = await db.insert(blogPosts).values(data).returning();
+    const [newPost] = await db.insert(blogPosts).values({
+      ...data,
+      id: crypto.randomUUID(),
+    }).returning();
     return newPost;
   }
 
-  async updateBlogPost(id: string, data: Partial<BlogPost>): Promise<BlogPost> {
+  async getBlogPost(id: string): Promise<BlogPost | undefined> {
+    const [post] = await db.select().from(blogPosts).where(eq(blogPosts.id, id));
+    return post;
+  }
+
+  async updateBlogPost(id: string, data: UpdateBlogPost): Promise<BlogPost> {
     const [updatedPost] = await db.update(blogPosts)
       .set(data)
       .where(eq(blogPosts.id, id))

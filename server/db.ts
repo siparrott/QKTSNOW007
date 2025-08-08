@@ -6,7 +6,8 @@ import {
   userCalculators, 
   leads, 
   sessions, 
-  subscriptions 
+  subscriptions,
+  blogPosts
 } from "@shared/schema";
 
 const connectionString = process.env.DATABASE_URL!;
@@ -21,5 +22,6 @@ export const db = drizzle(client, {
     leads,
     sessions,
     subscriptions,
+    blogPosts,
   },
 });

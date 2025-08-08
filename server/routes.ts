@@ -13,6 +13,7 @@ import { processPlasticSurgeryRequest } from "./plastic-surgery-ai";
 import { processChildcareServicesRequest } from "./childcare-services-ai";
 import { processPrivateMedicalRequest } from "./private-medical-ai";
 import { openaiService } from "./openai-service";
+import { z } from "zod";
 import { 
   insertUserSchema, 
   insertLeadSchema,

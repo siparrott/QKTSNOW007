@@ -264,7 +264,7 @@ export default function Blogs() {
                 </motion.div>
               ))}
             </div>
-          ) : filteredPosts.length === 0 ? (
+          ) : !isLoading && filteredPosts.length === 0 ? (
             <motion.div 
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -276,16 +276,13 @@ export default function Blogs() {
                 <div className="relative bg-gradient-to-r from-blue-500/10 to-purple-600/10 backdrop-blur-2xl rounded-3xl p-12 border border-white/10">
                   <Brain className="w-20 h-20 text-gray-400 mx-auto mb-6" />
                   <h3 className="text-2xl font-bold text-white mb-4">
-                    {searchQuery || selectedTag ? "No posts found" : "AI Blog Library Loading"}
+                    {searchQuery || selectedTag ? "No posts found" : "No blog posts available"}
                   </h3>
                   <p className="text-gray-300 mb-8 max-w-md mx-auto">
                     {searchQuery || selectedTag 
                       ? "Try adjusting your search or filter criteria to discover more AI-generated content." 
-                      : `Found ${blogPosts.length} blog posts. Loading...`
+                      : "Check back soon for new AI-generated content and insights."
                     }
-                  </p>
-                  <p className="text-gray-400 text-sm">
-                    Debug: isLoading={isLoading.toString()}, posts={blogPosts.length}, filtered={filteredPosts.length}
                   </p>
                   {(searchQuery || selectedTag) && (
                     <Button

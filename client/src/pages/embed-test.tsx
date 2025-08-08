@@ -21,30 +21,26 @@ export default function EmbedTest() {
 
           <div className="bg-white rounded-lg shadow-lg p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Wedding Timeline Planner Embed
+              QuoteKits Calculator Embed
             </h2>
             <p className="text-gray-600 mb-6">
-              This is a test embed for a wedding timeline planning tool:
+              Testing QuoteKits embed functionality:
             </p>
             
             <div className="border rounded-lg p-4 bg-gray-50">
               <iframe 
-                src="https://86a32f66-26a0-4cb7-8499-b6af23f515f0-00-3e8czkepyefz7.worf.replit.dev/embed?businessName=Your+Wedding+Business&primaryColor=%23e91e63&accentColor=%239c27b0&buttonText=Plan+My+Wedding+Timeline&headline=Create+Your+Perfect+Wedding+Day+Schedule&description=AI-powered+timeline+generation+in+60+seconds&showPoweredBy=true" 
+                src="https://quotekits.com/embed/embed_1754652627382_ssp7zfqey" 
                 width="100%" 
                 height="600" 
                 frameBorder="0"
-                style={{
-                  borderRadius: '12px',
-                  boxShadow: '0 4px 24px rgba(0,0,0,0.1)'
-                }}
-                title="Wedding Timeline Planner"
+                title="QuoteKits Calculator"
               />
             </div>
 
             <div className="mt-6 p-4 bg-green-50 rounded-lg">
               <h3 className="font-medium text-green-900 mb-2">Raw HTML Code (for reference):</h3>
               <div className="text-xs text-green-800 bg-white p-3 rounded border font-mono overflow-x-auto">
-                &lt;iframe src="https://86a32f66-26a0-4cb7-8499-b6af23f515f0-00-3e8czkepyefz7.worf.replit.dev/embed?businessName=Your+Wedding+Business&amp;primaryColor=%23e91e63&amp;accentColor=%239c27b0&amp;buttonText=Plan+My+Wedding+Timeline&amp;headline=Create+Your+Perfect+Wedding+Day+Schedule&amp;description=AI-powered+timeline+generation+in+60+seconds&amp;showPoweredBy=true" width="100%" height="600" frameborder="0" style="border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.1);"&gt; &lt;/iframe&gt;
+                &lt;iframe src="https://quotekits.com/embed/embed_1754652627382_ssp7zfqey" width="100%" height="600" frameborder="0"&gt;&lt;/iframe&gt;
               </div>
             </div>
 

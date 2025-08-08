@@ -139,6 +139,11 @@ export default function Footer() {
                 </a>
               </li>
               <li>
+                <Link href="/embed-test" className="text-gray-400 hover:text-neon-400 transition-colors">
+                  Embed Test
+                </Link>
+              </li>
+              <li>
                 <Link href="/admin" className="text-neon-400 hover:text-neon-300 transition-colors font-medium">
                   🔒 Admin Demo
                 </Link>

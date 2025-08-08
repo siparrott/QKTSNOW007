@@ -25,6 +25,7 @@ import Blogs from "@/pages/blogs";
 import BlogPost from "@/pages/blog-post-new";
 import AdminBlogEditor from "@/pages/admin-blog-editor";
 import AssistantDemo from "@/pages/assistant-demo";
+import EmbedTest from "@/pages/embed-test";
 import { useEffect } from "react";
 import { initGA } from "./lib/analytics";
 import { useAnalytics } from "./hooks/use-analytics";
@@ -83,6 +84,9 @@ function Router() {
       
       {/* Assistant Demo */}
       <Route path="/assistant-demo" component={AssistantDemo} />
+      
+      {/* Embed Test Page */}
+      <Route path="/embed-test" component={EmbedTest} />
       
       {/* Fallback routes */}
       <Route path="/niches/:niche" component={NotFound} />

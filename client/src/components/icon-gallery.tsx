@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Search, X } from "lucide-react";
+import { Search, X, Diamond, Circle, Square, Triangle, Star, Hexagon, Heart, Crown, Gem, Sparkles, Zap } from "lucide-react";
 
 // Comprehensive icon gallery for service-based businesses
 export const SERVICE_ICONS = {
@@ -33,6 +33,72 @@ export const SERVICE_ICONS = {
       "👶": "Baby/Newborn",
       "🤰": "Maternity",
       "💼": "Business/Corporate"
+    }
+  },
+
+  // Premium Shapes & Luxury Icons
+  premium: {
+    category: "Premium Shapes",
+    icons: {
+      "◆": "Diamond Shape",
+      "◇": "Hollow Diamond", 
+      "●": "Solid Circle",
+      "○": "Hollow Circle",
+      "■": "Solid Square",
+      "□": "Hollow Square",
+      "▲": "Solid Triangle",
+      "△": "Hollow Triangle",
+      "★": "Solid Star",
+      "☆": "Hollow Star",
+      "⬟": "Hexagon",
+      "⬢": "Large Hexagon",
+      "♦": "Diamond Suit",
+      "♥": "Heart Suit",
+      "♠": "Spade Suit",
+      "♣": "Club Suit",
+      "◉": "Circle Dot",
+      "◎": "Double Circle",
+      "⬡": "Black Hexagon",
+      "⬠": "White Hexagon",
+      "▣": "Square Check",
+      "▤": "Square Horizontal",
+      "▥": "Square Vertical",
+      "▦": "Square Grid",
+      "▧": "Square Diagonal",
+      "▨": "Square Cross",
+      "▩": "Square Dense",
+      "◈": "Diamond Dot",
+      "◊": "Lozenge",
+      "⟡": "Geometric Diamond",
+      "⟢": "Geometric Circle",
+      "⟣": "Geometric Square"
+    }
+  },
+
+  // Luxury Business Icons  
+  luxury: {
+    category: "Luxury Business",
+    icons: {
+      "◇": "Premium Service",
+      "⬟": "Excellence",
+      "◆": "VIP Treatment",
+      "★": "Five Star",
+      "◉": "Premium Quality",
+      "⬢": "Exclusive",
+      "♦": "Luxury Suite",
+      "◎": "High-End",
+      "▲": "Elite Service",
+      "⬡": "Boutique",
+      "◈": "Prestige",
+      "⟡": "Bespoke",
+      "●": "Concierge",
+      "■": "Executive",
+      "▣": "Professional",
+      "◊": "Sophisticated",
+      "⟢": "Premier",
+      "☆": "Signature",
+      "△": "Artisan",
+      "⬠": "Curated"
     }
   },
   

@@ -134,7 +134,7 @@ export default function Dashboard() {
     setShowCalculatorModal(false);
     
     setShowSuccessMessage(true);
-    setTimeout(() => setShowSuccessMessage(false), 3000);
+    setTimeout(() => setShowSuccessMessage(false), 100); // Disappear immediately
   };
 
   const customizeCalculator = (calc: UserCalculator) => {

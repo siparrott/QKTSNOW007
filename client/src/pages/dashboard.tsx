@@ -629,10 +629,11 @@ export default function Dashboard() {
     toast({
       title: "Calculator Added Successfully",
       description: `${template.name} has been added to your dashboard.`,
+      duration: 100, // Disappear immediately
     });
     
     setShowSuccessMessage(true);
-    setTimeout(() => setShowSuccessMessage(false), 3000);
+    setTimeout(() => setShowSuccessMessage(false), 100); // Disappear immediately
   };
 
   const customizeCalculator = (calc: UserCalculator) => {

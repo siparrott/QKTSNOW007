@@ -1,0 +1,199 @@
+REPLIT “SUPER PROMPT” (copy/paste this whole block)
+bash
+Copy
+Edit
+You are a senior full-stack engineer with authority to modify code and environment. 
+Goal: make the blog system actually work end-to-end (admin create → image upload → AI write → persist → publish → visible on /blogs). 
+You must VERIFY each step by running code, printing logs, and returning concrete evidence (HTTP codes, sample JSON, console output). 
+If anything fails, FIX it and retry until green. Do not claim success without proof.
+
+PROJECT ASSUMPTIONS (update paths if different):
+- Client: client/src/*
+- Server: server/*
+- Routes file: server/routes.ts
+- Admin page: client/src/pages/admin.tsx
+- SEO head: client/src/components/seo-head.tsx
+- Uses object storage (Supabase/S3/R2) and OpenAI
+
+### 0) PRE-FLIGHT DIAGNOSTICS
+1. List critical files and grep for known issues:
+   - `ls -la client/src/pages`
+   - `ls -la server | sed -n '1,200p'`
+   - `grep -n "apple-mobile-web-app-capable" -R client | cat`
+   - `grep -n "VITE_GA_MEASUREMENT_ID" -R . | cat`
+   - `grep -n "sample\\|mock\\|seed\\|test data" -R client/src/pages admin.tsx client/src/components || true`
+   - `grep -n "blog.*upload\\|upload.*blog\\|uppy" -R client server | cat`
+2. Print current env (server-side ONLY; NEVER print secrets to logs). Just confirm presence booleans:
+   - Confirm if these exist (true/false only): 
+     `OPENAI_API_KEY`, `STORAGE_BUCKET`, `STORAGE_REGION`, `STORAGE_ACCESS_KEY`, `STORAGE_SECRET_KEY`, `STORAGE_PUBLIC_BASE_URL`, 
+     `JWT_SECRET` or session secret, 
+     and client-side `VITE_GA_MEASUREMENT_ID` (only in Vite env).
+3. Start app, open logs, and try to create a blog post with an image from the Admin UI to reproduce: capture the exact failing request/response for `/api/blog-images/upload`.
+
+### 1) GOOGLE ANALYTICS + META TAG
+A) Fix GA:
+   - Ensure only ONE client var: `VITE_GA_MEASUREMENT_ID=G-1X8ZT1ZR29` is in `.env` / Replit secrets for the client build.
+   - Client must read it via `import.meta.env.VITE_GA_MEASUREMENT_ID`; if undefined, skip GA init without throwing.
+   - Update code in `client/src/App.tsx` or GA init module to guard:
+     ```ts
+     const gaId = import.meta.env.VITE_GA_MEASUREMENT_ID;
+     if (gaId) initializeGA(gaId); // no console.error if missing
+     ```
+B) Replace deprecated meta tag:
+   - In `client/index.html` or `client/src/components/seo-head.tsx`, replace:
+     `<meta name="apple-mobile-web-app-capable" content="yes">`
+     with
+     `<meta name="mobile-web-app-capable" content="yes">`
+   - Rebuild client.
+
+### 2) DASHBOARD SAMPLE DATA RESET
+- Remove any mock arrays/seed imports in `client/src/pages/admin.tsx` & related chart components.
+- Where charts/tables expect data, wire them to real API endpoints. If no data, show zero safely:
+  ```ts
+  const value = Number(apiValue ?? 0);
+Verify by rendering zeros with no JS errors.
+
+3) BLOG IMAGE UPLOAD – 401 FIX
+Target: /api/blog-images/upload must return 200 with signed params.
+
+A) Decide auth policy:
+
+If Admin-only upload: require Bearer JWT from admin session.
+
+If public form: allow unsigned but scoped & rate-limited.
+For now, implement Admin-only.
+
+B) SERVER: ensure route signature and auth middleware
+
+In server/routes.ts, find the upload route. Confirm order:
+
+router.post('/api/blog-images/upload', requireAdminAuth, createSignedUpload);
+
+requireAdminAuth must accept the Authorization header: Authorization: Bearer <token>.
+
+If the client uses cookies, ensure CORS allows credentials and sameSite is compatible.
+
+C) STORAGE: Create signed URL or POST policy for the chosen provider.
+Provide code if missing (pseudo-Express):
+
+ts
+Copy
+Edit
+import { getSignedUpload } from './storage';
+
+router.post('/api/blog-images/upload', requireAdminAuth, async (req, res) => {
+  try {
+    const { filename, contentType } = req.body;
+    if (!filename || !contentType) return res.status(400).json({ error: 'filename and contentType required' });
+    const signed = await getSignedUpload({ filename, contentType, folder: 'blogs' });
+    return res.json(signed); // { uploadUrl, publicUrl, fields? }
+  } catch (e) {
+    console.error('upload sign error', e);
+    return res.status(500).json({ error: 'upload signing failed' });
+  }
+});
+D) CLIENT (Uppy or fetch) must send Authorization and body:
+
+Confirm code in client/src/... sets:
+
+ts
+Copy
+Edit
+const token = localStorage.getItem('admin_jwt'); // or from context
+const resp = await fetch('/api/blog-images/upload', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+  body: JSON.stringify({ filename, contentType })
+});
+If using Uppy Companion or multipart signing, ensure Uppy headers includes Authorization.
+
+E) TEST:
+
+Call API with curl:
+
+rust
+Copy
+Edit
+curl -i -X POST https://<host>/api/blog-images/upload \
+  -H "Authorization: Bearer TEST_ADMIN_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"filename":"smoke-test.jpg","contentType":"image/jpeg"}'
+Expect 200 and JSON with uploadUrl & publicUrl.
+
+Next, PUT/POST the file to uploadUrl, then GET publicUrl → expect 200.
+
+If any step returns 401, FIX middleware to correctly parse the header; log req.headers.authorization (masked) and the token decode result.
+
+4) AI ARTICLE GENERATION → PERSIST → PUBLISH
+A) Locate server handler for AI generation (grep "OpenAI" or "createBlogWithAI"). Ensure:
+
+It validates inputs (title, prompt, image URL).
+
+It writes to DB with fields: id, slug, title, excerpt, coverImageUrl, bodyHtml/markdown, status, createdAt, updatedAt.
+
+It returns the fully saved post JSON.
+
+B) Ensure publish path:
+
+Either auto-publish (status='published') or a clear Admin toggle endpoint:
+POST /api/blogs/:id/publish → sets publishedAt, status='published'.
+
+The frontend /blogs list fetches only status='published'.
+
+C) CACHE / ISR
+
+If using SSR/ISR, add a revalidate call or purge cache on publish.
+
+Add a server log line confirming purge success.
+
+D) TEST: E2E create flow
+
+Programmatically:
+
+Upload cover image (use signed URL).
+
+Call AI create endpoint with that image URL.
+
+Publish the post.
+
+GET /api/blogs and look for the title.
+
+GET /blogs (HTML) and verify the title appears.
+
+5) FRONTEND WIRES
+/blogs page must fetch from live API (not local JSON).
+
+Single post route /blogs/:slug resolves server data by slug; shows the actual cover image URL.
+
+Add visible error UI when API returns empty: "No posts yet" (not crash).
+
+6) LOGGING & PROOF
+Add structured logs:
+
+On image sign: console.info('sign_ok', { filename })
+
+On AI save: console.info('blog_saved', { id, slug })
+
+On publish: console.info('blog_published', { id, slug })
+
+After fixes, POST a new blog and paste the three info log lines with IDs as proof.
+
+7) SECURITY & CORS QUICK PASS
+CORS: allow your frontend origin; credentials:true if cookies are used.
+
+Do not expose server secrets to the client.
+
+Only return public image URLs to the client.
+
+8) FINAL REPORT
+Reply with:
+
+The exact code diffs (or files/lines changed).
+
+The curl outputs for upload sign + final public image GET (200).
+
+JSON for the saved blog (id, slug).
+
+A screenshot or HTML snippet of /blogs showing the new post.
+
+Confirmation that GA init no longer throws and that the meta tag is updated.

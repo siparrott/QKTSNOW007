@@ -10,9 +10,7 @@ declare global {
 export const initGA = () => {
   const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID || 'G-1X8ZT1ZR29';
 
-  if (!import.meta.env.VITE_GA_MEASUREMENT_ID) {
-    console.warn('Google Analytics environment variable not found, using fallback ID');
-  }
+  // Silent fallback if GA ID not provided
 
   // Add Google Analytics script to the head
   const script1 = document.createElement('script');

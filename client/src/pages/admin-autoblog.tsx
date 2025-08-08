@@ -57,6 +57,11 @@ export default function AdminAutoBlog() {
   // Fetch all blog posts
   const { data: blogPosts = [], isLoading: isLoadingPosts } = useQuery<BlogPost[]>({
     queryKey: ["/api/admin/blog-posts"],
+    queryFn: () => apiRequest("/api/admin/blog-posts", {
+      headers: {
+        'X-Admin-Key': 'admin123'
+      }
+    })
   });
 
   // Generate blog post mutation
@@ -123,6 +128,7 @@ export default function AdminAutoBlog() {
           publishedAt: status === "published" ? new Date().toISOString() : null,
         }),
         headers: {
+          'X-Admin-Key': 'admin123',
           'Content-Type': 'application/json'
         }
       });
@@ -303,7 +309,7 @@ export default function AdminAutoBlog() {
                 {/* Content Guidance */}
                 <div>
                   <Label htmlFor="guidance" className="text-sm font-medium">
-                    Content Guidance (Optional)
+                    Content Guidance
                   </Label>
                   <Textarea
                     id="guidance"

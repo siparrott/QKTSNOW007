@@ -270,8 +270,11 @@ export default function Blogs() {
                   <p className="text-gray-300 mb-8 max-w-md mx-auto">
                     {searchQuery || selectedTag 
                       ? "Try adjusting your search or filter criteria to discover more AI-generated content." 
-                      : "Our AI is crafting the latest photography insights and expert content. Check back soon!"
+                      : `Found ${blogPosts.length} blog posts. Loading...`
                     }
+                  </p>
+                  <p className="text-gray-400 text-sm">
+                    Debug: isLoading={isLoading.toString()}, posts={blogPosts.length}, filtered={filteredPosts.length}
                   </p>
                   {(searchQuery || selectedTag) && (
                     <Button

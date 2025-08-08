@@ -135,12 +135,61 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
     }
   };
 
-  // Email notification system
-  const sendQuoteEmail = async (quoteData: any) => {
-    if (customConfig?.emailNotifications === false) return;
+  // Complete lead submission system
+  const submitQuoteAsLead = async (quoteData: any) => {
+    if (customConfig?.leadSubmission === false) return;
     
     try {
-      console.log('📤 Sending quote email to:', formData.contactInfo.email);
+      // Use a default embed ID for portrait photography calculator
+      const embedId = 'portrait-demo-embed-001';
+      console.log('📤 Submitting quote as lead for:', formData.contactInfo.email);
+      
+      const leadSubmissionData = {
+        name: formData.contactInfo.name,
+        email: formData.contactInfo.email,
+        phone: formData.contactInfo.phone || '',
+        quoteData: {
+          total: pricing.total,
+          currencySymbol: pricing.currencySymbol,
+          currency: pricing.currency,
+          breakdown: pricing.breakdown,
+          timestamp: quoteData.timestamp,
+          formData: quoteData
+        },
+        estimatedValue: pricing.total
+      };
+
+      const response = await fetch(`/api/embed/${embedId}/lead`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(leadSubmissionData),
+      });
+      
+      const result = await response.json();
+      if (response.ok) {
+        console.log('✅ Lead created successfully:', result);
+        console.log('📧 Quote emails automatically sent to customer and admin');
+        return result;
+      } else {
+        console.error('❌ Failed to create lead:', result.error);
+        
+        // Fallback to old email system if lead creation fails
+        await sendQuoteEmailFallback(quoteData);
+      }
+    } catch (error) {
+      console.error('❌ Network error creating lead:', error);
+      
+      // Fallback to old email system
+      await sendQuoteEmailFallback(quoteData);
+    }
+  };
+
+  // Fallback email system (original implementation)
+  const sendQuoteEmailFallback = async (quoteData: any) => {
+    try {
+      console.log('📤 Using fallback email system for:', formData.contactInfo.email);
       const response = await fetch('/api/send-quote-email', {
         method: 'POST',
         headers: {
@@ -156,12 +205,12 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
       
       const result = await response.json();
       if (response.ok) {
-        console.log('✅ Quote email sent successfully:', result.message);
+        console.log('✅ Fallback quote email sent successfully');
       } else {
-        console.error('❌ Failed to send quote email:', result.error);
+        console.error('❌ Fallback email also failed:', result.error);
       }
     } catch (error) {
-      console.error('❌ Network error sending quote email:', error);
+      console.error('❌ Fallback email network error:', error);
     }
   };
 
@@ -179,10 +228,12 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
     
     setIsQuoteLocked(true);
     
-    // Send email notification (enabled by default)
-    if (customConfig?.emailNotifications !== false) {
-      await sendQuoteEmail(quoteData);
-      console.log('📧 Quote email notification triggered');
+    // Submit as lead (includes email notifications and dashboard tracking)
+    if (customConfig?.leadSubmission !== false) {
+      const leadResult = await submitQuoteAsLead(quoteData);
+      if (leadResult) {
+        console.log('📊 Lead tracked in dashboard - quote counter updated');
+      }
     }
     
     // Track analytics if enabled

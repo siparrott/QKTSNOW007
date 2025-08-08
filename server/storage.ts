@@ -97,6 +97,26 @@ export class MemStorage implements IStorage {
     this.currentCalculatorId = 1;
     this.seedCalculators();
     this.seedBlogPosts();
+    this.initializeTestUserCalculator();
+  }
+
+  private initializeTestUserCalculator() {
+    // Add a test user calculator for portrait photography
+    const testUserCalculator: UserCalculator = {
+      id: 'test-portrait-calc-001',
+      userId: '84ceb86a-991f-4385-ae4d-f7c338a3ce53', // Use existing test user
+      calculatorId: 1, // Portrait photography calculator ID
+      embedId: 'portrait-demo-embed-001',
+      config: null,
+      customBranding: null,
+      embedUrl: 'http://localhost:5000/portrait-photography-calculator',
+      adminUrl: 'http://localhost:5000/admin',
+      isActive: true,
+      lastUpdated: new Date(),
+      createdAt: new Date(),
+    };
+    this.userCalculators.set(testUserCalculator.id, testUserCalculator);
+    console.log('✅ Test user calculator initialized with embedId:', testUserCalculator.embedId);
   }
 
   private seedCalculators() {

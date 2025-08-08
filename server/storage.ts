@@ -1519,7 +1519,11 @@ export class MemStorage implements IStorage {
   // Blog Posts implementation
   async getAllBlogPosts(): Promise<BlogPost[]> {
     return Array.from(this.blogPosts.values()).sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      (a, b) => {
+        const aDate = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const bDate = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return bDate - aDate;
+      }
     );
   }
 
@@ -1540,19 +1544,15 @@ export class MemStorage implements IStorage {
     return allPosts
       .filter(post => post.status === "published")
       .sort((a, b) => {
-        const aDate = new Date(a.publishedAt || a.createdAt);
-        const bDate = new Date(b.publishedAt || b.createdAt);
-        return bDate.getTime() - aDate.getTime();
+        const aDate = a.publishedAt ? new Date(a.publishedAt).getTime() : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
+        const bDate = b.publishedAt ? new Date(b.publishedAt).getTime() : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
+        return bDate - aDate;
       });
   }
 
   async getBlogPostBySlug(slug: string): Promise<BlogPost | undefined> {
-    for (const post of this.blogPosts.values()) {
-      if (post.slug === slug) {
-        return post;
-      }
-    }
-    return undefined;
+    const posts = Array.from(this.blogPosts.values());
+    return posts.find(post => post.slug === slug);
   }
 
   async getBlogPost(id: string): Promise<BlogPost | undefined> {
@@ -1674,6 +1674,12 @@ From photography studios to home renovation companies, businesses across industr
 
 The future of service business quoting is here, and it's powered by artificial intelligence.`,
         featuredImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=400&fit=crop',
+        images: [],
+        contentGuidance: null,
+        websiteUrl: null,
+        customSlug: null,
+        seoTitle: null,
+        seoDescription: null,
         tags: ['AI', 'Business', 'Technology', 'Automation'],
         status: 'published',
         language: 'en',
@@ -1715,6 +1721,12 @@ Successful businesses implement instant pricing by:
 
 The result? Higher conversion rates and better customer satisfaction.`,
         featuredImage: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=800&h=400&fit=crop',
+        images: [],
+        contentGuidance: null,
+        websiteUrl: null,
+        customSlug: null,
+        seoTitle: null,
+        seoDescription: null,
         tags: ['Psychology', 'Pricing', 'Conversion', 'Customer Experience'],
         status: 'published',
         language: 'en',
@@ -1758,6 +1770,12 @@ Make it crystal clear what you want visitors to do next.
 
 The goal is to create a seamless journey from curiosity to conversion, guiding visitors naturally toward becoming customers.`,
         featuredImage: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=400&fit=crop',
+        images: [],
+        contentGuidance: null,
+        websiteUrl: null,
+        customSlug: null,
+        seoTitle: null,
+        seoDescription: null,
         tags: ['Landing Pages', 'Conversion', 'Web Design', 'Marketing'],
         status: 'published',
         language: 'en',
@@ -1773,9 +1791,12 @@ The goal is to create a seamless journey from curiosity to conversion, guiding v
     samplePosts.forEach(post => {
       this.blogPosts.set(post.id, post);
     });
+    
+    console.log(`Initialized ${this.blogPosts.size} blog posts`);
   }
 }
 
 import { PostgresStorage } from "./postgres-storage";
 
-export const storage = new PostgresStorage();
+// Use MemStorage for development to ensure sample blog posts are available
+export const storage = process.env.NODE_ENV === 'production' ? new PostgresStorage() : new MemStorage();

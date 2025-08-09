@@ -533,8 +533,19 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
     },
   });
 
-  // Use custom group pricing if available
+  // Construction-specific project type pricing
   const getGroupPricing = () => {
+    // Check for construction industry theme
+    if (customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') {
+      return [
+        { id: "renovation", label: "Renovation", price: 0, icon: "🏗️", popular: true },
+        { id: "new-build", label: "New Construction", price: 200, icon: "🏠", popular: true },
+        { id: "demolition", label: "Demolition", price: 150, icon: "🧱", popular: false },
+        { id: "roofing", label: "Roofing", price: 100, icon: "🏠", popular: false },
+        { id: "flooring", label: "Flooring", price: 50, icon: "🪵", popular: false },
+      ];
+    }
+    
     if (customConfig?.groupPrices) {
       return customConfig.groupPrices;
     }
@@ -547,8 +558,18 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
     ];
   };
 
-  // Use custom duration pricing if available
+  // Construction-specific labor duration pricing
   const getDurationPricing = () => {
+    // Check for construction industry theme
+    if (customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') {
+      return [
+        { id: "site-visit", label: "Site Visit (2-3 hrs)", price: 150, icon: "🚗", popular: false },
+        { id: "half-day", label: "Half Day (4-5 hrs)", price: 300, icon: "🕐", popular: true },
+        { id: "full-day", label: "Full Day (8 hrs)", price: 600, icon: "⏱️", popular: true },
+        { id: "multi-day", label: "Multi-Day Project", price: 1200, icon: "📅", popular: false },
+      ];
+    }
+    
     if (customConfig?.sessionDurations) {
       return customConfig.sessionDurations;
     }
@@ -562,8 +583,18 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
   const portraitTypes = getGroupPricing();
   const durations = getDurationPricing();
 
-  // Use custom location pricing if available
+  // Construction-specific site conditions pricing
   const getLocationPricing = () => {
+    // Check for construction industry theme
+    if (customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') {
+      return [
+        { id: "standard-access", label: "Standard Site Access", price: 0, icon: "🏗️", popular: true },
+        { id: "difficult-access", label: "Difficult Access (+15%)", price: 75, icon: "🚧", popular: false },
+        { id: "remote-location", label: "Remote Location (+10%)", price: 50, icon: "🛣️", popular: false },
+        { id: "after-hours", label: "After Hours (+25%)", price: 125, icon: "🌙", popular: false },
+      ];
+    }
+    
     if (customConfig?.locationPrices) {
       return customConfig.locationPrices;
     }
@@ -574,8 +605,17 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
     ];
   };
 
-  // Use custom wardrobe pricing if available
+  // Construction-specific material grade pricing
   const getWardrobePricing = () => {
+    // Check for construction industry theme
+    if (customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') {
+      return [
+        { id: "standard", label: "Standard Materials", price: 0, icon: "🧱", popular: true },
+        { id: "premium", label: "Premium Materials (+20%)", price: 100, icon: "💎", popular: true },
+        { id: "luxury", label: "Luxury Finishes (+40%)", price: 200, icon: "✨", popular: false },
+      ];
+    }
+    
     if (customConfig?.wardrobePrices) {
       return customConfig.wardrobePrices;
     }
@@ -589,8 +629,20 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
   const locations = getLocationPricing();
   const wardrobeOptions = getWardrobePricing();
 
-  // Use custom enhancement pricing if available
+  // Construction-specific add-ons pricing
   const getEnhancementPricing = () => {
+    // Check for construction industry theme
+    if (customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') {
+      return [
+        { id: "permits", label: "Permits & Approvals", price: 300, popular: true },
+        { id: "dumpster", label: "Dumpster Rental", price: 350, popular: true },
+        { id: "design-drawings", label: "Design & Drawings", price: 1500, popular: false },
+        { id: "cleanup", label: "Site Cleanup", price: 200, popular: true },
+        { id: "project-mgmt", label: "Project Management", price: 500, popular: false },
+        { id: "warranty", label: "Extended Warranty", price: 250, popular: false },
+      ];
+    }
+    
     if (customConfig?.enhancementPrices) {
       return customConfig.enhancementPrices.map(addon => ({
         ...addon,
@@ -607,8 +659,17 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
     ];
   };
 
-  // Use custom usage pricing if available
+  // Construction-specific property type pricing
   const getUsagePricing = () => {
+    // Check for construction industry theme
+    if (customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') {
+      return [
+        { id: "residential", label: "Residential Property", price: 0, icon: "🏠" },
+        { id: "commercial", label: "Commercial Property", price: 250, icon: "🏢" },
+        { id: "industrial", label: "Industrial Property", price: 400, icon: "🏭" },
+      ];
+    }
+    
     if (customConfig?.usagePrices) {
       return customConfig.usagePrices;
     }
@@ -622,10 +683,17 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
   const usageTypes = getUsagePricing();
 
   const calculatePricing = (): PricingBreakdown => {
-    // Use custom pricing configuration if available, otherwise use defaults
-    const baseSession = customConfig?.basePrice ?? 150;
+    // Construction-specific base pricing
+    let baseSession = customConfig?.basePrice ?? 150;
+    let currency = customConfig?.currency || 'EUR';
+    
+    // Override for construction industry
+    if (customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') {
+      baseSession = customConfig?.basePrice ?? 500; // Construction base rate higher
+      currency = 'USD'; // Default to USD for construction
+    }
+    
     const locationFee = customConfig?.locationFee || 50;
-    const currency = customConfig?.currency || 'EUR';
     const currencySymbol = currency === 'USD' ? '$' : currency === 'GBP' ? '£' : currency === 'CHF' ? '₣' : '€';
     
     let durationAdd = 0;
@@ -634,7 +702,12 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
     let portraitTypeAdd = 0;
     let addOnsTotal = 0;
     let usageAdd = 0;
-    const breakdown: string[] = [`Base session: ${currencySymbol}${baseSession}`];
+    
+    // Use construction-specific terminology
+    const baseLabel = (customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') 
+      ? `Base estimate: ${currencySymbol}${baseSession}`
+      : `Base session: ${currencySymbol}${baseSession}`;
+    const breakdown: string[] = [baseLabel];
 
     // Portrait type/group size pricing
     const portraitType = portraitTypes.find(p => p.id === formData.portraitType);
@@ -700,7 +773,11 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
     
     // Promo code discount
     let discount = 0;
-    if (formData.promoCode.toLowerCase() === "portrait10") {
+    const validPromoCodes = (customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') 
+      ? ["build10", "construct10"] 
+      : ["portrait10"];
+    
+    if (validPromoCodes.includes(formData.promoCode.toLowerCase())) {
       discount = subtotal * 0.1;
       breakdown.push(`Promo code discount (10%): -${currencySymbol}${discount.toFixed(2)}`);
     }
@@ -1027,10 +1104,11 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                     <div className="space-y-6">
                       <div>
                         <EditableText
-                          value={textConfig?.portraitTypeLabel || "Portrait Type"}
+                          value={textConfig?.portraitTypeLabel || 
+                            ((customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') ? "Project Type" : "Portrait Type")}
                           onSave={(value) => updateTextContent('portraitTypeLabel', value)}
                           isPreview={isPreview}
-                          placeholder="Portrait Type"
+                          placeholder={(customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') ? "Project Type" : "Portrait Type"}
                           className="text-lg font-display text-gray-700 mb-3 block"
                         />
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -1054,10 +1132,11 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
 
                       <div>
                         <EditableText
-                          value={textConfig?.durationLabel || "Session Duration"}
+                          value={textConfig?.durationLabel || 
+                            ((customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') ? "Labor Duration" : "Session Duration")}
                           onSave={(value) => updateTextContent('durationLabel', value)}
                           isPreview={isPreview}
-                          placeholder="Session Duration"
+                          placeholder={(customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') ? "Labor Duration" : "Session Duration"}
                           className="text-lg font-display text-gray-700 mb-3 block"
                         />
                         <div className="grid grid-cols-1 gap-4">
@@ -1103,10 +1182,11 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                     <h2 className="text-2xl font-display text-gray-800 mb-4 flex items-center">
                       <MapPin className="h-6 w-6 mr-2 text-rose-500" />
                       <EditableText
-                        value={textConfig?.step2Title || "Location & styling details"}
+                        value={textConfig?.step2Title || 
+                          ((customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') ? "Site conditions & material specs" : "Location & styling details")}
                         onSave={(value) => updateTextContent('step2Title', value)}
                         isPreview={isPreview}
-                        placeholder="Location & styling details"
+                        placeholder={(customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') ? "Site conditions & material specs" : "Location & styling details"}
                         className="text-2xl font-display text-gray-800"
                       />
                     </h2>
@@ -1114,10 +1194,11 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                     <div className="space-y-6">
                       <div>
                         <EditableText
-                          value={textConfig?.locationLabel || "Shooting Location"}
+                          value={textConfig?.locationLabel || 
+                            ((customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') ? "Site Conditions" : "Shooting Location")}
                           onSave={(value) => updateTextContent('locationLabel', value)}
                           isPreview={isPreview}
-                          placeholder="Shooting Location"
+                          placeholder={(customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') ? "Site Conditions" : "Shooting Location"}
                           className="text-lg font-display text-gray-700 mb-3 block"
                         />
                         <div className="grid grid-cols-1 gap-4">
@@ -1141,10 +1222,11 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
 
                       <div>
                         <EditableText
-                          value={textConfig?.wardrobeLabel || "Wardrobe Changes"}
+                          value={textConfig?.wardrobeLabel || 
+                            ((customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') ? "Material Grade" : "Wardrobe Changes")}
                           onSave={(value) => updateTextContent('wardrobeLabel', value)}
                           isPreview={isPreview}
-                          placeholder="Wardrobe Changes"
+                          placeholder={(customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') ? "Material Grade" : "Wardrobe Changes"}
                           className="text-lg font-display text-gray-700 mb-3 block"
                         />
                         <div className="grid grid-cols-1 gap-4">
@@ -1192,10 +1274,11 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                     <h2 className="text-2xl font-display text-gray-800 mb-4 flex items-center">
                       <Palette className="h-6 w-6 mr-2 text-rose-500" />
                       <EditableText
-                        value={textConfig?.step3Title || "Enhance your session"}
+                        value={textConfig?.step3Title || 
+                          ((customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') ? "Additional services & permits" : "Enhance your session")}
                         onSave={(value) => updateTextContent('step3Title', value)}
                         isPreview={isPreview}
-                        placeholder="Enhance your session"
+                        placeholder={(customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') ? "Additional services & permits" : "Enhance your session"}
                         className="text-2xl font-display text-gray-800"
                       />
                     </h2>
@@ -1203,10 +1286,11 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                     <div className="space-y-6">
                       <div>
                         <EditableText
-                          value={textConfig?.addOnsLabel || "Add-ons (Optional)"}
+                          value={textConfig?.addOnsLabel || 
+                            ((customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') ? "Project Add-ons" : "Add-ons (Optional)")}
                           onSave={(value) => updateTextContent('addOnsLabel', value)}
                           isPreview={isPreview}
-                          placeholder="Add-ons (Optional)"
+                          placeholder={(customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') ? "Project Add-ons" : "Add-ons (Optional)"}
                           className="text-lg font-display text-gray-700 mb-3 block"
                         />
                         <div className="grid grid-cols-1 gap-3">
@@ -1233,7 +1317,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                               <div className="flex justify-between items-center">
                                 <div className="font-semibold text-gray-800">{addOn.label}</div>
                                 <div className="text-rose-600 font-semibold">
-                                  {addOn.price > 0 ? `+€${addOn.price}` : "Included"}
+                                  {addOn.price > 0 ? `+${(customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') ? '$' : '€'}${addOn.price}` : "Included"}
                                 </div>
                               </div>
                             </div>
@@ -1243,7 +1327,9 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                         {formData.addOns.length > 0 && (
                           <div className="mt-4 p-3 bg-green-50 rounded-xl border border-green-200">
                             <div className="text-sm text-green-700">
-                              📸 Most clients choose 1 hour, outdoor, 2 outfits + makeup
+                              {(customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') 
+                                ? "🏗️ Most clients choose full day projects with permits and cleanup"
+                                : "📸 Most clients choose 1 hour, outdoor, 2 outfits + makeup"}
                             </div>
                           </div>
                         )}
@@ -1251,10 +1337,11 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
 
                       <div>
                         <EditableText
-                          value={textConfig?.usageTypeLabel || "Usage Type"}
+                          value={textConfig?.usageTypeLabel || 
+                            ((customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') ? "Property Type" : "Usage Type")}
                           onSave={(value) => updateTextContent('usageTypeLabel', value)}
                           isPreview={isPreview}
-                          placeholder="Usage Type"
+                          placeholder={(customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') ? "Property Type" : "Usage Type"}
                           className="text-lg font-display text-gray-700 mb-3 block"
                         />
                         <div className="grid grid-cols-1 gap-4">
@@ -1279,7 +1366,9 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                           className="text-lg font-display text-gray-700 mb-3 block"
                         />
                         <Input
-                          placeholder="Enter promo code (e.g., PORTRAIT10)"
+                          placeholder={(customConfig?.themeId === 'construction' || customConfig?.industry === 'Construction & Contracting') 
+                            ? "Enter promo code (e.g., BUILD10)" 
+                            : "Enter promo code (e.g., PORTRAIT10)"}
                           value={formData.promoCode}
                           onChange={(e) => setFormData(prev => ({ ...prev, promoCode: e.target.value }))}
                           className="max-w-xs border-gray-300 rounded-lg"

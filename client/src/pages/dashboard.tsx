@@ -99,15 +99,103 @@ const mockUser: User = (() => {
   };
 })();
 
-// Streamlined Calculator Templates - Portrait Photography Only
+// Portrait Photography Calculator - 12 Theme Variants
 const calculatorTemplates: CalculatorTemplate[] = [
   { 
     id: "1", 
-    name: "Portrait Photography Calculator", 
-    category: "Photography", 
-    description: "Professional portrait sessions with comprehensive customization, real-time preview, and AI-powered pricing", 
-    template_id: "portrait-photography", 
-    slug: "portrait-photography" 
+    name: "Portrait Photography Calculator - Classic", 
+    category: "Photography - Themes", 
+    description: "Clean and professional blue styling with comprehensive customization", 
+    template_id: "portrait-photography-classic", 
+    slug: "portrait-photography-classic" 
+  },
+  { 
+    id: "2", 
+    name: "Portrait Photography Calculator - Minimal", 
+    category: "Photography - Themes", 
+    description: "Clean whitespace with subtle monochrome elements", 
+    template_id: "portrait-photography-minimal", 
+    slug: "portrait-photography-minimal" 
+  },
+  { 
+    id: "3", 
+    name: "Portrait Photography Calculator - Modern", 
+    category: "Photography - Themes", 
+    description: "Contemporary gradients and sleek design", 
+    template_id: "portrait-photography-modern", 
+    slug: "portrait-photography-modern" 
+  },
+  { 
+    id: "4", 
+    name: "Portrait Photography Calculator - Elegant", 
+    category: "Photography - Themes", 
+    description: "Sophisticated design with warm accent colors", 
+    template_id: "portrait-photography-elegant", 
+    slug: "portrait-photography-elegant" 
+  },
+  { 
+    id: "5", 
+    name: "Portrait Photography Calculator - Bold", 
+    category: "Photography - Themes", 
+    description: "Vibrant colors and strong contrast for impact", 
+    template_id: "portrait-photography-bold", 
+    slug: "portrait-photography-bold" 
+  },
+  { 
+    id: "6", 
+    name: "Portrait Photography Calculator - Serif", 
+    category: "Photography - Themes", 
+    description: "Traditional typography with warm tones", 
+    template_id: "portrait-photography-serif", 
+    slug: "portrait-photography-serif" 
+  },
+  { 
+    id: "7", 
+    name: "Portrait Photography Calculator - Rounded", 
+    category: "Photography - Themes", 
+    description: "Soft curves and friendly green design", 
+    template_id: "portrait-photography-rounded", 
+    slug: "portrait-photography-rounded" 
+  },
+  { 
+    id: "8", 
+    name: "Portrait Photography Calculator - Mono", 
+    category: "Photography - Themes", 
+    description: "Technical appearance with monospace fonts", 
+    template_id: "portrait-photography-mono", 
+    slug: "portrait-photography-mono" 
+  },
+  { 
+    id: "9", 
+    name: "Portrait Photography Calculator - High Contrast", 
+    category: "Photography - Themes", 
+    description: "Accessibility-focused with high contrast", 
+    template_id: "portrait-photography-contrast", 
+    slug: "portrait-photography-contrast" 
+  },
+  { 
+    id: "10", 
+    name: "Portrait Photography Calculator - Pastel", 
+    category: "Photography - Themes", 
+    description: "Soft and gentle pink/purple colors", 
+    template_id: "portrait-photography-pastel", 
+    slug: "portrait-photography-pastel" 
+  },
+  { 
+    id: "11", 
+    name: "Portrait Photography Calculator - Neon", 
+    category: "Photography - Themes", 
+    description: "Bright cyan with glow effects on dark background", 
+    template_id: "portrait-photography-neon", 
+    slug: "portrait-photography-neon" 
+  },
+  { 
+    id: "12", 
+    name: "Portrait Photography Calculator - Dark", 
+    category: "Photography - Themes", 
+    description: "Modern dark mode with amber accents", 
+    template_id: "portrait-photography-dark", 
+    slug: "portrait-photography-dark" 
   }
 ];
 

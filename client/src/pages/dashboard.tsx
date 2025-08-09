@@ -99,101 +99,101 @@ const mockUser: User = (() => {
   };
 })();
 
-// Portrait Photography Calculator - 12 Theme Variants
+// Service Industry Calculators - 12 Different Industries
 const calculatorTemplates: CalculatorTemplate[] = [
   { 
     id: "1", 
-    name: "Portrait Photography Calculator - Classic", 
-    category: "Photography - Themes", 
-    description: "Clean and professional blue styling with comprehensive customization", 
+    name: "Construction & Contracting Calculator", 
+    category: "Construction", 
+    description: "Materials, labor, dimensions, custom finishes, and site conditions pricing", 
     template_id: "portrait-photography-classic", 
     slug: "portrait-photography-classic" 
   },
   { 
     id: "2", 
-    name: "Portrait Photography Calculator - Minimal", 
-    category: "Photography - Themes", 
-    description: "Clean whitespace with subtle monochrome elements", 
+    name: "Insurance & Financial Services Calculator", 
+    category: "Financial", 
+    description: "Personalized pricing based on risk profiles and coverage options", 
     template_id: "portrait-photography-minimal", 
     slug: "portrait-photography-minimal" 
   },
   { 
     id: "3", 
-    name: "Portrait Photography Calculator - Modern", 
-    category: "Photography - Themes", 
-    description: "Contemporary gradients and sleek design", 
+    name: "Home Services Calculator", 
+    category: "Home Services", 
+    description: "Plumbing, electrical, HVAC, landscaping with dynamic inputs", 
     template_id: "portrait-photography-modern", 
     slug: "portrait-photography-modern" 
   },
   { 
     id: "4", 
-    name: "Portrait Photography Calculator - Elegant", 
-    category: "Photography - Themes", 
-    description: "Sophisticated design with warm accent colors", 
+    name: "SaaS & Subscription Software Calculator", 
+    category: "Technology", 
+    description: "Custom pricing by features, user seats, and billing frequency", 
     template_id: "portrait-photography-elegant", 
     slug: "portrait-photography-elegant" 
   },
   { 
     id: "5", 
-    name: "Portrait Photography Calculator - Bold", 
-    category: "Photography - Themes", 
-    description: "Vibrant colors and strong contrast for impact", 
+    name: "E-Commerce & Custom Products Calculator", 
+    category: "E-Commerce", 
+    description: "Furniture, printing - size, material, design customization", 
     template_id: "portrait-photography-bold", 
     slug: "portrait-photography-bold" 
   },
   { 
     id: "6", 
-    name: "Portrait Photography Calculator - Serif", 
-    category: "Photography - Themes", 
-    description: "Traditional typography with warm tones", 
+    name: "Marketing Agencies & Freelancers Calculator", 
+    category: "Marketing", 
+    description: "Quote based on ad spend, campaign scope, channels, duration", 
     template_id: "portrait-photography-serif", 
     slug: "portrait-photography-serif" 
   },
   { 
     id: "7", 
-    name: "Portrait Photography Calculator - Rounded", 
-    category: "Photography - Themes", 
-    description: "Soft curves and friendly green design", 
+    name: "Event Planning & Weddings Calculator", 
+    category: "Events", 
+    description: "Guest count, venue services, catering options pricing", 
     template_id: "portrait-photography-rounded", 
     slug: "portrait-photography-rounded" 
   },
   { 
     id: "8", 
-    name: "Portrait Photography Calculator - Mono", 
-    category: "Photography - Themes", 
-    description: "Technical appearance with monospace fonts", 
+    name: "Automotive Services Calculator", 
+    category: "Automotive", 
+    description: "Car detailing, repairs by vehicle type, parts, labor hours", 
     template_id: "portrait-photography-mono", 
     slug: "portrait-photography-mono" 
   },
   { 
     id: "9", 
-    name: "Portrait Photography Calculator - High Contrast", 
-    category: "Photography - Themes", 
-    description: "Accessibility-focused with high contrast", 
+    name: "Real Estate & Property Services Calculator", 
+    category: "Real Estate", 
+    description: "Renovation quotes, cleaning, property measurements", 
     template_id: "portrait-photography-contrast", 
     slug: "portrait-photography-contrast" 
   },
   { 
     id: "10", 
-    name: "Portrait Photography Calculator - Pastel", 
-    category: "Photography - Themes", 
-    description: "Soft and gentle pink/purple colors", 
+    name: "Legal & Consulting Firms Calculator", 
+    category: "Professional Services", 
+    description: "Service complexity, hours billed, potential costs", 
     template_id: "portrait-photography-pastel", 
     slug: "portrait-photography-pastel" 
   },
   { 
     id: "11", 
-    name: "Portrait Photography Calculator - Neon", 
-    category: "Photography - Themes", 
-    description: "Bright cyan with glow effects on dark background", 
+    name: "Printing & Promotional Goods Calculator", 
+    category: "Printing", 
+    description: "Quantity, material, size, and finish options pricing", 
     template_id: "portrait-photography-neon", 
     slug: "portrait-photography-neon" 
   },
   { 
     id: "12", 
-    name: "Portrait Photography Calculator - Dark", 
-    category: "Photography - Themes", 
-    description: "Modern dark mode with amber accents", 
+    name: "Energy & Utilities Calculator", 
+    category: "Energy", 
+    description: "Solar panel installation based on energy needs, roof size", 
     template_id: "portrait-photography-dark", 
     slug: "portrait-photography-dark" 
   }

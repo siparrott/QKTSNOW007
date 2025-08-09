@@ -44,82 +44,94 @@ export default function CalculatorPreview({ slug, customConfig, className = "", 
   const getThemeConfig = (slug: string) => {
     const baseConfig = customConfig || {};
     
-    // Map theme variants to their styling configs
+    // Map industry calculators to their styling configs
     const themeConfigs = {
       'portrait-photography-classic': {
         ...baseConfig,
         brandColors: { primary: '#2563eb', secondary: '#64748b', accent: '#0ea5e9' },
         themeClass: 'theme-classic',
-        themeId: 'classic'
+        themeId: 'construction',
+        industry: 'Construction & Contracting'
       },
       'portrait-photography-minimal': {
         ...baseConfig,
         brandColors: { primary: '#000000', secondary: '#737373', accent: '#525252' },
         themeClass: 'theme-minimal',
-        themeId: 'minimal'
+        themeId: 'insurance',
+        industry: 'Insurance & Financial Services'
       },
       'portrait-photography-modern': {
         ...baseConfig,
         brandColors: { primary: '#3b82f6', secondary: '#6366f1', accent: '#8b5cf6' },
         themeClass: 'theme-modern',
-        themeId: 'modern'
+        themeId: 'home-services',
+        industry: 'Home Services'
       },
       'portrait-photography-elegant': {
         ...baseConfig,
         brandColors: { primary: '#1f2937', secondary: '#6b7280', accent: '#d97706' },
         themeClass: 'theme-elegant',
-        themeId: 'elegant'
+        themeId: 'saas',
+        industry: 'SaaS & Subscription Software'
       },
       'portrait-photography-bold': {
         ...baseConfig,
         brandColors: { primary: '#dc2626', secondary: '#ea580c', accent: '#d97706' },
         themeClass: 'theme-bold',
-        themeId: 'bold'
+        themeId: 'ecommerce',
+        industry: 'E-Commerce & Custom Products'
       },
       'portrait-photography-serif': {
         ...baseConfig,
         brandColors: { primary: '#7c2d12', secondary: '#a3a3a3', accent: '#ca8a04' },
         styling: { ...baseConfig.styling, fontFamily: 'Georgia, serif' },
         themeClass: 'theme-serif',
-        themeId: 'serif'
+        themeId: 'marketing',
+        industry: 'Marketing Agencies & Freelancers'
       },
       'portrait-photography-rounded': {
         ...baseConfig,
         brandColors: { primary: '#059669', secondary: '#10b981', accent: '#34d399' },
         styling: { ...baseConfig.styling, borderRadius: '16px' },
         themeClass: 'theme-rounded',
-        themeId: 'rounded'
+        themeId: 'events',
+        industry: 'Event Planning & Weddings'
       },
       'portrait-photography-mono': {
         ...baseConfig,
         brandColors: { primary: '#374151', secondary: '#6b7280', accent: '#9ca3af' },
         styling: { ...baseConfig.styling, fontFamily: 'Monaco, monospace' },
         themeClass: 'theme-mono',
-        themeId: 'mono'
+        themeId: 'automotive',
+        industry: 'Automotive Services'
       },
       'portrait-photography-contrast': {
         ...baseConfig,
         brandColors: { primary: '#000000', secondary: '#1f2937', accent: '#ffffff' },
         themeClass: 'theme-contrast',
-        themeId: 'contrast'
+        themeId: 'real-estate',
+        industry: 'Real Estate & Property Services'
       },
       'portrait-photography-pastel': {
         ...baseConfig,
         brandColors: { primary: '#db2777', secondary: '#f472b6', accent: '#fb7185' },
         themeClass: 'theme-pastel',
-        themeId: 'pastel'
+        themeId: 'legal',
+        industry: 'Legal & Consulting Firms'
       },
       'portrait-photography-neon': {
         ...baseConfig,
         brandColors: { primary: '#06b6d4', secondary: '#0891b2', accent: '#0369a1' },
         themeClass: 'theme-neon',
-        themeId: 'neon'
+        themeId: 'printing',
+        industry: 'Printing & Promotional Goods'
       },
       'portrait-photography-dark': {
         ...baseConfig,
         brandColors: { primary: '#f59e0b', secondary: '#d97706', accent: '#92400e' },
         themeClass: 'theme-dark',
-        themeId: 'dark'
+        themeId: 'energy',
+        industry: 'Energy & Utilities'
       }
     };
     

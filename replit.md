@@ -28,15 +28,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes & Project Status
 
-### MAJOR: Monorepo Architecture with 12 Theme Variants (August 2025)
-- **Complete Architectural Transformation**: Restructured entire application into monorepo with 12 distinct theme variants
-- **Theme System**: Each calculator variant runs on dedicated ports (4101-4112) with unique CSS styling and visual identity
-- **Shared Core**: Created `packages/core-calculator` for reusable business logic and `packages/theme-registry` for centralized configuration
-- **Theme Variants**: Classic, Minimal, Modern, Elegant, Bold, Serif, Rounded, Mono, High Contrast, Pastel, Neon, and Dark themes
-- **Quality Assurance**: Automated smoke testing system (`scripts/smoke.ci.mjs`) validates all themes simultaneously
-- **Beta Gallery**: Comprehensive showcase page (`beta/index.html`) displaying all 12 themes with direct access links
-- **Independent Development**: Each theme can be developed, tested, and deployed separately while sharing the same backend
-- **Scalability**: Easy addition of new themes by duplicating existing app structure and customizing CSS variables
+### MAJOR: Service Industry Calculator Platform with 12 Specialized Variants (August 2025)
+- **Complete Platform Transformation**: Evolved from single calculator to comprehensive industry-specific platform with 12 service calculators
+- **Industry Coverage**: Construction, Insurance, Home Services, SaaS, E-Commerce, Marketing, Events, Automotive, Real Estate, Legal, Printing, and Energy sectors
+- **Theme System**: Each calculator variant features unique industry-appropriate styling and visual identity
+- **Shared Core**: Created `packages/core-calculator` for reusable business logic while maintaining industry-specific customizations
+- **Comprehensive Coverage**: From materials & labor (Construction) to risk profiles (Insurance) to campaign scope (Marketing)
+- **Quality Assurance**: Automated testing system validates all industry calculators simultaneously
+- **Beta Gallery**: Comprehensive showcase page displaying all 12 industry-specific calculators
+- **Scalable Architecture**: Easy addition of new industry calculators by duplicating existing structure
 
 ### Blog System Successfully Implemented (August 2025)
 - **Comprehensive Blog Platform**: Full-featured blog system with automated content generation and management

@@ -1,0 +1,27 @@
+/* Theme: contrast */
+/* High contrast theme styling - accessibility focused */
+
+:root {
+  --theme-primary: #000000;
+  --theme-secondary: #1f2937;
+  --theme-accent: #ffffff;
+  --theme-background: #ffffff;
+  --theme-surface: #f9fafb;
+  --theme-text: #000000;
+  --theme-border: #000000;
+}
+
+.theme-contrast {
+  --primary: var(--theme-primary);
+  --secondary: var(--theme-secondary);
+  --accent: var(--theme-accent);
+  --background: var(--theme-background);
+  --surface: var(--theme-surface);
+  --text: var(--theme-text);
+  --border: var(--theme-border);
+}
+
+.theme-contrast * {
+  border-width: 2px !important;
+  font-weight: 600 !important;
+}

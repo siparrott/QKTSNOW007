@@ -1,0 +1,3148 @@
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
+import { Calculator, Plus, Settings, Eye, Copy, ExternalLink, BarChart3, Users, TrendingUp, Activity, Calendar, DollarSign, Palette, Type, Layout, Zap, Bell, Smartphone, Monitor, Tablet, Trash2, Edit3, Camera, Smile } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart as RechartsBarChart, Bar } from "recharts";
+import CalculatorPreview from "../components/calculator-preview";
+import { getQuoteStats, incrementQuoteUsage, canGenerateQuote, resetQuoteUsage } from "@/lib/quote-tracker";
+import { EditableText } from "@/components/editable-text";
+import IconGallery from "@/components/icon-gallery";
+
+interface User {
+  id: string;
+  email: string;
+  fullName: string;
+  subscriptionStatus: 'free' | 'pro' | 'business' | 'enterprise';
+  quotesUsedThisMonth: number;
+  quotesLimit: number;
+  calculatorsUsed: number;
+  calculatorLimit: number;
+}
+
+interface UserCalculator {
+  id: string;
+  name: string;
+  slug: string;
+  embed_url: string;
+  admin_url: string;
+  calculator_id: number;
+  config: any;
+  custom_branding: any;
+  is_active: boolean;
+  template_id: string;
+  layout_json: any;
+  logic_json: any;
+  style_json: any;
+  prompt_md: string;
+  created_at: string;
+  last_updated: string;
+  embedId?: string;
+}
+
+interface CalculatorTemplate {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  template_id: string;
+  slug: string;
+}
+
+// Subscription tier definitions
+const SUBSCRIPTION_TIERS = {
+  free: { name: 'Free for Life', calculators: 1, quotes: 5, price: 0 },
+  pro: { name: 'Pro Launch Special', calculators: 5, quotes: 25, price: 5 },
+  business: { name: 'Business', calculators: 10, quotes: 50, price: 35 },
+  enterprise: { name: 'Enterprise', calculators: 999, quotes: 999, price: 99 }
+};
+
+const getUserSubscriptionData = () => {
+  const userSession = localStorage.getItem('user_session');
+  const subscriptionKey = `subscription_${userSession}`;
+  const quotesKey = `quotes_${userSession}`;
+  
+  const savedSubscription = localStorage.getItem(subscriptionKey);
+  const savedQuotes = localStorage.getItem(quotesKey);
+  
+  const subscription = savedSubscription ? JSON.parse(savedSubscription) : 'free';
+  const quotesUsed = savedQuotes ? parseInt(savedQuotes) : 0;
+  
+  const tier = SUBSCRIPTION_TIERS[subscription as keyof typeof SUBSCRIPTION_TIERS];
+  
+  return {
+    subscription,
+    quotesUsed,
+    tier
+  };
+};
+
+const mockUser: User = (() => {
+  const quoteStats = getQuoteStats();
+  return {
+    id: "1",
+    email: "user@example.com",
+    fullName: "John Doe",
+    subscriptionStatus: quoteStats.subscription,
+    quotesUsedThisMonth: quoteStats.used,
+    quotesLimit: quoteStats.limit,
+    calculatorsUsed: 0,
+    calculatorLimit: SUBSCRIPTION_TIERS[quoteStats.subscription].calculators
+  };
+})();
+
+// Streamlined Calculator Templates - Portrait Photography Only
+const calculatorTemplates: CalculatorTemplate[] = [
+  { 
+    id: "1", 
+    name: "Portrait Photography Calculator", 
+    category: "Photography", 
+    description: "Professional portrait sessions with comprehensive customization, real-time preview, and AI-powered pricing", 
+    template_id: "portrait-photography", 
+    slug: "portrait-photography" 
+  }
+];
+
+const performanceData = [
+  { name: 'Jan', quotes: 0, conversions: 0 },
+  { name: 'Feb', quotes: 0, conversions: 0 },
+  { name: 'Mar', quotes: 0, conversions: 0 },
+  { name: 'Apr', quotes: 0, conversions: 0 },
+  { name: 'May', quotes: 0, conversions: 0 },
+  { name: 'Jun', quotes: 0, conversions: 0 }
+];
+
+const clientData: Array<{id: number, name: string, email: string, project: string, quote: string, status: string, date: string}> = [];
+
+export default function Dashboard() {
+  const [user, setUser] = useState<User>(mockUser);
+  const [userCalculators, setUserCalculators] = useState<UserCalculator[]>([]);
+  const [showCalculatorModal, setShowCalculatorModal] = useState(false);
+  const [showCustomizeModal, setShowCustomizeModal] = useState(false);
+  const [showEmbedModal, setShowEmbedModal] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [showIconGallery, setShowIconGallery] = useState(false);
+  const [iconEditingIndex, setIconEditingIndex] = useState<{type: string, index: number} | null>(null);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [checkoutUrl, setCheckoutUrl] = useState("");
+  
+  // Clear test data function
+  const clearTestData = () => {
+    const userSession = localStorage.getItem('user_session');
+    const userCalculatorKey = `userCalculators_${userSession}`;
+    localStorage.removeItem(userCalculatorKey);
+    toast({
+      title: "Test Data Cleared",
+      description: "All calculator data has been reset. Create a new calculator to test embed codes.",
+    });
+    window.location.reload();
+  };
+  const [selectedCalculator, setSelectedCalculator] = useState<UserCalculator | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [customConfig, setCustomConfig] = useState<any>({
+    // Initialize pricing configuration with defaults
+    basePrice: 200,
+    hourlyRate: 100,
+    locationFee: 50,
+    currency: 'EUR',
+    addOnPrices: [
+      { name: "Rush delivery", price: 100 },
+      { name: "Print package", price: 150 },
+      { name: "Social media package", price: 75 }
+    ],
+    durationPrices: [
+      { duration: "30 minutes", multiplier: 0.5 },
+      { duration: "1 hour", multiplier: 1 },
+      { duration: "2 hours", multiplier: 1.8 },
+      { duration: "Half day", multiplier: 3 }
+    ]
+  });
+
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const { toast } = useToast();
+
+  // Listen for quote usage updates
+  useEffect(() => {
+    const handleQuoteUsageUpdate = (event: CustomEvent) => {
+      const quoteStats = getQuoteStats();
+      setUser(prev => ({
+        ...prev,
+        quotesUsedThisMonth: quoteStats.used,
+        quotesLimit: quoteStats.limit,
+        subscriptionStatus: quoteStats.subscription
+      }));
+    };
+
+    window.addEventListener('quoteUsageUpdated', handleQuoteUsageUpdate as EventListener);
+    
+    return () => {
+      window.removeEventListener('quoteUsageUpdated', handleQuoteUsageUpdate as EventListener);
+    };
+  }, []);
+
+  // Listen for text updates from preview
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === 'TEXT_UPDATE') {
+        const { key, value } = event.data;
+        setCustomConfig(prev => ({ ...prev, [key]: value }));
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
+  // Get current user email for session isolation
+  const getCurrentUserEmail = () => {
+    try {
+      const supabaseUser = localStorage.getItem('user');
+      if (supabaseUser) {
+        const parsed = JSON.parse(supabaseUser);
+        return parsed.email;
+      }
+      
+      const tempUser = localStorage.getItem('temp_user');
+      if (tempUser) {
+        const parsed = JSON.parse(tempUser);
+        return parsed.email;
+      }
+      
+      return null;
+    } catch {
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    // Get current user email for session isolation
+    const getCurrentUserEmailLocal = () => {
+      try {
+        const supabaseUser = localStorage.getItem('user');
+        if (supabaseUser) {
+          const parsed = JSON.parse(supabaseUser);
+          return parsed.email;
+        }
+        
+        const tempUser = localStorage.getItem('temp_user');
+        if (tempUser) {
+          const parsed = JSON.parse(tempUser);
+          return parsed.email;
+        }
+        
+        return null;
+      } catch {
+        return null;
+      }
+    };
+
+    // Check for account creation flag - if this is a new account, clear all data
+    const isNewAccount = localStorage.getItem('new_account_created');
+    if (isNewAccount === 'true') {
+      // Clear all existing data for this new account
+      const keys = Object.keys(localStorage);
+      keys.forEach(key => {
+        if (key.startsWith('userCalculators_') || key.startsWith('subscription_') || key === 'user_session') {
+          localStorage.removeItem(key);
+        }
+      });
+      localStorage.removeItem('new_account_created');
+    }
+
+    // Check if user just logged in/registered and force new session for data isolation
+    const userEmail = getCurrentUserEmailLocal();
+    const lastUserEmail = localStorage.getItem('last_user_email');
+    
+    if (userEmail && userEmail !== lastUserEmail) {
+      // Different user - clear all previous data and create new session
+      const keys = Object.keys(localStorage);
+      keys.forEach(key => {
+        if (key.startsWith('userCalculators_') || key.startsWith('subscription_') || key === 'user_session') {
+          localStorage.removeItem(key);
+        }
+      });
+      localStorage.setItem('last_user_email', userEmail);
+    }
+
+    // Generate unique user session if not exists
+    let userSession = localStorage.getItem('user_session');
+    if (!userSession) {
+      userSession = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9) + '_' + performance.now();
+      localStorage.setItem('user_session', userSession);
+    }
+
+    // Load user-specific calculators (should be empty for new users)
+    const userCalculatorKey = `userCalculators_${userSession}`;
+    const saved = localStorage.getItem(userCalculatorKey);
+    const calculators = saved ? JSON.parse(saved) : [];
+    setUserCalculators(calculators);
+
+    // Update user with current calculator count and subscription data
+    const { subscription, quotesUsed, tier } = getUserSubscriptionData();
+    setUser(prev => ({
+      ...prev,
+      subscriptionStatus: subscription,
+      quotesUsedThisMonth: quotesUsed,
+      quotesLimit: tier.quotes,
+      calculatorsUsed: calculators.length,
+      calculatorLimit: tier.calculators
+    }));
+  }, []);
+
+  const filteredCalculators = calculatorTemplates.filter(calc => {
+    const matchesSearch = calc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         calc.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === "all" || calc.category.toLowerCase() === selectedCategory.toLowerCase();
+    return matchesSearch && matchesCategory;
+  });
+
+  const checkSubscriptionLimits = () => {
+    if (user.calculatorsUsed >= user.calculatorLimit) {
+      return { canAdd: false, reason: 'calculator_limit' };
+    }
+    return { canAdd: true };
+  };
+
+  const upgradeSubscription = async (newTier: keyof typeof SUBSCRIPTION_TIERS) => {
+    const tier = SUBSCRIPTION_TIERS[newTier];
+    
+    // For free tier (downgrade), no payment needed
+    if (newTier === 'free') {
+      const userSession = localStorage.getItem('user_session');
+      const subscriptionKey = `subscription_${userSession}`;
+      localStorage.setItem(subscriptionKey, JSON.stringify(newTier));
+      
+      setUser(prev => ({
+        ...prev,
+        subscriptionStatus: newTier,
+        calculatorLimit: tier.calculators,
+        quotesLimit: tier.quotes
+      }));
+      
+      setShowUpgradeModal(false);
+      toast({
+        title: "Subscription Updated",
+        description: `You're now on the ${tier.name} plan.`,
+      });
+      return;
+    }
+
+    // For paid tiers, create Stripe checkout session
+    try {
+      setShowUpgradeModal(false);
+      
+      toast({
+        title: "Creating checkout session...",
+        description: "Redirecting to secure payment.",
+      });
+
+      const response = await fetch('/api/create-subscription-checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tier: newTier,
+          priceId: getPriceIdForTier(newTier),
+          userId: user.id || `session_${localStorage.getItem('user_session')}`
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log('Checkout response:', data);
+      
+      if (data.url) {
+        // Open Stripe checkout in new tab to avoid iframe restrictions
+        console.log('Opening checkout in new tab:', data.url);
+        const checkoutWindow = window.open(data.url, '_blank', 'noopener,noreferrer');
+        
+        if (!checkoutWindow) {
+          // Fallback if popup is blocked - show modal with link
+          setCheckoutUrl(data.url);
+          setShowCheckoutModal(true);
+        } else {
+          toast({
+            title: "Checkout Opened",
+            description: "Complete your payment in the new tab to upgrade your subscription.",
+          });
+        }
+      } else {
+        throw new Error('No checkout URL received');
+      }
+      
+    } catch (error) {
+      console.error('Checkout error:', error);
+      toast({
+        title: "Payment Setup Failed",
+        description: `Unable to start checkout: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        variant: "destructive"
+      });
+      setShowUpgradeModal(true); // Reopen modal on error
+    }
+  };
+
+  // Map tiers to Stripe price IDs (these would be configured in Stripe Dashboard)
+  const getPriceIdForTier = (tier: string) => {
+    const priceIds = {
+      'pro': 'price_pro_monthly_5eur',
+      'business': 'price_business_monthly_35eur', 
+      'enterprise': 'price_enterprise_monthly_99eur'
+    };
+    return priceIds[tier as keyof typeof priceIds];
+  };
+
+  const deleteCalculator = (calculatorId: string) => {
+    if (confirm('Are you sure you want to delete this calculator? This action cannot be undone.')) {
+      const userSession = localStorage.getItem('user_session');
+      const userCalculatorKey = `userCalculators_${userSession}`;
+      
+      const updated = userCalculators.filter(calc => calc.id !== calculatorId);
+      setUserCalculators(updated);
+      localStorage.setItem(userCalculatorKey, JSON.stringify(updated));
+      
+      // Update user calculator count
+      setUser(prev => ({
+        ...prev,
+        calculatorsUsed: updated.length
+      }));
+      
+      toast({
+        title: "Calculator Deleted",
+        description: "Calculator has been removed from your dashboard.",
+      });
+    }
+  };
+
+  // Test quote generation to see usage tracking in action
+  const testQuoteGeneration = () => {
+    const quoteCheck = canGenerateQuote();
+    
+    if (!quoteCheck.allowed) {
+      toast({
+        title: "Quote Limit Reached",
+        description: `You've used all ${quoteCheck.limit} quotes for this month. Upgrade your plan to continue.`,
+        variant: "destructive"
+      });
+      setShowUpgradeModal(true);
+      return;
+    }
+    
+    // Simulate quote generation
+    incrementQuoteUsage();
+    
+    toast({
+      title: "Quote Generated",
+      description: `Quote generated successfully! ${quoteCheck.remaining - 1} quotes remaining this month.`,
+    });
+  };
+
+  // Reset quote usage for testing
+  const resetQuoteUsageForTesting = () => {
+    if (confirm('Reset quote usage for this month? This is for testing purposes only.')) {
+      resetQuoteUsage();
+      
+      toast({
+        title: "Quote Usage Reset",
+        description: "Monthly quote usage has been reset to 0.",
+      });
+    }
+  };
+
+  // Force clean user session - for testing new user experience
+  const resetUserSession = () => {
+    if (confirm('This will clear all your data and simulate a new user account. Continue?')) {
+      // Clear all user-specific data
+      const keys = Object.keys(localStorage);
+      keys.forEach(key => {
+        if (key.startsWith('userCalculators_') || key.startsWith('subscription_') || key.startsWith('quote_usage_') || key === 'user_session') {
+          localStorage.removeItem(key);
+        }
+      });
+      
+      // Generate new session
+      const newSession = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9) + '_' + performance.now();
+      localStorage.setItem('user_session', newSession);
+      
+      // Reset state
+      setUserCalculators([]);
+      const freshQuoteStats = getQuoteStats();
+      setUser(prev => ({
+        ...prev,
+        subscriptionStatus: 'free',
+        quotesUsedThisMonth: freshQuoteStats.used,
+        quotesLimit: freshQuoteStats.limit,
+        calculatorsUsed: 0,
+        calculatorLimit: SUBSCRIPTION_TIERS.free.calculators
+      }));
+      
+      toast({
+        title: "Session Reset",
+        description: "Your account has been reset to simulate a new user experience.",
+      });
+    }
+  };
+
+  const addCalculator = async (template: CalculatorTemplate) => {
+    // Check subscription limits
+    const limitCheck = checkSubscriptionLimits();
+    if (!limitCheck.canAdd) {
+      setShowUpgradeModal(true);
+      return;
+    }
+    // Generate unique embed ID for the user calculator
+    const embedId = `embed_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Create deep clone of the comprehensive calculator with all detailed features
+    const getDetailedConfig = (templateId: string) => {
+      switch (templateId) {
+        case 'wedding-photography':
+          return {
+            packageTypes: [
+              { id: "elopement", label: "Elopement / Small Ceremony", basePrice: 950, hours: 4, icon: "💕", popular: false },
+              { id: "half-day", label: "Half-Day Coverage", basePrice: 1200, hours: 6, icon: "☀️", popular: true },
+              { id: "full-day", label: "Full-Day Coverage", basePrice: 1800, hours: 10, icon: "💍", popular: true },
+              { id: "destination", label: "Destination Wedding", basePrice: 2500, hours: 12, icon: "✈️", popular: false }
+            ],
+            hourOptions: [
+              { id: "4", label: "4 Hours", surcharge: 0, popular: false },
+              { id: "6", label: "6 Hours", surcharge: 300, popular: true },
+              { id: "8", label: "8 Hours", surcharge: 600, popular: true },
+              { id: "10+", label: "10+ Hours", surcharge: 900, popular: false }
+            ],
+            locationOptions: [
+              { id: "1", label: "1 Location", surcharge: 0, popular: false },
+              { id: "2", label: "2 Locations", surcharge: 150, popular: true },
+              { id: "3+", label: "3+ Locations", surcharge: 350, popular: false }
+            ],
+            addOnOptions: [
+              { id: "engagement", label: "Engagement Session", price: 300, popular: true },
+              { id: "second-photographer", label: "Second Photographer", price: 250, popular: true },
+              { id: "drone", label: "Drone Coverage", price: 150, popular: false },
+              { id: "album", label: "Album & Prints", price: 200, popular: true },
+              { id: "rehearsal", label: "Rehearsal Dinner Coverage", price: 350, popular: false },
+              { id: "express", label: "Express Turnaround", price: 175, popular: false }
+            ],
+            deliveryOptions: [
+              { id: "gallery", label: "Online Gallery Only", price: 0, popular: false },
+              { id: "usb-album", label: "USB + Album", price: 250, popular: true },
+              { id: "video-highlights", label: "Video Highlights Add-On", price: 400, popular: true }
+            ],
+            multiStep: true,
+            aiPowered: true,
+            naturalLanguageInput: true,
+            calculatorType: "comprehensive-wedding-photography"
+          };
+        case 'home-renovation':
+          return {
+            projectTypes: ["kitchen", "bathroom", "living-room", "bedroom", "whole-house"],
+            propertyTypes: ["apartment", "house", "villa", "commercial"],
+            finishQualities: ["standard", "premium", "luxury"],
+            timeframes: ["flexible", "normal", "rush"],
+            multiStep: true,
+            aiPowered: true,
+            calculatorType: "comprehensive-home-renovation"
+          };
+        case 'portrait-photography':
+          return {
+            sessionTypes: ["studio", "outdoor", "lifestyle", "business"],
+            durations: ["30min", "1hour", "2hours", "half-day"],
+            groupSizes: ["individual", "couple", "family", "group"],
+            deliveryOptions: ["digital", "prints", "album"],
+            multiStep: true,
+            calculatorType: "comprehensive-portrait-photography"
+          };
+        default:
+          return {
+            isDetailed: true,
+            hasAdvancedFeatures: true,
+            calculatorType: `comprehensive-${templateId}`
+          };
+      }
+    };
+
+    const detailedConfig = getDetailedConfig(template.template_id);
+
+    const newCalculator: UserCalculator = {
+      id: `calc_${Date.now()}`,
+      name: template.name,
+      slug: `${template.slug}-${Date.now()}`,
+      embed_url: `${window.location.origin}/embed/${embedId}`,
+      admin_url: `${window.location.origin}/dashboard`,
+      embedId: embedId,
+      calculator_id: parseInt(template.id),
+      config: detailedConfig,
+      custom_branding: {},
+      is_active: true,
+      template_id: template.template_id,
+      layout_json: {
+        type: template.template_id === 'wedding-photography' ? "multi-step-wizard" : "detailed-form",
+        steps: template.template_id === 'wedding-photography' ? 
+          ["package-coverage", "locations-addons", "wedding-details", "contact-info"] : 
+          ["service-selection", "requirements", "customization", "contact"],
+        components: template.template_id === 'wedding-photography' ? 
+          ["package-selector", "hour-selector", "location-grid", "addon-grid", "natural-language", "pricing-sidebar"] :
+          ["service-options", "requirements-form", "customization-panel", "quote-summary"],
+        forceDetailedView: true,
+        useComprehensiveCalculator: true
+      },
+      logic_json: detailedConfig,
+      style_json: template.template_id === 'wedding-photography' ? {
+        theme: "elegant-wedding",
+        colors: { primary: "#f43f5e", accent: "#fbbf24", neutral: "#6b7280" },
+        layout: "stepped-wizard"
+      } : {},
+      prompt_md: template.template_id === 'wedding-photography' ? "Professional wedding photography calculator with comprehensive multi-step form, package selection, venue options, and AI-powered pricing logic." : "",
+      created_at: new Date().toISOString(),
+      last_updated: new Date().toISOString()
+    };
+
+    // Get user session for isolated storage
+    const userSession = localStorage.getItem('user_session');
+    const userCalculatorKey = `userCalculators_${userSession}`;
+    
+    const updated = [...userCalculators, newCalculator];
+    setUserCalculators(updated);
+    localStorage.setItem(userCalculatorKey, JSON.stringify(updated));
+    
+    // Update user calculator count
+    setUser(prev => ({
+      ...prev,
+      calculatorsUsed: updated.length
+    }));
+    
+    setShowCalculatorModal(false);
+    
+    toast({
+      title: "Calculator Added Successfully",
+      description: `${template.name} has been added to your dashboard.`,
+      duration: 100, // Disappear immediately
+    });
+    
+    setShowSuccessMessage(true);
+    setTimeout(() => setShowSuccessMessage(false), 100); // Disappear immediately
+  };
+
+  const customizeCalculator = (calc: UserCalculator) => {
+    setSelectedCalculator(calc);
+    // Merge existing config with pricing defaults
+    const existingConfig = calc.config || {};
+    const configWithDefaults = {
+      // Pricing defaults
+      basePrice: 200,
+      hourlyRate: 100,
+      locationFee: 50,
+      currency: 'EUR',
+      addOnPrices: [
+        { name: "Rush delivery", price: 100 },
+        { name: "Print package", price: 150 },
+        { name: "Social media package", price: 75 }
+      ],
+      durationPrices: [
+        { duration: "30 minutes", multiplier: 0.5 },
+        { duration: "1 hour", multiplier: 1 },
+        { duration: "2 hours", multiplier: 1.8 },
+        { duration: "Half day", multiplier: 3 }
+      ],
+      sessionDurations: [
+        { id: "30-min", label: "30 minutes", price: 0, icon: "⏰" },
+        { id: "1-hour", label: "1 hour", price: 75, icon: "🕐" },
+        { id: "2-hours", label: "2 hours", price: 150, icon: "⏱️" }
+      ],
+      groupPrices: [
+        { id: "individual", label: "Individual", price: 0, icon: "👤" },
+        { id: "couple", label: "Couple", price: 50, icon: "💕" },
+        { id: "family", label: "Family", price: 100, icon: "👨‍👩‍👧‍👦" },
+        { id: "senior", label: "Senior / Graduation", price: 0, icon: "🎓" },
+        { id: "branding", label: "Branding / Business", price: 80, icon: "💼" }
+      ],
+      locationPrices: [
+        { id: "studio", label: "Studio", price: 0, icon: "🏢" },
+        { id: "outdoor", label: "Outdoor", price: 60, icon: "🌳" },
+        { id: "client-location", label: "Client's Home / Office", price: 60, icon: "🏠" }
+      ],
+      wardrobePrices: [
+        { id: "1", label: "1 Outfit", price: 0, icon: "👕" },
+        { id: "2", label: "2 Outfits", price: 40, icon: "👔" },
+        { id: "3+", label: "3+ Outfits", price: 80, icon: "👗" }
+      ],
+      enhancementPrices: [
+        { id: "makeup", label: "Professional Makeup", price: 80 },
+        { id: "standard-retouching", label: "Standard Retouching", price: 0 },
+        { id: "deluxe-retouching", label: "Deluxe Retouching", price: 50 },
+        { id: "express-delivery", label: "Express Delivery", price: 50 },
+        { id: "extra-images", label: "Extra Images (+5)", price: 100 },
+        { id: "headshot-bundle", label: "Headshot Bundle", price: 75 }
+      ],
+      usagePrices: [
+        { id: "personal", label: "Personal Use", price: 0, icon: "🏠" },
+        { id: "commercial", label: "Commercial / Branding", price: 120, icon: "💼" }
+      ],
+      // Merge with existing config (existing config takes precedence)
+      ...existingConfig
+    };
+    setCustomConfig(configWithDefaults);
+    setShowCustomizeModal(true);
+  };
+
+  const previewCalculator = (calc: UserCalculator) => {
+    setSelectedCalculator(calc);
+    // Merge existing config with pricing defaults
+    const existingConfig = calc.config || {};
+    const configWithDefaults = {
+      // Pricing defaults
+      basePrice: 200,
+      hourlyRate: 100,
+      locationFee: 50,
+      currency: 'EUR',
+      addOnPrices: [
+        { name: "Rush delivery", price: 100 },
+        { name: "Print package", price: 150 },
+        { name: "Social media package", price: 75 }
+      ],
+      durationPrices: [
+        { duration: "30 minutes", multiplier: 0.5 },
+        { duration: "1 hour", multiplier: 1 },
+        { duration: "2 hours", multiplier: 1.8 },
+        { duration: "Half day", multiplier: 3 }
+      ],
+      sessionDurations: [
+        { id: "30-min", label: "30 minutes", price: 0, icon: "⏰" },
+        { id: "1-hour", label: "1 hour", price: 75, icon: "🕐" },
+        { id: "2-hours", label: "2 hours", price: 150, icon: "⏱️" }
+      ],
+      groupPrices: [
+        { id: "individual", label: "Individual", price: 0, icon: "👤" },
+        { id: "couple", label: "Couple", price: 50, icon: "💕" },
+        { id: "family", label: "Family", price: 100, icon: "👨‍👩‍👧‍👦" },
+        { id: "senior", label: "Senior / Graduation", price: 0, icon: "🎓" },
+        { id: "branding", label: "Branding / Business", price: 80, icon: "💼" }
+      ],
+      locationPrices: [
+        { id: "studio", label: "Studio", price: 0, icon: "🏢" },
+        { id: "outdoor", label: "Outdoor", price: 60, icon: "🌳" },
+        { id: "client-location", label: "Client's Home / Office", price: 60, icon: "🏠" }
+      ],
+      wardrobePrices: [
+        { id: "1", label: "1 Outfit", price: 0, icon: "👕" },
+        { id: "2", label: "2 Outfits", price: 40, icon: "👔" },
+        { id: "3+", label: "3+ Outfits", price: 80, icon: "👗" }
+      ],
+      enhancementPrices: [
+        { id: "makeup", label: "Professional Makeup", price: 80 },
+        { id: "standard-retouching", label: "Standard Retouching", price: 0 },
+        { id: "deluxe-retouching", label: "Deluxe Retouching", price: 50 },
+        { id: "express-delivery", label: "Express Delivery", price: 50 },
+        { id: "extra-images", label: "Extra Images (+5)", price: 100 },
+        { id: "headshot-bundle", label: "Headshot Bundle", price: 75 }
+      ],
+      usagePrices: [
+        { id: "personal", label: "Personal Use", price: 0, icon: "🏠" },
+        { id: "commercial", label: "Commercial / Branding", price: 120, icon: "💼" }
+      ],
+      // Merge with existing config (existing config takes precedence)
+      ...existingConfig
+    };
+    setCustomConfig(configWithDefaults);
+    setShowPreviewModal(true);
+  };
+
+  const showEmbedCode = (calc: UserCalculator) => {
+    setSelectedCalculator(calc);
+    setShowEmbedModal(true);
+  };
+
+  // Icon selection handler
+  const handleIconSelect = (icon: string) => {
+    if (!iconEditingIndex) return;
+    
+    const { type, index } = iconEditingIndex;
+    
+    if (type === 'addon') {
+      const newAddOns = [...(customConfig.addOnPrices || [])];
+      newAddOns[index] = { ...newAddOns[index], icon };
+      setCustomConfig({...customConfig, addOnPrices: newAddOns});
+    } else if (type === 'duration') {
+      const newDurations = [...(customConfig.durationPrices || [])];
+      newDurations[index] = { ...newDurations[index], icon };
+      setCustomConfig({...customConfig, durationPrices: newDurations});
+    } else if (type === 'group') {
+      const newGroups = [...(customConfig.groupPrices || [])];
+      newGroups[index] = { ...newGroups[index], icon };
+      setCustomConfig({...customConfig, groupPrices: newGroups});
+    } else if (type === 'location') {
+      const newLocations = [...(customConfig.locationPrices || [])];
+      newLocations[index] = { ...newLocations[index], icon };
+      setCustomConfig({...customConfig, locationPrices: newLocations});
+    } else if (type === 'wardrobe') {
+      const newWardrobe = [...(customConfig.wardrobePrices || [])];
+      newWardrobe[index] = { ...newWardrobe[index], icon };
+      setCustomConfig({...customConfig, wardrobePrices: newWardrobe});
+    } else if (type === 'usage') {
+      const newUsage = [...(customConfig.usagePrices || [])];
+      newUsage[index] = { ...newUsage[index], icon };
+      setCustomConfig({...customConfig, usagePrices: newUsage});
+    } else if (type === 'sessionDuration') {
+      const newSessionDurations = [...(customConfig.sessionDurations || [])];
+      newSessionDurations[index] = { ...newSessionDurations[index], icon };
+      setCustomConfig({...customConfig, sessionDurations: newSessionDurations});
+    }
+    
+    setShowIconGallery(false);
+    setIconEditingIndex(null);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-midnight-950 via-midnight-900 to-midnight-800">
+      <div className="container mx-auto px-6 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
+          <p className="text-gray-400">Manage your quote calculators and track performance</p>
+        </div>
+
+        {/* Subscription Status */}
+        <Card className="bg-midnight-800 border-midnight-700 mb-6">
+          <CardContent className="p-6">
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="text-lg font-semibold text-white">
+                  {SUBSCRIPTION_TIERS[user.subscriptionStatus].name}
+                </h3>
+                <p className="text-gray-400 text-sm">
+                  {user.calculatorsUsed}/{user.calculatorLimit} calculators • {user.quotesUsedThisMonth}/{user.quotesLimit} quotes used
+                </p>
+              </div>
+              <div className="flex space-x-2">
+                {user.subscriptionStatus === 'free' && (
+                  <Button 
+                    onClick={() => setShowUpgradeModal(true)}
+                    className="bg-neon-500 hover:bg-neon-600 text-black font-medium"
+                  >
+                    Upgrade Now
+                  </Button>
+                )}
+                <Button
+                  onClick={clearTestData}
+                  variant="outline"
+                  size="sm"
+                  className="border-red-600 text-red-400 hover:bg-red-600/10 hover:border-red-500"
+                >
+                  Clear Test Data
+                </Button>
+              </div>
+            </div>
+            
+            {/* Usage bars */}
+            <div className="mt-4 space-y-3">
+              <div>
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="text-gray-400">Calculator Usage</span>
+                  <span className="text-white">{user.calculatorsUsed}/{user.calculatorLimit}</span>
+                </div>
+                <div className="w-full bg-midnight-700 rounded-full h-2">
+                  <div 
+                    className={`h-2 rounded-full ${
+                      user.calculatorsUsed >= user.calculatorLimit ? 'bg-red-500' : 
+                      user.calculatorsUsed / user.calculatorLimit > 0.8 ? 'bg-yellow-500' : 'bg-neon-400'
+                    }`}
+                    style={{ width: `${Math.min((user.calculatorsUsed / user.calculatorLimit) * 100, 100)}%` }}
+                  ></div>
+                </div>
+              </div>
+              
+              <div>
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="text-gray-400">Quote Usage</span>
+                  <span className="text-white">{user.quotesUsedThisMonth}/{user.quotesLimit}</span>
+                </div>
+                <div className="w-full bg-midnight-700 rounded-full h-2">
+                  <div 
+                    className={`h-2 rounded-full ${
+                      user.quotesUsedThisMonth >= user.quotesLimit ? 'bg-red-500' : 
+                      user.quotesUsedThisMonth / user.quotesLimit > 0.8 ? 'bg-yellow-500' : 'bg-neon-400'
+                    }`}
+                    style={{ width: `${Math.min((user.quotesUsedThisMonth / user.quotesLimit) * 100, 100)}%` }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Stats Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <Card className="bg-midnight-800 border-midnight-700">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-400 text-sm">Active Calculators</p>
+                  <p className="text-2xl font-bold text-white">{user.calculatorsUsed}/{user.calculatorLimit}</p>
+                </div>
+                <Calculator className="h-8 w-8 text-neon-400" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-midnight-800 border-midnight-700">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-400 text-sm">Quotes This Month</p>
+                  <p className="text-2xl font-bold text-white">{user.quotesUsedThisMonth}/{user.quotesLimit}</p>
+                  <div className="w-full bg-midnight-700 rounded-full h-2 mt-2">
+                    <div 
+                      className="bg-neon-500 h-2 rounded-full transition-all duration-300" 
+                      style={{ width: `${Math.min(100, (user.quotesUsedThisMonth / user.quotesLimit) * 100)}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {user.quotesLimit - user.quotesUsedThisMonth} remaining
+                  </p>
+                </div>
+                <BarChart3 className="h-8 w-8 text-neon-400" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-midnight-800 border-midnight-700">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-400 text-sm">Conversion Rate</p>
+                  <p className="text-2xl font-bold text-white">0%</p>
+                </div>
+                <TrendingUp className="h-8 w-8 text-neon-400" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-midnight-800 border-midnight-700">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-400 text-sm">Revenue Generated</p>
+                  <p className="text-2xl font-bold text-white">$0</p>
+                </div>
+                <DollarSign className="h-8 w-8 text-neon-400" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+
+        {/* Your Calculators */}
+        <Card className="bg-midnight-800 border-midnight-700 mb-8">
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <CardTitle className="text-white flex items-center">
+                <Calculator className="h-5 w-5 mr-2 text-neon-400" />
+                Your Calculators
+              </CardTitle>
+              <Button
+                onClick={() => setShowCalculatorModal(true)}
+                className="bg-neon-500 hover:bg-neon-600 text-black font-medium"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Calculator
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {userCalculators.length === 0 ? (
+              <div className="text-center py-12">
+                <Calculator className="h-16 w-16 text-gray-600 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-white mb-2">No calculators yet</h3>
+                <p className="text-gray-400 mb-4">Create your first calculator to start generating quotes</p>
+                <Button
+                  onClick={() => setShowCalculatorModal(true)}
+                  className="bg-neon-500 hover:bg-neon-600 text-black font-medium"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Your First Calculator
+                </Button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {userCalculators.map((calc) => (
+                  <Card key={calc.id} className="bg-midnight-900 border-midnight-700 hover:border-neon-500/50 transition-all duration-200">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="font-medium text-white truncate">{calc.name}</h3>
+                        <Badge 
+                          variant={calc.is_active ? "default" : "secondary"}
+                          className={calc.is_active ? "bg-green-500 text-white" : "bg-gray-600 text-gray-300"}
+                        >
+                          {calc.is_active ? "Active" : "Inactive"}
+                        </Badge>
+                      </div>
+                      
+                      <p className="text-sm text-gray-400 mb-4">
+                        Created {new Date(calc.created_at).toLocaleDateString()}
+                      </p>
+                      
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => customizeCalculator(calc)}
+                          className="border-midnight-600 text-gray-300 hover:bg-midnight-800"
+                        >
+                          <Settings className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => previewCalculator(calc)}
+                          className="border-midnight-600 text-gray-300 hover:bg-midnight-800"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => showEmbedCode(calc)}
+                          className="border-midnight-600 text-gray-300 hover:bg-midnight-800"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => deleteCalculator(calc.id)}
+                          className="border-red-600 text-red-400 hover:bg-red-600/10 hover:border-red-500"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Analytics Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          {/* Performance Chart */}
+          <Card className="bg-midnight-800 border-midnight-700">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center">
+                <BarChart3 className="h-5 w-5 mr-2 text-neon-400" />
+                Performance Overview
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={performanceData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis dataKey="name" stroke="#9CA3AF" />
+                  <YAxis stroke="#9CA3AF" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#1F2937', 
+                      border: '1px solid #374151',
+                      borderRadius: '8px',
+                      color: '#F3F4F6'
+                    }} 
+                  />
+                  <Line type="monotone" dataKey="quotes" stroke="#10B981" strokeWidth={2} />
+                  <Line type="monotone" dataKey="conversions" stroke="#3B82F6" strokeWidth={2} />
+                </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* Recent Activity */}
+          <Card className="bg-midnight-800 border-midnight-700">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center">
+                <Activity className="h-5 w-5 mr-2 text-neon-400" />
+                Recent Activity
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="text-center text-gray-400 py-8">
+                  <Activity className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">No recent activity</p>
+                  <p className="text-xs">Activity will appear here as you use your calculators</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Client Management */}
+        <Card className="bg-midnight-800 border-midnight-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center">
+              <Users className="h-5 w-5 mr-2 text-neon-400" />
+              Recent Client Quotes
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-midnight-700">
+                    <th className="text-left text-sm font-medium text-gray-400 pb-2">Client</th>
+                    <th className="text-left text-sm font-medium text-gray-400 pb-2">Project</th>
+                    <th className="text-left text-sm font-medium text-gray-400 pb-2">Quote</th>
+                    <th className="text-left text-sm font-medium text-gray-400 pb-2">Status</th>
+                    <th className="text-left text-sm font-medium text-gray-400 pb-2">Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {clientData.map((client) => (
+                    <tr key={client.id} className="border-b border-midnight-700/50">
+                      <td className="py-3">
+                        <div>
+                          <p className="text-sm font-medium text-white">{client.name}</p>
+                          <p className="text-xs text-gray-400">{client.email}</p>
+                        </div>
+                      </td>
+                      <td className="py-3">
+                        <p className="text-sm text-gray-300">{client.project}</p>
+                      </td>
+                      <td className="py-3">
+                        <p className="text-sm font-medium text-white">{client.quote}</p>
+                      </td>
+                      <td className="py-3">
+                        <Badge 
+                          variant={
+                            client.status === 'Accepted' ? 'default' : 
+                            client.status === 'Pending' ? 'secondary' : 
+                            'destructive'
+                          }
+                          className={
+                            client.status === 'Accepted' ? 'bg-green-500 text-white' :
+                            client.status === 'Pending' ? 'bg-yellow-500 text-black' :
+                            'bg-red-500 text-white'
+                          }
+                        >
+                          {client.status}
+                        </Badge>
+                      </td>
+                      <td className="py-3">
+                        <p className="text-sm text-gray-400">{client.date}</p>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Customization Modal */}
+        {showCustomizeModal && selectedCalculator && (
+          <Dialog open={showCustomizeModal} onOpenChange={setShowCustomizeModal}>
+            <DialogContent className="max-w-7xl w-[95vw] h-[95vh] bg-midnight-800 border-midnight-700 p-0 flex flex-col">
+              <DialogHeader className="px-6 py-4 border-b border-midnight-700 flex-shrink-0">
+                <DialogTitle className="text-white">Customize Calculator</DialogTitle>
+                <DialogDescription className="text-gray-400">
+                  Personalize your calculator appearance and functionality.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="flex flex-1 min-h-0">
+                {/* Left Panel - Customization Options */}
+                <div className="w-1/2 border-r border-midnight-700 flex flex-col">
+                  <div className="flex-1 overflow-y-auto p-6 space-y-8 pb-24">
+                    
+                    {/* Branding */}
+                    <div>
+                      <h3 className="text-white font-medium mb-4 flex items-center">
+                        <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
+                        <Palette className="h-4 w-4 mr-2" />
+                        Branding
+                      </h3>
+                      <div className="space-y-4">
+                        <div>
+                          <Label className="text-gray-300">Business Name</Label>
+                          <Input
+                            value={customConfig.businessName || ''}
+                            onChange={(e) => setCustomConfig({...customConfig, businessName: e.target.value})}
+                            placeholder="Your Business Name"
+                            className="bg-midnight-900 border-midnight-600 text-white"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Logo Upload</Label>
+                          <div className="space-y-2">
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  const reader = new FileReader();
+                                  reader.onload = (event) => {
+                                    setCustomConfig({...customConfig, logoUrl: event.target?.result as string});
+                                  };
+                                  reader.readAsDataURL(file);
+                                }
+                              }}
+                              className="bg-midnight-900 border-midnight-600 text-white file:bg-neon-500 file:text-black file:border-0 file:px-4 file:py-2 file:rounded"
+                            />
+                            <Input
+                              value={customConfig.logoUrl || ''}
+                              onChange={(e) => setCustomConfig({...customConfig, logoUrl: e.target.value})}
+                              placeholder="Or paste image URL"
+                              className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                            />
+                          </div>
+                        </div>
+                        {customConfig.logoUrl && (
+                          <div>
+                            <Label className="text-gray-300">Logo Size: {customConfig.logoSize || 60}px</Label>
+                            <Slider
+                              value={[customConfig.logoSize || 60]}
+                              onValueChange={(value) => setCustomConfig({...customConfig, logoSize: value[0]})}
+                              max={200}
+                              min={20}
+                              step={5}
+                              className="mt-2"
+                            />
+                          </div>
+                        )}
+                        <div>
+                          <Label className="text-gray-300">Primary Color</Label>
+                          <Input
+                            type="color"
+                            value={customConfig.primaryColor || '#10B981'}
+                            onChange={(e) => setCustomConfig({...customConfig, primaryColor: e.target.value})}
+                            className="h-12 bg-midnight-900 border-midnight-600"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Pricing Configuration */}
+                    <div>
+                      <h3 className="text-white font-medium mb-4 flex items-center">
+                        <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
+                        <DollarSign className="h-4 w-4 mr-2" />
+                        Pricing Configuration
+                      </h3>
+                      <div className="space-y-4">
+                        <div className="border border-midnight-600 rounded-lg p-4">
+                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Base Pricing</h4>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <Label className="text-gray-300 text-xs">Base Price (€)</Label>
+                              <Input
+                                type="number"
+                                value={customConfig.basePrice ?? 200}
+                                onChange={(e) => setCustomConfig({...customConfig, basePrice: Number(e.target.value) || 0})}
+                                placeholder="200"
+                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-gray-300 text-xs">Hourly Rate (€)</Label>
+                              <Input
+                                type="number"
+                                value={customConfig.hourlyRate ?? 100}
+                                onChange={(e) => setCustomConfig({...customConfig, hourlyRate: Number(e.target.value) || 0})}
+                                placeholder="100"
+                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-gray-300 text-xs">Location Fee (€)</Label>
+                              <Input
+                                type="number"
+                                value={customConfig.locationFee ?? 50}
+                                onChange={(e) => setCustomConfig({...customConfig, locationFee: Number(e.target.value) || 0})}
+                                placeholder="50"
+                                className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-gray-300 text-xs">Currency</Label>
+                              <Select value={customConfig.currency || 'EUR'} onValueChange={(value) => setCustomConfig({...customConfig, currency: value})}>
+                                <SelectTrigger className="bg-midnight-900 border-midnight-600 text-white text-sm">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="EUR">€ Euro</SelectItem>
+                                  <SelectItem value="USD">$ USD</SelectItem>
+                                  <SelectItem value="GBP">£ Pound</SelectItem>
+                                  <SelectItem value="CHF">₣ CHF</SelectItem>
+                                  <SelectItem value="CAD">C$ CAD</SelectItem>
+                                  <SelectItem value="AUD">A$ AUD</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="border border-midnight-600 rounded-lg p-4">
+                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Add-on Services</h4>
+                          <div className="space-y-3">
+                            {(customConfig.addOnPrices || [
+                              { name: "Rush delivery", price: 100, icon: "⚡" },
+                              { name: "Print package", price: 150, icon: "📦" },
+                              { name: "Social media package", price: 75, icon: "📱" }
+                            ]).map((addon, index) => (
+                              <div key={index} className="flex gap-2 items-center">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setIconEditingIndex({type: 'addon', index});
+                                    setShowIconGallery(true);
+                                  }}
+                                  className="w-8 h-8 p-0 text-lg hover:bg-midnight-700 border border-midnight-600"
+                                  title="Change icon"
+                                >
+                                  {addon.icon || "🎯"}
+                                </Button>
+                                <div className="flex-1">
+                                  <Input
+                                    value={addon.name}
+                                    onChange={(e) => {
+                                      const newAddOns = [...(customConfig.addOnPrices || [])];
+                                      newAddOns[index] = { ...addon, name: e.target.value };
+                                      setCustomConfig({...customConfig, addOnPrices: newAddOns});
+                                    }}
+                                    placeholder="Add-on name"
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                                <div className="w-20">
+                                  <Input
+                                    type="number"
+                                    value={addon.price}
+                                    onChange={(e) => {
+                                      const newAddOns = [...(customConfig.addOnPrices || [])];
+                                      newAddOns[index] = { ...addon, price: Number(e.target.value) };
+                                      setCustomConfig({...customConfig, addOnPrices: newAddOns});
+                                    }}
+                                    placeholder="Price"
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    const newAddOns = [...(customConfig.addOnPrices || [])];
+                                    newAddOns.splice(index, 1);
+                                    setCustomConfig({...customConfig, addOnPrices: newAddOns});
+                                  }}
+                                  className="text-red-400 hover:text-red-300 hover:bg-red-500/20 px-2"
+                                >
+                                  ×
+                                </Button>
+                              </div>
+                            ))}
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => {
+                                const newAddOns = [...(customConfig.addOnPrices || []), { name: "", price: 0, icon: "🎯" }];
+                                setCustomConfig({...customConfig, addOnPrices: newAddOns});
+                              }}
+                              className="text-neon-400 hover:text-neon-300 hover:bg-neon-500/20 text-xs"
+                            >
+                              + Add Service
+                            </Button>
+                          </div>
+                        </div>
+
+                        <div className="border border-midnight-600 rounded-lg p-4">
+                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Duration Pricing</h4>
+                          <div className="space-y-2">
+                            {(customConfig.durationPrices || [
+                              { duration: "30 minutes", multiplier: 0.5, icon: "⏰" },
+                              { duration: "1 hour", multiplier: 1, icon: "🕐" },
+                              { duration: "2 hours", multiplier: 1.8, icon: "⏱️" },
+                              { duration: "Half day", multiplier: 3, icon: "☀️" }
+                            ]).map((duration, index) => (
+                              <div key={index} className="flex gap-2 items-center">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setIconEditingIndex({type: 'duration', index});
+                                    setShowIconGallery(true);
+                                  }}
+                                  className="w-8 h-8 p-0 text-lg hover:bg-midnight-700 border border-midnight-600"
+                                  title="Change icon"
+                                >
+                                  {duration.icon || "🕐"}
+                                </Button>
+                                <div className="flex-1">
+                                  <Input
+                                    value={duration.duration}
+                                    onChange={(e) => {
+                                      const newDurations = [...(customConfig.durationPrices || [])];
+                                      newDurations[index] = { ...duration, duration: e.target.value };
+                                      setCustomConfig({...customConfig, durationPrices: newDurations});
+                                    }}
+                                    placeholder="Duration"
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                                <div className="w-20">
+                                  <Input
+                                    type="number"
+                                    step="0.1"
+                                    value={duration.multiplier}
+                                    onChange={(e) => {
+                                      const newDurations = [...(customConfig.durationPrices || [])];
+                                      newDurations[index] = { ...duration, multiplier: Number(e.target.value) };
+                                      setCustomConfig({...customConfig, durationPrices: newDurations});
+                                    }}
+                                    placeholder="×"
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                                <span className="text-xs text-gray-400 w-8">×</span>
+                              </div>
+                            ))}
+                          </div>
+                          <p className="text-xs text-gray-400 mt-2">
+                            Multiplier × Base Price = Final Price for duration
+                          </p>
+                        </div>
+
+                        {/* Session Duration Direct Pricing */}
+                        <div className="border border-midnight-600 rounded-lg p-4">
+                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Session Duration Pricing</h4>
+                          <p className="text-xs text-gray-400 mb-3">Control the +€75, +€150 amounts shown in calculator</p>
+                          <div className="space-y-3">
+                            {(customConfig.sessionDurations || [
+                              { id: "30-min", label: "30 minutes", price: 0, icon: "⏰" },
+                              { id: "1-hour", label: "1 hour", price: 75, icon: "🕐" },
+                              { id: "2-hours", label: "2 hours", price: 150, icon: "⏱️" }
+                            ]).map((duration, index) => (
+                              <div key={index} className="flex gap-2 items-center">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setIconEditingIndex({type: 'sessionDuration', index});
+                                    setShowIconGallery(true);
+                                  }}
+                                  className="w-8 h-8 p-0 text-lg hover:bg-midnight-700 border border-midnight-600"
+                                  title="Change icon"
+                                >
+                                  {duration.icon || "⏰"}
+                                </Button>
+                                <div className="flex-1">
+                                  <Input
+                                    placeholder="Duration Label"
+                                    value={duration.label}
+                                    onChange={(e) => {
+                                      const newDurations = [...(customConfig.sessionDurations || [])];
+                                      newDurations[index] = { ...duration, label: e.target.value };
+                                      setCustomConfig({...customConfig, sessionDurations: newDurations});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                                <div className="w-20">
+                                  <Input
+                                    type="number"
+                                    placeholder="Extra Price (€)"
+                                    value={duration.price}
+                                    onChange={(e) => {
+                                      const newDurations = [...(customConfig.sessionDurations || [])];
+                                      newDurations[index] = { ...duration, price: Number(e.target.value) || 0 };
+                                      setCustomConfig({...customConfig, sessionDurations: newDurations});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Group Size Pricing */}
+                        <div className="border border-midnight-600 rounded-lg p-4">
+                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Group Size Pricing</h4>
+                          <p className="text-xs text-gray-400 mb-3">Pricing for Individual, Couple, Family, etc.</p>
+                          <div className="space-y-3">
+                            {(customConfig.groupPrices || [
+                              { id: "individual", label: "Individual", price: 0, icon: "👤" },
+                              { id: "couple", label: "Couple", price: 50, icon: "💕" },
+                              { id: "family", label: "Family", price: 100, icon: "👨‍👩‍👧‍👦" },
+                              { id: "senior", label: "Senior / Graduation", price: 0, icon: "🎓" },
+                              { id: "branding", label: "Branding / Business", price: 80, icon: "💼" }
+                            ]).map((group, index) => (
+                              <div key={index} className="flex gap-2 items-center">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setIconEditingIndex({type: 'group', index});
+                                    setShowIconGallery(true);
+                                  }}
+                                  className="w-8 h-8 p-0 text-lg hover:bg-midnight-700 border border-midnight-600"
+                                  title="Change icon"
+                                >
+                                  {group.icon || "👤"}
+                                </Button>
+                                <div className="flex-1">
+                                  <Input
+                                    placeholder="Group Type"
+                                    value={group.label}
+                                    onChange={(e) => {
+                                      const newGroups = [...(customConfig.groupPrices || [])];
+                                      newGroups[index] = { ...group, label: e.target.value };
+                                      setCustomConfig({...customConfig, groupPrices: newGroups});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                                <div className="w-20">
+                                  <Input
+                                    type="number"
+                                    placeholder="Extra Price (€)"
+                                    value={group.price}
+                                    onChange={(e) => {
+                                      const newGroups = [...(customConfig.groupPrices || [])];
+                                      newGroups[index] = { ...group, price: Number(e.target.value) || 0 };
+                                      setCustomConfig({...customConfig, groupPrices: newGroups});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Location Pricing */}
+                        <div className="border border-midnight-600 rounded-lg p-4">
+                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Location Pricing</h4>
+                          <p className="text-xs text-gray-400 mb-3">Control the +€60 amounts for Outdoor, Client location</p>
+                          <div className="space-y-3">
+                            {(customConfig.locationPrices || [
+                              { id: "studio", label: "Studio", price: 0, icon: "🏢" },
+                              { id: "outdoor", label: "Outdoor", price: 60, icon: "🌳" },
+                              { id: "client-location", label: "Client's Home / Office", price: 60, icon: "🏠" }
+                            ]).map((location, index) => (
+                              <div key={index} className="flex gap-2 items-center">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setIconEditingIndex({type: 'location', index});
+                                    setShowIconGallery(true);
+                                  }}
+                                  className="w-8 h-8 p-0 text-lg hover:bg-midnight-700 border border-midnight-600"
+                                  title="Change icon"
+                                >
+                                  {location.icon || "🏢"}
+                                </Button>
+                                <div className="flex-1">
+                                  <Input
+                                    placeholder="Location Type"
+                                    value={location.label}
+                                    onChange={(e) => {
+                                      const newLocations = [...(customConfig.locationPrices || [])];
+                                      newLocations[index] = { ...location, label: e.target.value };
+                                      setCustomConfig({...customConfig, locationPrices: newLocations});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                                <div className="w-20">
+                                  <Input
+                                    type="number"
+                                    placeholder="Extra Price (€)"
+                                    value={location.price}
+                                    onChange={(e) => {
+                                      const newLocations = [...(customConfig.locationPrices || [])];
+                                      newLocations[index] = { ...location, price: Number(e.target.value) || 0 };
+                                      setCustomConfig({...customConfig, locationPrices: newLocations});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Wardrobe Changes Pricing */}
+                        <div className="border border-midnight-600 rounded-lg p-4">
+                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Wardrobe Changes Pricing</h4>
+                          <p className="text-xs text-gray-400 mb-3">Control the +€40, +€80 amounts for outfit changes</p>
+                          <div className="space-y-3">
+                            {(customConfig.wardrobePrices || [
+                              { id: "1", label: "1 Outfit", price: 0, icon: "👕" },
+                              { id: "2", label: "2 Outfits", price: 40, icon: "👔" },
+                              { id: "3+", label: "3+ Outfits", price: 80, icon: "👗" }
+                            ]).map((wardrobe, index) => (
+                              <div key={index} className="flex gap-2 items-center">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setIconEditingIndex({type: 'wardrobe', index});
+                                    setShowIconGallery(true);
+                                  }}
+                                  className="w-8 h-8 p-0 text-lg hover:bg-midnight-700 border border-midnight-600"
+                                  title="Change icon"
+                                >
+                                  {wardrobe.icon || "👕"}
+                                </Button>
+                                <div className="flex-1">
+                                  <Input
+                                    placeholder="Outfit Option"
+                                    value={wardrobe.label}
+                                    onChange={(e) => {
+                                      const newWardrobe = [...(customConfig.wardrobePrices || [])];
+                                      newWardrobe[index] = { ...wardrobe, label: e.target.value };
+                                      setCustomConfig({...customConfig, wardrobePrices: newWardrobe});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                                <div className="w-20">
+                                  <Input
+                                    type="number"
+                                    placeholder="Extra Price (€)"
+                                    value={wardrobe.price}
+                                    onChange={(e) => {
+                                      const newWardrobe = [...(customConfig.wardrobePrices || [])];
+                                      newWardrobe[index] = { ...wardrobe, price: Number(e.target.value) || 0 };
+                                      setCustomConfig({...customConfig, wardrobePrices: newWardrobe});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Add-on Services Pricing */}
+                        <div className="border border-midnight-600 rounded-lg p-4">
+                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Add-on Services Pricing</h4>
+                          <p className="text-xs text-gray-400 mb-3">Control Professional Makeup (+€80), Retouching, etc.</p>
+                          <div className="space-y-3">
+                            {(customConfig.enhancementPrices || [
+                              { id: "makeup", label: "Professional Makeup", price: 80 },
+                              { id: "standard-retouching", label: "Standard Retouching", price: 0 },
+                              { id: "deluxe-retouching", label: "Deluxe Retouching", price: 50 },
+                              { id: "express-delivery", label: "Express Delivery", price: 50 },
+                              { id: "extra-images", label: "Extra Images (+5)", price: 100 },
+                              { id: "headshot-bundle", label: "Headshot Bundle", price: 75 }
+                            ]).map((addon, index) => (
+                              <div key={index} className="grid grid-cols-2 gap-2">
+                                <Input
+                                  placeholder="Add-on Service"
+                                  value={addon.label}
+                                  onChange={(e) => {
+                                    const newAddons = [...(customConfig.enhancementPrices || [])];
+                                    newAddons[index] = { ...addon, label: e.target.value };
+                                    setCustomConfig({...customConfig, enhancementPrices: newAddons});
+                                  }}
+                                  className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                />
+                                <Input
+                                  type="number"
+                                  placeholder="Price (€)"
+                                  value={addon.price}
+                                  onChange={(e) => {
+                                    const newAddons = [...(customConfig.enhancementPrices || [])];
+                                    newAddons[index] = { ...addon, price: Number(e.target.value) || 0 };
+                                    setCustomConfig({...customConfig, enhancementPrices: newAddons});
+                                  }}
+                                  className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Usage Type Pricing */}
+                        <div className="border border-midnight-600 rounded-lg p-4">
+                          <h4 className="text-neon-400 font-medium mb-3 text-sm">Usage Type Pricing</h4>
+                          <p className="text-xs text-gray-400 mb-3">Control Commercial/Branding (+€120) pricing</p>
+                          <div className="space-y-3">
+                            {(customConfig.usagePrices || [
+                              { id: "personal", label: "Personal Use", price: 0, icon: "🏠" },
+                              { id: "commercial", label: "Commercial / Branding", price: 120, icon: "💼" }
+                            ]).map((usage, index) => (
+                              <div key={index} className="flex gap-2 items-center">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setIconEditingIndex({type: 'usage', index});
+                                    setShowIconGallery(true);
+                                  }}
+                                  className="w-8 h-8 p-0 text-lg hover:bg-midnight-700 border border-midnight-600"
+                                  title="Change icon"
+                                >
+                                  {usage.icon || "🏠"}
+                                </Button>
+                                <div className="flex-1">
+                                  <Input
+                                    placeholder="Usage Type"
+                                    value={usage.label}
+                                    onChange={(e) => {
+                                      const newUsage = [...(customConfig.usagePrices || [])];
+                                      newUsage[index] = { ...usage, label: e.target.value };
+                                      setCustomConfig({...customConfig, usagePrices: newUsage});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                                <div className="w-20">
+                                  <Input
+                                    type="number"
+                                    placeholder="Extra Price (€)"
+                                    value={usage.price}
+                                    onChange={(e) => {
+                                      const newUsage = [...(customConfig.usagePrices || [])];
+                                      newUsage[index] = { ...usage, price: Number(e.target.value) || 0 };
+                                      setCustomConfig({...customConfig, usagePrices: newUsage});
+                                    }}
+                                    className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                  />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Commercial Photography Pricing Controls */}
+                    {selectedCalculator.template_id === 'commercial-photography' && (
+                      <div>
+                        <h3 className="text-white font-medium mb-4 flex items-center">
+                          <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
+                          <Camera className="h-4 w-4 mr-2" />
+                          Commercial Photography Pricing Controls
+                        </h3>
+                        <div className="space-y-6">
+
+                          {/* Project Type Pricing */}
+                          <div className="border border-midnight-600 rounded-lg p-4">
+                            <h4 className="text-neon-400 font-medium mb-3 text-sm">Project Type Pricing</h4>
+                            <p className="text-xs text-gray-400 mb-3">Control base pricing for different project types</p>
+                            <div className="space-y-3">
+                              {(() => {
+                                const defaultProjects = [
+                                  { id: "product", label: "Product Photography", price: 500, icon: "📦" },
+                                  { id: "headshots", label: "Corporate Headshots", price: 800, icon: "👔" },
+                                  { id: "branding", label: "Branding Session", price: 1200, icon: "💼" },
+                                  { id: "event", label: "Event Photography", price: 1000, icon: "🎉" },
+                                  { id: "advertising", label: "Advertising Campaign", price: 2000, icon: "📸" },
+                                  { id: "architectural", label: "Architectural Photography", price: 1500, icon: "🏢" }
+                                ];
+                                const currentProjects = customConfig.projectTypePrices || defaultProjects;
+                                return currentProjects.map((project, index) => (
+                                  <div key={index} className="grid grid-cols-2 gap-2">
+                                    <Input
+                                      placeholder="Project Type"
+                                      value={project.label}
+                                      onChange={(e) => {
+                                        const baseProjects = customConfig.projectTypePrices || defaultProjects;
+                                        const newProjects = [...baseProjects];
+                                        newProjects[index] = { ...project, label: e.target.value };
+                                        setCustomConfig({...customConfig, projectTypePrices: newProjects});
+                                      }}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                    />
+                                    <Input
+                                      type="number"
+                                      placeholder="Base Price (€)"
+                                      value={project.price}
+                                      onChange={(e) => {
+                                        const baseProjects = customConfig.projectTypePrices || defaultProjects;
+                                        const newProjects = [...baseProjects];
+                                        newProjects[index] = { ...project, price: Number(e.target.value) || 0 };
+                                        setCustomConfig({...customConfig, projectTypePrices: newProjects});
+                                      }}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                    />
+                                  </div>
+                                ));
+                              })()}
+                              <Button
+                                onClick={() => {
+                                  const defaultProjects = [
+                                    { id: "product", label: "Product Photography", price: 500, icon: "📦" },
+                                    { id: "headshots", label: "Corporate Headshots", price: 800, icon: "👔" },
+                                    { id: "branding", label: "Branding Session", price: 1200, icon: "💼" },
+                                    { id: "event", label: "Event Photography", price: 1000, icon: "🎉" },
+                                    { id: "advertising", label: "Advertising Campaign", price: 2000, icon: "📸" },
+                                    { id: "architectural", label: "Architectural Photography", price: 1500, icon: "🏢" }
+                                  ];
+                                  const currentProjects = customConfig.projectTypePrices || defaultProjects;
+                                  const newProject = { 
+                                    id: `custom_${Date.now()}`, 
+                                    label: "Custom Project Type", 
+                                    price: 0, 
+                                    icon: "📷" 
+                                  };
+                                  setCustomConfig({
+                                    ...customConfig, 
+                                    projectTypePrices: [...currentProjects, newProject]
+                                  });
+                                }}
+                                className="w-full mt-3 bg-neon-500 hover:bg-neon-600 text-black text-xs"
+                                size="sm"
+                              >
+                                <Plus className="h-3 w-3 mr-1" />
+                                Add Project Type
+                              </Button>
+                            </div>
+                          </div>
+
+                          {/* Image Count Pricing */}
+                          <div className="border border-midnight-600 rounded-lg p-4">
+                            <h4 className="text-neon-400 font-medium mb-3 text-sm">Image Count Pricing</h4>
+                            <p className="text-xs text-gray-400 mb-3">Control pricing for different image packages</p>
+                            <div className="space-y-3">
+                              {(() => {
+                                const defaultPackages = [
+                                  { id: "basic", label: "Basic Package (10-15 images)", price: 0, icon: "📷" },
+                                  { id: "standard", label: "Standard Package (20-30 images)", price: 300, icon: "📸" },
+                                  { id: "premium", label: "Premium Package (40-50 images)", price: 600, icon: "🎯" },
+                                  { id: "unlimited", label: "Unlimited Package (All edited)", price: 1000, icon: "♾️" }
+                                ];
+                                const currentPackages = customConfig.imageCountPrices || defaultPackages;
+                                return currentPackages.map((package_, index) => (
+                                  <div key={index} className="grid grid-cols-2 gap-2">
+                                    <Input
+                                      placeholder="Package Name"
+                                      value={package_.label}
+                                      onChange={(e) => {
+                                        const basePackages = customConfig.imageCountPrices || defaultPackages;
+                                        const newPackages = [...basePackages];
+                                        newPackages[index] = { ...package_, label: e.target.value };
+                                        setCustomConfig({...customConfig, imageCountPrices: newPackages});
+                                      }}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                    />
+                                    <Input
+                                      type="number"
+                                      placeholder="Extra Price (€)"
+                                      value={package_.price}
+                                      onChange={(e) => {
+                                        const basePackages = customConfig.imageCountPrices || defaultPackages;
+                                        const newPackages = [...basePackages];
+                                        newPackages[index] = { ...package_, price: Number(e.target.value) || 0 };
+                                        setCustomConfig({...customConfig, imageCountPrices: newPackages});
+                                      }}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                    />
+                                  </div>
+                                ));
+                              })()}
+                              <Button
+                                onClick={() => {
+                                  const defaultPackages = [
+                                    { id: "basic", label: "Basic Package (10-15 images)", price: 0, icon: "📷" },
+                                    { id: "standard", label: "Standard Package (20-30 images)", price: 300, icon: "📸" },
+                                    { id: "premium", label: "Premium Package (40-50 images)", price: 600, icon: "🎯" },
+                                    { id: "unlimited", label: "Unlimited Package (All edited)", price: 1000, icon: "♾️" }
+                                  ];
+                                  const currentPackages = customConfig.imageCountPrices || defaultPackages;
+                                  const newPackage = { 
+                                    id: `custom_${Date.now()}`, 
+                                    label: "Custom Package", 
+                                    price: 0, 
+                                    icon: "📷" 
+                                  };
+                                  setCustomConfig({
+                                    ...customConfig, 
+                                    imageCountPrices: [...currentPackages, newPackage]
+                                  });
+                                }}
+                                className="w-full mt-3 bg-neon-500 hover:bg-neon-600 text-black text-xs"
+                                size="sm"
+                              >
+                                <Plus className="h-3 w-3 mr-1" />
+                                Add Package
+                              </Button>
+                            </div>
+                          </div>
+
+                          {/* Location Pricing */}
+                          <div className="border border-midnight-600 rounded-lg p-4">
+                            <h4 className="text-neon-400 font-medium mb-3 text-sm">Location Pricing</h4>
+                            <p className="text-xs text-gray-400 mb-3">Control pricing for different shoot locations</p>
+                            <div className="space-y-3">
+                              {(() => {
+                                const defaultLocations = [
+                                  { id: "studio", label: "Studio Location", price: 0, icon: "🏢" },
+                                  { id: "client", label: "Client Location", price: 200, icon: "🏠" },
+                                  { id: "outdoor", label: "Outdoor Location", price: 150, icon: "🌳" }
+                                ];
+                                const currentLocations = customConfig.commercialLocationPrices || defaultLocations;
+                                return currentLocations.map((location, index) => (
+                                  <div key={index} className="grid grid-cols-2 gap-2">
+                                    <Input
+                                      placeholder="Location Type"
+                                      value={location.label}
+                                      onChange={(e) => {
+                                        const baseLocations = customConfig.commercialLocationPrices || defaultLocations;
+                                        const newLocations = [...baseLocations];
+                                        newLocations[index] = { ...location, label: e.target.value };
+                                        setCustomConfig({...customConfig, commercialLocationPrices: newLocations});
+                                      }}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                    />
+                                    <Input
+                                      type="number"
+                                      placeholder="Extra Price (€)"
+                                      value={location.price}
+                                      onChange={(e) => {
+                                        const baseLocations = customConfig.commercialLocationPrices || defaultLocations;
+                                        const newLocations = [...baseLocations];
+                                        newLocations[index] = { ...location, price: Number(e.target.value) || 0 };
+                                        setCustomConfig({...customConfig, commercialLocationPrices: newLocations});
+                                      }}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                    />
+                                  </div>
+                                ));
+                              })()}
+                              <Button
+                                onClick={() => {
+                                  const defaultLocations = [
+                                    { id: "studio", label: "Studio Location", price: 0, icon: "🏢" },
+                                    { id: "client", label: "Client Location", price: 200, icon: "🏠" },
+                                    { id: "outdoor", label: "Outdoor Location", price: 150, icon: "🌳" }
+                                  ];
+                                  const currentLocations = customConfig.commercialLocationPrices || defaultLocations;
+                                  const newLocation = { 
+                                    id: `custom_${Date.now()}`, 
+                                    label: "Custom Location", 
+                                    price: 0, 
+                                    icon: "🏢" 
+                                  };
+                                  setCustomConfig({
+                                    ...customConfig, 
+                                    commercialLocationPrices: [...currentLocations, newLocation]
+                                  });
+                                }}
+                                className="w-full mt-3 bg-neon-500 hover:bg-neon-600 text-black text-xs"
+                                size="sm"
+                              >
+                                <Plus className="h-3 w-3 mr-1" />
+                                Add Location
+                              </Button>
+                            </div>
+                          </div>
+
+                          {/* Duration Pricing */}
+                          <div className="border border-midnight-600 rounded-lg p-4">
+                            <h4 className="text-neon-400 font-medium mb-3 text-sm">Duration Pricing</h4>
+                            <p className="text-xs text-gray-400 mb-3">Control pricing for different shoot durations</p>
+                            <div className="space-y-3">
+                              {(() => {
+                                const defaultDurations = [
+                                  { id: "half-day", label: "Half Day (4 hours)", price: 0, icon: "⏰" },
+                                  { id: "full-day", label: "Full Day (8 hours)", price: 800, icon: "🕐" },
+                                  { id: "multi-day", label: "Multi-Day Shoot", price: 1500, icon: "📅" },
+                                  { id: "hourly", label: "Hourly Rate", price: 200, icon: "⏱️" }
+                                ];
+                                const currentDurations = customConfig.commercialDurationPrices || defaultDurations;
+                                return currentDurations.map((duration, index) => (
+                                  <div key={index} className="grid grid-cols-2 gap-2">
+                                    <Input
+                                      placeholder="Duration Option"
+                                      value={duration.label}
+                                      onChange={(e) => {
+                                        const baseDurations = customConfig.commercialDurationPrices || defaultDurations;
+                                        const newDurations = [...baseDurations];
+                                        newDurations[index] = { ...duration, label: e.target.value };
+                                        setCustomConfig({...customConfig, commercialDurationPrices: newDurations});
+                                      }}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                    />
+                                    <Input
+                                      type="number"
+                                      placeholder="Extra Price (€)"
+                                      value={duration.price}
+                                      onChange={(e) => {
+                                        const baseDurations = customConfig.commercialDurationPrices || defaultDurations;
+                                        const newDurations = [...baseDurations];
+                                        newDurations[index] = { ...duration, price: Number(e.target.value) || 0 };
+                                        setCustomConfig({...customConfig, commercialDurationPrices: newDurations});
+                                      }}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                    />
+                                  </div>
+                                ));
+                              })()}
+                              <Button
+                                onClick={() => {
+                                  const defaultDurations = [
+                                    { id: "half-day", label: "Half Day (4 hours)", price: 0, icon: "⏰" },
+                                    { id: "full-day", label: "Full Day (8 hours)", price: 800, icon: "🕐" },
+                                    { id: "multi-day", label: "Multi-Day Shoot", price: 1500, icon: "📅" },
+                                    { id: "hourly", label: "Hourly Rate", price: 200, icon: "⏱️" }
+                                  ];
+                                  const currentDurations = customConfig.commercialDurationPrices || defaultDurations;
+                                  const newDuration = { 
+                                    id: `custom_${Date.now()}`, 
+                                    label: "Custom Duration", 
+                                    price: 0, 
+                                    icon: "⏰" 
+                                  };
+                                  setCustomConfig({
+                                    ...customConfig, 
+                                    commercialDurationPrices: [...currentDurations, newDuration]
+                                  });
+                                }}
+                                className="w-full mt-3 bg-neon-500 hover:bg-neon-600 text-black text-xs"
+                                size="sm"
+                              >
+                                <Plus className="h-3 w-3 mr-1" />
+                                Add Duration
+                              </Button>
+                            </div>
+                          </div>
+
+                          {/* Add-on Services Pricing */}
+                          <div className="border border-midnight-600 rounded-lg p-4">
+                            <h4 className="text-neon-400 font-medium mb-3 text-sm">Add-on Services Pricing</h4>
+                            <p className="text-xs text-gray-400 mb-3">Control pricing for additional services</p>
+                            <div className="space-y-3">
+                              {(() => {
+                                const defaultAddons = [
+                                  { id: "retouching", label: "Advanced Retouching", price: 300, icon: "✨" },
+                                  { id: "rush", label: "Rush Delivery", price: 400, icon: "⚡" },
+                                  { id: "prints", label: "Print Package", price: 250, icon: "🖨️" },
+                                  { id: "social", label: "Social Media Package", price: 150, icon: "📱" },
+                                  { id: "video", label: "Video Content", price: 800, icon: "🎥" },
+                                  { id: "stylist", label: "Stylist Service", price: 500, icon: "💄" }
+                                ];
+                                const currentAddons = customConfig.commercialAddonPrices || defaultAddons;
+                                return currentAddons.map((addon, index) => (
+                                  <div key={index} className="grid grid-cols-2 gap-2">
+                                    <Input
+                                      placeholder="Add-on Service"
+                                      value={addon.label}
+                                      onChange={(e) => {
+                                        const baseAddons = customConfig.commercialAddonPrices || defaultAddons;
+                                        const newAddons = [...baseAddons];
+                                        newAddons[index] = { ...addon, label: e.target.value };
+                                        setCustomConfig({...customConfig, commercialAddonPrices: newAddons});
+                                      }}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                    />
+                                    <Input
+                                      type="number"
+                                      placeholder="Price (€)"
+                                      value={addon.price}
+                                      onChange={(e) => {
+                                        const baseAddons = customConfig.commercialAddonPrices || defaultAddons;
+                                        const newAddons = [...baseAddons];
+                                        newAddons[index] = { ...addon, price: Number(e.target.value) || 0 };
+                                        setCustomConfig({...customConfig, commercialAddonPrices: newAddons});
+                                      }}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                    />
+                                  </div>
+                                ));
+                              })()}
+                              <Button
+                                onClick={() => {
+                                  const defaultAddons = [
+                                    { id: "retouching", label: "Advanced Retouching", price: 300, icon: "✨" },
+                                    { id: "rush", label: "Rush Delivery", price: 400, icon: "⚡" },
+                                    { id: "prints", label: "Print Package", price: 250, icon: "🖨️" },
+                                    { id: "social", label: "Social Media Package", price: 150, icon: "📱" },
+                                    { id: "video", label: "Video Content", price: 800, icon: "🎥" },
+                                    { id: "stylist", label: "Stylist Service", price: 500, icon: "💄" }
+                                  ];
+                                  const currentAddons = customConfig.commercialAddonPrices || defaultAddons;
+                                  const newAddon = { 
+                                    id: `custom_${Date.now()}`, 
+                                    label: "Custom Service", 
+                                    price: 0, 
+                                    icon: "✨" 
+                                  };
+                                  setCustomConfig({
+                                    ...customConfig, 
+                                    commercialAddonPrices: [...currentAddons, newAddon]
+                                  });
+                                }}
+                                className="w-full mt-3 bg-neon-500 hover:bg-neon-600 text-black text-xs"
+                                size="sm"
+                              >
+                                <Plus className="h-3 w-3 mr-1" />
+                                Add Service
+                              </Button>
+                            </div>
+                          </div>
+
+                          {/* Delivery Options Pricing */}
+                          <div className="border border-midnight-600 rounded-lg p-4">
+                            <h4 className="text-neon-400 font-medium mb-3 text-sm">Delivery Options Pricing</h4>
+                            <p className="text-xs text-gray-400 mb-3">Control pricing for different delivery timelines</p>
+                            <div className="space-y-3">
+                              {(() => {
+                                const defaultDelivery = [
+                                  { id: "standard", label: "Standard Delivery (7-10 days)", price: 0, icon: "📦" },
+                                  { id: "expedited", label: "Expedited Delivery (3-5 days)", price: 200, icon: "📬" },
+                                  { id: "rush", label: "Rush Delivery (24-48 hours)", price: 500, icon: "⚡" }
+                                ];
+                                const currentDelivery = customConfig.commercialDeliveryPrices || defaultDelivery;
+                                return currentDelivery.map((delivery, index) => (
+                                  <div key={index} className="grid grid-cols-2 gap-2">
+                                    <Input
+                                      placeholder="Delivery Option"
+                                      value={delivery.label}
+                                      onChange={(e) => {
+                                        const baseDelivery = customConfig.commercialDeliveryPrices || defaultDelivery;
+                                        const newDelivery = [...baseDelivery];
+                                        newDelivery[index] = { ...delivery, label: e.target.value };
+                                        setCustomConfig({...customConfig, commercialDeliveryPrices: newDelivery});
+                                      }}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                    />
+                                    <Input
+                                      type="number"
+                                      placeholder="Extra Price (€)"
+                                      value={delivery.price}
+                                      onChange={(e) => {
+                                        const baseDelivery = customConfig.commercialDeliveryPrices || defaultDelivery;
+                                        const newDelivery = [...baseDelivery];
+                                        newDelivery[index] = { ...delivery, price: Number(e.target.value) || 0 };
+                                        setCustomConfig({...customConfig, commercialDeliveryPrices: newDelivery});
+                                      }}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-xs"
+                                    />
+                                  </div>
+                                ));
+                              })()}
+                              <Button
+                                onClick={() => {
+                                  const defaultDelivery = [
+                                    { id: "standard", label: "Standard Delivery (7-10 days)", price: 0, icon: "📦" },
+                                    { id: "expedited", label: "Expedited Delivery (3-5 days)", price: 200, icon: "📬" },
+                                    { id: "rush", label: "Rush Delivery (24-48 hours)", price: 500, icon: "⚡" }
+                                  ];
+                                  const currentDelivery = customConfig.commercialDeliveryPrices || defaultDelivery;
+                                  const newDelivery = { 
+                                    id: `custom_${Date.now()}`, 
+                                    label: "Custom Delivery", 
+                                    price: 0, 
+                                    icon: "📦" 
+                                  };
+                                  setCustomConfig({
+                                    ...customConfig, 
+                                    commercialDeliveryPrices: [...currentDelivery, newDelivery]
+                                  });
+                                }}
+                                className="w-full mt-3 bg-neon-500 hover:bg-neon-600 text-black text-xs"
+                                size="sm"
+                              >
+                                <Plus className="h-3 w-3 mr-1" />
+                                Add Delivery Option
+                              </Button>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                    )}
+
+
+
+                    {/* Calculator-Specific Fields */}
+                    {(() => {
+                          const getCalculatorSpecificFields = () => {
+                            const calculatorConfigs = {
+                              'wedding-photography': {
+                                sections: [
+                                  {
+                                    title: 'Package Options',
+                                    fields: [
+                                      { key: 'elopementPackage', label: 'Elopement Package', placeholder: 'Elopement / Small Ceremony' },
+                                      { key: 'halfDayPackage', label: 'Half-Day Package', placeholder: 'Half-Day Coverage' },
+                                      { key: 'fullDayPackage', label: 'Full-Day Package', placeholder: 'Full-Day Coverage' },
+                                      { key: 'destinationPackage', label: 'Destination Package', placeholder: 'Destination Wedding' }
+                                    ]
+                                  },
+                                  {
+                                    title: 'Location Options',
+                                    fields: [
+                                      { key: 'singleLocation', label: 'Single Location', placeholder: '1 Location' },
+                                      { key: 'twoLocations', label: 'Two Locations', placeholder: '2 Locations' },
+                                      { key: 'multipleLocations', label: 'Multiple Locations', placeholder: '3+ Locations' }
+                                    ]
+                                  },
+                                  {
+                                    title: 'Add-on Services',
+                                    fields: [
+                                      { key: 'engagementSession', label: 'Engagement Session', placeholder: 'Engagement Session' },
+                                      { key: 'secondPhotographer', label: 'Second Photographer', placeholder: 'Second Photographer' },
+                                      { key: 'dronePhotography', label: 'Drone Photography', placeholder: 'Drone Photography' },
+                                      { key: 'weddingAlbum', label: 'Wedding Album', placeholder: 'Wedding Album' },
+                                      { key: 'rehearsalDinner', label: 'Rehearsal Dinner', placeholder: 'Rehearsal Dinner Coverage' },
+                                      { key: 'expressDelivery', label: 'Express Delivery', placeholder: 'Express Turnaround' }
+                                    ]
+                                  }
+                                ]
+                              },
+                              'boudoir-photography': {
+                                sections: [
+                                  {
+                                    title: 'Session Types',
+                                    fields: [
+                                      { key: 'standardSession', label: 'Standard Session', placeholder: 'Standard Boudoir Session' },
+                                      { key: 'deluxeSession', label: 'Deluxe Session', placeholder: 'Deluxe Session with Makeup' },
+                                      { key: 'couplesSession', label: 'Couples Session', placeholder: 'Couples Boudoir' },
+                                      { key: 'outdoorSession', label: 'Outdoor Session', placeholder: 'Outdoor Boudoir' }
+                                    ]
+                                  },
+                                  {
+                                    title: 'Add-on Services',
+                                    fields: [
+                                      { key: 'makeupArtist', label: 'Makeup Artist', placeholder: 'Professional Makeup' },
+                                      { key: 'hairStyling', label: 'Hair Styling', placeholder: 'Hair Styling Service' },
+                                      { key: 'outfitChanges', label: 'Extra Outfits', placeholder: 'Additional Outfit Changes' },
+                                      { key: 'albumUpgrade', label: 'Album Upgrade', placeholder: 'Luxury Album' }
+                                    ]
+                                  }
+                                ]
+                              },
+                              'portrait-photography': null,
+                              'commercial-photography': {
+                                sections: [
+                                  {
+                                    title: 'Project Types',
+                                    fields: [
+                                      { key: 'productPhotography', label: 'Product Photography', placeholder: 'Product Photography' },
+                                      { key: 'corporateHeadshots', label: 'Corporate Headshots', placeholder: 'Corporate Headshots' },
+                                      { key: 'brandingSession', label: 'Branding Session', placeholder: 'Branding Session' },
+                                      { key: 'eventPhotography', label: 'Event Photography', placeholder: 'Event Photography' },
+                                      { key: 'advertisingCampaign', label: 'Advertising Campaign', placeholder: 'Advertising Campaign' },
+                                      { key: 'architecturalPhotography', label: 'Architectural Photography', placeholder: 'Architectural Photography' }
+                                    ]
+                                  },
+                                  {
+                                    title: 'Image Count Options',
+                                    fields: [
+                                      { key: 'basicPackage', label: 'Basic Package (10-15 images)', placeholder: 'Basic Package' },
+                                      { key: 'standardPackage', label: 'Standard Package (20-30 images)', placeholder: 'Standard Package' },
+                                      { key: 'premiumPackage', label: 'Premium Package (40-50 images)', placeholder: 'Premium Package' },
+                                      { key: 'unlimitedPackage', label: 'Unlimited Package (All edited)', placeholder: 'Unlimited Package' }
+                                    ]
+                                  },
+                                  {
+                                    title: 'Location Options',
+                                    fields: [
+                                      { key: 'studioLocation', label: 'Studio Location', placeholder: 'Studio Location' },
+                                      { key: 'clientLocation', label: 'Client Location', placeholder: 'Client Location' },
+                                      { key: 'outdoorLocation', label: 'Outdoor Location', placeholder: 'Outdoor Location' }
+                                    ]
+                                  },
+                                  {
+                                    title: 'Duration Options',
+                                    fields: [
+                                      { key: 'halfDay', label: 'Half Day (4 hours)', placeholder: 'Half Day' },
+                                      { key: 'fullDay', label: 'Full Day (8 hours)', placeholder: 'Full Day' },
+                                      { key: 'multiDay', label: 'Multi-Day Shoot', placeholder: 'Multi-Day' },
+                                      { key: 'hourlyRate', label: 'Hourly Rate', placeholder: 'Hourly Rate' }
+                                    ]
+                                  },
+                                  {
+                                    title: 'Add-on Services',
+                                    fields: [
+                                      { key: 'advancedRetouching', label: 'Advanced Retouching', placeholder: 'Advanced Retouching' },
+                                      { key: 'rushDelivery', label: 'Rush Delivery', placeholder: 'Rush Delivery' },
+                                      { key: 'printPackage', label: 'Print Package', placeholder: 'Print Package' },
+                                      { key: 'socialMediaPackage', label: 'Social Media Package', placeholder: 'Social Media Package' },
+                                      { key: 'videoContent', label: 'Video Content', placeholder: 'Video Content' },
+                                      { key: 'stylistService', label: 'Stylist Service', placeholder: 'Stylist Service' }
+                                    ]
+                                  },
+                                  {
+                                    title: 'Delivery Options',
+                                    fields: [
+                                      { key: 'standardDelivery', label: 'Standard Delivery (7-10 days)', placeholder: 'Standard Delivery' },
+                                      { key: 'expeditedDelivery', label: 'Expedited Delivery (3-5 days)', placeholder: 'Expedited Delivery' },
+                                      { key: 'rushDelivery24h', label: 'Rush Delivery (24-48 hours)', placeholder: 'Rush Delivery' }
+                                    ]
+                                  }
+                                ]
+                              },
+                              'real-estate-photography': {
+                                sections: [
+                                  {
+                                    title: 'Listing Types',
+                                    fields: [
+                                      { key: 'standardListing', label: 'Standard Listing', placeholder: 'Standard Real Estate Photos' },
+                                      { key: 'luxuryListing', label: 'Luxury Listing', placeholder: 'Luxury Property Package' },
+                                      { key: 'commercialProperty', label: 'Commercial Property', placeholder: 'Commercial Real Estate' },
+                                      { key: 'rentalProperty', label: 'Rental Property', placeholder: 'Rental Listing Photos' }
+                                    ]
+                                  },
+                                  {
+                                    title: 'Additional Services',
+                                    fields: [
+                                      { key: 'virtualTour', label: 'Virtual Tour', placeholder: '360° Virtual Tour' },
+                                      { key: 'droneAerial', label: 'Drone Aerial', placeholder: 'Aerial Drone Photography' },
+                                      { key: 'twilightPhotos', label: 'Twilight Photos', placeholder: 'Twilight/Dusk Photos' },
+                                      { key: 'videoWalkthrough', label: 'Video Walkthrough', placeholder: 'Property Video Tour' },
+                                      { key: 'floorPlan', label: 'Floor Plan', placeholder: 'Professional Floor Plan' },
+                                      { key: 'virtualStaging', label: 'Virtual Staging', placeholder: 'Digital Furniture Staging' }
+                                    ]
+                                  }
+                                ]
+                              },
+                              'electrician': {
+                                sections: [
+                                  {
+                                    title: 'Service Types',
+                                    fields: [
+                                      { key: 'generalElectrical', label: 'General Electrical', placeholder: 'General Electrical Work' },
+                                      { key: 'emergencyRepair', label: 'Emergency Repair', placeholder: 'Emergency Electrical Repair' },
+                                      { key: 'panelUpgrade', label: 'Panel Upgrade', placeholder: 'Electrical Panel Upgrade' },
+                                      { key: 'newConstruction', label: 'New Construction', placeholder: 'New Construction Wiring' }
+                                    ]
+                                  },
+                                  {
+                                    title: 'Specialized Services',
+                                    fields: [
+                                      { key: 'lightingInstall', label: 'Lighting Installation', placeholder: 'Lighting Installation' },
+                                      { key: 'outletInstall', label: 'Outlet Installation', placeholder: 'New Outlet Installation' },
+                                      { key: 'smartHome', label: 'Smart Home Setup', placeholder: 'Smart Home Automation' },
+                                      { key: 'safetyInspection', label: 'Safety Inspection', placeholder: 'Electrical Safety Inspection' }
+                                    ]
+                                  }
+                                ]
+                              },
+                              'home-renovation': {
+                                sections: [
+                                  {
+                                    title: 'Renovation Types',
+                                    fields: [
+                                      { key: 'kitchenReno', label: 'Kitchen Renovation', placeholder: 'Kitchen Renovation' },
+                                      { key: 'bathroomReno', label: 'Bathroom Renovation', placeholder: 'Bathroom Renovation' },
+                                      { key: 'fullHouseReno', label: 'Full House Renovation', placeholder: 'Complete Home Renovation' },
+                                      { key: 'basementFinish', label: 'Basement Finishing', placeholder: 'Basement Finishing' }
+                                    ]
+                                  },
+                                  {
+                                    title: 'Additional Services',
+                                    fields: [
+                                      { key: 'additionBuild', label: 'Home Addition', placeholder: 'Room Addition' },
+                                      { key: 'flooringInstall', label: 'Flooring Installation', placeholder: 'New Flooring' },
+                                      { key: 'paintingService', label: 'Painting Service', placeholder: 'Interior/Exterior Painting' },
+                                      { key: 'roofingWork', label: 'Roofing Work', placeholder: 'Roof Repair/Replacement' }
+                                    ]
+                                  }
+                                ]
+                              }
+                            };
+                            
+                            return calculatorConfigs[selectedCalculator.template_id as keyof typeof calculatorConfigs] || null;
+                          };
+                          
+                          const config = getCalculatorSpecificFields();
+                          
+                          if (!config) return null;
+                          
+                          return config.sections.map((section: any, sectionIndex: number) => (
+                            <div key={sectionIndex} className="border border-midnight-600 rounded-lg p-4">
+                              <h4 className="text-neon-400 font-medium mb-3 text-sm">{section.title}</h4>
+                              <div className="grid grid-cols-2 gap-3">
+                                {section.fields.map((field: any) => (
+                                  <div key={field.key}>
+                                    <Label className="text-gray-300 text-xs">{field.label}</Label>
+                                    <Input
+                                      value={customConfig[field.key] || ''}
+                                      onChange={(e) => setCustomConfig({...customConfig, [field.key]: e.target.value})}
+                                      placeholder={field.placeholder}
+                                      className="bg-midnight-900 border-midnight-600 text-white text-sm"
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ));
+                        })()}
+
+                    {/* Layout & Spacing */}
+                    <div>
+                      <h3 className="text-white font-medium mb-4 flex items-center">
+                        <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
+                        <Layout className="h-4 w-4 mr-2" />
+                        Layout & Spacing
+                      </h3>
+                      <div className="space-y-4">
+                        <div>
+                          <Label className="text-gray-300">Layout Style</Label>
+                          <Select value={customConfig.layout || 'vertical'} onValueChange={(value) => setCustomConfig({...customConfig, layout: value})}>
+                            <SelectTrigger className="bg-midnight-900 border-midnight-600 text-white">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="vertical">Vertical (Single Column)</SelectItem>
+                              <SelectItem value="horizontal">Horizontal (Multi-Column)</SelectItem>
+                              <SelectItem value="wizard">Step-by-Step Wizard</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Padding: {customConfig.padding || 20}px</Label>
+                          <Slider
+                            value={[customConfig.padding || 20]}
+                            onValueChange={(value) => setCustomConfig({...customConfig, padding: value[0]})}
+                            max={60}
+                            min={0}
+                            step={5}
+                            className="mt-2"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Border Radius: {customConfig.borderRadius || 8}px</Label>
+                          <Slider
+                            value={[customConfig.borderRadius || 8]}
+                            onValueChange={(value) => setCustomConfig({...customConfig, borderRadius: value[0]})}
+                            max={24}
+                            min={0}
+                            step={2}
+                            className="mt-2"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Form Behavior */}
+                    <div>
+                      <h3 className="text-white font-medium mb-4 flex items-center">
+                        <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
+                        <Zap className="h-4 w-4 mr-2" />
+                        Form Behavior
+                      </h3>
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <Label className="text-gray-300">Real-time Updates</Label>
+                          <Switch
+                            checked={customConfig.realTimeUpdates !== false}
+                            onCheckedChange={(checked) => setCustomConfig({...customConfig, realTimeUpdates: checked})}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Label className="text-gray-300">Show Progress Bar</Label>
+                          <Switch
+                            checked={customConfig.showProgress || false}
+                            onCheckedChange={(checked) => setCustomConfig({...customConfig, showProgress: checked})}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Label className="text-gray-300">Required Field Validation</Label>
+                          <Switch
+                            checked={customConfig.validation !== false}
+                            onCheckedChange={(checked) => setCustomConfig({...customConfig, validation: checked})}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Animation Speed</Label>
+                          <Select value={customConfig.animationSpeed || 'normal'} onValueChange={(value) => setCustomConfig({...customConfig, animationSpeed: value})}>
+                            <SelectTrigger className="bg-midnight-900 border-midnight-600 text-white">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="slow">Slow</SelectItem>
+                              <SelectItem value="normal">Normal</SelectItem>
+                              <SelectItem value="fast">Fast</SelectItem>
+                              <SelectItem value="none">No Animation</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Notifications & Analytics */}
+                    <div>
+                      <h3 className="text-white font-medium mb-4 flex items-center">
+                        <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
+                        <Bell className="h-4 w-4 mr-2" />
+                        Notifications & Analytics
+                      </h3>
+                      <div className="space-y-4">
+                        <div>
+                          <Label className="text-gray-300">Email Notifications</Label>
+                          <Input
+                            value={customConfig.notificationEmail || ''}
+                            onChange={(e) => setCustomConfig({...customConfig, notificationEmail: e.target.value})}
+                            placeholder="your@email.com"
+                            type="email"
+                            className="bg-midnight-900 border-midnight-600 text-white"
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Label className="text-gray-300">Track Conversions</Label>
+                          <Switch
+                            checked={customConfig.trackConversions !== false}
+                            onCheckedChange={(checked) => setCustomConfig({...customConfig, trackConversions: checked})}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Label className="text-gray-300">Capture Lead Info</Label>
+                          <Switch
+                            checked={customConfig.captureLeads || false}
+                            onCheckedChange={(checked) => setCustomConfig({...customConfig, captureLeads: checked})}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Google Analytics ID</Label>
+                          <Input
+                            value={customConfig.googleAnalytics || ''}
+                            onChange={(e) => setCustomConfig({...customConfig, googleAnalytics: e.target.value})}
+                            placeholder="GA4-XXXXXXXXXX"
+                            className="bg-midnight-900 border-midnight-600 text-white"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Device Optimization */}
+                    <div>
+                      <h3 className="text-white font-medium mb-4 flex items-center">
+                        <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
+                        <Smartphone className="h-4 w-4 mr-2" />
+                        Device Optimization
+                      </h3>
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <Label className="text-gray-300">Mobile Optimized</Label>
+                          <Switch
+                            checked={customConfig.mobileOptimized !== false}
+                            onCheckedChange={(checked) => setCustomConfig({...customConfig, mobileOptimized: checked})}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Responsive Breakpoint</Label>
+                          <Select value={customConfig.breakpoint || 'md'} onValueChange={(value) => setCustomConfig({...customConfig, breakpoint: value})}>
+                            <SelectTrigger className="bg-midnight-900 border-midnight-600 text-white">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="sm">Small (640px)</SelectItem>
+                              <SelectItem value="md">Medium (768px)</SelectItem>
+                              <SelectItem value="lg">Large (1024px)</SelectItem>
+                              <SelectItem value="xl">Extra Large (1280px)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Font Size: {customConfig.fontSize || 16}px</Label>
+                          <Slider
+                            value={[customConfig.fontSize || 16]}
+                            onValueChange={(value) => setCustomConfig({...customConfig, fontSize: value[0]})}
+                            max={24}
+                            min={12}
+                            step={1}
+                            className="mt-2"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Advanced Styling */}
+                    <div>
+                      <h3 className="text-white font-medium mb-4 flex items-center">
+                        <div className="w-2 h-2 bg-neon-500 rounded-full mr-2"></div>
+                        <Palette className="h-4 w-4 mr-2" />
+                        Advanced Styling
+                      </h3>
+                      <div className="space-y-4">
+                        <div>
+                          <Label className="text-gray-300">Background Color</Label>
+                          <Input
+                            type="color"
+                            value={customConfig.backgroundColor || '#ffffff'}
+                            onChange={(e) => setCustomConfig({...customConfig, backgroundColor: e.target.value})}
+                            className="h-12 bg-midnight-900 border-midnight-600"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Text Color</Label>
+                          <Input
+                            type="color"
+                            value={customConfig.textColor || '#000000'}
+                            onChange={(e) => setCustomConfig({...customConfig, textColor: e.target.value})}
+                            className="h-12 bg-midnight-900 border-midnight-600"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Font Family</Label>
+                          <Select value={customConfig.fontFamily || 'Inter'} onValueChange={(value) => setCustomConfig({...customConfig, fontFamily: value})}>
+                            <SelectTrigger className="bg-midnight-900 border-midnight-600 text-white">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Inter">Inter (Modern Sans)</SelectItem>
+                              <SelectItem value="Poppins">Poppins (Friendly)</SelectItem>
+                              <SelectItem value="Montserrat">Montserrat (Clean)</SelectItem>
+                              <SelectItem value="Roboto">Roboto (Technical)</SelectItem>
+                              <SelectItem value="Open Sans">Open Sans (Readable)</SelectItem>
+                              <SelectItem value="Playfair Display">Playfair Display (Elegant)</SelectItem>
+                              <SelectItem value="Lora">Lora (Serif Classic)</SelectItem>
+                              <SelectItem value="Source Sans Pro">Source Sans Pro (Professional)</SelectItem>
+                              <SelectItem value="Nunito">Nunito (Rounded)</SelectItem>
+                              <SelectItem value="Crimson Text">Crimson Text (Traditional)</SelectItem>
+                              <SelectItem value="Oswald">Oswald (Bold Headers)</SelectItem>
+                              <SelectItem value="Dancing Script">Dancing Script (Handwritten)</SelectItem>
+                              <SelectItem value="Raleway">Raleway (Sophisticated)</SelectItem>
+                              <SelectItem value="Merriweather">Merriweather (Blog Style)</SelectItem>
+                              <SelectItem value="Fira Sans">Fira Sans (Tech Modern)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Border Radius: {customConfig.borderRadius || 8}px</Label>
+                          <Slider
+                            value={[customConfig.borderRadius || 8]}
+                            onValueChange={(value) => setCustomConfig({...customConfig, borderRadius: value[0]})}
+                            max={50}
+                            min={0}
+                            step={1}
+                            className="mt-2"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Shadow Intensity: {customConfig.shadowIntensity || 10}%</Label>
+                          <Slider
+                            value={[customConfig.shadowIntensity || 10]}
+                            onValueChange={(value) => setCustomConfig({...customConfig, shadowIntensity: value[0]})}
+                            max={100}
+                            min={0}
+                            step={5}
+                            className="mt-2"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Custom CSS</Label>
+                          <Textarea
+                            value={customConfig.customCSS || ''}
+                            onChange={(e) => setCustomConfig({...customConfig, customCSS: e.target.value})}
+                            placeholder="/* Custom CSS styles */\n.calculator-form {\n  /* your styles here */\n}"
+                            className="bg-midnight-900 border-midnight-600 text-white font-mono text-sm"
+                            rows={6}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Panel - Live Preview */}
+                <div className="w-1/2 flex flex-col">
+                  <div className="p-4 border-b border-midnight-700 bg-midnight-900 flex-shrink-0">
+                    <h3 className="text-lg font-medium text-white flex items-center">
+                      <Eye className="h-5 w-5 mr-2 text-neon-400" />
+                      Live Preview
+                    </h3>
+                    <p className="text-sm text-gray-400 mt-1">See changes in real-time</p>
+                  </div>
+                  
+                  <div className="flex-1 overflow-hidden bg-gray-100 relative">
+                    <div 
+                      className="w-full h-full overflow-y-auto p-4"
+                      style={{
+                        backgroundColor: customConfig.backgroundColor || '#ffffff',
+                        color: customConfig.textColor || '#000000',
+                        fontSize: `${customConfig.fontSize || 16}px`
+                      }}
+                    >
+                      <div className="transform scale-75 origin-top-left w-[133%] h-[133%]">
+                        <CalculatorPreview 
+                          slug={selectedCalculator.template_id}
+                          customConfig={{
+                            ...customConfig,
+                            forceDetailedView: true,
+                            useComprehensiveCalculator: true,
+                            calculatorType: `comprehensive-${selectedCalculator.template_id}`,
+                            isPreview: true
+                          }}
+                          onConfigChange={(newConfig) => {
+                            setCustomConfig(prev => ({ ...prev, ...newConfig }));
+                          }}
+                          className="h-auto max-h-none"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex justify-between items-center px-6 py-4 border-t border-midnight-700 bg-midnight-900 flex-shrink-0">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowCustomizeModal(false)}
+                  className="border-midnight-600 text-gray-300 hover:bg-midnight-800"
+                >
+                  Cancel
+                </Button>
+                <div className="flex items-center space-x-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setCustomConfig({});
+                      toast({
+                        title: "Reset Complete",
+                        description: "All customizations have been reset to default.",
+                      });
+                    }}
+                    className="border-midnight-600 text-gray-300 hover:bg-midnight-800"
+                  >
+                    Reset to Default
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      const updatedCalculators = userCalculators.map(calc => 
+                        calc.id === selectedCalculator.id 
+                          ? { ...calc, config: customConfig }
+                          : calc
+                      );
+                      setUserCalculators(updatedCalculators);
+                      const userSession = localStorage.getItem('user_session');
+                      const userCalculatorKey = `userCalculators_${userSession}`;
+                      localStorage.setItem(userCalculatorKey, JSON.stringify(updatedCalculators));
+                      
+                      toast({
+                        title: "Calculator Updated!",
+                        description: "Your customizations have been saved.",
+                      });
+                      
+                      setShowCustomizeModal(false);
+                    }}
+                    className="bg-neon-500 hover:bg-neon-600 text-black font-medium"
+                  >
+                    Save Changes
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+
+        {/* Calculator Selection Modal */}
+        {showCalculatorModal && (
+          <Dialog open={showCalculatorModal} onOpenChange={setShowCalculatorModal}>
+            <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden bg-midnight-800 border-midnight-700">
+              <DialogHeader>
+                <DialogTitle className="text-white">Add Calculator</DialogTitle>
+                <DialogDescription className="text-gray-400">
+                  Choose from our library of professional calculator templates.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="flex flex-col space-y-4 p-6">
+                {/* Search and Filter */}
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Input
+                    placeholder="Search calculators..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="bg-midnight-900 border-midnight-600 text-white placeholder-gray-400"
+                  />
+                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                    <SelectTrigger className="sm:w-48 bg-midnight-900 border-midnight-600 text-white">
+                      <SelectValue placeholder="All Categories" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-midnight-900 border-midnight-600">
+                      <SelectItem value="all">All Categories</SelectItem>
+                      <SelectItem value="photography">Photography</SelectItem>
+                      <SelectItem value="construction">Construction</SelectItem>
+                      <SelectItem value="beauty">Beauty & Wellness</SelectItem>
+                      <SelectItem value="professional">Professional Services</SelectItem>
+                      <SelectItem value="legal">Legal</SelectItem>
+                      <SelectItem value="technology">Technology</SelectItem>
+                      <SelectItem value="automotive">Automotive</SelectItem>
+                      <SelectItem value="transportation">Transportation</SelectItem>
+                      <SelectItem value="medical">Medical</SelectItem>
+                      <SelectItem value="education">Education</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Calculator Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
+                  {filteredCalculators.map((calculator) => (
+                    <Card 
+                      key={calculator.id} 
+                      className="bg-midnight-900 border-midnight-700 hover:border-neon-500/50 cursor-pointer transition-all duration-200 hover:shadow-lg hover:shadow-neon-500/20"
+                      onClick={() => addCalculator(calculator)}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-center space-x-3 mb-2">
+                          <div className="w-10 h-10 bg-gradient-to-br from-neon-400 to-neon-600 rounded-lg flex items-center justify-center">
+                            <Calculator className="h-5 w-5 text-black" />
+                          </div>
+                          <div>
+                            <h3 className="font-medium text-white text-sm">{calculator.name}</h3>
+                            <p className="text-xs text-gray-400">{calculator.category}</p>
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-500">{calculator.description}</p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                  {filteredCalculators.length === 0 && (
+                    <div className="col-span-full text-center py-8">
+                      <p className="text-gray-400">No calculators found matching your criteria.</p>
+                      <Button
+                        variant="outline"
+                        onClick={() => setShowCalculatorModal(false)}
+                        className="mt-2 border-midnight-600 text-gray-300 hover:bg-midnight-800"
+                      >
+                        Clear Filters
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+
+        {/* Embed Code Modal */}
+        {showEmbedModal && selectedCalculator && (
+          <Dialog open={showEmbedModal} onOpenChange={setShowEmbedModal}>
+            <DialogContent className="max-w-2xl bg-midnight-800 border-midnight-700">
+              <DialogHeader>
+                <DialogTitle className="text-white">Embed Code</DialogTitle>
+                <DialogDescription className="text-gray-400">
+                  Copy and paste this code into your website to embed the calculator.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="space-y-6">
+                {/* Preview URL */}
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">
+                    Direct Link
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <code className="flex-1 px-3 py-2 bg-midnight-900 border border-midnight-600 rounded text-sm text-gray-300 font-mono">
+                      {`https://quotekits.com/embed/${selectedCalculator.embedId || selectedCalculator.id}`}
+                    </code>
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        const embedUrl = `https://quotekits.com/embed/${selectedCalculator.embedId || selectedCalculator.id}`;
+                        navigator.clipboard.writeText(embedUrl);
+                        toast({
+                          title: "Copied!",
+                          description: "Direct link copied to clipboard.",
+                        });
+                      }}
+                      className="bg-neon-500 hover:bg-neon-600 text-black"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Embed Code */}
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">
+                    Embed Code
+                  </label>
+                  <div className="flex items-start space-x-2">
+                    <code className="flex-1 px-3 py-2 bg-midnight-900 border border-midnight-600 rounded text-sm text-gray-300 font-mono whitespace-pre-wrap">
+{`<iframe 
+  src="https://quotekits.com/embed/${selectedCalculator.embedId || selectedCalculator.id}" 
+  width="100%" 
+  height="600" 
+  frameborder="0">
+</iframe>`}
+                    </code>
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        const embedUrl = `https://quotekits.com/embed/${selectedCalculator.embedId || selectedCalculator.id}`;
+                        const embedCode = `<iframe src="${embedUrl}" width="100%" height="600" frameborder="0"></iframe>`;
+                        navigator.clipboard.writeText(embedCode);
+                        toast({
+                          title: "Copied!",
+                          description: "Embed code copied to clipboard.",
+                        });
+                      }}
+                      className="bg-neon-500 hover:bg-neon-600 text-black"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="flex justify-end">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowEmbedModal(false)}
+                    className="border-midnight-600 text-gray-300 hover:bg-midnight-800"
+                  >
+                    Close
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+
+        {/* Preview Modal */}
+        {showPreviewModal && selectedCalculator && (
+          <Dialog open={showPreviewModal} onOpenChange={setShowPreviewModal}>
+            <DialogContent className="max-w-6xl max-h-[90vh] bg-midnight-800 border-midnight-700">
+              <DialogHeader>
+                <DialogTitle className="text-white flex items-center">
+                  <Eye className="h-5 w-5 mr-2 text-neon-400" />
+                  Preview: {selectedCalculator.name}
+                </DialogTitle>
+                <DialogDescription className="text-gray-400">
+                  See how your calculator looks and test its functionality.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="flex-1 overflow-hidden bg-gray-100 relative">
+                <div 
+                  className="w-full h-full overflow-y-auto"
+                  style={{
+                    backgroundColor: customConfig.backgroundColor || '#ffffff',
+                    color: customConfig.textColor || '#000000',
+                    fontSize: `${customConfig.fontSize || 16}px`,
+                    minHeight: '700px'
+                  }}
+                >
+                  <CalculatorPreview 
+                    slug={selectedCalculator.template_id}
+                    customConfig={customConfig}
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowPreviewModal(false)}
+                  className="border-midnight-600 text-gray-300 hover:bg-midnight-800"
+                >
+                  Close Preview
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+
+        {/* Success Message */}
+        {showSuccessMessage && (
+          <div className="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50">
+            Calculator added successfully!
+          </div>
+        )}
+
+        {/* Subscription Upgrade Modal */}
+        {showUpgradeModal && (
+          <Dialog open={showUpgradeModal} onOpenChange={setShowUpgradeModal}>
+            <DialogContent className="max-w-4xl bg-midnight-800 border-midnight-700">
+              <DialogHeader>
+                <DialogTitle className="text-white text-xl">Upgrade Your Subscription</DialogTitle>
+                <DialogDescription className="text-gray-400">
+                  You've reached your {user.subscriptionStatus === 'free' ? 'calculator limit' : 'usage limits'}. Choose a plan that fits your needs.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-6">
+                {Object.entries(SUBSCRIPTION_TIERS).map(([tier, details]) => (
+                  <Card 
+                    key={tier} 
+                    className={`bg-midnight-900 border-midnight-600 hover:border-neon-500/50 transition-all ${
+                      tier === 'pro' ? 'border-neon-500 shadow-lg shadow-neon-500/20' : ''
+                    }`}
+                  >
+                    <CardContent className="p-6">
+                      <div className="text-center">
+                        <h3 className="text-lg font-semibold text-white mb-2">{details.name}</h3>
+                        {tier === 'pro' && (
+                          <div className="bg-neon-500 text-black text-xs font-bold px-2 py-1 rounded-full mb-2">
+                            LIMITED TIME
+                          </div>
+                        )}
+                        <div className="text-3xl font-bold text-white mb-1">
+                          {details.price === 0 ? 'Free' : `€${details.price}`}
+                        </div>
+                        {details.price > 0 && (
+                          <div className="text-sm text-gray-400 mb-4">/month</div>
+                        )}
+                        
+                        <div className="space-y-3 text-left">
+                          <div className="flex items-center text-sm">
+                            <div className="w-2 h-2 bg-neon-400 rounded-full mr-2"></div>
+                            <span className="text-gray-300">
+                              {details.calculators === 999 ? 'Unlimited' : details.calculators} calculators
+                            </span>
+                          </div>
+                          <div className="flex items-center text-sm">
+                            <div className="w-2 h-2 bg-neon-400 rounded-full mr-2"></div>
+                            <span className="text-gray-300">
+                              {details.quotes === 999 ? 'Unlimited' : details.quotes} quotes/month
+                            </span>
+                          </div>
+                          
+                          {tier === 'pro' && (
+                            <>
+                              <div className="flex items-center text-sm">
+                                <div className="w-2 h-2 bg-neon-400 rounded-full mr-2"></div>
+                                <span className="text-gray-300">Priority support</span>
+                              </div>
+                              <div className="flex items-center text-sm">
+                                <div className="w-2 h-2 bg-neon-400 rounded-full mr-2"></div>
+                                <span className="text-gray-300">Custom branding</span>
+                              </div>
+                            </>
+                          )}
+                          
+                          {tier === 'business' && (
+                            <>
+                              <div className="flex items-center text-sm">
+                                <div className="w-2 h-2 bg-neon-400 rounded-full mr-2"></div>
+                                <span className="text-gray-300">Analytics dashboard</span>
+                              </div>
+                              <div className="flex items-center text-sm">
+                                <div className="w-2 h-2 bg-neon-400 rounded-full mr-2"></div>
+                                <span className="text-gray-300">Lead management</span>
+                              </div>
+                              <div className="flex items-center text-sm">
+                                <div className="w-2 h-2 bg-neon-400 rounded-full mr-2"></div>
+                                <span className="text-gray-300">API access</span>
+                              </div>
+                            </>
+                          )}
+                          
+                          {tier === 'enterprise' && (
+                            <>
+                              <div className="flex items-center text-sm">
+                                <div className="w-2 h-2 bg-neon-400 rounded-full mr-2"></div>
+                                <span className="text-gray-300">White-label solution</span>
+                              </div>
+                              <div className="flex items-center text-sm">
+                                <div className="w-2 h-2 bg-neon-400 rounded-full mr-2"></div>
+                                <span className="text-gray-300">Dedicated support</span>
+                              </div>
+                              <div className="flex items-center text-sm">
+                                <div className="w-2 h-2 bg-neon-400 rounded-full mr-2"></div>
+                                <span className="text-gray-300">Custom integrations</span>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                        
+                        <Button
+                          className={`w-full mt-6 ${
+                            tier === user.subscriptionStatus 
+                              ? 'bg-gray-600 cursor-not-allowed' 
+                              : tier === 'pro' 
+                                ? 'bg-neon-500 hover:bg-neon-600 text-black font-medium' 
+                                : 'bg-midnight-700 hover:bg-midnight-600 text-white border border-midnight-600'
+                          }`}
+                          onClick={() => tier !== user.subscriptionStatus && upgradeSubscription(tier as keyof typeof SUBSCRIPTION_TIERS)}
+                          disabled={tier === user.subscriptionStatus}
+                        >
+                          {tier === user.subscriptionStatus ? 'Current Plan' : 
+                           tier === 'free' ? 'Downgrade' : 
+                           tier === 'enterprise' ? 'Contact Sales' : 
+                           `Pay €${details.price}/month`}
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              
+              <div className="text-center text-sm text-gray-400 pt-4 border-t border-midnight-600">
+                Need help choosing? <span className="text-neon-400 cursor-pointer hover:underline">Contact our sales team</span>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+
+        {/* Checkout Modal for blocked popups */}
+        {showCheckoutModal && (
+          <Dialog open={showCheckoutModal} onOpenChange={setShowCheckoutModal}>
+            <DialogContent className="bg-midnight-800 text-white border-midnight-600 max-w-md">
+              <DialogHeader>
+                <DialogTitle className="text-neon-400">Complete Your Payment</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <p className="text-gray-300">
+                  Your browser blocked the popup. Click the button below to open the secure Stripe checkout page:
+                </p>
+                <Button
+                  className="w-full bg-neon-500 hover:bg-neon-600 text-black font-medium"
+                  onClick={() => window.open(checkoutUrl, '_blank', 'noopener,noreferrer')}
+                >
+                  Open Stripe Checkout
+                </Button>
+                <div className="text-xs text-gray-400 text-center">
+                  Or copy this link: 
+                  <input 
+                    type="text" 
+                    value={checkoutUrl} 
+                    readOnly 
+                    className="w-full mt-2 p-2 bg-midnight-700 border border-midnight-600 rounded text-xs"
+                    onClick={(e) => e.currentTarget.select()}
+                  />
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+      </div>
+
+      {/* Icon Gallery */}
+      <IconGallery
+        isOpen={showIconGallery}
+        onClose={() => {
+          setShowIconGallery(false);
+          setIconEditingIndex(null);
+        }}
+        onSelectIcon={handleIconSelect}
+        currentIcon={(() => {
+          if (!iconEditingIndex) return undefined;
+          
+          const { type, index } = iconEditingIndex;
+          switch (type) {
+            case 'addon': return customConfig.addOnPrices?.[index]?.icon;
+            case 'duration': return customConfig.durationPrices?.[index]?.icon;
+            case 'group': return customConfig.groupPrices?.[index]?.icon;
+            case 'location': return customConfig.locationPrices?.[index]?.icon;
+            case 'wardrobe': return customConfig.wardrobePrices?.[index]?.icon;
+            case 'usage': return customConfig.usagePrices?.[index]?.icon;
+            case 'sessionDuration': return customConfig.sessionDurations?.[index]?.icon;
+            default: return undefined;
+          }
+        })()}
+      />
+    </div>
+  );
+}

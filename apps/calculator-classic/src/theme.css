@@ -1,0 +1,22 @@
+/* Theme: classic */
+/* Classic theme styling - clean and professional */
+
+:root {
+  --theme-primary: #2563eb;
+  --theme-secondary: #64748b;
+  --theme-accent: #0ea5e9;
+  --theme-background: #ffffff;
+  --theme-surface: #f8fafc;
+  --theme-text: #1e293b;
+  --theme-border: #e2e8f0;
+}
+
+.theme-classic {
+  --primary: var(--theme-primary);
+  --secondary: var(--theme-secondary);
+  --accent: var(--theme-accent);
+  --background: var(--theme-background);
+  --surface: var(--theme-surface);
+  --text: var(--theme-text);
+  --border: var(--theme-border);
+}

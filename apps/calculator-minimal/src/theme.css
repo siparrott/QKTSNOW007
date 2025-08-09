@@ -1,0 +1,22 @@
+/* Theme: minimal */
+/* Minimal theme styling - clean white space and subtle elements */
+
+:root {
+  --theme-primary: #000000;
+  --theme-secondary: #737373;
+  --theme-accent: #525252;
+  --theme-background: #ffffff;
+  --theme-surface: #fafafa;
+  --theme-text: #171717;
+  --theme-border: #e5e5e5;
+}
+
+.theme-minimal {
+  --primary: var(--theme-primary);
+  --secondary: var(--theme-secondary);
+  --accent: var(--theme-accent);
+  --background: var(--theme-background);
+  --surface: var(--theme-surface);
+  --text: var(--theme-text);
+  --border: var(--theme-border);
+}

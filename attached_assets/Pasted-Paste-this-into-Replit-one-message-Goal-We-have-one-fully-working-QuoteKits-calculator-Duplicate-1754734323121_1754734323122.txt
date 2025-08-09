@@ -1,0 +1,191 @@
+Paste this into Replit (one message)
+Goal: We have one fully working QuoteKits calculator. Duplicate it exactly 11 times so we can ship 12 theme variants for BETA. Do not change core logic. Each variant must be independently routable and deployable, but all should point to the same backend/env and pass a smoke test.
+
+Assumptions (auto-detect):
+
+The current working calculator is a React app (Vite or Next.js).
+
+Source folder is either apps/calculator, app, or src in repo root.
+
+Routing is via React Router or Next.js pages/app router.
+If detection differs, adapt paths accordingly.
+
+Themes to create (12 total including the current one):
+classic, minimal, modern, elegant, bold, serif, rounded, mono, contrast, pastel, neon, dark
+
+1) Repo scan + set vars
+Find the current calculator root (contains package.json and src or app): search for a folder with package.json that includes a script "build" and components for the calculator UI (look for Calculator, Quote, or similar). Save the path as $CALC_ROOT.
+
+If a monorepo exists (packages/ or apps/), set $APPS_DIR=apps. Else, create apps and move the calculator into apps/calculator-classic (rename existing app to classic). Keep git history if possible.
+
+2) Monorepo/workspaces setup (preserve exact code)
+In repo root, ensure npm workspaces:
+
+json
+Copy
+Edit
+// package.json (root) — create or merge
+{
+  "name": "quotekits-mono",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "build": "npm run -ws build",
+    "dev": "npm run -ws dev",
+    "lint": "npm run -ws lint",
+    "test": "npm run -ws test"
+  }
+}
+Create packages/core-calculator and move all business logic there (hooks, utils, schema, state, API client, components). Important: copy not move yet; then re-export from core-calculator. Update apps/calculator-classic to import from @quotekits/core-calculator.
+
+Confirm the app still builds and runs using the shared core. This guarantees every theme is exactly the same logic.
+
+3) Duplicate the app 11 times (identical code)
+For each theme in the list (excluding classic which we already have), duplicate apps/calculator-classic to apps/calculator-<theme>.
+
+Inside each duplicate, only change:
+
+name in package.json to "calculator-<theme>".
+
+Add THEME_ID=<theme> in a local .env.example (do not alter runtime env keys).
+
+Create src/theme.css (or app/theme.css for Next) with a top comment /* Theme: <theme> */. Import it once in the app entry. Do not edit logic files.
+
+4) Shared backend + env
+Ensure all apps read the same API base URL and keys from the root .env or Replit secrets. No per-theme API differences.
+
+Verify any analytics keys are identical, or gated by THEME_ID for reporting only.
+
+5) Routing / access (two variants; pick what matches the project)
+Next.js: in next.config.js, add rewrites so each theme mounts at /calculator/<theme> and root /calculator→classic.
+
+js
+Copy
+Edit
+async rewrites() {
+  return [
+    { source: '/calculator', destination: '/calculator-classic' },
+    ...['classic','minimal','modern','elegant','bold','serif','rounded','mono','contrast','pastel','neon','dark']
+      .map(t => ({ source: `/calculator/${t}`, destination: `/calculator-${t}` }))
+  ];
+}
+Vite/React Router: create a tiny host app at apps/host that renders a <ThemeLoader> which import()s the matching app by pathname segment and mounts it. Add routes for each theme. Keep the original per-theme apps buildable directly.
+
+6) Theme registry (metadata only)
+Create packages/theme-registry/themes.json:
+
+json
+Copy
+Edit
+{
+  "themes": [
+    {"id":"classic","label":"Classic"},
+    {"id":"minimal","label":"Minimal"},
+    {"id":"modern","label":"Modern"},
+    {"id":"elegant","label":"Elegant"},
+    {"id":"bold","label":"Bold"},
+    {"id":"serif","label":"Serif"},
+    {"id":"rounded","label":"Rounded"},
+    {"id":"mono","label":"Mono"},
+    {"id":"contrast","label":"High Contrast"},
+    {"id":"pastel","label":"Pastel"},
+    {"id":"neon","label":"Neon"},
+    {"id":"dark","label":"Dark"}
+  ]
+}
+Export a tiny helper in packages/theme-registry/index.ts that returns the list. Each app can read it to display the active theme name, but must not alter logic.
+
+7) Commands
+Add to repo root package.json:
+
+json
+Copy
+Edit
+{
+  "scripts": {
+    "build:all": "npm run -ws build",
+    "dev:classic": "npm --workspace apps/calculator-classic run dev",
+    "dev:minimal": "npm --workspace apps/calculator-minimal run dev",
+    "beta:smoke": "node scripts/smoke.ci.mjs",
+    "preview": "npm run build:all && node scripts/serve-previews.mjs"
+  }
+}
+8) Smoke test (same behavior everywhere)
+Create scripts/smoke.ci.mjs that:
+
+Boots each app on a unique port (e.g., 4101…4112),
+
+Hits /health (add a simple Health component if missing),
+
+Posts a sample payload to the quote endpoint and asserts a valid JSON quote is returned (same output shape).
+Fail fast on any mismatch.
+
+9) CI/task runner (optional but preferred)
+If Turborepo is present, add:
+
+json
+Copy
+Edit
+// turbo.json
+{
+  "pipeline": {
+    "build": { "dependsOn": ["^build"], "outputs": ["dist/**", ".next/**"] },
+    "test": { "dependsOn": ["build"] }
+  }
+}
+10) Deployment plan
+Create 12 deployment targets:
+
+Either 12 separate Replit deployments, one per app, with URLs like
+/calculator-classic, /calculator-minimal, …
+
+Or deploy a single host with rewrites to each theme path.
+
+Add a /beta index page listing links to all 12 for testers.
+
+11) Execute
+Convert to workspaces, extract shared core, keep classic building.
+
+Duplicate to 11 themes.
+
+Wire routes (Next or Vite host).
+
+Add smoke test + run npm run beta:smoke.
+
+Create /beta directory page linking all themes.
+
+Build all and start previews.
+
+Report:
+
+Paths of all 12 apps
+
+Preview URLs/ports
+
+Smoke test results
+
+Any diffs found (should be none, logic must be identical)
+
+Important rules:
+
+Do not refactor functional code, only relocate to packages/core-calculator and re-export.
+
+The only per-theme files allowed: package.json name, theme.css, and THEME_ID exposure.
+
+All apps must share identical dependencies and lockfile version.
+
+If the current app has custom config (ESLint, Tailwind, PostCSS), copy it to each theme unchanged.
+
+When finished, print a checklist showing:
+
+ 12 themes created
+
+ All build successfully
+
+ All pass smoke test
+
+ Unified backend verified
+
+ /beta page lists all 12 links
+
+ Deploy instructions output

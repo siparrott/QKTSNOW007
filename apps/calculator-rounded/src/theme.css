@@ -1,0 +1,27 @@
+/* Theme: rounded */
+/* Rounded theme styling - soft curves and friendly design */
+
+:root {
+  --theme-primary: #059669;
+  --theme-secondary: #10b981;
+  --theme-accent: #34d399;
+  --theme-background: #ffffff;
+  --theme-surface: #f0fdf4;
+  --theme-text: #064e3b;
+  --theme-border: #bbf7d0;
+  --theme-radius: 16px;
+}
+
+.theme-rounded {
+  --primary: var(--theme-primary);
+  --secondary: var(--theme-secondary);
+  --accent: var(--theme-accent);
+  --background: var(--theme-background);
+  --surface: var(--theme-surface);
+  --text: var(--theme-text);
+  --border: var(--theme-border);
+}
+
+.theme-rounded * {
+  border-radius: var(--theme-radius) !important;
+}

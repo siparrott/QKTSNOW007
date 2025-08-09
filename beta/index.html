@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuoteKit.ai - Beta Theme Gallery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .theme-card {
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .theme-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .classic { background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%); }
+        .minimal { background: linear-gradient(135deg, #000000 0%, #737373 100%); }
+        .modern { background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); }
+        .elegant { background: linear-gradient(135deg, #1f2937 0%, #d97706 100%); }
+        .bold { background: linear-gradient(135deg, #dc2626 0%, #d97706 100%); }
+        .serif { background: linear-gradient(135deg, #7c2d12 0%, #ca8a04 100%); }
+        .rounded { background: linear-gradient(135deg, #059669 0%, #34d399 100%); }
+        .mono { background: linear-gradient(135deg, #374151 0%, #9ca3af 100%); }
+        .contrast { background: linear-gradient(135deg, #000000 0%, #ffffff 100%); }
+        .pastel { background: linear-gradient(135deg, #db2777 0%, #fb7185 100%); }
+        .neon { background: linear-gradient(135deg, #06b6d4 0%, #0369a1 100%); }
+        .dark { background: linear-gradient(135deg, #1f2937 0%, #f59e0b 100%); }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">
+                <i class="fas fa-calculator text-blue-600"></i>
+                QuoteKit.ai Beta
+            </h1>
+            <p class="text-xl text-gray-600 mb-6">
+                Experience our Portrait Photography Calculator in 12 unique themes
+            </p>
+            <div class="bg-blue-100 border border-blue-300 rounded-lg p-4 max-w-2xl mx-auto">
+                <p class="text-blue-800">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    Each theme shares the same backend and functionality - only the visual styling differs
+                </p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Classic Theme -->
+            <div class="theme-card classic rounded-xl p-6 text-white shadow-lg">
+                <div class="text-center">
+                    <i class="fas fa-palette text-3xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Classic</h3>
+                    <p class="text-sm opacity-90 mb-4">Clean and professional styling</p>
+                    <a href="http://localhost:4101" target="_blank" 
+                       class="inline-block bg-white text-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-blue-50 transition-colors">
+                        <i class="fas fa-external-link-alt mr-2"></i>View Theme
+                    </a>
+                </div>
+            </div>
+
+            <!-- Minimal Theme -->
+            <div class="theme-card minimal rounded-xl p-6 text-white shadow-lg">
+                <div class="text-center">
+                    <i class="fas fa-minus text-3xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Minimal</h3>
+                    <p class="text-sm opacity-90 mb-4">Clean whitespace and subtle elements</p>
+                    <a href="http://localhost:4102" target="_blank" 
+                       class="inline-block bg-white text-gray-800 px-4 py-2 rounded-lg font-semibold hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-external-link-alt mr-2"></i>View Theme
+                    </a>
+                </div>
+            </div>
+
+            <!-- Modern Theme -->
+            <div class="theme-card modern rounded-xl p-6 text-white shadow-lg">
+                <div class="text-center">
+                    <i class="fas fa-rocket text-3xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Modern</h3>
+                    <p class="text-sm opacity-90 mb-4">Contemporary gradients and sleek design</p>
+                    <a href="http://localhost:4103" target="_blank" 
+                       class="inline-block bg-white text-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-blue-50 transition-colors">
+                        <i class="fas fa-external-link-alt mr-2"></i>View Theme
+                    </a>
+                </div>
+            </div>
+
+            <!-- Elegant Theme -->
+            <div class="theme-card elegant rounded-xl p-6 text-white shadow-lg">
+                <div class="text-center">
+                    <i class="fas fa-gem text-3xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Elegant</h3>
+                    <p class="text-sm opacity-90 mb-4">Sophisticated and refined</p>
+                    <a href="http://localhost:4104" target="_blank" 
+                       class="inline-block bg-white text-gray-800 px-4 py-2 rounded-lg font-semibold hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-external-link-alt mr-2"></i>View Theme
+                    </a>
+                </div>
+            </div>
+
+            <!-- Bold Theme -->
+            <div class="theme-card bold rounded-xl p-6 text-white shadow-lg">
+                <div class="text-center">
+                    <i class="fas fa-exclamation text-3xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Bold</h3>
+                    <p class="text-sm opacity-90 mb-4">Vibrant colors and strong contrast</p>
+                    <a href="http://localhost:4105" target="_blank" 
+                       class="inline-block bg-white text-red-600 px-4 py-2 rounded-lg font-semibold hover:bg-red-50 transition-colors">
+                        <i class="fas fa-external-link-alt mr-2"></i>View Theme
+                    </a>
+                </div>
+            </div>
+
+            <!-- Serif Theme -->
+            <div class="theme-card serif rounded-xl p-6 text-white shadow-lg">
+                <div class="text-center">
+                    <i class="fas fa-font text-3xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Serif</h3>
+                    <p class="text-sm opacity-90 mb-4">Traditional typography and warm tones</p>
+                    <a href="http://localhost:4106" target="_blank" 
+                       class="inline-block bg-white text-amber-700 px-4 py-2 rounded-lg font-semibold hover:bg-amber-50 transition-colors">
+                        <i class="fas fa-external-link-alt mr-2"></i>View Theme
+                    </a>
+                </div>
+            </div>
+
+            <!-- Rounded Theme -->
+            <div class="theme-card rounded rounded-xl p-6 text-white shadow-lg">
+                <div class="text-center">
+                    <i class="fas fa-circle text-3xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Rounded</h3>
+                    <p class="text-sm opacity-90 mb-4">Soft curves and friendly design</p>
+                    <a href="http://localhost:4107" target="_blank" 
+                       class="inline-block bg-white text-green-600 px-4 py-2 rounded-lg font-semibold hover:bg-green-50 transition-colors">
+                        <i class="fas fa-external-link-alt mr-2"></i>View Theme
+                    </a>
+                </div>
+            </div>
+
+            <!-- Mono Theme -->
+            <div class="theme-card mono rounded-xl p-6 text-white shadow-lg">
+                <div class="text-center">
+                    <i class="fas fa-terminal text-3xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Mono</h3>
+                    <p class="text-sm opacity-90 mb-4">Technical and precise</p>
+                    <a href="http://localhost:4108" target="_blank" 
+                       class="inline-block bg-white text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-external-link-alt mr-2"></i>View Theme
+                    </a>
+                </div>
+            </div>
+
+            <!-- High Contrast Theme -->
+            <div class="theme-card contrast rounded-xl p-6 text-white shadow-lg">
+                <div class="text-center">
+                    <i class="fas fa-adjust text-3xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">High Contrast</h3>
+                    <p class="text-sm opacity-90 mb-4">Accessibility focused</p>
+                    <a href="http://localhost:4109" target="_blank" 
+                       class="inline-block bg-white text-black px-4 py-2 rounded-lg font-semibold hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-external-link-alt mr-2"></i>View Theme
+                    </a>
+                </div>
+            </div>
+
+            <!-- Pastel Theme -->
+            <div class="theme-card pastel rounded-xl p-6 text-white shadow-lg">
+                <div class="text-center">
+                    <i class="fas fa-heart text-3xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Pastel</h3>
+                    <p class="text-sm opacity-90 mb-4">Soft and gentle colors</p>
+                    <a href="http://localhost:4110" target="_blank" 
+                       class="inline-block bg-white text-pink-600 px-4 py-2 rounded-lg font-semibold hover:bg-pink-50 transition-colors">
+                        <i class="fas fa-external-link-alt mr-2"></i>View Theme
+                    </a>
+                </div>
+            </div>
+
+            <!-- Neon Theme -->
+            <div class="theme-card neon rounded-xl p-6 text-white shadow-lg">
+                <div class="text-center">
+                    <i class="fas fa-bolt text-3xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Neon</h3>
+                    <p class="text-sm opacity-90 mb-4">Bright and electric</p>
+                    <a href="http://localhost:4111" target="_blank" 
+                       class="inline-block bg-white text-cyan-600 px-4 py-2 rounded-lg font-semibold hover:bg-cyan-50 transition-colors">
+                        <i class="fas fa-external-link-alt mr-2"></i>View Theme
+                    </a>
+                </div>
+            </div>
+
+            <!-- Dark Theme -->
+            <div class="theme-card dark rounded-xl p-6 text-white shadow-lg">
+                <div class="text-center">
+                    <i class="fas fa-moon text-3xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Dark</h3>
+                    <p class="text-sm opacity-90 mb-4">Modern dark mode</p>
+                    <a href="http://localhost:4112" target="_blank" 
+                       class="inline-block bg-white text-yellow-600 px-4 py-2 rounded-lg font-semibold hover:bg-yellow-50 transition-colors">
+                        <i class="fas fa-external-link-alt mr-2"></i>View Theme
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 text-center">
+            <div class="bg-gray-100 rounded-lg p-6 max-w-4xl mx-auto">
+                <h3 class="text-lg font-bold text-gray-900 mb-4">
+                    <i class="fas fa-tools mr-2"></i>Development Commands
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div class="bg-white rounded p-3">
+                        <code class="text-blue-600">npm run beta:smoke</code>
+                        <p class="text-gray-600 mt-1">Run smoke tests on all themes</p>
+                    </div>
+                    <div class="bg-white rounded p-3">
+                        <code class="text-blue-600">npm run preview</code>
+                        <p class="text-gray-600 mt-1">Start all preview servers</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 text-center text-gray-500">
+            <p>&copy; 2025 QuoteKit.ai - All themes powered by the same robust backend</p>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactivity
+        document.querySelectorAll('.theme-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>

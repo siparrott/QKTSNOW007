@@ -28,6 +28,16 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes & Project Status
 
+### MAJOR: Monorepo Architecture with 12 Theme Variants (August 2025)
+- **Complete Architectural Transformation**: Restructured entire application into monorepo with 12 distinct theme variants
+- **Theme System**: Each calculator variant runs on dedicated ports (4101-4112) with unique CSS styling and visual identity
+- **Shared Core**: Created `packages/core-calculator` for reusable business logic and `packages/theme-registry` for centralized configuration
+- **Theme Variants**: Classic, Minimal, Modern, Elegant, Bold, Serif, Rounded, Mono, High Contrast, Pastel, Neon, and Dark themes
+- **Quality Assurance**: Automated smoke testing system (`scripts/smoke.ci.mjs`) validates all themes simultaneously
+- **Beta Gallery**: Comprehensive showcase page (`beta/index.html`) displaying all 12 themes with direct access links
+- **Independent Development**: Each theme can be developed, tested, and deployed separately while sharing the same backend
+- **Scalability**: Easy addition of new themes by duplicating existing app structure and customizing CSS variables
+
 ### Blog System Successfully Implemented (August 2025)
 - **Comprehensive Blog Platform**: Full-featured blog system with automated content generation and management
 - **Admin Interface**: Complete blog management via admin dashboard with create/edit/publish capabilities
@@ -74,13 +84,13 @@ Preferred communication style: Simple, everyday language.
 - **Support System**: Ticket management and CSV export functionality
 - **Demo Access**: Footer link with admin credentials (admin@quotekit.ai / admin123)
 
-### MAJOR ARCHITECTURAL STREAMLINING COMPLETED (January 2025)
-- **Strategic Pivot**: System simplified from 67+ calculators to single Portrait Photography calculator
-- **Architecture Benefits**: Eliminates batch update failures, improves performance, reduces complexity
-- **Functionality Preserved**: Portrait Photography calculator retains full customization through inline editing and dashboard controls
-- **Clean Import Structure**: All broken calculator references removed from routing, components, and mappings
-- **Streamlined Dashboard**: Template array reduced from 60+ entries to single Portrait Photography option
-- **System Stability**: Application successfully running with clean architecture and zero LSP errors
+### MAJOR ARCHITECTURAL EXPANSION (August 2025)
+- **Monorepo Transformation**: Evolved from single calculator to comprehensive theme system with 12 variants
+- **Architecture Benefits**: Maintains single source of truth for business logic while enabling extensive visual customization
+- **Enhanced Functionality**: Portrait Photography calculator now available in 12 unique themes, each optimized for different brand aesthetics
+- **Scalable Structure**: New apps can be easily added by duplicating existing theme structure
+- **Independent Deployment**: Each theme variant can be deployed separately while sharing core backend infrastructure
+- **Quality Assurance**: Comprehensive testing and preview systems ensure all themes maintain functionality
 
 ## External Dependencies
 

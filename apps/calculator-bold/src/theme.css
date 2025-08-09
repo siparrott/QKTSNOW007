@@ -1,0 +1,22 @@
+/* Theme: bold */
+/* Bold theme styling - vibrant colors and strong contrast */
+
+:root {
+  --theme-primary: #dc2626;
+  --theme-secondary: #ea580c;
+  --theme-accent: #d97706;
+  --theme-background: #ffffff;
+  --theme-surface: #fef2f2;
+  --theme-text: #1f2937;
+  --theme-border: #fecaca;
+}
+
+.theme-bold {
+  --primary: var(--theme-primary);
+  --secondary: var(--theme-secondary);
+  --accent: var(--theme-accent);
+  --background: var(--theme-background);
+  --surface: var(--theme-surface);
+  --text: var(--theme-text);
+  --border: var(--theme-border);
+}

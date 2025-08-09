@@ -1,0 +1,31 @@
+{
+  "name": "calculator-minimal",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 4102",
+    "build": "vite build",
+    "preview": "vite preview --port 4102"
+  },
+  "dependencies": {
+    "@quotekits/core-calculator": "workspace:*",
+    "@quotekits/theme-registry": "workspace:*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "wouter": "^3.3.5",
+    "lucide-react": "^0.453.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.6.0",
+    "framer-motion": "^11.13.1",
+    "class-variance-authority": "^0.7.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.2",
+    "vite": "^5.4.14",
+    "tailwindcss": "^3.4.17",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.1"
+  }
+}

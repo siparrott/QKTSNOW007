@@ -1,0 +1,22 @@
+/* Theme: dark */
+/* Dark theme styling - modern dark mode */
+
+:root {
+  --theme-primary: #f59e0b;
+  --theme-secondary: #d97706;
+  --theme-accent: #92400e;
+  --theme-background: #1f2937;
+  --theme-surface: #374151;
+  --theme-text: #f9fafb;
+  --theme-border: #6b7280;
+}
+
+.theme-dark {
+  --primary: var(--theme-primary);
+  --secondary: var(--theme-secondary);
+  --accent: var(--theme-accent);
+  --background: var(--theme-background);
+  --surface: var(--theme-surface);
+  --text: var(--theme-text);
+  --border: var(--theme-border);
+}

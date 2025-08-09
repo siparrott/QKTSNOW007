@@ -1,0 +1,80 @@
+// Define the gtag function globally
+declare global {
+  interface Window {
+    dataLayer: any[];
+    gtag: (...args: any[]) => void;
+  }
+}
+
+// Initialize Google Analytics
+export const initGA = () => {
+  const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID || 'G-1X8ZT1ZR29';
+
+  // Silent fallback if GA ID not provided
+
+  // Add Google Analytics script to the head
+  const script1 = document.createElement('script');
+  script1.async = true;
+  script1.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
+  document.head.appendChild(script1);
+
+  // Initialize gtag
+  const script2 = document.createElement('script');
+  script2.textContent = `
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '${measurementId}');
+  `;
+  document.head.appendChild(script2);
+};
+
+// Track page views - useful for single-page applications
+export const trackPageView = (url: string) => {
+  if (typeof window === 'undefined' || !window.gtag) return;
+  
+  const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID || 'G-1X8ZT1ZR29';
+  
+  window.gtag('config', measurementId, {
+    page_path: url
+  });
+};
+
+// Track events
+export const trackEvent = (
+  action: string, 
+  category?: string, 
+  label?: string, 
+  value?: number
+) => {
+  if (typeof window === 'undefined' || !window.gtag) return;
+  
+  window.gtag('event', action, {
+    event_category: category,
+    event_label: label,
+    value: value,
+  });
+};
+
+// Track calculator-specific events
+export const trackCalculatorEvent = (
+  eventType: 'quote_generated' | 'field_changed' | 'step_completed' | 'email_sent',
+  calculatorType: string,
+  additionalData?: {
+    quote_value?: number;
+    field_name?: string;
+    step_number?: number;
+  }
+) => {
+  trackEvent(eventType, 'calculator', calculatorType, additionalData?.quote_value);
+  
+  // Send additional data for detailed tracking
+  if (additionalData) {
+    window.gtag?.('event', 'calculator_interaction', {
+      event_category: 'calculator',
+      calculator_type: calculatorType,
+      interaction_type: eventType,
+      ...additionalData
+    });
+  }
+};

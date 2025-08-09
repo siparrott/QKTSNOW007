@@ -1,0 +1,17 @@
+{
+  "name": "@quotekits/core-calculator",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./hooks": "./hooks/index.js",
+    "./utils": "./utils/index.js",
+    "./components": "./components/index.js",
+    "./types": "./types/index.js"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "zod": "^3.24.2"
+  }
+}

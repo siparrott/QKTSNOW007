@@ -1,0 +1,22 @@
+/* Theme: modern */
+/* Modern theme styling - contemporary gradients and sleek design */
+
+:root {
+  --theme-primary: #3b82f6;
+  --theme-secondary: #6366f1;
+  --theme-accent: #8b5cf6;
+  --theme-background: #ffffff;
+  --theme-surface: #f9fafb;
+  --theme-text: #111827;
+  --theme-border: #e5e7eb;
+}
+
+.theme-modern {
+  --primary: var(--theme-primary);
+  --secondary: var(--theme-secondary);
+  --accent: var(--theme-accent);
+  --background: var(--theme-background);
+  --surface: var(--theme-surface);
+  --text: var(--theme-text);
+  --border: var(--theme-border);
+}

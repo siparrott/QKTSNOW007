@@ -1,0 +1,22 @@
+/* Theme: elegant */
+/* Elegant theme styling - sophisticated and refined */
+
+:root {
+  --theme-primary: #1f2937;
+  --theme-secondary: #6b7280;
+  --theme-accent: #d97706;
+  --theme-background: #fafaf9;
+  --theme-surface: #f5f5f4;
+  --theme-text: #1c1917;
+  --theme-border: #e7e5e4;
+}
+
+.theme-elegant {
+  --primary: var(--theme-primary);
+  --secondary: var(--theme-secondary);
+  --accent: var(--theme-accent);
+  --background: var(--theme-background);
+  --surface: var(--theme-surface);
+  --text: var(--theme-text);
+  --border: var(--theme-border);
+}

@@ -1,0 +1,16 @@
+{
+  "themes": [
+    {"id":"classic","label":"Classic"},
+    {"id":"minimal","label":"Minimal"},
+    {"id":"modern","label":"Modern"},
+    {"id":"elegant","label":"Elegant"},
+    {"id":"bold","label":"Bold"},
+    {"id":"serif","label":"Serif"},
+    {"id":"rounded","label":"Rounded"},
+    {"id":"mono","label":"Mono"},
+    {"id":"contrast","label":"High Contrast"},
+    {"id":"pastel","label":"Pastel"},
+    {"id":"neon","label":"Neon"},
+    {"id":"dark","label":"Dark"}
+  ]
+}

@@ -1,0 +1,24 @@
+/* Theme: serif */
+/* Serif theme styling - traditional typography and warm tones */
+
+:root {
+  --theme-primary: #7c2d12;
+  --theme-secondary: #a3a3a3;
+  --theme-accent: #ca8a04;
+  --theme-background: #fffef7;
+  --theme-surface: #fefdf8;
+  --theme-text: #451a03;
+  --theme-border: #fef3c7;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+.theme-serif {
+  --primary: var(--theme-primary);
+  --secondary: var(--theme-secondary);
+  --accent: var(--theme-accent);
+  --background: var(--theme-background);
+  --surface: var(--theme-surface);
+  --text: var(--theme-text);
+  --border: var(--theme-border);
+  font-family: Georgia, 'Times New Roman', serif;
+}

@@ -1,0 +1,22 @@
+/* Theme: pastel */
+/* Pastel theme styling - soft and gentle colors */
+
+:root {
+  --theme-primary: #db2777;
+  --theme-secondary: #f472b6;
+  --theme-accent: #fb7185;
+  --theme-background: #fdf2f8;
+  --theme-surface: #fce7f3;
+  --theme-text: #831843;
+  --theme-border: #fbcfe8;
+}
+
+.theme-pastel {
+  --primary: var(--theme-primary);
+  --secondary: var(--theme-secondary);
+  --accent: var(--theme-accent);
+  --background: var(--theme-background);
+  --surface: var(--theme-surface);
+  --text: var(--theme-text);
+  --border: var(--theme-border);
+}

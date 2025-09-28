@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { useState, useEffect } from "react";
-import { getCurrentUser, logout } from "@/lib/supabase";
+import { getCurrentUser, logout } from "@/lib/supabase"; // compatibility shim
 import { useToast } from "@/hooks/use-toast";
 import logoImage from "@assets/ChatGPT Image Jun 11, 2025, 11_57_41 AM_1749655121133.png";
 
@@ -13,8 +13,8 @@ export function QuoteKitHeader() {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const user = await getCurrentUser();
-        setCurrentUser(user);
+  const user = await getCurrentUser();
+  if (user) setCurrentUser(user);
       } catch (error) {
         console.error('Error loading user:', error);
       } finally {

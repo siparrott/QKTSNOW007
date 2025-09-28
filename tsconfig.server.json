@@ -1,7 +1,14 @@
 {
   "extends": "./tsconfig.json",
   "include": ["server/**/*", "shared/**/*"],
-  "exclude": ["node_modules", "dist", "dist-server", "client", "**/*.test.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "dist-server",
+    "client",
+    "**/*.test.ts",
+    "server/storage-backup.ts" // exclude legacy/corrupted backup file from compilation
+  ],
   "compilerOptions": {
     "noEmit": false,
     "outDir": "dist-server",

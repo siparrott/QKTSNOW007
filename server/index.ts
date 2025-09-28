@@ -3,6 +3,11 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Recreate __dirname for ESM module (needed to locate built client files)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Global process-level diagnostics for crashes
 process.on('unhandledRejection', (reason: any) => {
@@ -34,12 +39,16 @@ app.get('/healthz', (_req, res) => {
 });
 
 app.get('/', (_req, res, next) => {
-  // If later static middleware mounts it will override; this is fallback to show server is alive
-  if (!(res as any).headersSent) {
-    res.status(200).send('<html><body><h1>QuoteKit Server</h1><p>Server started. If you expected the UI and do not see it, the static assets may be missing. Check /__healthplus.</p></body></html>');
-  } else {
-    next();
+  // In production, if the built client index exists, serve it so the real UI loads.
+  if (process.env.NODE_ENV === 'production') {
+    const indexPath = path.resolve(__dirname, '..', 'dist', 'public', 'index.html');
+    if (fs.existsSync(indexPath)) {
+      return res.sendFile(indexPath);
+    }
   }
+  // Fallback placeholder (e.g., first deploy before build succeeds or assets missing)
+  res.status(200).send('<html><body><h1>QuoteKit Server</h1><p>Server started. Built client not found yet (serving placeholder). If you expected the full UI, confirm the Vite build ran and produced <code>dist/public</code>.</p></body></html>');
+  next();
 });
 
 // Stripe webhooks must receive the raw body (for signature verification) so we:

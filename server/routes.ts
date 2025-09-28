@@ -91,7 +91,6 @@ function calculateSEOScore(blogPost: any): number {
   
   return Math.min(score, maxScore);
 }
-import { sql } from "@shared/supabase";
 import Stripe from 'stripe';
 
 // Optional Stripe initialization (separate from stripeService) for price bootstrap helpers
@@ -298,9 +297,11 @@ Allow: /*-calculator`;
     res.send(robotsTxt);
   });
 
-  // Import Supabase routes
-  const { default: supabaseRoutes } = await import('./supabase-routes');
-  app.use('/api/supabase', supabaseRoutes);
+  // (Supabase routes removed) – legacy Supabase API endpoints have been retired.
+  // If a client still tries to call /api/supabase/* respond with 410 Gone to signal removal.
+  app.use('/api/supabase', (_req, res) => {
+    res.status(410).json({ error: 'Supabase API removed. Update client to use new internal endpoints.' });
+  });
   
   // Test endpoint for connectivity verification
   app.get('/api/test', (req, res) => {
@@ -478,7 +479,8 @@ Allow: /*-calculator`;
   app.post("/api/webhooks/stripe", async (req, res) => {
     try {
       const signature = req.headers['stripe-signature'] as string;
-      const event = stripeService.constructEvent(req.body, signature);
+      const rawBody = (req as any).body; // body is a Buffer because of express.raw in index.ts
+      const event = stripeService.constructEvent(rawBody, signature);
       await stripeService.handleWebhook(event);
       res.json({ received: true });
     } catch (error: any) {
@@ -1630,6 +1632,21 @@ Allow: /*-calculator`;
 
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok", timestamp: new Date().toISOString() });
+  });
+
+  // Configuration status (does not expose secret values, only presence flags)
+  app.get('/api/config-status', (_req, res) => {
+    res.json({
+      nodeEnv: process.env.NODE_ENV || null,
+      hasJwtSecret: !!process.env.JWT_SECRET,
+      hasStripeKey: !!process.env.STRIPE_SECRET_KEY,
+      hasStripeWebhookSecret: !!process.env.STRIPE_WEBHOOK_SECRET,
+      databaseUrlPresent: !!process.env.DATABASE_URL,
+      appBaseUrl: process.env.APP_BASE_URL || null,
+      customDomain: process.env.CUSTOM_DOMAIN || null,
+      buildId: process.env.HEROKU_RELEASE_VERSION || null,
+      updatedAt: new Date().toISOString()
+    });
   });
 
   // Admin routes

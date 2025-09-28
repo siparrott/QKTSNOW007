@@ -1,6 +1,7 @@
 // Compatibility layer: legacy code still imports { getCurrentUser, logout } from this file.
 // Supabase auth was removed; we now proxy to the new token-based auth endpoints.
 // TODO: Remove these shims after updating all components to use useAuth() hook directly.
+// NOTE: Server-side Supabase endpoints were fully removed; any network calls to /api/supabase/* now return 410.
 
 import { apiRequest } from "@/lib/queryClient";
 import { clearAuthData, isTokenExpired } from "@/lib/auth-utils";

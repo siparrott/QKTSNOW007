@@ -18,8 +18,20 @@ app.use((req, res, next) => {
   }
 });
 
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: false, limit: '50mb' }));
+// Stripe webhooks must receive the raw body (for signature verification) so we:
+// 1. Attach a raw parser ONLY for that path
+// 2. Skip the JSON/urlencoded parsers for that same path
+app.post('/api/webhooks/stripe', express.raw({ type: 'application/json' }));
+app.use((req, res, next) => {
+  if (req.originalUrl.startsWith('/api/webhooks/stripe')) {
+    return next(); // leave raw body intact
+  }
+  // Apply JSON + urlencoded for all other routes
+  express.json({ limit: '50mb' })(req, res, (err) => {
+    if (err) return next(err);
+    express.urlencoded({ extended: false, limit: '50mb' })(req, res, next);
+  });
+});
 
 app.use((req, res, next) => {
   const start = Date.now();

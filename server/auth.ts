@@ -12,6 +12,10 @@ import {
 import { storage } from './storage';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
+if (!process.env.JWT_SECRET) {
+  // Visible once at startup to encourage secure config
+  console.warn('[startup] JWT_SECRET not set – using insecure fallback. Set JWT_SECRET in Heroku config vars.');
+}
 const SESSION_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 days
 const REMEMBER_SESSION_DURATION = 30 * 24 * 60 * 60 * 1000; // 30 days
 

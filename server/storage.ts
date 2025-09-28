@@ -1823,11 +1823,11 @@ The goal is to create a seamless journey from curiosity to conversion, guiding v
 }
 
 import { PostgresStorage } from "./postgres-storage";
+import { dbAvailable } from "./db";
 
-// In production we prefer Postgres, but only if DATABASE_URL is present. Otherwise fall back to in‑memory.
-// This prevents the app from crashing on startup when the database env var isn't configured yet.
-const usingPostgres = process.env.NODE_ENV === 'production' && !!process.env.DATABASE_URL;
-if (process.env.NODE_ENV === 'production' && !process.env.DATABASE_URL) {
-  console.warn('[startup] DATABASE_URL missing – falling back to in‑memory storage (data will not persist). Set the Heroku config var DATABASE_URL to enable Postgres.');
+// Decide storage backend: only use PostgresStorage if dbAvailable (i.e. valid URL & init succeeded)
+const usingPostgres = process.env.NODE_ENV === 'production' && dbAvailable;
+if (process.env.NODE_ENV === 'production' && !dbAvailable) {
+  console.warn('[startup] Postgres not available (missing or invalid DATABASE_URL) – using in‑memory storage (data will not persist).');
 }
 export const storage = usingPostgres ? new PostgresStorage() : new MemStorage();

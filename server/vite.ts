@@ -72,15 +72,15 @@ export function serveStatic(app: Express) {
   const distPath = path.resolve(import.meta.dirname, "..", "dist", "public");
 
   if (!fs.existsSync(distPath)) {
-    throw new Error(
-      `Could not find built client assets at ${distPath}. Did 'npm run build' run successfully on Heroku?`,
-    );
+    console.error(`[static] Missing build directory at ${distPath} – serving fallback page. (Build may have been pruned.)`);
+    app.get('*', (_req, res) => {
+      res.status(200).send(`<!doctype html><html><head><meta charset='utf-8'><title>QuoteKit – Build Missing</title><style>body{font-family:system-ui;padding:40px;max-width:640px;margin:auto;line-height:1.4}code{background:#eee;padding:2px 4px;border-radius:4px}</style></head><body><h1>Server Online – Client Build Missing</h1><p>The backend started successfully, but the compiled client assets were not found at <code>${distPath}</code>.</p><h2>Likely Causes</h2><ul><li>Heroku postbuild ran but output directory name mismatch</li><li>Assets removed by .slugignore</li><li>Build failed silently</li></ul><h2>Next Steps</h2><ol><li>Check build log contained line for <code>../dist/public/index.html</code> (it did).</li><li>Confirm directory exists at runtime (add temporary ls step or avoid pruning).</li><li>Ensure .slugignore does NOT exclude <code>dist</code>.</li></ol><p>API health can be tested at <code>/api/health</code>.</p></body></html>`);
+    });
+    return;
   }
 
   app.use(express.static(distPath));
-
-  // fall through to index.html if the file doesn't exist
-  app.use("*", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
+  app.use('*', (_req, res) => {
+    res.sendFile(path.resolve(distPath, 'index.html'));
   });
 }

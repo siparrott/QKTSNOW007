@@ -1,17 +1,25 @@
 import { createClient } from '@supabase/supabase-js';
 import postgres from 'postgres';
 
-// For server-side operations, use direct PostgreSQL connection
-const sql = postgres(process.env.DATABASE_URL!);
-
-// Export sql for use in other modules
+// Guard database & supabase client creation so missing env vars don't crash production
+let sql: any = { unsafe: true };
+try {
+  if (process.env.DATABASE_URL) {
+    sql = postgres(process.env.DATABASE_URL);
+  } else {
+    console.warn('[startup] shared/supabase.ts: DATABASE_URL missing – SQL helper disabled.');
+  }
+} catch (e) {
+  console.error('[startup] Failed to init postgres in shared/supabase.ts:', e);
+}
 export { sql };
 
-// Initialize Supabase client for browser operations
-export const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_ANON_KEY!
-);
+export const supabase = (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY)
+  ? createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY)
+  : ({} as any);
+if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
+  console.warn('[startup] Supabase env vars missing – supabase client stubbed.');
+}
 
 // Authentication functions
 export async function signUpWithEmail(email: string, password: string) {

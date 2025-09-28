@@ -28,6 +28,20 @@ app.use((req, res, next) => {
   }
 });
 
+// Basic early health & root handlers BEFORE async bootstrap (helps if bootstrap crashes)
+app.get('/healthz', (_req, res) => {
+  res.json({ status: 'ok-preinit', time: new Date().toISOString() });
+});
+
+app.get('/', (_req, res, next) => {
+  // If later static middleware mounts it will override; this is fallback to show server is alive
+  if (!(res as any).headersSent) {
+    res.status(200).send('<html><body><h1>QuoteKit Server</h1><p>Server started. If you expected the UI and do not see it, the static assets may be missing. Check /__healthplus.</p></body></html>');
+  } else {
+    next();
+  }
+});
+
 // Stripe webhooks must receive the raw body (for signature verification) so we:
 // 1. Attach a raw parser ONLY for that path
 // 2. Skip the JSON/urlencoded parsers for that same path

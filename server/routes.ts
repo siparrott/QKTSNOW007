@@ -40,6 +40,11 @@ import {
 import { ObjectPermission } from "./objectAcl";
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+// ESM __dirname polyfill (import.meta.dirname is not standard)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // SEO Score calculation function
 function calculateSEOScore(blogPost: any): number {
@@ -1638,7 +1643,7 @@ Allow: /*-calculator`;
 
   // Extended health / diagnostics (no secrets revealed)
   app.get('/__healthplus', async (_req, res) => {
-    const distPath = path.resolve(import.meta.dirname, '..', 'dist', 'public');
+  const distPath = path.resolve(__dirname, '..', 'dist', 'public');
     let distExists = false;
     let fileSample: string[] = [];
     let indexHtml = false;

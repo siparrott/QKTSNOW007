@@ -58,14 +58,27 @@ app.use((req, res, next) => {
     next();
   });
 
+  // Lightweight early diagnostics BEFORE route registration
+  app.get('/__startup', (_req, res) => {
+    res.json({
+      status: 'starting',
+      nodeEnv: process.env.NODE_ENV,
+      hasStripeKey: !!process.env.STRIPE_SECRET_KEY,
+      hasDbUrl: !!process.env.DATABASE_URL,
+      time: new Date().toISOString()
+    });
+  });
+
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
-
-    res.status(status).json({ message });
-    throw err;
+    console.error('[express-error]', status, message, err?.stack);
+    // Respond but DO NOT rethrow (rethrowing crashes the process on any request error)
+    if (!res.headersSent) {
+      res.status(status).json({ message });
+    }
   });
 
   // importantly only setup vite in development and after

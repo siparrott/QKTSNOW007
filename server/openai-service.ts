@@ -1,12 +1,17 @@
 import OpenAI from "openai";
 
+// Make OpenAI optional so the whole server doesn't crash if the key is missing.
+let openai: OpenAI | null = null;
 if (!process.env.OPENAI_API_KEY) {
-  throw new Error("OPENAI_API_KEY environment variable must be set");
+  console.warn("[startup] OPENAI_API_KEY not set – AI content & image endpoints disabled.");
+} else {
+  try {
+    openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  } catch (e) {
+    console.error('[startup] Failed to initialize OpenAI client – disabling AI features:', e);
+    openai = null;
+  }
 }
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 export interface ImageAnalysisResult {
   description: string;
@@ -57,6 +62,19 @@ export class OpenAIService {
    */
   async analyzeImages(images: string[]): Promise<ImageAnalysisResult[]> {
     const results: ImageAnalysisResult[] = [];
+
+    if (!openai) {
+      console.warn('[ai] analyzeImages called but OpenAI disabled. Returning empty analyses.');
+      return images.map(() => ({
+        description: "AI disabled",
+        mainSubjects: [],
+        setting: "",
+        mood: "",
+        colors: [],
+        technicalAspects: "",
+        suggestedTags: []
+      }));
+    }
 
     for (const base64Image of images) {
       try {
@@ -118,6 +136,9 @@ export class OpenAIService {
    * Enhanced blog generation with Assistant-first approach
    */
   async generateBlogPost(request: BlogGenerationRequest): Promise<BlogGenerationResult> {
+    if (!openai) {
+      throw new Error('AI content generation disabled (missing OPENAI_API_KEY).');
+    }
     return await this.generateContentWithAssistant(request);
   }
 
@@ -125,6 +146,9 @@ export class OpenAIService {
    * Stronger Assistant-first with strict JSON + safe fallback
    */
   private async generateContentWithAssistant(request: BlogGenerationRequest): Promise<BlogGenerationResult> {
+    if (!openai) {
+      throw new Error('AI assistant unavailable (missing OPENAI_API_KEY).');
+    }
     const assistantId = process.env.OPENAI_ASSISTANT_ID;
     const haveAssistant = Boolean(assistantId && assistantId.trim().length > 0);
 
@@ -195,11 +219,11 @@ Please generate a blog post in JSON format with:
         // Poll until it completes (more defensive)
         let attempts = 0;
         const maxAttempts = 60;
-        let runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
+  let runStatus = await openai.beta.threads.runs.retrieve(thread.id, { id: run.id } as any);
 
         while ((runStatus.status === "queued" || runStatus.status === "in_progress") && attempts < maxAttempts) {
           await new Promise(r => setTimeout(r, 1000));
-          runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
+          runStatus = await openai.beta.threads.runs.retrieve(thread.id, { id: run.id } as any);
           attempts++;
           if (attempts % 10 === 0) console.log(`Run status: ${runStatus.status} (attempt ${attempts})`);
         }
@@ -301,6 +325,7 @@ Please generate a blog post in JSON format with:
    * Generates SEO-optimized blog content using the blueprint strategy
    */
   async generateBlogPostWithStrategy(request: BlogGenerationWithStrategyRequest): Promise<BlogGenerationResult> {
+    if (!openai) throw new Error('AI generation disabled');
     try {
       const response = await openai.chat.completions.create({
         model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
@@ -344,6 +369,7 @@ Please generate a blog post in JSON format with:
    * Enhances existing blog content with AI suggestions
    */
   async enhanceBlogPost(content: string, enhancementType: string): Promise<string> {
+    if (!openai) throw new Error('AI enhancement disabled');
     try {
       const response = await openai.chat.completions.create({
         model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user

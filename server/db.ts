@@ -18,6 +18,7 @@ if (!connectionString) {
 
 // Only create client when we actually have a connection string
 export const client = connectionString ? postgres(connectionString, { prepare: false }) : (null as any);
+export const dbAvailable = !!connectionString;
 export const db = connectionString ? drizzle(client, {
   schema: {
     users,
@@ -29,3 +30,7 @@ export const db = connectionString ? drizzle(client, {
     blogPosts,
   },
 }) : ({} as any);
+
+if (!dbAvailable) {
+  console.warn('[startup] Running without Postgres – some persistence features will be disabled.');
+}

@@ -38,7 +38,33 @@ app.get('/healthz', (_req, res) => {
   res.json({ status: 'ok-preinit', time: new Date().toISOString() });
 });
 
-app.get('/', (_req, res, next) => {
+// Static assets diagnostic (lists dist/public contents to confirm build presence)
+app.get('/__staticdiag', (_req, res) => {
+  const distPath = path.resolve(__dirname, '..', 'dist', 'public');
+  const assetsDir = path.join(distPath, 'assets');
+  const info: any = {
+    distPath,
+    distPathExists: fs.existsSync(distPath),
+    indexHtmlExists: false,
+    assetDirExists: false,
+    assetSample: [] as string[],
+    generatedAt: new Date().toISOString(),
+    nodeEnv: process.env.NODE_ENV,
+  };
+  if (info.distPathExists) {
+    const indexPath = path.join(distPath, 'index.html');
+    info.indexHtmlExists = fs.existsSync(indexPath);
+    if (fs.existsSync(assetsDir)) {
+      info.assetDirExists = true;
+      try {
+        info.assetSample = fs.readdirSync(assetsDir).slice(0, 20);
+      } catch {}
+    }
+  }
+  res.json(info);
+});
+
+app.get('/', (_req, res) => {
   // In production, if the built client index exists, serve it so the real UI loads.
   if (process.env.NODE_ENV === 'production') {
     const indexPath = path.resolve(__dirname, '..', 'dist', 'public', 'index.html');
@@ -47,8 +73,7 @@ app.get('/', (_req, res, next) => {
     }
   }
   // Fallback placeholder (e.g., first deploy before build succeeds or assets missing)
-  res.status(200).send('<html><body><h1>QuoteKit Server</h1><p>Server started. Built client not found yet (serving placeholder). If you expected the full UI, confirm the Vite build ran and produced <code>dist/public</code>.</p></body></html>');
-  next();
+  return res.status(200).send('<html><body><h1>QuoteKit Server</h1><p>Server started. Built client not found yet (serving placeholder). If you expected the full UI, confirm the Vite build ran and produced <code>dist/public</code>. Visit <code>/__staticdiag</code> for asset diagnostics.</p></body></html>');
 });
 
 // Stripe webhooks must receive the raw body (for signature verification) so we:

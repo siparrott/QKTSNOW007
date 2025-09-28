@@ -2,16 +2,21 @@ import express, { type Express } from "express";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from 'url';
-import { createServer as createViteServer, createLogger } from "vite";
+// IMPORTANT: Do NOT import 'vite' or '../vite.config' at the top level.
+// They depend on devDependencies that are pruned in production. We lazy load them inside setupVite() only in development.
 import { type Server } from "http";
-import viteConfig from "../vite.config";
 import { nanoid } from "nanoid";
 
 // Recreate __dirname in ESM context (import.meta.dirname is NOT standard and caused runtime crash)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const viteLogger = createLogger();
+// Minimal logger fallback for production when vite isn't loaded
+let viteLogger: { info: Function; error: Function; warn: Function } = {
+  info: (...args: any[]) => console.log('[vite]', ...args),
+  error: (...args: any[]) => console.error('[vite]', ...args),
+  warn: (...args: any[]) => console.warn('[vite]', ...args),
+};
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
@@ -25,6 +30,18 @@ export function log(message: string, source = "express") {
 }
 
 export async function setupVite(app: Express, server: Server) {
+  if (process.env.NODE_ENV === 'production') {
+    // Should never be called in production, but guard just in case
+    console.warn('[vite] setupVite() invoked in production – skipping.');
+    return;
+  }
+
+  // Lazy import vite and config only in development
+  const { createServer: createViteServer, createLogger } = await import('vite');
+  const viteConfigModule: any = await import('../vite.config.ts');
+  const localViteConfig = viteConfigModule.default || viteConfigModule;
+  viteLogger = createLogger();
+
   const serverOptions = {
     middlewareMode: true,
     hmr: { server },
@@ -32,7 +49,7 @@ export async function setupVite(app: Express, server: Server) {
   };
 
   const vite = await createViteServer({
-    ...viteConfig,
+    ...localViteConfig,
     configFile: false,
     customLogger: {
       ...viteLogger,
@@ -42,29 +59,21 @@ export async function setupVite(app: Express, server: Server) {
       },
     },
     server: serverOptions,
-    appType: "custom",
+    appType: 'custom',
   });
 
   app.use(vite.middlewares);
-  app.use("*", async (req, res, next) => {
+  app.use('*', async (req, res, next) => {
     const url = req.originalUrl;
-
     try {
-      const clientTemplate = path.resolve(
-        __dirname,
-        "..",
-        "client",
-        "index.html",
-      );
-
-      // always reload the index.html file from disk incase it changes
-      let template = await fs.promises.readFile(clientTemplate, "utf-8");
+      const clientTemplate = path.resolve(__dirname, '..', 'client', 'index.html');
+      let template = await fs.promises.readFile(clientTemplate, 'utf-8');
       template = template.replace(
         `src="/src/main.tsx"`,
         `src="/src/main.tsx?v=${nanoid()}"`,
       );
       const page = await vite.transformIndexHtml(url, template);
-      res.status(200).set({ "Content-Type": "text/html" }).end(page);
+      res.status(200).set({ 'Content-Type': 'text/html' }).end(page);
     } catch (e) {
       vite.ssrFixStacktrace(e as Error);
       next(e);

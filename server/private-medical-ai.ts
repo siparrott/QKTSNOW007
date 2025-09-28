@@ -1,12 +1,20 @@
 import OpenAI from "openai";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+let openai: OpenAI | null = null;
+if (!process.env.OPENAI_API_KEY) {
+  console.warn('[startup] OPENAI_API_KEY missing – private medical AI disabled');
+} else {
+  try { openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY }); } catch (e) { console.error('[startup] Failed to init OpenAI (private medical)', e); }
+}
 
 export async function processPrivateMedicalRequest(input: string) {
   if (!input.trim()) {
     throw new Error("Input is required");
   }
 
+  if (!openai) {
+    return { disabled: true };
+  }
   try {
     const response = await openai.chat.completions.create({
       model: "gpt-4o",

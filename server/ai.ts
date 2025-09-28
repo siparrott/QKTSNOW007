@@ -1,16 +1,23 @@
 import OpenAI from "openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let openai: OpenAI | null = null;
+if (!process.env.OPENAI_API_KEY) {
+  console.warn('[startup] OPENAI_API_KEY missing – general AI classifiers disabled');
+} else {
+  try { openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY }); } catch (e) { console.error('[startup] Failed to init OpenAI (general ai.ts)', e); }
+}
+
+function getClient(): OpenAI | null { return openai; }
 
 export async function processCarWashRequest(input: string) {
   if (!input.trim()) {
     throw new Error("Input is required");
   }
 
+  const client = getClient();
+  if (!client) return { disabled: true };
   try {
-    const response = await openai.chat.completions.create({
+    const response = await client.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
         {
@@ -54,9 +61,10 @@ export async function processChauffeurRequest(input: string) {
   if (!input.trim()) {
     throw new Error("Input is required");
   }
-
+  const client = getClient();
+  if (!client) return { disabled: true };
   try {
-    const response = await openai.chat.completions.create({
+    const response = await client.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
         {
@@ -98,9 +106,10 @@ export async function processAirportTransferRequest(input: string) {
   if (!input.trim()) {
     throw new Error("Input is required");
   }
-
+  const client = getClient();
+  if (!client) return { disabled: true };
   try {
-    const response = await openai.chat.completions.create({
+    const response = await client.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
         {
@@ -144,9 +153,10 @@ export async function processVanRentalRequest(input: string) {
   if (!input.trim()) {
     throw new Error("Input is required");
   }
-
+  const client = getClient();
+  if (!client) return { disabled: true };
   try {
-    const response = await openai.chat.completions.create({
+    const response = await client.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
         {
@@ -188,9 +198,10 @@ export async function processBoatCharterRequest(input: string) {
   if (!input.trim()) {
     throw new Error("Input is required");
   }
-
+  const client = getClient();
+  if (!client) return { disabled: true };
   try {
-    const response = await openai.chat.completions.create({
+    const response = await client.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
         {
@@ -232,9 +243,10 @@ export async function processMovingServicesRequest(input: string) {
   if (!input.trim()) {
     throw new Error("Input is required");
   }
-
+  const client = getClient();
+  if (!client) return { disabled: true };
   try {
-    const response = await openai.chat.completions.create({
+    const response = await client.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
         {
@@ -276,9 +288,10 @@ export async function processMotorcycleRepairRequest(input: string) {
   if (!input.trim()) {
     throw new Error("Input is required");
   }
-
+  const client = getClient();
+  if (!client) return { disabled: true };
   try {
-    const response = await openai.chat.completions.create({
+    const response = await client.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
         {
@@ -320,9 +333,10 @@ export async function processDrivingInstructorRequest(input: string) {
   if (!input.trim()) {
     throw new Error("Input is required");
   }
-
+  const client = getClient();
+  if (!client) return { disabled: true };
   try {
-    const response = await openai.chat.completions.create({
+    const response = await client.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
         {
@@ -366,9 +380,10 @@ export async function processWebDesignerRequest(input: string) {
   if (!input.trim()) {
     throw new Error("Input is required");
   }
-
+  const client = getClient();
+  if (!client) return { disabled: true };
   try {
-    const response = await openai.chat.completions.create({
+    const response = await client.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
         {
@@ -412,9 +427,10 @@ export async function processMarketingConsultantRequest(input: string) {
   if (!input.trim()) {
     throw new Error("Input is required");
   }
-
+  const client = getClient();
+  if (!client) return { disabled: true };
   try {
-    const response = await openai.chat.completions.create({
+    const response = await client.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
         {
@@ -460,9 +476,10 @@ export async function processSEOAgencyRequest(input: string) {
   if (!input.trim()) {
     throw new Error("Input is required");
   }
-
+  const client = getClient();
+  if (!client) return { disabled: true };
   try {
-    const response = await openai.chat.completions.create({
+    const response = await client.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
         {
@@ -508,9 +525,10 @@ export async function processVideoEditorRequest(input: string) {
   if (!input.trim()) {
     throw new Error("Input is required");
   }
-
+  const client = getClient();
+  if (!client) return { disabled: true };
   try {
-    const response = await openai.chat.completions.create({
+    const response = await client.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
         {
@@ -554,9 +572,10 @@ export async function processCopywriterRequest(input: string) {
   if (!input.trim()) {
     throw new Error("Input is required");
   }
-
+  const client = getClient();
+  if (!client) return { disabled: true };
   try {
-    const response = await openai.chat.completions.create({
+    const response = await client.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
         {
@@ -600,9 +619,10 @@ export async function processLegalAdvisorRequest(input: string) {
   if (!input.trim()) {
     throw new Error("Input is required");
   }
-
+  const client = getClient();
+  if (!client) return { disabled: true };
   try {
-    const response = await openai.chat.completions.create({
+    const response = await client.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
         {
@@ -646,9 +666,10 @@ export async function processTaxPreparerRequest(input: string) {
   if (!input.trim()) {
     throw new Error("Input is required");
   }
-
+  const client = getClient();
+  if (!client) return { disabled: true };
   try {
-    const response = await openai.chat.completions.create({
+    const response = await client.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
         {
@@ -690,9 +711,10 @@ export async function processTranslationServicesRequest(input: string) {
   if (!input.trim()) {
     throw new Error("Input is required");
   }
-
+  const client = getClient();
+  if (!client) return { disabled: true };
   try {
-    const response = await openai.chat.completions.create({
+    const response = await client.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
         {
@@ -740,9 +762,10 @@ export async function processCleaningServicesRequest(input: string) {
   if (!input.trim()) {
     throw new Error("Input is required");
   }
-
+  const client = getClient();
+  if (!client) return { disabled: true };
   try {
-    const response = await openai.chat.completions.create({
+    const response = await client.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
         {
@@ -786,9 +809,10 @@ export async function processPrivateSchoolRequest(input: string) {
   if (!input.trim()) {
     throw new Error("Input is required");
   }
-
+  const client = getClient();
+  if (!client) return { disabled: true };
   try {
-    const response = await openai.chat.completions.create({
+    const response = await client.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
         {

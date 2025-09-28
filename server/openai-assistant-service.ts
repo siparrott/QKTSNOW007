@@ -1,12 +1,17 @@
 import OpenAI from "openai";
 
+// Optional OpenAI client (do NOT crash app if key missing)
+let openai: OpenAI | null = null;
 if (!process.env.OPENAI_API_KEY) {
-  throw new Error("OPENAI_API_KEY environment variable must be set");
+  console.warn("[startup] OPENAI_API_KEY not set – assistant features disabled.");
+} else {
+  try {
+    openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  } catch (e) {
+    console.error("[startup] Failed to initialize OpenAI assistant client – disabling assistant features:", e);
+    openai = null;
+  }
 }
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 // Default Assistant ID - will be overridden by environment variable if set
 const DEFAULT_ASSISTANT_ID = "asst_nINuiVStB5sKhKbNCgjeODI2";
@@ -51,12 +56,20 @@ export class OpenAIAssistantService {
     console.log(`OpenAI Assistant Service initialized with ID: ${this.assistantId}`);
   }
 
+  private requireClient(): OpenAI {
+    if (!openai) {
+      throw new Error("AI assistant features disabled (missing OPENAI_API_KEY)");
+    }
+    return openai;
+  }
+
   /**
    * Creates a new thread for conversation with the assistant
    */
   async createThread(): Promise<string> {
     try {
-      const thread = await openai.beta.threads.create();
+      const client = this.requireClient();
+      const thread = await client.beta.threads.create();
       return thread.id;
     } catch (error) {
       console.error("Error creating thread:", error);
@@ -69,14 +82,15 @@ export class OpenAIAssistantService {
    */
   async sendMessage(threadId: string, message: string): Promise<string> {
     try {
+      const client = this.requireClient();
       // Add message to thread
-      await openai.beta.threads.messages.create(threadId, {
+      await client.beta.threads.messages.create(threadId, {
         role: "user",
         content: message,
       });
 
       // Create a run
-      const run = await openai.beta.threads.runs.create(threadId, {
+      const run = await client.beta.threads.runs.create(threadId, {
         assistant_id: this.assistantId,
       });
 
@@ -87,13 +101,14 @@ export class OpenAIAssistantService {
       
       while ((runStatus.status === "in_progress" || runStatus.status === "queued") && attempts < maxAttempts) {
         await new Promise(resolve => setTimeout(resolve, 1000));
-        runStatus = await openai.beta.threads.runs.retrieve(threadId, run.id);
+  // Type workaround: newer OpenAI SDK expects params object
+  runStatus = await client.beta.threads.runs.retrieve(threadId, { id: run.id } as any);
         attempts++;
       }
 
       if (runStatus.status === "completed") {
         // Get the messages
-        const messages = await openai.beta.threads.messages.list(threadId);
+  const messages = await client.beta.threads.messages.list(threadId);
         const lastMessage = messages.data[0];
         
         if (lastMessage?.content?.[0] && lastMessage.content[0].type === "text") {
@@ -233,7 +248,8 @@ Return as structured JSON.`;
    */
   async getAssistantInfo(): Promise<any> {
     try {
-      const assistant = await openai.beta.assistants.retrieve(this.assistantId);
+      const client = this.requireClient();
+      const assistant = await client.beta.assistants.retrieve(this.assistantId);
       return {
         id: assistant.id,
         name: assistant.name,

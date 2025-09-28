@@ -38,6 +38,8 @@ import {
   ObjectNotFoundError,
 } from "./objectStorage";
 import { ObjectPermission } from "./objectAcl";
+import fs from 'fs';
+import path from 'path';
 
 // SEO Score calculation function
 function calculateSEOScore(blogPost: any): number {
@@ -1632,6 +1634,54 @@ Allow: /*-calculator`;
 
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok", timestamp: new Date().toISOString() });
+  });
+
+  // Extended health / diagnostics (no secrets revealed)
+  app.get('/__healthplus', async (_req, res) => {
+    const distPath = path.resolve(import.meta.dirname, '..', 'dist', 'public');
+    let distExists = false;
+    let fileSample: string[] = [];
+    let indexHtml = false;
+    try {
+      distExists = fs.existsSync(distPath);
+      if (distExists) {
+        const entries = fs.readdirSync(distPath, { withFileTypes: true });
+        fileSample = entries.slice(0, 15).map(e => e.name + (e.isDirectory() ? '/' : ''));
+        indexHtml = fs.existsSync(path.join(distPath, 'index.html'));
+      }
+    } catch (e) {
+      // ignore
+    }
+
+    // DB quick checks (safe failures)
+    let dbChecks: any = { ok: false };
+    try {
+      const userCount = await storage.getUserCount().catch(() => null);
+      const calcCount = await storage.getCalculatorCount().catch(() => null);
+      dbChecks = { ok: true, userCount, calcCount };
+    } catch {
+      dbChecks = { ok: false };
+    }
+
+    res.json({
+      status: 'ok',
+      time: new Date().toISOString(),
+      env: {
+        nodeEnv: process.env.NODE_ENV,
+        hasJwtSecret: !!process.env.JWT_SECRET,
+        hasDbUrl: !!process.env.DATABASE_URL,
+        hasStripeKey: !!process.env.STRIPE_SECRET_KEY,
+        hasStripeWebhookSecret: !!process.env.STRIPE_WEBHOOK_SECRET,
+        hasOpenAI: !!process.env.OPENAI_API_KEY
+      },
+      build: {
+        distExists,
+        indexHtml,
+        fileSample,
+      },
+      db: dbChecks,
+      release: process.env.HEROKU_RELEASE_VERSION || null
+    });
   });
 
   // Configuration status (does not expose secret values, only presence flags)

@@ -10,11 +10,15 @@ import {
   blogPosts
 } from "@shared/schema";
 
-const connectionString = process.env.DATABASE_URL!;
+const connectionString = process.env.DATABASE_URL;
 
-// Disable prefetch as it is not supported for "Transaction" pool mode
-export const client = postgres(connectionString, { prepare: false });
-export const db = drizzle(client, {
+if (!connectionString) {
+  console.warn('[startup] DATABASE_URL not set – Postgres client not initialized (in‑memory storage will be used if configured).');
+}
+
+// Only create client when we actually have a connection string
+export const client = connectionString ? postgres(connectionString, { prepare: false }) : (null as any);
+export const db = connectionString ? drizzle(client, {
   schema: {
     users,
     calculators,
@@ -24,4 +28,4 @@ export const db = drizzle(client, {
     subscriptions,
     blogPosts,
   },
-});
+}) : ({} as any);

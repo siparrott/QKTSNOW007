@@ -94,12 +94,24 @@ function calculateSEOScore(blogPost: any): number {
 import { sql } from "@shared/supabase";
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-05-28.basil',
-});
+// Optional Stripe initialization (separate from stripeService) for price bootstrap helpers
+let stripe: Stripe | null = null;
+if (process.env.STRIPE_SECRET_KEY) {
+  try {
+    stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2025-05-28.basil' });
+  } catch (e) {
+    console.error('Failed to instantiate Stripe in routes.ts helper:', e);
+    stripe = null;
+  }
+} else {
+  console.warn('[startup] STRIPE_SECRET_KEY missing – subscription price bootstrap endpoints will be disabled.');
+}
 
 // Helper function to create or get Stripe price IDs
 async function createOrGetPriceId(tier: string): Promise<string> {
+  if (!stripe) {
+    throw new Error('Stripe unavailable');
+  }
   const tierConfig = {
     pro: { name: 'QuoteKit Pro', price: 500, description: '5 calculators, 25 quotes/month' },
     business: { name: 'QuoteKit Business', price: 3500, description: '10 calculators, 50 quotes/month' },

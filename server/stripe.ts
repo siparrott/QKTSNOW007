@@ -1,12 +1,17 @@
 import Stripe from 'stripe';
 
+// Make Stripe optional so the app can boot without the secret key (features will be disabled instead of crashing)
+let stripe: Stripe | null = null;
 if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
+  console.warn('[startup] STRIPE_SECRET_KEY not set – Stripe features (billing, checkout, webhooks) are disabled. Add STRIPE_SECRET_KEY Heroku config var to enable.');
+} else {
+  try {
+    stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2025-05-28.basil' });
+  } catch (err) {
+    console.error('[startup] Failed to initialize Stripe – disabling billing features:', err);
+    stripe = null;
+  }
 }
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2025-05-28.basil',
-});
 
 export const stripeService = {
   // Create a new customer
@@ -14,7 +19,8 @@ export const stripeService = {
     email: string;
     metadata?: Record<string, string>;
   }) {
-    return await stripe.customers.create({
+  if (!stripe) throw new Error('Stripe unavailable');
+  return await stripe.customers.create({
       email: params.email,
       metadata: params.metadata || {},
     });
@@ -26,7 +32,8 @@ export const stripeService = {
     priceId: string;
     paymentBehavior?: 'default_incomplete' | 'allow_incomplete';
   }) {
-    return await stripe.subscriptions.create({
+  if (!stripe) throw new Error('Stripe unavailable');
+  return await stripe.subscriptions.create({
       customer: params.customerId,
       items: [{ price: params.priceId }],
       payment_behavior: params.paymentBehavior || 'default_incomplete',
@@ -42,7 +49,8 @@ export const stripeService = {
     customerId?: string;
     metadata?: Record<string, string>;
   }) {
-    return await stripe.paymentIntents.create({
+  if (!stripe) throw new Error('Stripe unavailable');
+  return await stripe.paymentIntents.create({
       amount: params.amount,
       currency: params.currency || 'eur',
       customer: params.customerId,
@@ -53,28 +61,31 @@ export const stripeService = {
 
   // Get subscription
   async getSubscription(subscriptionId: string) {
-    return await stripe.subscriptions.retrieve(subscriptionId);
+  if (!stripe) throw new Error('Stripe unavailable');
+  return await stripe.subscriptions.retrieve(subscriptionId);
   },
 
   // Update subscription
   async updateSubscription(subscriptionId: string, params: Partial<Stripe.SubscriptionUpdateParams>) {
-    return await stripe.subscriptions.update(subscriptionId, params);
+  if (!stripe) throw new Error('Stripe unavailable');
+  return await stripe.subscriptions.update(subscriptionId, params);
   },
 
   // Cancel subscription
   async cancelSubscription(subscriptionId: string) {
-    return await stripe.subscriptions.update(subscriptionId, {
+  if (!stripe) throw new Error('Stripe unavailable');
+  return await stripe.subscriptions.update(subscriptionId, {
       cancel_at_period_end: true,
     });
   },
 
   // Construct webhook event
   constructEvent(payload: string | Buffer, signature: string) {
+    if (!stripe) throw new Error('Stripe unavailable');
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
     if (!webhookSecret) {
       throw new Error('Missing webhook secret');
     }
-    
     return stripe.webhooks.constructEvent(payload, signature, webhookSecret);
   },
 
@@ -86,7 +97,8 @@ export const stripeService = {
     cancelUrl: string;
     metadata?: Record<string, string>;
   }) {
-    return await stripe.checkout.sessions.create({
+  if (!stripe) throw new Error('Stripe unavailable');
+  return await stripe.checkout.sessions.create({
       customer: params.customerId,
       payment_method_types: ['card'],
       line_items: [
@@ -104,7 +116,8 @@ export const stripeService = {
 
   // Retrieve checkout session
   async retrieveSession(sessionId: string) {
-    return await stripe.checkout.sessions.retrieve(sessionId);
+  if (!stripe) throw new Error('Stripe unavailable');
+  return await stripe.checkout.sessions.retrieve(sessionId);
   },
 
   // Create one-time payment checkout session
@@ -115,7 +128,8 @@ export const stripeService = {
     cancelUrl: string;
     metadata?: Record<string, string>;
   }) {
-    return await stripe.checkout.sessions.create({
+  if (!stripe) throw new Error('Stripe unavailable');
+  return await stripe.checkout.sessions.create({
       customer: params.customerId,
       payment_method_types: ['card'],
       line_items: [
@@ -136,7 +150,8 @@ export const stripeService = {
     customerId: string;
     returnUrl: string;
   }) {
-    return await stripe.billingPortal.sessions.create({
+  if (!stripe) throw new Error('Stripe unavailable');
+  return await stripe.billingPortal.sessions.create({
       customer: params.customerId,
       return_url: params.returnUrl,
     });

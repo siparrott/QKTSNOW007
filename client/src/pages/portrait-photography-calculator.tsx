@@ -1094,7 +1094,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
                         onClick={parseNaturalLanguage}
                         size="sm" 
                         className="bg-rose-500 hover:bg-rose-600 text-white border-0 font-body font-semibold rounded-lg"
-                        disabled={!formData.naturalLanguageInput.trim()}
+                        disabled={!formData.naturalLanguageInput?.trim()}
                       >
                         <Sparkles className="h-4 w-4 mr-2" />
                         Calculate with AI

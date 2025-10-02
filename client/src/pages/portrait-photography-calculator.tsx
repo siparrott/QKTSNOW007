@@ -804,7 +804,7 @@ export default function PortraitPhotographyCalculator({ customConfig: propConfig
   const pricing = calculatePricing();
 
   const parseNaturalLanguage = () => {
-    const input = formData.naturalLanguageInput.toLowerCase();
+    const input = (formData.naturalLanguageInput || "").toLowerCase();
     const newFormData = { ...formData };
 
     // Parse portrait type

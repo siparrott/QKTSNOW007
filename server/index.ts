@@ -64,17 +64,7 @@ app.get('/__staticdiag', (_req, res) => {
   res.json(info);
 });
 
-app.get('/', (_req, res) => {
-  // In production, if the built client index exists, serve it so the real UI loads.
-  if (process.env.NODE_ENV === 'production') {
-    const indexPath = path.resolve(__dirname, '..', 'dist', 'public', 'index.html');
-    if (fs.existsSync(indexPath)) {
-      return res.sendFile(indexPath);
-    }
-  }
-  // Fallback placeholder (e.g., first deploy before build succeeds or assets missing)
-  return res.status(200).send('<html><body><h1>QuoteKit Server</h1><p>Server started. Built client not found yet (serving placeholder). If you expected the full UI, confirm the Vite build ran and produced <code>dist/public</code>. Visit <code>/__staticdiag</code> for asset diagnostics.</p></body></html>');
-});
+// Note: Root route handler removed - Vite middleware or serveStatic will handle '/' in the bootstrap below
 
 // Stripe webhooks must receive the raw body (for signature verification) so we:
 // 1. Attach a raw parser ONLY for that path
@@ -154,7 +144,7 @@ app.use((req, res, next) => {
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
+  if (process.env.NODE_ENV !== "production") {
     await setupVite(app, server);
   } else {
     serveStatic(app);
@@ -162,11 +152,7 @@ app.use((req, res, next) => {
 
   // Use Heroku provided PORT or fallback to 5000 locally
   const port = Number(process.env.PORT) || 5000;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
+  server.listen(port, () => {
     log(`serving on port ${port}`);
   });
 })();

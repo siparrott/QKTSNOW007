@@ -54,35 +54,34 @@ export default function Hero() {
           transition={{ duration: 0.8 }}
         >
           <motion.h1
-            className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
+            className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <span className="text-neon-400">💥 They Don't Want a Chat.</span>
-            <br />
-            <span className="text-white animate-pulse">
+            <span className="text-neon-400 block mb-2">💥 They Don't Want a Chat.</span>
+            <span className="text-white block">
               They Want a Price.
             </span>
           </motion.h1>
 
           <motion.div
-            className="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed space-y-6"
+            className="text-xl md:text-2xl text-gray-200 mb-12 max-w-4xl mx-auto leading-relaxed space-y-6"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            <p className="text-gray-200 text-lg md:text-xl">
+            <p className="text-gray-100 text-lg md:text-xl">
               Clients don't want to call. They won't wait for an email.<br />
-              <span className="text-white font-semibold">They want a price—right now.</span>
+              <span className="text-white font-bold">They want a price—right now.</span>
             </p>
             
-            <p className="text-gray-300 text-lg md:text-xl">
+            <p className="text-gray-200 text-lg md:text-xl">
               If your website can't quote instantly, they'll click away and never return.<br />
               It's not your fault. Your service page just isn't built to convert.
             </p>
             
-            <p className="text-neon-300 font-bold text-xl md:text-2xl">
+            <p className="text-neon-400 font-bold text-xl md:text-2xl">
               But now it can be.
             </p>
           </motion.div>
@@ -95,23 +94,23 @@ export default function Hero() {
           >
             <Button
               onClick={() => scrollToSection("pricing")}
-              className="bg-neon-500 hover:bg-neon-600 text-white px-8 py-6 rounded-lg font-bold text-xl transition-all duration-300 hover:shadow-glow transform hover:scale-105 min-w-[400px] max-w-lg"
+              className="bg-neon-500 hover:bg-neon-600 text-white px-8 py-6 rounded-lg font-bold text-lg md:text-xl transition-all duration-300 hover:shadow-glow transform hover:scale-105 w-full max-w-md"
             >
               💥 Get Lifetime Access for Just €5/month
             </Button>
-            <p className="text-sm text-gray-400 text-center max-w-md">
+            <p className="text-sm text-gray-300 text-center max-w-md">
               Limited Launch Offer • Renews annually • Cancel anytime
             </p>
             
-            <p className="text-gray-200 text-lg md:text-xl text-center max-w-2xl">
-              QuoteKit calculators give you <span className="text-white font-semibold">confirmed bookings</span>, not question marks.<br />
+            <p className="text-gray-100 text-lg md:text-xl text-center max-w-2xl">
+              QuoteKit calculators give you <span className="text-neon-300 font-bold">confirmed bookings</span>, not question marks.<br />
               No calls. No emails. No fuss.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center w-full max-w-md">
               <Link href="/niches">
                 <Button
                   variant="outline"
-                  className="border border-gray-600 hover:border-neon-400 text-gray-300 hover:text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-transparent"
+                  className="border-2 border-gray-500 hover:border-neon-400 text-gray-100 hover:text-neon-300 px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-transparent hover:bg-neon-500/10 w-full sm:w-auto"
                 >
                   <Rocket className="mr-2 h-4 w-4" />
                   See All 56 Niches
@@ -119,7 +118,7 @@ export default function Hero() {
               </Link>
               <Button
                 variant="outline"
-                className="border border-gray-600 hover:border-neon-400 text-gray-300 hover:text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-transparent"
+                className="border-2 border-gray-500 hover:border-neon-400 text-gray-100 hover:text-neon-300 px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-transparent hover:bg-neon-500/10 w-full sm:w-auto"
               >
                 <Play className="mr-2 h-4 w-4" />
                 Watch Demo
@@ -143,22 +142,22 @@ export default function Hero() {
 
           {/* Trust Indicators */}
           <motion.div
-            className="flex flex-col sm:flex-row items-center justify-center gap-8 text-gray-400"
+            className="flex flex-col sm:flex-row items-center justify-center gap-6 md:gap-8 text-gray-200"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.0 }}
           >
             <div className="flex items-center gap-2">
-              <CheckCircle className="text-neon-400 h-5 w-5" />
-              <span>No Coding Required</span>
+              <CheckCircle className="text-neon-400 h-5 w-5 flex-shrink-0" />
+              <span className="font-medium">No Coding Required</span>
             </div>
             <div className="flex items-center gap-2">
-              <Clock className="text-neon-400 h-5 w-5" />
-              <span>5-Minute Setup</span>
+              <Clock className="text-neon-400 h-5 w-5 flex-shrink-0" />
+              <span className="font-medium">5-Minute Setup</span>
             </div>
             <div className="flex items-center gap-2">
-              <Users className="text-neon-400 h-5 w-5" />
-              <span>500+ Businesses</span>
+              <Users className="text-neon-400 h-5 w-5 flex-shrink-0" />
+              <span className="font-medium">500+ Businesses</span>
             </div>
           </motion.div>
         </motion.div>

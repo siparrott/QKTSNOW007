@@ -769,8 +769,9 @@ export default function CalculatorPage({ customConfig: propConfig, isPreview = f
                       else if (input.includes("bathroom")) updates.projectType = "bathroom-remodel";
                       else if (input.includes("paint")) updates.projectType = "painting";
                       
-                      if (input.match(/\d+\s*m²/)) {
-                        const size = parseInt(input.match(/(\d+)\s*m²/)?.[1] || "0");
+                      const sizeMatch = input.match(/(\d+)\s*m²/);
+                      if (sizeMatch) {
+                        const size = parseInt(sizeMatch[1] || "0");
                         if (size < 50) updates.propertySize = "under-50";
                         else if (size <= 100) updates.propertySize = "50-100";
                         else if (size <= 200) updates.propertySize = "100-200";

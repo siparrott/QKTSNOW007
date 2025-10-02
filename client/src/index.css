@@ -127,6 +127,13 @@
   .text-midnight-800 { color: hsl(215, 35%, 15%); }
   .text-midnight-900 { color: hsl(215, 40%, 8%); }
   
+  /* Standard Tailwind gray text utilities */
+  .text-gray-100 { color: #f3f4f6; }
+  .text-gray-200 { color: #e5e7eb; }
+  .text-gray-300 { color: #d1d5db; }
+  .text-gray-400 { color: #9ca3af; }
+  
+  /* Neon utilities */
   .text-neon-300 { color: hsl(159, 70%, 65%); }
   .text-neon-400 { color: hsl(159, 75%, 55%); }
   .text-neon-500 { color: hsl(159, 80%, 45%); }

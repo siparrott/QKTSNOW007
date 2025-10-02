@@ -3,6 +3,17 @@ import type { Config } from "tailwindcss";
 export default {
   darkMode: ["class"],
   content: ["./client/index.html", "./client/src/**/*.{js,jsx,ts,tsx}"],
+  safelist: [
+    'text-gray-100',
+    'text-gray-200', 
+    'text-gray-300',
+    'text-neon-300',
+    'text-neon-400',
+    'border-gray-500',
+    'hover:border-neon-400',
+    'hover:text-neon-300',
+    'hover:bg-neon-500/10',
+  ],
   theme: {
     extend: {
       borderRadius: {
